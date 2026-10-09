@@ -1,0 +1,2693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Gerador de Cronograma de Estudos para Concursos</title>
+  
+  <!-- Configurações PWA e Mobile -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4f46e5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Cronograma">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  
+  <!-- Script imediato: previne flash branco (FOUC) aplicando o tema antes de renderizar -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('concurso_theme_preference');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- PDF.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    // Configura o worker do PDF.js
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+
+  <style>
+    /* ==========================================================================
+       1. VARIÁVEIS DE DESIGN & TONS PASTEL (TEMA CLARO DEFAULT)
+       ========================================================================== */
+    :root {
+      --bg-page: #fbfbfe;
+      --bg-card: #ffffff;
+      --bg-subtle: #f4f6fa;
+      --bg-header: rgba(255, 255, 255, 0.94);
+      --border-color: #e5e9f2;
+      --border-focus: #cbd5e1;
+      
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      
+      /* Tons Pastel Curados - Tema Claro */
+      --pastel-blue-bg: #e0f2fe;
+      --pastel-blue-border: #bae6fd;
+      --pastel-blue-text: #0369a1;
+
+      --pastel-green-bg: #dcfce7;
+      --pastel-green-border: #bbf7d0;
+      --pastel-green-text: #15803d;
+
+      --pastel-purple-bg: #ede9fe;
+      --pastel-purple-border: #ddd6fe;
+      --pastel-purple-text: #6d28d9;
+
+      --pastel-amber-bg: #fef3c7;
+      --pastel-amber-border: #fde68a;
+      --pastel-amber-text: #b45309;
+
+      --pastel-rose-bg: #ffe4e6;
+      --pastel-rose-border: #fecdd3;
+      --pastel-rose-text: #be123c;
+
+      --pastel-teal-bg: #ccfbf1;
+      --pastel-teal-border: #99f6e4;
+      --pastel-teal-text: #0f766e;
+
+      --pastel-indigo-bg: #e0e7ff;
+      --pastel-indigo-border: #c7d2fe;
+      --pastel-indigo-text: #4338ca;
+
+      --pastel-peach-bg: #ffedd5;
+      --pastel-peach-border: #fed7aa;
+      --pastel-peach-text: #c2410c;
+
+      --pastel-neutral-bg: #f1f5f9;
+      --pastel-neutral-border: #e2e8f0;
+      --pastel-neutral-text: #475569;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+      --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+      --shadow-lg: 0 10px 25px -3px rgba(15, 23, 42, 0.06), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ==========================================================================
+       TEMA ESCURO (Dark Mode Confortável e Suave)
+       ========================================================================== */
+    :root[data-theme="dark"] {
+      --bg-page: #0f172a;        /* Fundo cinza-escuro suave (não preto puro) */
+      --bg-card: #1e293b;        /* Superfície dos cards */
+      --bg-subtle: #273549;      /* Fundos secundários e abas */
+      --bg-header: rgba(15, 23, 42, 0.94);
+      --border-color: #334155;    /* Linhas e divisores discretos */
+      --border-focus: #475569;
+      
+      --text-main: #f8fafc;      /* Texto de alto contraste e boa leitura */
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      
+      /* Tons Pastel Adaptados para Tema Escuro (confortáveis e luminosos) */
+      --pastel-blue-bg: #14283e;
+      --pastel-blue-border: #1e456d;
+      --pastel-blue-text: #7dd3fc;
+
+      --pastel-green-bg: #122e20;
+      --pastel-green-border: #195234;
+      --pastel-green-text: #86efac;
+
+      --pastel-purple-bg: #271c3f;
+      --pastel-purple-border: #442d72;
+      --pastel-purple-text: #c4b5fd;
+
+      --pastel-amber-bg: #322514;
+      --pastel-amber-border: #5a3e1a;
+      --pastel-amber-text: #fde047;
+
+      --pastel-rose-bg: #351721;
+      --pastel-rose-border: #5d2233;
+      --pastel-rose-text: #fda4af;
+
+      --pastel-teal-bg: #112d2a;
+      --pastel-teal-border: #194e48;
+      --pastel-teal-text: #5eead4;
+
+      --pastel-indigo-bg: #1f2349;
+      --pastel-indigo-border: #323c7b;
+      --pastel-indigo-text: #a5b4fc;
+
+      --pastel-peach-bg: #361f14;
+      --pastel-peach-border: #5d331d;
+      --pastel-peach-text: #fdba74;
+
+      --pastel-neutral-bg: #1e293b;
+      --pastel-neutral-border: #334155;
+      --pastel-neutral-text: #cbd5e1;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+      --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    html, body {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding-bottom: 80px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Transição suave para os componentes na troca de tema */
+    header, .upload-card, .subject-card, .config-card, .schedule-column, 
+    .schedule-slot-card, .nav-tab-btn, .btn, .input-field, .topic-item, 
+    .modal-card, .toast, .feature-box, .unclassified-box {
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Container Principal */
+    .container {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ==========================================================================
+       2. CABEÇALHO & NAVEGAÇÃO
+       ========================================================================== */
+    header {
+      background-color: var(--bg-header);
+      border-bottom: 1px solid var(--border-color);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+    }
+
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: var(--pastel-indigo-bg);
+      border: 1px solid var(--pastel-indigo-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: var(--pastel-indigo-text);
+    }
+
+    .logo-titles h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .logo-titles p {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Botão de Alternância de Tema */
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 44px;
+      padding: 8px 14px;
+      font-size: 0.875rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      user-select: none;
+    }
+    .theme-toggle-btn span:first-child {
+      font-size: 1.05rem;
+      line-height: 1;
+    }
+
+    /* Abas de Navegação */
+    .nav-tabs {
+      display: flex;
+      background: var(--bg-subtle);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      margin: 28px 0 24px 0;
+      gap: 4px;
+      overflow-x: auto;
+    }
+
+    .nav-tab-btn {
+      flex: 1;
+      min-width: 140px;
+      min-height: 44px;
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .nav-tab-btn:hover {
+      color: var(--text-main);
+      background: var(--bg-card);
+    }
+
+    .nav-tab-btn.active {
+      background: var(--bg-card);
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-badge {
+      font-size: 0.75rem;
+      padding: 2px 7px;
+      border-radius: 20px;
+      background: var(--pastel-indigo-bg);
+      color: var(--pastel-indigo-text);
+      font-weight: 700;
+    }
+
+    /* Conteúdo das Abas */
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       3. BOTÕES & ELEMENTOS DE FORMULÁRIO
+       ========================================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      min-height: 44px;
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: #4f46e5;
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: #4338ca;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border-color);
+    }
+    .btn-secondary:hover {
+      background: var(--bg-subtle);
+      border-color: var(--border-focus);
+    }
+
+    .btn-pastel-purple {
+      background: var(--pastel-purple-bg);
+      color: var(--pastel-purple-text);
+      border-color: var(--pastel-purple-border);
+    }
+    .btn-pastel-purple:hover {
+      filter: brightness(0.95);
+    }
+
+    .btn-pastel-green {
+      background: var(--pastel-green-bg);
+      color: var(--pastel-green-text);
+      border-color: var(--pastel-green-border);
+    }
+    .btn-pastel-green:hover {
+      filter: brightness(0.95);
+    }
+
+    .btn-danger-soft {
+      background: var(--pastel-rose-bg);
+      color: var(--pastel-rose-text);
+      border-color: var(--pastel-rose-border);
+    }
+    .btn-danger-soft:hover {
+      filter: brightness(0.92);
+    }
+
+    .btn-sm {
+      min-height: 44px;
+      padding: 8px 14px;
+      font-size: 0.825rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-lg {
+      padding: 13px 26px;
+      font-size: 1rem;
+      border-radius: var(--radius-md);
+    }
+
+    /* ==========================================================================
+       4. SEÇÃO 1: UPLOAD DE PDF DO EDITAL
+       ========================================================================== */
+    .upload-card {
+      background: var(--bg-card);
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 48px 24px;
+      text-align: center;
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .upload-card:hover, .upload-card.dragover {
+      border-color: #818cf8;
+      background: var(--bg-subtle);
+    }
+
+    .upload-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--pastel-indigo-bg);
+      color: var(--pastel-indigo-text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      margin-bottom: 16px;
+    }
+
+    .upload-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .upload-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      max-width: 480px;
+      margin: 0 auto 20px auto;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    /* Barra de Progresso */
+    .progress-container {
+      margin-top: 24px;
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      max-width: 580px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: var(--shadow-sm);
+      text-align: left;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-bg {
+      height: 10px;
+      background: var(--bg-subtle);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #818cf8, #4f46e5);
+      border-radius: 10px;
+      transition: width 0.2s ease;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .feature-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .feature-icon {
+      font-size: 22px;
+      line-height: 1;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .feature-box h4 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 3px;
+    }
+
+    .feature-box p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ==========================================================================
+       5. SEÇÃO 2: MATÉRIAS GRAVADAS & TÓPICOS
+       ========================================================================== */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-count {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-subtle);
+      padding: 3px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .subject-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Cartão de Matéria */
+    .subject-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .subject-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-focus);
+    }
+
+    .subject-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid transparent;
+      transition: var(--transition);
+    }
+
+    .subject-header-row.open {
+      border-bottom-color: var(--border-color);
+      background: var(--bg-card);
+    }
+
+    .subject-title-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .subject-pill {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .subject-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .subject-topics-count {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .subject-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .subject-toggle-icon {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      transition: transform 0.2s ease;
+    }
+    .subject-header-row.open .subject-toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .subject-body {
+      padding: 16px 20px;
+      display: none;
+      background: var(--bg-subtle);
+    }
+    .subject-body.open {
+      display: block;
+    }
+
+    /* Lista de Tópicos */
+    .topics-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .topic-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.875rem;
+      color: var(--text-main);
+      transition: var(--transition);
+    }
+
+    .topic-item:hover {
+      border-color: var(--border-focus);
+    }
+
+    .topic-text {
+      flex: 1;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.45;
+    }
+
+    .topic-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .btn-icon {
+      background: transparent;
+      border: none;
+      color: var(--text-light);
+      cursor: pointer;
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+    .btn-icon:hover {
+      color: var(--text-main);
+      background: var(--bg-subtle);
+    }
+    .btn-icon.danger:hover {
+      color: #e11d48;
+      background: var(--pastel-rose-bg);
+    }
+
+    .add-topic-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .input-field {
+      flex: 1;
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      font-family: inherit;
+      font-size: 0.875rem;
+      color: var(--text-main);
+      outline: none;
+      transition: var(--transition);
+      background: var(--bg-card);
+    }
+    .input-field:focus {
+      border-color: #818cf8;
+      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+    }
+
+    /* Seção de Não Classificados */
+    .unclassified-box {
+      margin-top: 24px;
+      background: var(--bg-card);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+
+    .unclassified-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .unclassified-header h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .unclassified-item {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-main);
+    }
+
+    .unclassified-move-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .select-field {
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      font-family: inherit;
+      font-size: 0.8rem;
+      color: var(--text-main);
+      background: var(--bg-card);
+      outline: none;
+    }
+
+    /* Estado Vazio */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+    }
+
+    .empty-state-icon {
+      font-size: 42px;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+
+    .empty-state h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .empty-state p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      max-width: 440px;
+      margin: 0 auto 20px auto;
+    }
+
+    /* ==========================================================================
+       6. SEÇÃO 3: GERADOR DE CRONOGRAMA & CONFIGURAÇÃO
+       ========================================================================== */
+    .config-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    .config-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .config-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .config-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .config-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .config-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Checkboxes de Dias da Semana */
+    .days-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .day-chip {
+      user-select: none;
+      cursor: pointer;
+    }
+
+    .day-chip input {
+      display: none;
+    }
+
+    .day-chip-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      min-width: 44px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-subtle);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: var(--transition);
+    }
+
+    .day-chip input:checked + .day-chip-label {
+      background: var(--pastel-indigo-bg);
+      border-color: var(--pastel-indigo-border);
+      color: var(--pastel-indigo-text);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .range-picker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .range-picker input[type="range"] {
+      flex: 1;
+      accent-color: #4f46e5;
+    }
+
+    .range-val-badge {
+      min-width: 60px;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-align: center;
+      color: var(--text-main);
+    }
+
+    .action-bar-generate {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* ==========================================================================
+       7. GRADE SEMANAL DO CRONOGRAMA
+       ========================================================================== */
+    .schedule-wrapper {
+      margin-top: 16px;
+    }
+
+    .schedule-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .schedule-stats {
+      display: flex;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .schedule-stats-badge {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Grade em Colunas */
+    .schedule-grid {
+      display: grid;
+      gap: 14px;
+      align-items: stretch;
+      overflow-x: auto;
+      padding-bottom: 16px;
+    }
+
+    .schedule-column {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 220px;
+    }
+
+    .schedule-col-header {
+      padding: 14px 16px;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-color);
+      text-align: center;
+    }
+
+    .schedule-col-header h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .schedule-col-header span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .schedule-col-body {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+      background: var(--bg-card);
+    }
+
+    /* Bloco de Sessão / Matéria no Cronograma */
+    .schedule-slot-card {
+      border-radius: var(--radius-md);
+      padding: 12px;
+      border: 1px solid transparent;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .schedule-slot-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+
+    .slot-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.725rem;
+      font-weight: 600;
+      opacity: 0.85;
+    }
+
+    .slot-subject-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .slot-topic-desc {
+      font-size: 0.78rem;
+      line-height: 1.35;
+      opacity: 0.9;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    .slot-checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      min-height: 44px;
+      margin-top: 6px;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 600;
+      opacity: 0.85;
+      transition: var(--transition);
+    }
+    .slot-checkbox-label:hover {
+      opacity: 1;
+    }
+
+    .slot-checkbox-label input {
+      width: 20px;
+      height: 20px;
+      accent-color: #4f46e5;
+      cursor: pointer;
+    }
+
+    .schedule-slot-card.completed {
+      opacity: 0.55;
+      filter: grayscale(40%);
+    }
+    .schedule-slot-card.completed .slot-subject-title {
+      text-decoration: line-through;
+    }
+
+    /* ==========================================================================
+       8. MODAIS & TOASTS
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .modal-overlay.open {
+      display: flex;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .modal-header h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Seletor de Cores Pastel para Matéria */
+    .color-picker-palette {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .color-swatch-radio {
+      cursor: pointer;
+    }
+    .color-swatch-radio input {
+      display: none;
+    }
+    .color-swatch-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      transition: var(--transition);
+      display: block;
+    }
+    .color-swatch-radio input:checked + .color-swatch-box {
+      border-color: var(--text-main);
+      transform: scale(1.15);
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-main);
+      animation: slideInRight 0.3s ease-out;
+      min-width: 280px;
+    }
+    .toast.success { border-left: 4px solid #22c55e; }
+    .toast.info { border-left: 4px solid #3b82f6; }
+    .toast.warning { border-left: 4px solid #f59e0b; }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ==========================================================================
+       9. ESTILOS DE IMPRESSÃO (PRINT FRIENDLY)
+       ========================================================================== */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding-bottom: 0 !important;
+      }
+      header, .nav-tabs, .config-card, .header-actions, .schedule-topbar .btn, .toast-container {
+        display: none !important;
+      }
+      .tab-content {
+        display: none !important;
+      }
+      #tab-schedule {
+        display: block !important;
+      }
+      .schedule-grid {
+        display: grid !important;
+        grid-template-columns: repeat(7, 1fr) !important;
+        gap: 6px !important;
+        page-break-inside: avoid;
+      }
+      .schedule-column {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        min-width: auto !important;
+        background: #fff !important;
+      }
+      .schedule-slot-card {
+        border: 1px solid #bbb !important;
+        page-break-inside: avoid;
+        box-shadow: none !important;
+      }
+    }
+
+    /* ==========================================================================
+       10. RESPONSIVIDADE
+       ========================================================================== */
+    @media (max-width: 768px) {
+      .header-inner {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .logo-area {
+        justify-content: space-between;
+      }
+      .header-actions {
+        justify-content: flex-start;
+      }
+      .nav-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+      }
+      .schedule-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+      .action-bar-generate {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .action-bar-generate .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       CABEÇALHO
+       ========================================================================== -->
+  <header>
+    <div class="container header-inner">
+      <div class="logo-area">
+        <div class="logo-badge">📚</div>
+        <div class="logo-titles">
+          <h1>Cronograma de Concursos</h1>
+          <p>Leitura de edital em PDF & criação de cronogramas inteligentes</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <!-- Botão de Alternância de Tema Escuro / Claro -->
+        <button id="btnToggleTheme" class="btn btn-secondary btn-sm theme-toggle-btn" title="Alternar entre tema claro e escuro" aria-label="Alternar tema">
+          <span id="themeToggleIcon">🌙</span>
+          <span id="themeToggleText">Escuro</span>
+        </button>
+        <button id="btnLoadDemo" class="btn btn-secondary btn-sm" title="Carregar disciplinas de exemplo para testar">
+          ✨ Carregar Exemplo
+        </button>
+        <button id="btnClearAll" class="btn btn-danger-soft btn-sm" title="Limpar todos os dados salvos">
+          🗑️ Limpar Dados
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       CONTAINER PRINCIPAL COM ABAS
+       ========================================================================== -->
+  <main class="container">
+    
+    <!-- Navegação em Abas -->
+    <nav class="nav-tabs" aria-label="Navegação do aplicativo">
+      <button class="nav-tab-btn active" data-tab="tab-upload">
+        📄 1. Upload do Edital
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-subjects">
+        📚 2. Matérias & Tópicos <span class="tab-badge" id="badgeSubjectsCount">0</span>
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-schedule">
+        🗓️ 3. Gerar Cronograma
+      </button>
+    </nav>
+
+    <!-- ========================================================================
+         ABA 1: UPLOAD DE PDF DO EDITAL
+         ======================================================================== -->
+    <section id="tab-upload" class="tab-content active">
+      <div class="upload-card" id="dropZone">
+        <div class="upload-icon">📑</div>
+        <h3>Arraste o PDF do Edital ou Clique para Selecionar</h3>
+        <p>O sistema processa o documento diretamente no seu navegador via PDF.js, identifica as matérias e preserva todo o conteúdo programático na íntegra.</p>
+        <input type="file" id="fileInput" accept="application/pdf">
+        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+          📂 Escolher Arquivo PDF
+        </button>
+
+        <!-- Barra de Progresso do Processamento -->
+        <div class="progress-container" id="uploadProgress">
+          <div class="progress-info">
+            <span id="progressText">Lendo documento...</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Destaques das Regras -->
+      <div class="features-grid">
+        <div class="feature-box">
+          <div class="feature-icon" style="background: var(--pastel-blue-bg); color: var(--pastel-blue-text);">🔍</div>
+          <div>
+            <h4>Detecção Inteligente</h4>
+            <p>Identifica blocos em caixa alta como <em>Língua Portuguesa</em>, <em>Direito Constitucional</em>, <em>Informática</em> e conhecimentos básicos/específicos.</p>
+          </div>
+        </div>
+        <div class="feature-box">
+          <div class="feature-icon" style="background: var(--pastel-green-bg); color: var(--pastel-green-text);">🛡️</div>
+          <div>
+            <h4>100% Fiel ao Edital</h4>
+            <p>Nenhuma linha é descartada ou suprimida. Trechos com formatação atípica são guardados na seção <em>Não Classificado</em> para sua revisão.</p>
+          </div>
+        </div>
+        <div class="feature-box">
+          <div class="feature-icon" style="background: var(--pastel-purple-bg); color: var(--pastel-purple-text);">⚡</div>
+          <div>
+            <h4>Cronograma com 1 Clique</h4>
+            <p>Distribui equitativamente os tópicos e matérias pelos seus dias livres da semana, respeitando suas horas disponíveis.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ABA 2: MATÉRIAS GRAVADAS & TÓPICOS
+         ======================================================================== -->
+    <section id="tab-subjects" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <span>Matérias Identificadas</span>
+          <span class="section-count" id="headerCountLabel">0 matérias cadastradas</span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary btn-sm" id="btnExpandAll">
+            ↕️ Expandir/Recolher
+          </button>
+          <button class="btn btn-pastel-purple btn-sm" id="btnOpenAddSubjectModal">
+            ➕ Adicionar Matéria Manualmente
+          </button>
+        </div>
+      </div>
+
+      <!-- Lista Dinâmica de Matérias -->
+      <div id="subjectListContainer" class="subject-list">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+
+      <!-- Seção de Tópicos Não Classificados (para garantir 0% de perda) -->
+      <div id="unclassifiedContainer" class="unclassified-box" style="display: none;">
+        <div class="unclassified-header">
+          <h4>
+            <span>⚠️ Trechos Não Classificados</span>
+            <span class="section-count" id="unclassifiedCount">0</span>
+          </h4>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">
+            Trechos do edital mantidos na íntegra. Você pode movê-los para qualquer disciplina.
+          </span>
+        </div>
+        <div id="unclassifiedList">
+          <!-- Renderizado dinamicamente -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ABA 3: GERAR CRONOGRAMA & VISUALIZAÇÃO EM GRADE
+         ======================================================================== -->
+    <section id="tab-schedule" class="tab-content">
+      
+      <!-- Painel de Configurações do Cronograma -->
+      <div class="config-card">
+        <div class="config-title">
+          <span>⚙️ Parâmetros de Estudo</span>
+        </div>
+
+        <div class="config-grid">
+          <!-- Dias da Semana -->
+          <div class="config-group">
+            <label class="config-label">Dias da Semana Disponíveis</label>
+            <div class="days-picker" id="daysPicker">
+              <label class="day-chip">
+                <input type="checkbox" value="Segunda" checked>
+                <span class="day-chip-label">Seg</span>
+              </label>
+              <label class="day-chip">
+                <input type="checkbox" value="Terça" checked>
+                <span class="day-chip-label">Ter</span>
+              </label>
+              <label class="day-chip">
+                <input type="checkbox" value="Quarta" checked>
+                <span class="day-chip-label">Qua</span>
+              </label>
+              <label class="day-chip">
+                <input type="checkbox" value="Quinta" checked>
+                <span class="day-chip-label">Qui</span>
+              </label>
+              <label class="day-chip">
+                <input type="checkbox" value="Sexta" checked>
+                <span class="day-chip-label">Sex</span>
+              </label>
+              <label class="day-chip">
+                <input type="checkbox" value="Sábado">
+                <span class="day-chip-label">Sáb</span>
+              </label>
+              <label class="day-chip">
+                <input type="checkbox" value="Domingo">
+                <span class="day-chip-label">Dom</span>
+              </label>
+            </div>
+            <span class="config-hint">Selecione os dias em que você pode estudar</span>
+          </div>
+
+          <!-- Horas de Estudo por Dia -->
+          <div class="config-group">
+            <label class="config-label">Horas de Estudo Diárias</label>
+            <div class="range-picker">
+              <input type="range" id="inputHoursPerDay" min="1" max="8" value="3" step="1">
+              <span class="range-val-badge" id="badgeHoursPerDay">3h / dia</span>
+            </div>
+            <span class="config-hint">Tempo líquido dedicado por dia</span>
+          </div>
+
+          <!-- Duração da Sessão / Bloco -->
+          <div class="config-group">
+            <label class="config-label">Duração de Cada Bloco de Estudo</label>
+            <select id="selectBlockDuration" class="input-field" style="padding: 7px 12px;">
+              <option value="60" selected>Blocos de 1 hora (60 min)</option>
+              <option value="50">Blocos Pomodoro (50 min)</option>
+              <option value="90">Blocos Aprofundados (1h 30min)</option>
+            </select>
+            <span class="config-hint">Alterna disciplinas entre blocos para manter o foco</span>
+          </div>
+        </div>
+
+        <div class="action-bar-generate">
+          <div style="font-size: 0.85rem; color: var(--text-muted);" id="estimatedBlocksText">
+            Estimativa: <strong>15 sessões semanais</strong>
+          </div>
+          <button id="btnGenerateSchedule" class="btn btn-primary btn-lg">
+            🚀 Gerar Cronograma Semanal
+          </button>
+        </div>
+      </div>
+
+      <!-- Exibição do Cronograma Gerado -->
+      <div id="scheduleResultsWrapper" class="schedule-wrapper" style="display: none;">
+        <div class="schedule-topbar">
+          <div class="schedule-stats">
+            <span>Matérias no ciclo: <span class="schedule-stats-badge" id="schedStatsSubjects">0</span></span>
+            <span>•</span>
+            <span>Sessões totais: <span class="schedule-stats-badge" id="schedStatsSessions">0</span></span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary btn-sm" id="btnPrintSchedule">
+              🖨️ Imprimir / Salvar PDF
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btnResetCompleted">
+              🔄 Limpar Marcações Feitas
+            </button>
+          </div>
+        </div>
+
+        <!-- Grade Semanal Responsiva -->
+        <div id="scheduleGridContainer" class="schedule-grid">
+          <!-- Renderizado dinamicamente via JS -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       MODAIS
+       ========================================================================== -->
+  
+  <!-- Modal: Adicionar / Editar Matéria -->
+  <div class="modal-overlay" id="modalSubject">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalSubjectTitle">Nova Matéria</h3>
+        <button class="btn-icon" onclick="App.closeModals()">✕</button>
+      </div>
+      <div class="modal-body">
+        <label class="config-label" for="inputSubjectName">Nome da Disciplina</label>
+        <input type="text" id="inputSubjectName" class="input-field" placeholder="Ex: Direito Constitucional">
+
+        <label class="config-label">Cor Pastel do Card</label>
+        <div class="color-picker-palette" id="colorPickerContainer">
+          <!-- Swatches inseridos dinamicamente -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="App.closeModals()">Cancelar</button>
+        <button class="btn btn-primary" id="btnSaveSubjectModal">Salvar Matéria</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Editar Tópico -->
+  <div class="modal-overlay" id="modalTopic">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Editar Conteúdo do Tópico</h3>
+        <button class="btn-icon" onclick="App.closeModals()">✕</button>
+      </div>
+      <div class="modal-body">
+        <label class="config-label" for="textareaTopicText">Texto do Tópico</label>
+        <textarea id="textareaTopicText" class="input-field" rows="4" style="resize: vertical;"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="App.closeModals()">Cancelar</button>
+        <button class="btn btn-primary" id="btnSaveTopicModal">Salvar Alteração</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container de Notificações Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT DA APLICAÇÃO
+       ========================================================================== -->
+  <script>
+    /**
+     * PALETAS EM TONS PASTEL
+     * Usam variáveis CSS para refletir a alternância entre tema claro e escuro automaticamente.
+     */
+    const PASTEL_PALETTES = [
+      { id: 'blue', name: 'Azul Céu', bg: 'var(--pastel-blue-bg)', border: 'var(--pastel-blue-border)', text: 'var(--pastel-blue-text)' },
+      { id: 'purple', name: 'Lavanda', bg: 'var(--pastel-purple-bg)', border: 'var(--pastel-purple-border)', text: 'var(--pastel-purple-text)' },
+      { id: 'green', name: 'Menta', bg: 'var(--pastel-green-bg)', border: 'var(--pastel-green-border)', text: 'var(--pastel-green-text)' },
+      { id: 'amber', name: 'Baunilha', bg: 'var(--pastel-amber-bg)', border: 'var(--pastel-amber-border)', text: 'var(--pastel-amber-text)' },
+      { id: 'rose', name: 'Rosa Pastel', bg: 'var(--pastel-rose-bg)', border: 'var(--pastel-rose-border)', text: 'var(--pastel-rose-text)' },
+      { id: 'teal', name: 'Turquesa Suave', bg: 'var(--pastel-teal-bg)', border: 'var(--pastel-teal-border)', text: 'var(--pastel-teal-text)' },
+      { id: 'indigo', name: 'Índigo Leve', bg: 'var(--pastel-indigo-bg)', border: 'var(--pastel-indigo-border)', text: 'var(--pastel-indigo-text)' },
+      { id: 'peach', name: 'Pêssego', bg: 'var(--pastel-peach-bg)', border: 'var(--pastel-peach-border)', text: 'var(--pastel-peach-text)' }
+    ];
+
+    /**
+     * DADOS DE EXEMPLO (DEMO)
+     */
+    const DEMO_DATA = {
+      materias: [
+        {
+          id: 'mat-1',
+          nome: 'Língua Portuguesa',
+          paletteId: 'blue',
+          topicos: [
+            '1 Compreensão e interpretação de textos de gêneros variados.',
+            '2 Reconhecimento de tipos e gêneros textuais.',
+            '3 Domínio da ortografia oficial: acentuação gráfica e emprego de letras.',
+            '4 Domínio dos mecanismos de coesão e coerência textual.',
+            '5 Emprego das classes de palavras: substantivo, adjetivo, pronome, verbo.',
+            '6 Sintaxe da oração e do período: termos essenciais, concordância e regência.'
+          ]
+        },
+        {
+          id: 'mat-2',
+          nome: 'Direito Constitucional',
+          paletteId: 'purple',
+          topicos: [
+            '1 Princípios fundamentais da Constituição da República Federativa do Brasil.',
+            '2 Direitos e garantias fundamentais: direitos individuais e coletivos (art. 5º).',
+            '3 Direitos sociais e da nacionalidade.',
+            '4 Organização político-administrativa do Estado brasileiro.',
+            '5 Da Administração Pública: princípios expressos e implícitos (art. 37).'
+          ]
+        },
+        {
+          id: 'mat-3',
+          nome: 'Direito Administrativo',
+          paletteId: 'green',
+          topicos: [
+            '1 Noções de organização administrativa: administração direta e indireta.',
+            '2 Atos administrativos: conceitos, requisitos, atributos e anulação/revogação.',
+            '3 Poderes administrativos: poder vinculado, discricionário, hierárquico e de polícia.',
+            '4 Lei nº 14.133/2021 (Nova Lei de Licitações e Contratos Administrativos).',
+            '5 Responsabilidade civil do Estado no ordenamento jurídico brasileiro.'
+          ]
+        },
+        {
+          id: 'mat-4',
+          nome: 'Noções de Informática',
+          paletteId: 'teal',
+          topicos: [
+            '1 Conceitos de internet, intranet e protocolos de redes de computadores.',
+            '2 Segurança da informação: vírus, malwares, backup, criptografia e phishing.',
+            '3 Ferramentas de escritório: edição de textos, planilhas eletrônicas e apresentações.',
+            '4 Sistemas operacionais Windows e Linux: conceitos fundamentais e comandos usuais.'
+          ]
+        },
+        {
+          id: 'mat-5',
+          nome: 'Raciocínio Lógico e Matemático',
+          paletteId: 'amber',
+          topicos: [
+            '1 Estruturas lógicas de relações entre pessoas, lugares, coisas e eventos.',
+            '2 Lógica proposicional: proposições simples e compostas, tabelas-verdade.',
+            '3 Equivalências lógicas e leis de De Morgan.',
+            '4 Diagramas lógicos, conjuntos e operações.',
+            '5 Noções básicas de contagem, probabilidade e porcentagem.'
+          ]
+        }
+      ],
+      naoClassificado: [
+        'INFORMAÇÃO DO EDITAL: Os candidatos deverão comparecer ao local de prova com 60 minutos de antecedência.',
+        'ITEM 8.4: Será considerado aprovado o candidato que obtiver no mínimo 50% dos pontos em Conhecimentos Básicos.'
+      ]
+    };
+
+    /**
+     * ESTADO GLOBAL DA APLICAÇÃO
+     */
+    const App = {
+      data: {
+        materias: [],
+        naoClassificado: []
+      },
+      schedule: null,
+      completedSlots: {}, // armazena chaves de slots marcados como concluídos
+      activeModalSubjectId: null,
+      activeModalTopicMeta: null,
+
+      init() {
+        this.initTheme();
+        this.loadFromStorage();
+        this.bindEvents();
+        this.renderAll();
+        this.updateHoursBadge();
+        this.updateEstimatedBlocks();
+      },
+
+      /* Gestão de Tema (Claro / Escuro) */
+      initTheme() {
+        const saved = localStorage.getItem('concurso_theme_preference');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = saved || (prefersDark ? 'dark' : 'light');
+        this.setTheme(theme, false);
+
+        // Ouve preferências do sistema caso o usuário não tenha definido manualmente
+        if (window.matchMedia) {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('concurso_theme_preference')) {
+              App.setTheme(e.matches ? 'dark' : 'light', false);
+            }
+          });
+        }
+      },
+
+      setTheme(theme, save = true) {
+        document.documentElement.setAttribute('data-theme', theme);
+        if (save) {
+          localStorage.setItem('concurso_theme_preference', theme);
+        }
+        
+        const iconEl = document.getElementById('themeToggleIcon');
+        const textEl = document.getElementById('themeToggleText');
+        const btn = document.getElementById('btnToggleTheme');
+
+        if (iconEl && textEl && btn) {
+          if (theme === 'dark') {
+            iconEl.textContent = '☀️';
+            textEl.textContent = 'Claro';
+            btn.title = 'Mudar para tema claro';
+          } else {
+            iconEl.textContent = '🌙';
+            textEl.textContent = 'Escuro';
+            btn.title = 'Mudar para tema escuro';
+          }
+        }
+      },
+
+      toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        this.setTheme(next, true);
+        this.showToast(next === 'dark' ? 'Tema escuro ativado 🌙' : 'Tema claro ativado ☀️', 'info');
+      },
+
+      /* Persistência LocalStorage */
+      saveToStorage() {
+        try {
+          localStorage.setItem('concurso_app_data', JSON.stringify(this.data));
+          localStorage.setItem('concurso_schedule_data', JSON.stringify(this.schedule));
+          localStorage.setItem('concurso_completed_slots', JSON.stringify(this.completedSlots));
+        } catch (e) {
+          console.error('Erro ao salvar no localStorage', e);
+        }
+      },
+
+      loadFromStorage() {
+        try {
+          const raw = localStorage.getItem('concurso_app_data');
+          if (raw) {
+            this.data = JSON.parse(raw);
+          } else {
+            // Inicializa limpo
+            this.data = { materias: [], naoClassificado: [] };
+          }
+
+          const rawSched = localStorage.getItem('concurso_schedule_data');
+          if (rawSched) this.schedule = JSON.parse(rawSched);
+
+          const rawSlots = localStorage.getItem('concurso_completed_slots');
+          if (rawSlots) this.completedSlots = JSON.parse(rawSlots);
+        } catch (e) {
+          console.error('Erro ao carregar do localStorage', e);
+          this.data = { materias: [], naoClassificado: [] };
+        }
+      },
+
+      clearAllData() {
+        if (confirm('Deseja realmente apagar todas as matérias e cronogramas salvos? Esta ação não pode ser desfeita.')) {
+          this.data = { materias: [], naoClassificado: [] };
+          this.schedule = null;
+          this.completedSlots = {};
+          this.saveToStorage();
+          this.renderAll();
+          this.showToast('Todos os dados foram reiniciados com sucesso.', 'info');
+        }
+      },
+
+      loadDemoData() {
+        this.data = JSON.parse(JSON.stringify(DEMO_DATA));
+        this.saveToStorage();
+        this.renderAll();
+        this.showToast('Disciplinas de exemplo carregadas! Acesse a aba Matérias ou Cronograma.', 'success');
+        this.switchTab('tab-subjects');
+      },
+
+      /* Notificações Toast */
+      showToast(message, type = 'success') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        let icon = '✅';
+        if (type === 'info') icon = 'ℹ️';
+        if (type === 'warning') icon = '⚠️';
+
+        toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(10px)';
+          setTimeout(() => toast.remove(), 250);
+        }, 3200);
+      },
+
+      /* Vinculação de Eventos */
+      bindEvents() {
+        // Alternância de Tema
+        const themeBtn = document.getElementById('btnToggleTheme');
+        if (themeBtn) {
+          themeBtn.addEventListener('click', () => App.toggleTheme());
+        }
+
+        // Navegação em abas
+        document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const targetTab = e.currentTarget.getAttribute('data-tab');
+            App.switchTab(targetTab);
+          });
+        });
+
+        // Upload de PDF & Drag and drop
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        dropZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+          dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropZone.classList.remove('dragover');
+          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            App.handlePdfFile(e.dataTransfer.files[0]);
+          }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+          if (e.target.files && e.target.files[0]) {
+            App.handlePdfFile(e.target.files[0]);
+          }
+        });
+
+        // Botões de topo
+        document.getElementById('btnLoadDemo').addEventListener('click', () => App.loadDemoData());
+        document.getElementById('btnClearAll').addEventListener('click', () => App.clearAllData());
+
+        // Botões da aba de matérias
+        document.getElementById('btnOpenAddSubjectModal').addEventListener('click', () => App.openAddSubjectModal());
+        document.getElementById('btnExpandAll').addEventListener('click', () => App.toggleExpandAll());
+
+        // Controles de Configuração de Cronograma
+        const inputHours = document.getElementById('inputHoursPerDay');
+        inputHours.addEventListener('input', () => {
+          App.updateHoursBadge();
+          App.updateEstimatedBlocks();
+        });
+
+        document.querySelectorAll('#daysPicker input').forEach(chk => {
+          chk.addEventListener('change', () => App.updateEstimatedBlocks());
+        });
+
+        document.getElementById('selectBlockDuration').addEventListener('change', () => App.updateEstimatedBlocks());
+
+        // Gerar Cronograma
+        document.getElementById('btnGenerateSchedule').addEventListener('click', () => App.generateSchedule());
+        document.getElementById('btnPrintSchedule').addEventListener('click', () => window.print());
+        document.getElementById('btnResetCompleted').addEventListener('click', () => App.resetCompletedSlots());
+
+        // Salvar modais
+        document.getElementById('btnSaveSubjectModal').addEventListener('click', () => App.saveSubjectModal());
+        document.getElementById('btnSaveTopicModal').addEventListener('click', () => App.saveTopicModal());
+      },
+
+      switchTab(tabId) {
+        document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+        const targetBtn = document.querySelector(`.nav-tab-btn[data-tab="${tabId}"]`);
+        const targetContent = document.getElementById(tabId);
+
+        if (targetBtn && targetContent) {
+          targetBtn.classList.add('active');
+          targetContent.classList.add('active');
+        }
+      },
+
+      updateHoursBadge() {
+        const val = document.getElementById('inputHoursPerDay').value;
+        document.getElementById('badgeHoursPerDay').textContent = `${val}h / dia`;
+      },
+
+      updateEstimatedBlocks() {
+        const daysCount = document.querySelectorAll('#daysPicker input:checked').length;
+        const hours = parseInt(document.getElementById('inputHoursPerDay').value, 10);
+        const blockDuration = parseInt(document.getElementById('selectBlockDuration').value, 10);
+
+        const blocksPerDay = Math.max(1, Math.round((hours * 60) / blockDuration));
+        const totalSessions = daysCount * blocksPerDay;
+
+        document.getElementById('estimatedBlocksText').innerHTML = 
+          `Estimativa: <strong>${daysCount} dias × ${blocksPerDay} blocos = ${totalSessions} sessões semanais</strong>`;
+      },
+
+      /* ========================================================================
+         PROCESSAMENTO DO PDF COM PDF.JS (ETAPA 2 & 3)
+         ======================================================================== */
+      async handlePdfFile(file) {
+        if (!file || file.type !== 'application/pdf') {
+          alert('Por favor, selecione um arquivo válido no formato PDF.');
+          return;
+        }
+
+        if (!window.pdfjsLib) {
+          alert('Biblioteca PDF.js não carregada. Verifique sua conexão com a internet.');
+          return;
+        }
+
+        const progressContainer = document.getElementById('uploadProgress');
+        const progressBarFill = document.getElementById('progressBarFill');
+        const progressText = document.getElementById('progressText');
+        const progressPercent = document.getElementById('progressPercent');
+
+        progressContainer.style.display = 'block';
+        progressBarFill.style.width = '5%';
+        progressPercent.textContent = '5%';
+        progressText.textContent = 'Iniciando leitura do edital...';
+
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+          const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+          const pdfDoc = await loadingTask.promise;
+          const totalPages = pdfDoc.numPages;
+
+          let fullTextLines = [];
+
+          for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+            const page = await pdfDoc.getPage(pageNum);
+            const textContent = await page.getTextContent();
+            
+            // Reagrupa itens de texto respeitando posicionamento e quebras de linha
+            let pageLines = App.extractLinesFromPage(textContent);
+            fullTextLines.push(...pageLines);
+
+            // Atualiza barra de progresso
+            const percent = Math.round((pageNum / totalPages) * 100);
+            progressBarFill.style.width = `${percent}%`;
+            progressPercent.textContent = `${percent}%`;
+            progressText.textContent = `Lendo página ${pageNum} de ${totalPages}...`;
+          }
+
+          progressText.textContent = 'Processando matérias e tópicos do edital...';
+          
+          // Heurística de identificação de matérias sem descartar nada
+          const parseResult = App.parseEditalText(fullTextLines);
+
+          // Salva no estado
+          App.data.materias = parseResult.materias;
+          App.data.naoClassificado = parseResult.naoClassificado;
+          App.saveToStorage();
+          App.renderAll();
+
+          progressContainer.style.display = 'none';
+          App.showToast(`Edital lido! ${parseResult.materias.length} matérias e ${parseResult.totalTopicos} tópicos identificados.`, 'success');
+          App.switchTab('tab-subjects');
+
+        } catch (error) {
+          console.error('Erro na leitura do PDF:', error);
+          progressContainer.style.display = 'none';
+          alert('Ocorreu um erro ao processar o arquivo PDF. Verifique se o arquivo não está corrompido ou protegido por senha.');
+        }
+      },
+
+      /* Extrai linhas de texto de uma página do PDF preservando fluxo */
+      extractLinesFromPage(textContent) {
+        if (!textContent || !textContent.items) return [];
+
+        const items = textContent.items;
+        if (items.length === 0) return [];
+
+        // Agrupa por aproximação de coordenada vertical Y (com tolerância de 4px)
+        const linesMap = [];
+        items.forEach(item => {
+          const str = item.str;
+          if (!str || str.trim() === '') return;
+          const y = Math.round(item.transform[5]);
+
+          let existingLine = linesMap.find(l => Math.abs(l.y - y) <= 4);
+          if (existingLine) {
+            existingLine.items.push(item);
+          } else {
+            linesMap.push({ y: y, items: [item] });
+          }
+        });
+
+        // Ordena linhas de cima para baixo (coordenada Y decrescente no PDF)
+        linesMap.sort((a, b) => b.y - a.y);
+
+        // Para cada linha, ordena itens da esquerda para a direita (coordenada X crescente)
+        const finalLines = [];
+        linesMap.forEach(lineObj => {
+          lineObj.items.sort((a, b) => a.transform[4] - b.transform[4]);
+          const lineStr = lineObj.items.map(it => it.str).join(' ').trim();
+          if (lineStr) {
+            finalLines.push(lineStr);
+          }
+        });
+
+        return finalLines;
+      },
+
+      /* Heurística para detecção de matérias e tópicos */
+      parseEditalText(lines) {
+        // Nomes conhecidos de disciplinas de concursos públicos brasileiros
+        const KNOWN_SUBJECTS = [
+          'LÍNGUA PORTUGUESA', 'PORTUGUÊS', 'LÍNGUA INGLESA', 'INGLÊS',
+          'DIREITO CONSTITUCIONAL', 'DIREITO ADMINISTRATIVO', 'DIREITO PENAL',
+          'DIREITO PROCESSUAL PENAL', 'DIREITO CIVIL', 'DIREITO PROCESSUAL CIVIL',
+          'DIREITO TRIBUTÁRIO', 'DIREITO PREVIDENCIÁRIO', 'DIREITO DO TRABALHO',
+          'DIREITO PROCESSUAL DO TRABALHO', 'DIREITO ELEITORAL', 'DIREITO FINANCEIRO',
+          'RACIOCÍNIO LÓGICO', 'RACIOCÍNIO LÓGICO-MATEMÁTICO', 'MATEMÁTICA',
+          'MATEMÁTICA FINANCEIRA', 'ESTATÍSTICA', 'INFORMÁTICA',
+          'NOÇÕES DE INFORMÁTICA', 'TECNOLOGIA DA INFORMAÇÃO', 'LEGISLAÇÃO APLICADA',
+          'LEGISLAÇÃO ESPECÍFICA', 'ÉTICA NO SERVIÇO PÚBLICO', 'ÉTICA E CONDUTA',
+          'ADMINISTRAÇÃO PÚBLICA', 'GESTÃO PÚBLICA', 'CONTABILIDADE GERAL',
+          'CONTABILIDADE PÚBLICA', 'ADMINISTRAÇÃO FINANCEIRA E ORÇAMENTÁRIA',
+          'AFO', 'ATUALIDADES', 'GEOGRAFIA', 'HISTÓRIA', 'CONHECIMENTOS GERAIS'
+        ];
+
+        const SECTORS_HEADERS = [
+          'CONHECIMENTOS BÁSICOS', 'CONHECIMENTOS GERAIS', 'CONHECIMENTOS ESPECÍFICOS',
+          'CONTEÚDO PROGRAMÁTICO', 'OBJETOS DE AVALIAÇÃO', 'ANEXO'
+        ];
+
+        let materiasMap = [];
+        let naoClassificado = [];
+        let currentMateria = null;
+        let paletteIndex = 0;
+
+        function getNextPaletteId() {
+          const pal = PASTEL_PALETTES[paletteIndex % PASTEL_PALETTES.length];
+          paletteIndex++;
+          return pal.id;
+        }
+
+        // Função para testar se uma linha se parece fortemente com o título de uma matéria
+        function isSubjectHeader(line) {
+          const clean = line.replace(/^[0-9\.\-\:\s]+/, '').trim().toUpperCase();
+
+          // 1. Coincidência direta com disciplina conhecida
+          for (let subj of KNOWN_SUBJECTS) {
+            if (clean === subj || clean.startsWith(subj + ':') || clean.startsWith(subj + ' -')) {
+              return clean.split(':')[0].split(' -')[0].trim();
+            }
+          }
+
+          // 2. Linha em caixa alta de tamanho moderado com palavras-chave de disciplina
+          const isAllUpper = (clean === clean.toUpperCase()) && clean.length > 4 && clean.length < 50;
+          if (isAllUpper) {
+            if (clean.includes('DIREITO') || clean.includes('NOÇÕES DE') || clean.includes('LEGISLAÇÃO') || clean.includes('LÍNGUA') || clean.includes('CONHECIMENTOS DE')) {
+              return clean.replace(/[:\-]/g, '').trim();
+            }
+          }
+
+          return null;
+        }
+
+        // Processa linha a linha
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!line) continue;
+
+          const detectedSubjectName = isSubjectHeader(line);
+
+          if (detectedSubjectName) {
+            // Nova matéria encontrada
+            let existing = materiasMap.find(m => m.nome.toLowerCase() === detectedSubjectName.toLowerCase());
+            if (!existing) {
+              currentMateria = {
+                id: 'mat-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+                nome: detectedSubjectName,
+                paletteId: getNextPaletteId(),
+                topicos: []
+              };
+              materiasMap.push(currentMateria);
+            } else {
+              currentMateria = existing;
+            }
+            continue;
+          }
+
+          // Se ainda não encontramos nenhuma matéria ou é cabeçalho macro, direciona para Não Classificado
+          if (!currentMateria) {
+            naoClassificado.push(line);
+            continue;
+          }
+
+          // Dentro de uma matéria ativa: analisa se a linha contém múltiplos tópicos numerados
+          const numberedParts = App.splitTopicsByNumbers(line);
+
+          if (numberedParts.length > 1) {
+            numberedParts.forEach(topicStr => {
+              if (topicStr.trim()) {
+                currentMateria.topicos.push(topicStr.trim());
+              }
+            });
+          } else {
+            currentMateria.topicos.push(line);
+          }
+        }
+
+        // Se nenhuma matéria foi identificada, aloca tudo com segurança
+        if (materiasMap.length === 0 && naoClassificado.length > 0) {
+          materiasMap.push({
+            id: 'mat-geral',
+            nome: 'Conteúdo Programático Geral',
+            paletteId: 'blue',
+            topicos: [...naoClassificado]
+          });
+          naoClassificado = [];
+        }
+
+        let totalTopicos = 0;
+        materiasMap.forEach(m => totalTopicos += m.topicos.length);
+
+        return {
+          materias: materiasMap,
+          naoClassificado: naoClassificado,
+          totalTopicos: totalTopicos
+        };
+      },
+
+      /* Divide strings do tipo "1 Tópico A. 2 Tópico B. 3 Tópico C" */
+      splitTopicsByNumbers(text) {
+        const regex = /(?=(?:^|\s)(?:\d+[\.\)]|\d+\.\d+)[\sA-ZÁÉÍÓÚÂÊÔÃÕÇ])/g;
+        const matches = text.split(regex);
+        if (matches.length > 1) {
+          return matches.map(m => m.trim()).filter(m => m.length > 0);
+        }
+        return [text];
+      },
+
+      /* ========================================================================
+         RENDERIZAÇÃO VISUAL (ETAPAS 1, 3 & 4)
+         ======================================================================== */
+      renderAll() {
+        this.renderSubjectList();
+        this.renderUnclassified();
+        this.renderSchedule();
+        this.updateHeaderCounters();
+      },
+
+      updateHeaderCounters() {
+        const count = this.data.materias.length;
+        document.getElementById('badgeSubjectsCount').textContent = count;
+        document.getElementById('headerCountLabel').textContent = `${count} matéria${count === 1 ? '' : 's'} cadastrada${count === 1 ? '' : 's'}`;
+      },
+
+      getPalette(paletteId) {
+        return PASTEL_PALETTES.find(p => p.id === paletteId) || PASTEL_PALETTES[0];
+      },
+
+      renderSubjectList() {
+        const container = document.getElementById('subjectListContainer');
+        container.innerHTML = '';
+
+        if (!this.data.materias || this.data.materias.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📂</div>
+              <h3>Nenhuma matéria gravada</h3>
+              <p>Faça o upload do PDF do edital na primeira aba ou clique em "Carregar Exemplo" no topo para testar instantaneamente.</p>
+              <button class="btn btn-primary" onclick="App.openAddSubjectModal()">
+                ➕ Cadastrar Primeira Matéria
+              </button>
+            </div>
+          `;
+          return;
+        }
+
+        this.data.materias.forEach((materia, matIndex) => {
+          const pal = this.getPalette(materia.paletteId);
+          const card = document.createElement('div');
+          card.className = 'subject-card';
+          card.setAttribute('data-id', materia.id);
+
+          const totalTopicos = materia.topicos.length;
+
+          card.innerHTML = `
+            <div class="subject-header-row open" onclick="App.toggleSubjectBody('${materia.id}')">
+              <div class="subject-title-area">
+                <span class="subject-pill" style="background: ${pal.text};"></span>
+                <span class="subject-name">${App.escapeHtml(materia.nome)}</span>
+                <span class="subject-topics-count">• ${totalTopicos} tópico${totalTopicos === 1 ? '' : 's'}</span>
+              </div>
+              <div class="subject-actions" onclick="event.stopPropagation()">
+                <button class="btn btn-secondary btn-sm" onclick="App.openEditSubjectModal('${materia.id}')" title="Editar nome/cor">
+                  ✏️
+                </button>
+                <button class="btn btn-danger-soft btn-sm" onclick="App.deleteSubject('${materia.id}')" title="Excluir matéria">
+                  🗑️
+                </button>
+                <span class="subject-toggle-icon">▼</span>
+              </div>
+            </div>
+
+            <div class="subject-body open" id="body-${materia.id}">
+              <div class="topics-list" id="topics-${materia.id}">
+                ${materia.topicos.map((topico, topIndex) => `
+                  <div class="topic-item">
+                    <span class="topic-text">${App.escapeHtml(topico)}</span>
+                    <div class="topic-actions">
+                      <button class="btn-icon" onclick="App.openEditTopicModal('${materia.id}', ${topIndex})" title="Editar tópico">
+                        ✏️
+                      </button>
+                      <button class="btn-icon danger" onclick="App.deleteTopic('${materia.id}', ${topIndex})" title="Excluir tópico">
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+
+              <!-- Adicionar Novo Tópico Manualmente -->
+              <div class="add-topic-row">
+                <input type="text" class="input-field" id="newTopicInput-${materia.id}" placeholder="Escreva um novo tópico ou item programático...">
+                <button class="btn btn-secondary btn-sm" onclick="App.addTopicManual('${materia.id}')">
+                  ➕ Adicionar
+                </button>
+              </div>
+            </div>
+          `;
+
+          container.appendChild(card);
+        });
+      },
+
+      toggleSubjectBody(materiaId) {
+        const body = document.getElementById(`body-${materiaId}`);
+        const header = body.previousElementSibling;
+        if (body.classList.contains('open')) {
+          body.classList.remove('open');
+          header.classList.remove('open');
+        } else {
+          body.classList.add('open');
+          header.classList.add('open');
+        }
+      },
+
+      toggleExpandAll() {
+        const bodies = document.querySelectorAll('.subject-body');
+        const headers = document.querySelectorAll('.subject-header-row');
+        const shouldOpen = !Array.from(bodies).every(b => b.classList.contains('open'));
+
+        bodies.forEach(b => shouldOpen ? b.classList.add('open') : b.classList.remove('open'));
+        headers.forEach(h => shouldOpen ? h.classList.add('open') : h.classList.remove('open'));
+      },
+
+      renderUnclassified() {
+        const container = document.getElementById('unclassifiedContainer');
+        const list = document.getElementById('unclassifiedList');
+        const countSpan = document.getElementById('unclassifiedCount');
+
+        if (!this.data.naoClassificado || this.data.naoClassificado.length === 0) {
+          container.style.display = 'none';
+          return;
+        }
+
+        container.style.display = 'block';
+        countSpan.textContent = `${this.data.naoClassificado.length} trecho(s)`;
+        list.innerHTML = '';
+
+        this.data.naoClassificado.forEach((trecho, index) => {
+          const item = document.createElement('div');
+          item.className = 'unclassified-item';
+
+          const materiaOptions = this.data.materias.map(m => `
+            <option value="${m.id}">${App.escapeHtml(m.nome)}</option>
+          `).join('');
+
+          item.innerHTML = `
+            <div style="line-height: 1.45;">${App.escapeHtml(trecho)}</div>
+            <div class="unclassified-move-row">
+              <span style="font-size: 0.75rem;">Mover para disciplina:</span>
+              <select class="select-field" id="selectMove-${index}">
+                <option value="">Selecione a matéria...</option>
+                ${materiaOptions}
+              </select>
+              <button class="btn btn-secondary btn-sm" onclick="App.moveUnclassifiedToSubject(${index})">
+                Mover
+              </button>
+              <button class="btn-icon danger" onclick="App.deleteUnclassified(${index})" title="Remover trecho">
+                🗑️
+              </button>
+            </div>
+          `;
+
+          list.appendChild(item);
+        });
+      },
+
+      /* Gestão manual de matérias e tópicos (CRUD) */
+      addTopicManual(materiaId) {
+        const input = document.getElementById(`newTopicInput-${materiaId}`);
+        const text = input.value.trim();
+        if (!text) return;
+
+        const materia = this.data.materias.find(m => m.id === materiaId);
+        if (materia) {
+          materia.topicos.push(text);
+          this.saveToStorage();
+          this.renderAll();
+          this.showToast('Tópico adicionado com sucesso!');
+        }
+      },
+
+      deleteTopic(materiaId, topicIndex) {
+        const materia = this.data.materias.find(m => m.id === materiaId);
+        if (materia) {
+          materia.topicos.splice(topicIndex, 1);
+          this.saveToStorage();
+          this.renderAll();
+          this.showToast('Tópico excluído.');
+        }
+      },
+
+      deleteSubject(materiaId) {
+        const materia = this.data.materias.find(m => m.id === materiaId);
+        if (!materia) return;
+        if (confirm(`Excluir a matéria "${materia.nome}" e todos os seus tópicos?`)) {
+          this.data.materias = this.data.materias.filter(m => m.id !== materiaId);
+          this.saveToStorage();
+          this.renderAll();
+          this.showToast(`Matéria "${materia.nome}" removida.`, 'info');
+        }
+      },
+
+      moveUnclassifiedToSubject(index) {
+        const select = document.getElementById(`selectMove-${index}`);
+        const targetId = select.value;
+        if (!targetId) {
+          alert('Por favor, selecione para qual matéria deseja mover este trecho.');
+          return;
+        }
+
+        const trecho = this.data.naoClassificado[index];
+        const targetMateria = this.data.materias.find(m => m.id === targetId);
+
+        if (targetMateria) {
+          targetMateria.topicos.push(trecho);
+          this.data.naoClassificado.splice(index, 1);
+          this.saveToStorage();
+          this.renderAll();
+          this.showToast(`Trecho movido para "${targetMateria.nome}"!`);
+        }
+      },
+
+      deleteUnclassified(index) {
+        this.data.naoClassificado.splice(index, 1);
+        this.saveToStorage();
+        this.renderAll();
+      },
+
+      /* Modais de Edição */
+      openAddSubjectModal() {
+        this.activeModalSubjectId = null;
+        document.getElementById('modalSubjectTitle').textContent = 'Nova Disciplina';
+        document.getElementById('inputSubjectName').value = '';
+        this.renderColorSwatches('blue');
+        document.getElementById('modalSubject').classList.add('open');
+      },
+
+      openEditSubjectModal(materiaId) {
+        const materia = this.data.materias.find(m => m.id === materiaId);
+        if (!materia) return;
+
+        this.activeModalSubjectId = materiaId;
+        document.getElementById('modalSubjectTitle').textContent = 'Editar Disciplina';
+        document.getElementById('inputSubjectName').value = materia.nome;
+        this.renderColorSwatches(materia.paletteId);
+        document.getElementById('modalSubject').classList.add('open');
+      },
+
+      renderColorSwatches(selectedPaletteId) {
+        const container = document.getElementById('colorPickerContainer');
+        container.innerHTML = '';
+
+        PASTEL_PALETTES.forEach(pal => {
+          const label = document.createElement('label');
+          label.className = 'color-swatch-radio';
+          label.title = pal.name;
+
+          label.innerHTML = `
+            <input type="radio" name="swatchColor" value="${pal.id}" ${pal.id === selectedPaletteId ? 'checked' : ''}>
+            <span class="color-swatch-box" style="background: ${pal.bg}; border-color: ${pal.border};"></span>
+          `;
+          container.appendChild(label);
+        });
+      },
+
+      saveSubjectModal() {
+        const nameInput = document.getElementById('inputSubjectName');
+        const name = nameInput.value.trim();
+        if (!name) {
+          alert('Por favor, insira o nome da matéria.');
+          return;
+        }
+
+        const checkedSwatch = document.querySelector('input[name="swatchColor"]:checked');
+        const paletteId = checkedSwatch ? checkedSwatch.value : 'blue';
+
+        if (this.activeModalSubjectId) {
+          const materia = this.data.materias.find(m => m.id === this.activeModalSubjectId);
+          if (materia) {
+            materia.nome = name;
+            materia.paletteId = paletteId;
+          }
+          this.showToast('Matéria atualizada!');
+        } else {
+          const newMat = {
+            id: 'mat-' + Date.now(),
+            nome: name,
+            paletteId: paletteId,
+            topicos: []
+          };
+          this.data.materias.push(newMat);
+          this.showToast('Nova matéria cadastrada!');
+        }
+
+        this.saveToStorage();
+        this.closeModals();
+        this.renderAll();
+      },
+
+      openEditTopicModal(materiaId, topicIndex) {
+        const materia = this.data.materias.find(m => m.id === materiaId);
+        if (!materia || !materia.topicos[topicIndex]) return;
+
+        this.activeModalTopicMeta = { materiaId, topicIndex };
+        document.getElementById('textareaTopicText').value = materia.topicos[topicIndex];
+        document.getElementById('modalTopic').classList.add('open');
+      },
+
+      saveTopicModal() {
+        if (!this.activeModalTopicMeta) return;
+        const text = document.getElementById('textareaTopicText').value.trim();
+        if (!text) {
+          alert('O conteúdo do tópico não pode ficar em branco.');
+          return;
+        }
+
+        const { materiaId, topicIndex } = this.activeModalTopicMeta;
+        const materia = this.data.materias.find(m => m.id === materiaId);
+        if (materia) {
+          materia.topicos[topicIndex] = text;
+          this.saveToStorage();
+          this.renderAll();
+          this.showToast('Tópico atualizado!');
+        }
+        this.closeModals();
+      },
+
+      closeModals() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+        this.activeModalSubjectId = null;
+        this.activeModalTopicMeta = null;
+      },
+
+      /* ========================================================================
+         GERAÇÃO DO CRONOGRAMA COM 1 CLIQUE (ETAPA 4)
+         ======================================================================== */
+      generateSchedule() {
+        if (!this.data.materias || this.data.materias.length === 0) {
+          alert('Você precisa ter pelo menos uma matéria gravada para gerar o cronograma.');
+          this.switchTab('tab-upload');
+          return;
+        }
+
+        const selectedDays = Array.from(document.querySelectorAll('#daysPicker input:checked')).map(i => i.value);
+        if (selectedDays.length === 0) {
+          alert('Por favor, selecione pelo menos um dia da semana para estudar.');
+          return;
+        }
+
+        const hoursPerDay = parseInt(document.getElementById('inputHoursPerDay').value, 10);
+        const blockDuration = parseInt(document.getElementById('selectBlockDuration').value, 10);
+        const slotsPerDay = Math.max(1, Math.round((hoursPerDay * 60) / blockDuration));
+
+        const subjectsPool = this.data.materias.map(m => ({
+          id: m.id,
+          nome: m.nome,
+          paletteId: m.paletteId,
+          topicos: [...m.topicos],
+          nextTopicIndex: 0
+        }));
+
+        let subjectRotationIndex = 0;
+        const columns = [];
+
+        selectedDays.forEach(diaNome => {
+          const daySlots = [];
+
+          for (let slotIdx = 0; slotIdx < slotsPerDay; slotIdx++) {
+            const currentSubj = subjectsPool[subjectRotationIndex % subjectsPool.length];
+            subjectRotationIndex++;
+
+            let topicText = '';
+            if (currentSubj.topicos.length > 0) {
+              const tIdx = currentSubj.nextTopicIndex % currentSubj.topicos.length;
+              const isCiclo2 = Math.floor(currentSubj.nextTopicIndex / currentSubj.topicos.length) > 0;
+              topicText = (isCiclo2 ? '🔄 [Revisão/Questões] ' : '') + currentSubj.topicos[tIdx];
+              currentSubj.nextTopicIndex++;
+            } else {
+              topicText = 'Leitura teórica, resolução de questões e resumo.';
+            }
+
+            const slotKey = `${diaNome}-bloco-${slotIdx + 1}`;
+
+            daySlots.push({
+              slotNumber: slotIdx + 1,
+              slotKey: slotKey,
+              subjectId: currentSubj.id,
+              subjectName: currentSubj.nome,
+              paletteId: currentSubj.paletteId,
+              topic: topicText
+            });
+          }
+
+          columns.push({
+            dia: diaNome,
+            slots: daySlots
+          });
+        });
+
+        this.schedule = {
+          dias: selectedDays,
+          hoursPerDay: hoursPerDay,
+          blockDuration: blockDuration,
+          columns: columns,
+          generatedAt: new Date().toLocaleDateString('pt-BR')
+        };
+
+        this.saveToStorage();
+        this.renderSchedule();
+        this.showToast('Cronograma semanal montado com sucesso!', 'success');
+      },
+
+      renderSchedule() {
+        const wrapper = document.getElementById('scheduleResultsWrapper');
+        const container = document.getElementById('scheduleGridContainer');
+
+        if (!this.schedule || !this.schedule.columns || this.schedule.columns.length === 0) {
+          wrapper.style.display = 'none';
+          return;
+        }
+
+        wrapper.style.display = 'block';
+        container.innerHTML = '';
+
+        container.style.gridTemplateColumns = `repeat(${this.schedule.columns.length}, minmax(180px, 1fr))`;
+
+        let totalSessionsCount = 0;
+
+        this.schedule.columns.forEach(colData => {
+          const colEl = document.createElement('div');
+          colEl.className = 'schedule-column';
+
+          colEl.innerHTML = `
+            <div class="schedule-col-header">
+              <h4>${colData.dia}</h4>
+              <span>${colData.slots.length} bloco${colData.slots.length === 1 ? '' : 's'} de estudo</span>
+            </div>
+            <div class="schedule-col-body" id="col-body-${colData.dia}"></div>
+          `;
+
+          const bodyEl = colEl.querySelector('.schedule-col-body');
+
+          colData.slots.forEach(slot => {
+            totalSessionsCount++;
+            const pal = this.getPalette(slot.paletteId);
+            const isCompleted = !!this.completedSlots[slot.slotKey];
+
+            const slotCard = document.createElement('div');
+            slotCard.className = `schedule-slot-card ${isCompleted ? 'completed' : ''}`;
+            slotCard.id = `card-${slot.slotKey}`;
+            slotCard.style.backgroundColor = pal.bg;
+            slotCard.style.borderColor = pal.border;
+            slotCard.style.color = pal.text;
+
+            slotCard.innerHTML = `
+              <div class="slot-meta">
+                <span>SESSÃO ${slot.slotNumber}</span>
+                <span>${this.schedule.blockDuration} min</span>
+              </div>
+              <div class="slot-subject-title">${App.escapeHtml(slot.subjectName)}</div>
+              <div class="slot-topic-desc" title="${App.escapeHtml(slot.topic)}">${App.escapeHtml(slot.topic)}</div>
+              <label class="slot-checkbox-label">
+                <input type="checkbox" ${isCompleted ? 'checked' : ''} onchange="App.toggleSlotCompleted('${slot.slotKey}')">
+                <span>${isCompleted ? 'Concluído' : 'Marcar como feito'}</span>
+              </label>
+            `;
+
+            bodyEl.appendChild(slotCard);
+          });
+
+          container.appendChild(colEl);
+        });
+
+        document.getElementById('schedStatsSubjects').textContent = this.data.materias.length;
+        document.getElementById('schedStatsSessions').textContent = totalSessionsCount;
+      },
+
+      toggleSlotCompleted(slotKey) {
+        if (this.completedSlots[slotKey]) {
+          delete this.completedSlots[slotKey];
+        } else {
+          this.completedSlots[slotKey] = true;
+        }
+        this.saveToStorage();
+        
+        const card = document.getElementById(`card-${slotKey}`);
+        if (card) {
+          const isDone = !!this.completedSlots[slotKey];
+          if (isDone) {
+            card.classList.add('completed');
+            card.querySelector('.slot-checkbox-label span').textContent = 'Concluído';
+          } else {
+            card.classList.remove('completed');
+            card.querySelector('.slot-checkbox-label span').textContent = 'Marcar como feito';
+          }
+        }
+      },
+
+      resetCompletedSlots() {
+        if (confirm('Deseja desmarcar todos os blocos concluídos no cronograma?')) {
+          this.completedSlots = {};
+          this.saveToStorage();
+          this.renderSchedule();
+          this.showToast('Marcações de estudo reiniciadas.');
+        }
+      },
+
+      escapeHtml(str) {
+        if (!str) return '';
+        return str
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+    };
+
+    // Inicialização ao carregar o DOM
+    document.addEventListener('DOMContentLoaded', () => {
+      App.init();
+    });
+
+    // Registro do Service Worker (PWA Offline & App Instalável)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => {
+            console.log('[PWA] Service Worker registrado no escopo:', reg.scope);
+          })
+          .catch(err => {
+            console.warn('[PWA] Erro ao registrar Service Worker:', err);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
