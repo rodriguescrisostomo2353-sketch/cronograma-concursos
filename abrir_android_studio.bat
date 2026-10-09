@@ -1,0 +1,3 @@
+@echo off
+echo Abrindo o projeto no Android Studio...
+start "" "C:\Program Files\Android\Android Studio\bin\studio64.exe" "c:\Users\Thallisson\Desktop\projeto aba\android"

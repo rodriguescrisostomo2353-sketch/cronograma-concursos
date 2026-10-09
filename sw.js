@@ -1,18 +1,20 @@
 // Service Worker para o PWA Cronograma de Estudos para Concursos
-const CACHE_NAME = 'cronograma-concursos-v1';
+const CACHE_NAME = 'cronograma-concursos-v2';
 
 // Recursos essenciais para funcionamento offline (caminhos relativos e CDNs)
 const PRECACHE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
+  './html2pdf.bundle.min.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-192-maskable.png',
   './icons/icon-512-maskable.png',
   'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
 ];
 
 // Instalação do Service Worker e pré-cache

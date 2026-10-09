@@ -39,6 +39,16 @@
     }
   </script>
 
+  <!-- HTML2PDF CDN & Fallback Local para Geração do Cronograma em PDF -->
+  <script src="html2pdf.bundle.min.js"></script>
+  <script>
+    if (!window.html2pdf) {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+      document.head.appendChild(s);
+    }
+  </script>
+
   <style>
     /* ==========================================================================
        1. VARIÁVEIS DE DESIGN & TONS PASTEL (TEMA CLARO DEFAULT)
@@ -1261,32 +1271,659 @@
     }
 
     /* ==========================================================================
-       10. RESPONSIVIDADE
+       10. NAVEGAÇÃO INFERIOR FIXA (MOBILE BOTTOM NAVIGATION)
        ========================================================================== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: calc(62px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: var(--bg-header);
+      border-top: 1px solid var(--border-color);
+      display: none; /* Ativado no mobile via media query */
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .bottom-nav-item {
+      flex: 1;
+      height: 100%;
+      min-height: 48px;
+      min-width: 44px;
+      background: transparent;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+      transition: var(--transition);
+      padding: 4px 2px;
+      user-select: none;
+    }
+
+    .bottom-nav-item:active {
+      transform: scale(0.94);
+    }
+
+    .bottom-nav-icon-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 24px;
+    }
+
+    .bottom-nav-icon {
+      font-size: 1.25rem;
+      line-height: 1;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .bottom-nav-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      transition: color 0.2s ease;
+    }
+
+    .bottom-nav-item.active {
+      color: #4f46e5;
+    }
+
+    :root[data-theme="dark"] .bottom-nav-item.active {
+      color: #818cf8;
+    }
+
+    .bottom-nav-item.active .bottom-nav-icon {
+      transform: translateY(-2px) scale(1.1);
+    }
+
+    .bottom-nav-badge {
+      position: absolute;
+      top: -4px;
+      right: -8px;
+      background: #4f46e5;
+      color: #ffffff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 10px;
+      min-width: 16px;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .bottom-nav-dot {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      border: 2px solid var(--bg-card);
+    }
+
+    .tab-badge-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    /* ==========================================================================
+       11. BOTÃO DE AÇÃO FLUTUANTE (FAB)
+       ========================================================================== */
+    .fab-btn {
+      position: fixed;
+      bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+      right: 18px;
+      z-index: 900;
+      min-height: 48px;
+      padding: 10px 18px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 6px 20px -2px rgba(79, 70, 229, 0.45), 0 2px 6px rgba(0, 0, 0, 0.1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+    }
+
+    .fab-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px -2px rgba(79, 70, 229, 0.55);
+    }
+
+    .fab-btn:active {
+      transform: scale(0.95);
+    }
+
+    .fab-icon {
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+
+    /* ==========================================================================
+       12. VISUALIZAÇÃO DO CRONOGRAMA MOBILE (UM DIA POR VEZ COM SWIPE)
+       ========================================================================== */
+    .schedule-mobile-view {
+      display: none; /* Ativado no mobile */
+    }
+
+    .mobile-day-pills-bar {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 6px 2px 12px 2px;
+      margin-bottom: 12px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .mobile-day-pills-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .mobile-day-pill {
+      flex: 0 0 auto;
+      min-height: 44px;
+      min-width: 52px;
+      padding: 8px 14px;
+      border-radius: 22px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .mobile-day-pill.active {
+      background: #4f46e5;
+      color: #ffffff;
+      border-color: #4f46e5;
+      box-shadow: var(--shadow-sm);
+    }
+
+    :root[data-theme="dark"] .mobile-day-pill.active {
+      background: #6366f1;
+      border-color: #6366f1;
+    }
+
+    .mobile-day-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .mobile-nav-arrow {
+      font-size: 1.1rem;
+      color: var(--text-main);
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+    }
+
+    .mobile-day-current-info {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .mobile-day-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .mobile-day-subtitle {
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .mobile-day-card-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      touch-action: pan-y;
+      user-select: none;
+      min-height: 240px;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .mobile-slots-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mobile-swipe-hint {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--text-light);
+      letter-spacing: 0.02em;
+    }
+
+    /* ==========================================================================
+       13. TELA DE CARREGAMENTO DO PDF (FULLSCREEN OVERLAY)
+       ========================================================================== */
+    .pdf-loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 2500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .pdf-loading-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pdf-loading-spinner-box {
+      position: relative;
+      width: 68px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .pdf-loading-spinner {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 3px solid var(--border-color);
+      border-top-color: #4f46e5;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .pdf-loading-icon {
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .pdf-loading-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .pdf-loading-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .pdf-loading-progress-bg {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-subtle);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .pdf-loading-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #6366f1, #4f46e5);
+      border-radius: 6px;
+      transition: width 0.2s ease;
+    }
+
+    .pdf-loading-meta {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       14. ESTILOS DAS ABAS AJUSTES & ATUALIZAÇÕES
+       ========================================================================== */
+    .settings-container, .updates-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .settings-card, .update-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .settings-card-header, .update-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .settings-card-icon, .update-badge-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: var(--pastel-indigo-bg);
+      border: 1px solid var(--pastel-indigo-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: var(--pastel-indigo-text);
+      flex-shrink: 0;
+    }
+
+    .settings-card-header h3, .update-header h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .settings-card-header p, .update-header p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .settings-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .settings-subtext {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .settings-divider {
+      height: 1px;
+      background: var(--border-color);
+      margin: 2px 0;
+    }
+
+    .settings-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.85rem;
+    }
+
+    .settings-info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .info-value {
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    /* Atualizações */
+    .update-status-box {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .update-version-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .update-status-msg {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .new-version-box {
+      margin-top: 18px;
+      background: var(--pastel-green-bg);
+      border: 1px solid var(--pastel-green-border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      color: var(--pastel-green-text);
+    }
+
+    .new-version-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .new-version-badge {
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .new-version-tag {
+      background: var(--pastel-green-text);
+      color: #ffffff;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .new-version-date {
+      font-size: 0.76rem;
+      opacity: 0.85;
+      margin-bottom: 10px;
+    }
+
+    .new-version-notes-title {
+      font-weight: 700;
+      font-size: 0.84rem;
+      margin-bottom: 6px;
+    }
+
+    .new-version-notes-list {
+      margin-left: 18px;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .new-version-install-tip {
+      font-size: 0.76rem;
+      line-height: 1.4;
+      margin-top: 10px;
+      opacity: 0.9;
+    }
+
+    .history-item {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .history-item-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .history-date {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .history-notes {
+      margin-left: 18px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ==========================================================================
+       15. RESPONSIVIDADE & MOBILE-FIRST
+       ========================================================================== */
+    @media (min-width: 769px) {
+      .schedule-desktop-view {
+        display: block;
+      }
+      .schedule-mobile-view {
+        display: none;
+      }
+      .bottom-nav {
+        display: none !important;
+      }
+      .nav-tabs {
+        display: flex;
+      }
+      .fab-btn {
+        display: none !important;
+      }
+    }
+
     @media (max-width: 768px) {
+      body {
+        padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+      }
+      header {
+        padding: max(14px, env(safe-area-inset-top, 0px)) 0 12px 0;
+      }
+      .container {
+        padding: 0 14px;
+      }
       .header-inner {
         flex-direction: column;
         align-items: stretch;
-      }
-      .logo-area {
-        justify-content: space-between;
+        gap: 10px;
       }
       .header-actions {
-        justify-content: flex-start;
+        display: none;
       }
       .nav-tabs {
-        flex-wrap: nowrap;
-        overflow-x: auto;
+        display: none !important;
       }
-      .schedule-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      .bottom-nav {
+        display: flex !important;
       }
-      .action-bar-generate {
-        flex-direction: column;
-        align-items: stretch;
+      .schedule-desktop-view {
+        display: none;
       }
-      .action-bar-generate .btn {
-        width: 100%;
+      .schedule-mobile-view {
+        display: block;
+      }
+      .config-grid {
+        grid-template-columns: 1fr;
+      }
+      .subject-card {
+        border-radius: var(--radius-md);
+      }
+      .subject-header-row {
+        padding: 12px 14px;
+      }
+      .subject-title-area {
+        gap: 8px;
+      }
+      .subject-name {
+        font-size: 0.95rem;
+      }
+      .subject-body {
+        padding: 12px 14px;
       }
     }
   </style>
@@ -1326,16 +1963,22 @@
        ========================================================================== -->
   <main class="container">
     
-    <!-- Navegação em Abas -->
+    <!-- Navegação em Abas (Desktop) -->
     <nav class="nav-tabs" aria-label="Navegação do aplicativo">
-      <button class="nav-tab-btn active" data-tab="tab-upload">
-        📄 1. Upload do Edital
-      </button>
-      <button class="nav-tab-btn" data-tab="tab-subjects">
-        📚 2. Matérias & Tópicos <span class="tab-badge" id="badgeSubjectsCount">0</span>
+      <button class="nav-tab-btn active" data-tab="tab-subjects">
+        📚 Matérias & Tópicos <span class="tab-badge" id="badgeSubjectsCount">0</span>
       </button>
       <button class="nav-tab-btn" data-tab="tab-schedule">
-        🗓️ 3. Gerar Cronograma
+        🗓️ Cronograma
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-upload">
+        📄 Upload do Edital
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-updates">
+        🔄 Atualizações <span class="tab-badge-dot" id="topUpdatesBadgeDot" style="display: none;"></span>
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-settings">
+        ⚙️ Ajustes
       </button>
     </nav>
 
@@ -1519,22 +2162,225 @@
             <span>•</span>
             <span>Sessões totais: <span class="schedule-stats-badge" id="schedStatsSessions">0</span></span>
           </div>
-          <div style="display: flex; gap: 8px;">
-            <button class="btn btn-secondary btn-sm" id="btnPrintSchedule">
-              🖨️ Imprimir / Salvar PDF
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-primary btn-sm" id="btnDownloadPdf" title="Baixar arquivo PDF com o cronograma formatado">
+              📥 Salvar em PDF
             </button>
-            <button class="btn btn-secondary btn-sm" id="btnResetCompleted">
-              🔄 Limpar Marcações Feitas
+            <button class="btn btn-secondary btn-sm" id="btnPrintSchedule" title="Imprimir diretamente na impressora">
+              🖨️ Imprimir
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btnResetCompleted" title="Desmarcar blocos concluídos">
+              🔄 Limpar Feitos
             </button>
           </div>
         </div>
 
-        <!-- Grade Semanal Responsiva -->
-        <div id="scheduleGridContainer" class="schedule-grid">
-          <!-- Renderizado dinamicamente via JS -->
+        <!-- Visualização Desktop (Grade Completa com Todas as Colunas) -->
+        <div class="schedule-desktop-view">
+          <div id="scheduleGridContainer" class="schedule-grid">
+            <!-- Renderizado dinamicamente via JS -->
+          </div>
+        </div>
+
+        <!-- Visualização Mobile (Visão de um dia por vez com abas dos dias e swipe) -->
+        <div class="schedule-mobile-view">
+          <div class="mobile-day-pills-bar" id="mobileDayPillsBar">
+            <!-- Pílulas dos dias geradas dinamicamente -->
+          </div>
+
+          <div class="mobile-day-nav">
+            <button class="btn-icon mobile-nav-arrow" id="btnPrevMobileDay" title="Dia anterior">◀</button>
+            <div class="mobile-day-current-info" id="mobileCurrentDayLabel">
+              <span class="mobile-day-title">Segunda-feira</span>
+              <span class="mobile-day-subtitle">3 blocos de estudo</span>
+            </div>
+            <button class="btn-icon mobile-nav-arrow" id="btnNextMobileDay" title="Próximo dia">▶</button>
+          </div>
+
+          <div class="mobile-day-card-container" id="mobileDayScheduleContainer">
+            <div class="mobile-slots-list" id="mobileSlotsList">
+              <!-- Slots do dia renderizados dinamicamente -->
+            </div>
+          </div>
+          
+          <div class="mobile-swipe-hint">
+            <span>👈 Deslize para mudar de dia 👉</span>
+          </div>
         </div>
       </div>
 
+    </section>
+
+    <!-- ========================================================================
+         ABA 4: ATUALIZAÇÕES DO APLICATIVO
+         ======================================================================== -->
+    <section id="tab-updates" class="tab-content">
+      <div class="updates-container">
+        <div class="update-card" id="updateMainCard">
+          <div class="update-header">
+            <div class="update-badge-icon">🔄</div>
+            <div class="update-title-area">
+              <h3 id="updateCardTitle">Verificação de Atualização</h3>
+              <p id="updateCardSubtitle">Mantenha seu aplicativo sempre com as últimas melhorias</p>
+            </div>
+          </div>
+
+          <div class="update-body">
+            <div class="update-status-box" id="updateStatusBox">
+              <div class="update-version-row">
+                <span>Versão instalada no dispositivo:</span>
+                <strong id="updateCurrentVersionText">v1.0.0</strong>
+              </div>
+              <div class="update-status-msg" id="updateStatusMsg">
+                Toque no botão abaixo para verificar se há novas versões disponíveis online.
+              </div>
+            </div>
+
+            <div id="updateActionArea" style="margin-top: 16px;">
+              <button id="btnCheckUpdates" class="btn btn-primary btn-lg" style="width: 100%;">
+                🔄 Verificar Atualizações
+              </button>
+            </div>
+
+            <!-- Seção de Nova Versão (Detectada Online) -->
+            <div id="newVersionBox" class="new-version-box" style="display: none;">
+              <div class="new-version-header">
+                <span class="new-version-badge">🎉 Nova Versão Disponível</span>
+                <span class="new-version-tag" id="newVersionTag">v1.1.0</span>
+              </div>
+              <p class="new-version-date" id="newVersionDate">Lançada em: --/--/----</p>
+              <div class="new-version-notes-title">Novidades desta versão:</div>
+              <ul class="new-version-notes-list" id="newVersionNotesList">
+                <!-- Inserido dinamicamente -->
+              </ul>
+              <a id="btnDownloadApk" href="#" target="_blank" class="btn btn-primary btn-lg" style="width: 100%; text-decoration: none; margin-top: 14px; text-align: center;">
+                📥 Baixar Nova Versão (APK)
+              </a>
+              <p class="new-version-install-tip">
+                💡 <strong>Dica de instalação:</strong> Após baixar o arquivo APK, toque nele para instalar. Se o Android pedir, permita a instalação de fontes externas.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Histórico de Versões -->
+        <div class="update-card">
+          <div class="update-header">
+            <div class="update-badge-icon">📜</div>
+            <div class="update-title-area">
+              <h3>Histórico de Versões</h3>
+              <p>Registro das novidades de cada versão lançada</p>
+            </div>
+          </div>
+          <div class="update-body" id="updateHistoryList">
+            <div class="history-item">
+              <div class="history-item-header">
+                <strong>Versão 1.0.0</strong>
+                <span class="history-date">Versão Atual</span>
+              </div>
+              <ul class="history-notes">
+                <li>Leitura inteligente de edital em PDF sem perda de conteúdo</li>
+                <li>Separação automática por matérias e tópicos programáticos</li>
+                <li>Geração do cronograma semanal adaptado aos seus dias e horários</li>
+                <li>Tema claro e escuro confortável</li>
+                <li>Exportação direta do cronograma em arquivo PDF de alta definição</li>
+                <li>Visualização mobile-first com abas diárias e navegação por swipe</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ABA 5: AJUSTES E OPÇÕES DO APLICATIVO
+         ======================================================================== -->
+    <section id="tab-settings" class="tab-content">
+      <div class="settings-container">
+        <!-- Card 1: Aparência -->
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <span class="settings-card-icon">🎨</span>
+            <div>
+              <h3>Aparência & Tema</h3>
+              <p>Escolha o estilo visual mais confortável para seus olhos</p>
+            </div>
+          </div>
+          <div class="settings-card-body">
+            <div class="settings-row">
+              <div>
+                <strong>Modo de Cores</strong>
+                <p class="settings-subtext">Alterne entre tema claro suave e tema escuro noturno</p>
+              </div>
+              <button id="btnSettingsThemeToggle" class="btn btn-secondary btn-sm theme-toggle-btn">
+                <span id="settingsThemeIcon">🌙</span>
+                <span id="settingsThemeText">Tema Escuro</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Ações Rápidas de Dados -->
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <span class="settings-card-icon">⚡</span>
+            <div>
+              <h3>Gerenciamento de Dados</h3>
+              <p>Opções para testes ou reinicialização dos dados salvos</p>
+            </div>
+          </div>
+          <div class="settings-card-body">
+            <div class="settings-row">
+              <div>
+                <strong>Carregar Disciplinas de Exemplo</strong>
+                <p class="settings-subtext">Preenche 5 matérias clássicas de concursos públicos</p>
+              </div>
+              <button id="btnSettingsLoadDemo" class="btn btn-secondary btn-sm">
+                ✨ Carregar Exemplo
+              </button>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-row">
+              <div>
+                <strong>Limpar Todos os Dados</strong>
+                <p class="settings-subtext">Apaga com segurança todas as matérias e cronogramas gravados</p>
+              </div>
+              <button id="btnSettingsClearAll" class="btn btn-danger-soft btn-sm">
+                🗑️ Limpar Tudo
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Sobre o Aplicativo -->
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <span class="settings-card-icon">📱</span>
+            <div>
+              <h3>Sobre o Aplicativo</h3>
+              <p>Detalhes do aplicativo e versão em execução</p>
+            </div>
+          </div>
+          <div class="settings-card-body">
+            <div class="settings-info-row">
+              <span class="info-label">Nome</span>
+              <span class="info-value">Cronograma de Concursos</span>
+            </div>
+            <div class="settings-info-row">
+              <span class="info-label">Versão Instalada</span>
+              <span class="info-value" id="settingsAppVersion">v1.0.0</span>
+            </div>
+            <div class="settings-info-row">
+              <span class="info-label">Modo Offline</span>
+              <span class="info-value">🟢 Totalmente Funcional (PWA / APK)</span>
+            </div>
+            <div class="settings-info-row">
+              <span class="info-label">Privacidade</span>
+              <span class="info-value">100% Local (seus dados nunca saem do celular)</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
   </main>
@@ -1586,6 +2432,71 @@
 
   <!-- Container de Notificações Toast -->
   <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ==========================================================================
+       ELEMENTOS FIXOS MOBILE (FAB, NAVEGAÇÃO INFERIOR & OVERLAY)
+       ========================================================================== -->
+  
+  <!-- Botão de Ação Flutuante (FAB) -->
+  <button class="fab-btn" id="fabAction" aria-label="Ação rápida">
+    <span class="fab-icon" id="fabIcon">➕</span>
+    <span class="fab-label" id="fabLabel">Nova Matéria</span>
+  </button>
+
+  <!-- Navegação Inferior Fixa (Mobile Bottom Navigation) -->
+  <nav class="bottom-nav" id="bottomNav" aria-label="Navegação Principal Mobile">
+    <button class="bottom-nav-item active" data-tab="tab-subjects">
+      <div class="bottom-nav-icon-wrapper">
+        <span class="bottom-nav-icon">📚</span>
+        <span class="bottom-nav-badge" id="bottomBadgeSubjects">0</span>
+      </div>
+      <span class="bottom-nav-label">Matérias</span>
+    </button>
+    <button class="bottom-nav-item" data-tab="tab-schedule">
+      <div class="bottom-nav-icon-wrapper">
+        <span class="bottom-nav-icon">🗓️</span>
+      </div>
+      <span class="bottom-nav-label">Cronograma</span>
+    </button>
+    <button class="bottom-nav-item" data-tab="tab-upload">
+      <div class="bottom-nav-icon-wrapper">
+        <span class="bottom-nav-icon">📄</span>
+      </div>
+      <span class="bottom-nav-label">Edital</span>
+    </button>
+    <button class="bottom-nav-item" data-tab="tab-updates">
+      <div class="bottom-nav-icon-wrapper">
+        <span class="bottom-nav-icon">🔄</span>
+        <span class="bottom-nav-dot" id="updatesBadgeDot" style="display: none;"></span>
+      </div>
+      <span class="bottom-nav-label">Atualizações</span>
+    </button>
+    <button class="bottom-nav-item" data-tab="tab-settings">
+      <div class="bottom-nav-icon-wrapper">
+        <span class="bottom-nav-icon">⚙️</span>
+      </div>
+      <span class="bottom-nav-label">Ajustes</span>
+    </button>
+  </nav>
+
+  <!-- Tela de Carregamento Fullscreen para Leitura de PDF -->
+  <div class="pdf-loading-overlay" id="pdfLoadingOverlay" style="display: none;">
+    <div class="pdf-loading-card">
+      <div class="pdf-loading-spinner-box">
+        <div class="pdf-loading-spinner"></div>
+        <div class="pdf-loading-icon">📑</div>
+      </div>
+      <h3 id="pdfLoadingTitle">Processando Edital</h3>
+      <p id="pdfLoadingMsg">Lendo páginas e extraindo conteúdo programático...</p>
+      <div class="pdf-loading-progress-bg">
+        <div class="pdf-loading-progress-bar" id="pdfLoadingBar"></div>
+      </div>
+      <div class="pdf-loading-meta">
+        <span id="pdfLoadingPercent">0%</span>
+        <span id="pdfLoadingPages">Página 1 de 1</span>
+      </div>
+    </div>
+  </div>
 
   <!-- ==========================================================================
        JAVASCRIPT DA APLICAÇÃO
@@ -1690,14 +2601,22 @@
       completedSlots: {}, // armazena chaves de slots marcados como concluídos
       activeModalSubjectId: null,
       activeModalTopicMeta: null,
+      currentMobileDayIndex: 0,
+      openSubjectIds: new Set(),
+      activeTab: 'tab-subjects',
 
       init() {
         this.initTheme();
         this.loadFromStorage();
         this.bindEvents();
+        this.initSwipeListeners();
         this.renderAll();
         this.updateHoursBadge();
         this.updateEstimatedBlocks();
+
+        // Se houver matérias gravadas, inicia em Matérias; se vazio, inicia em Upload
+        const initialTab = (this.data.materias && this.data.materias.length > 0) ? 'tab-subjects' : 'tab-upload';
+        this.switchTab(initialTab);
       },
 
       /* Gestão de Tema (Claro / Escuro) */
@@ -1736,6 +2655,19 @@
             iconEl.textContent = '🌙';
             textEl.textContent = 'Escuro';
             btn.title = 'Mudar para tema escuro';
+          }
+        }
+
+        // Sincroniza também na aba Ajustes
+        const sIcon = document.getElementById('settingsThemeIcon');
+        const sText = document.getElementById('settingsThemeText');
+        if (sIcon && sText) {
+          if (theme === 'dark') {
+            sIcon.textContent = '☀️';
+            sText.textContent = 'Tema Claro';
+          } else {
+            sIcon.textContent = '🌙';
+            sText.textContent = 'Tema Escuro';
           }
         }
       },
@@ -1826,13 +2758,35 @@
           themeBtn.addEventListener('click', () => App.toggleTheme());
         }
 
-        // Navegação em abas
+        // Navegação em abas (Desktop)
         document.querySelectorAll('.nav-tab-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const targetTab = e.currentTarget.getAttribute('data-tab');
             App.switchTab(targetTab);
           });
         });
+
+        // Navegação na barra inferior (Mobile)
+        document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const targetTab = e.currentTarget.getAttribute('data-tab');
+            App.switchTab(targetTab);
+          });
+        });
+
+        // Controles da aba de Ajustes
+        const sThemeBtn = document.getElementById('btnSettingsThemeToggle');
+        if (sThemeBtn) sThemeBtn.addEventListener('click', () => App.toggleTheme());
+        const sDemoBtn = document.getElementById('btnSettingsLoadDemo');
+        if (sDemoBtn) sDemoBtn.addEventListener('click', () => App.loadDemoData());
+        const sClearBtn = document.getElementById('btnSettingsClearAll');
+        if (sClearBtn) sClearBtn.addEventListener('click', () => App.clearAllData());
+
+        // Navegação de dias no cronograma mobile
+        const prevDayBtn = document.getElementById('btnPrevMobileDay');
+        if (prevDayBtn) prevDayBtn.addEventListener('click', () => App.prevMobileScheduleDay());
+        const nextDayBtn = document.getElementById('btnNextMobileDay');
+        if (nextDayBtn) nextDayBtn.addEventListener('click', () => App.nextMobileScheduleDay());
 
         // Upload de PDF & Drag and drop
         const dropZone = document.getElementById('dropZone');
@@ -1884,6 +2838,7 @@
 
         // Gerar Cronograma
         document.getElementById('btnGenerateSchedule').addEventListener('click', () => App.generateSchedule());
+        document.getElementById('btnDownloadPdf').addEventListener('click', () => App.exportScheduleToPdf());
         document.getElementById('btnPrintSchedule').addEventListener('click', () => window.print());
         document.getElementById('btnResetCompleted').addEventListener('click', () => App.resetCompletedSlots());
 
@@ -1894,14 +2849,57 @@
 
       switchTab(tabId) {
         document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-        const targetBtn = document.querySelector(`.nav-tab-btn[data-tab="${tabId}"]`);
+        const targetTopBtn = document.querySelector(`.nav-tab-btn[data-tab="${tabId}"]`);
+        const targetBottomBtn = document.querySelector(`.bottom-nav-item[data-tab="${tabId}"]`);
         const targetContent = document.getElementById(tabId);
 
-        if (targetBtn && targetContent) {
-          targetBtn.classList.add('active');
-          targetContent.classList.add('active');
+        if (targetTopBtn) targetTopBtn.classList.add('active');
+        if (targetBottomBtn) targetBottomBtn.classList.add('active');
+        if (targetContent) targetContent.classList.add('active');
+
+        this.activeTab = tabId;
+        this.updateFab(tabId);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+
+      updateFab(tabId) {
+        const fab = document.getElementById('fabAction');
+        const icon = document.getElementById('fabIcon');
+        const label = document.getElementById('fabLabel');
+        if (!fab || !icon || !label) return;
+
+        if (tabId === 'tab-subjects') {
+          fab.style.display = 'inline-flex';
+          icon.textContent = '➕';
+          label.textContent = 'Nova Matéria';
+          fab.onclick = () => App.openAddSubjectModal();
+        } else if (tabId === 'tab-schedule') {
+          fab.style.display = 'inline-flex';
+          icon.textContent = '🚀';
+          label.textContent = 'Gerar Cronograma';
+          fab.onclick = () => {
+            App.generateSchedule();
+            const res = document.getElementById('scheduleResultsWrapper');
+            if (res) res.scrollIntoView({ behavior: 'smooth' });
+          };
+        } else if (tabId === 'tab-upload') {
+          fab.style.display = 'inline-flex';
+          icon.textContent = '📂';
+          label.textContent = 'Escolher PDF';
+          fab.onclick = () => document.getElementById('fileInput').click();
+        } else if (tabId === 'tab-updates') {
+          fab.style.display = 'inline-flex';
+          icon.textContent = '🔄';
+          label.textContent = 'Verificar';
+          fab.onclick = () => {
+            const btn = document.getElementById('btnCheckUpdates');
+            if (btn) btn.click();
+          };
+        } else {
+          fab.style.display = 'none';
         }
       },
 
@@ -1941,6 +2939,19 @@
         const progressText = document.getElementById('progressText');
         const progressPercent = document.getElementById('progressPercent');
 
+        // Overlay de tela cheia
+        const overlay = document.getElementById('pdfLoadingOverlay');
+        const overlayBar = document.getElementById('pdfLoadingBar');
+        const overlayPercent = document.getElementById('pdfLoadingPercent');
+        const overlayPages = document.getElementById('pdfLoadingPages');
+        const overlayMsg = document.getElementById('pdfLoadingMsg');
+
+        if (overlay) overlay.style.display = 'flex';
+        if (overlayBar) overlayBar.style.width = '5%';
+        if (overlayPercent) overlayPercent.textContent = '5%';
+        if (overlayPages) overlayPages.textContent = 'Carregando...';
+        if (overlayMsg) overlayMsg.textContent = 'Lendo páginas do edital...';
+
         progressContainer.style.display = 'block';
         progressBarFill.style.width = '5%';
         progressPercent.textContent = '5%';
@@ -1967,9 +2978,15 @@
             progressBarFill.style.width = `${percent}%`;
             progressPercent.textContent = `${percent}%`;
             progressText.textContent = `Lendo página ${pageNum} de ${totalPages}...`;
+
+            if (overlayBar) overlayBar.style.width = `${percent}%`;
+            if (overlayPercent) overlayPercent.textContent = `${percent}%`;
+            if (overlayPages) overlayPages.textContent = `Página ${pageNum} de ${totalPages}`;
+            if (overlayMsg) overlayMsg.textContent = `Lendo página ${pageNum} de ${totalPages}...`;
           }
 
           progressText.textContent = 'Processando matérias e tópicos do edital...';
+          if (overlayMsg) overlayMsg.textContent = 'Organizando matérias e tópicos programáticos...';
           
           // Heurística de identificação de matérias sem descartar nada
           const parseResult = App.parseEditalText(fullTextLines);
@@ -1981,12 +2998,14 @@
           App.renderAll();
 
           progressContainer.style.display = 'none';
+          if (overlay) overlay.style.display = 'none';
           App.showToast(`Edital lido! ${parseResult.materias.length} matérias e ${parseResult.totalTopicos} tópicos identificados.`, 'success');
           App.switchTab('tab-subjects');
 
         } catch (error) {
           console.error('Erro na leitura do PDF:', error);
           progressContainer.style.display = 'none';
+          if (overlay) overlay.style.display = 'none';
           alert('Ocorreu um erro ao processar o arquivo PDF. Verifique se o arquivo não está corrompido ou protegido por senha.');
         }
       },
@@ -2172,8 +3191,12 @@
 
       updateHeaderCounters() {
         const count = this.data.materias.length;
-        document.getElementById('badgeSubjectsCount').textContent = count;
-        document.getElementById('headerCountLabel').textContent = `${count} matéria${count === 1 ? '' : 's'} cadastrada${count === 1 ? '' : 's'}`;
+        const bTop = document.getElementById('badgeSubjectsCount');
+        const bBottom = document.getElementById('bottomBadgeSubjects');
+        const hLabel = document.getElementById('headerCountLabel');
+        if (bTop) bTop.textContent = count;
+        if (bBottom) bBottom.textContent = count;
+        if (hLabel) hLabel.textContent = `${count} matéria${count === 1 ? '' : 's'} cadastrada${count === 1 ? '' : 's'}`;
       },
 
       getPalette(paletteId) {
@@ -2189,10 +3212,15 @@
             <div class="empty-state">
               <div class="empty-state-icon">📂</div>
               <h3>Nenhuma matéria gravada</h3>
-              <p>Faça o upload do PDF do edital na primeira aba ou clique em "Carregar Exemplo" no topo para testar instantaneamente.</p>
-              <button class="btn btn-primary" onclick="App.openAddSubjectModal()">
-                ➕ Cadastrar Primeira Matéria
-              </button>
+              <p>Envie o PDF do edital ou carregue disciplinas de exemplo para testar as funcionalidades.</p>
+              <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="App.switchTab('tab-upload')">
+                  📄 Upload do Edital
+                </button>
+                <button class="btn btn-secondary" onclick="App.loadDemoData()">
+                  ✨ Carregar Exemplo
+                </button>
+              </div>
             </div>
           `;
           return;
@@ -2205,9 +3233,10 @@
           card.setAttribute('data-id', materia.id);
 
           const totalTopicos = materia.topicos.length;
+          const isOpen = this.openSubjectIds.has(materia.id);
 
           card.innerHTML = `
-            <div class="subject-header-row open" onclick="App.toggleSubjectBody('${materia.id}')">
+            <div class="subject-header-row ${isOpen ? 'open' : ''}" onclick="App.toggleSubjectBody('${materia.id}')">
               <div class="subject-title-area">
                 <span class="subject-pill" style="background: ${pal.text};"></span>
                 <span class="subject-name">${App.escapeHtml(materia.nome)}</span>
@@ -2224,7 +3253,7 @@
               </div>
             </div>
 
-            <div class="subject-body open" id="body-${materia.id}">
+            <div class="subject-body ${isOpen ? 'open' : ''}" id="body-${materia.id}">
               <div class="topics-list" id="topics-${materia.id}">
                 ${materia.topicos.map((topico, topIndex) => `
                   <div class="topic-item">
@@ -2257,23 +3286,35 @@
 
       toggleSubjectBody(materiaId) {
         const body = document.getElementById(`body-${materiaId}`);
-        const header = body.previousElementSibling;
-        if (body.classList.contains('open')) {
+        const card = document.querySelector(`.subject-card[data-id="${materiaId}"]`);
+        const header = card ? card.querySelector('.subject-header-row') : null;
+        if (!body) return;
+
+        if (this.openSubjectIds.has(materiaId)) {
+          this.openSubjectIds.delete(materiaId);
           body.classList.remove('open');
-          header.classList.remove('open');
+          if (header) header.classList.remove('open');
         } else {
+          this.openSubjectIds.add(materiaId);
           body.classList.add('open');
-          header.classList.add('open');
+          if (header) header.classList.add('open');
         }
       },
 
       toggleExpandAll() {
         const bodies = document.querySelectorAll('.subject-body');
         const headers = document.querySelectorAll('.subject-header-row');
-        const shouldOpen = !Array.from(bodies).every(b => b.classList.contains('open'));
+        const allOpen = this.data.materias.length > 0 && this.openSubjectIds.size === this.data.materias.length;
 
-        bodies.forEach(b => shouldOpen ? b.classList.add('open') : b.classList.remove('open'));
-        headers.forEach(h => shouldOpen ? h.classList.add('open') : h.classList.remove('open'));
+        if (allOpen) {
+          this.openSubjectIds.clear();
+          bodies.forEach(b => b.classList.remove('open'));
+          headers.forEach(h => h.classList.remove('open'));
+        } else {
+          this.data.materias.forEach(m => this.openSubjectIds.add(m.id));
+          bodies.forEach(b => b.classList.add('open'));
+          headers.forEach(h => h.classList.add('open'));
+        }
       },
 
       renderUnclassified() {
@@ -2628,6 +3669,9 @@
 
         document.getElementById('schedStatsSubjects').textContent = this.data.materias.length;
         document.getElementById('schedStatsSessions').textContent = totalSessionsCount;
+
+        // Renderiza visualização mobile de um dia por vez
+        this.renderMobileSchedule();
       },
 
       toggleSlotCompleted(slotKey) {
@@ -2638,17 +3682,165 @@
         }
         this.saveToStorage();
         
-        const card = document.getElementById(`card-${slotKey}`);
-        if (card) {
-          const isDone = !!this.completedSlots[slotKey];
+        const isDone = !!this.completedSlots[slotKey];
+
+        // Atualiza card no desktop
+        const deskCard = document.getElementById(`card-${slotKey}`);
+        if (deskCard) {
           if (isDone) {
-            card.classList.add('completed');
-            card.querySelector('.slot-checkbox-label span').textContent = 'Concluído';
+            deskCard.classList.add('completed');
+            deskCard.querySelector('.slot-checkbox-label span').textContent = 'Concluído';
+            deskCard.querySelector('input[type="checkbox"]').checked = true;
           } else {
-            card.classList.remove('completed');
-            card.querySelector('.slot-checkbox-label span').textContent = 'Marcar como feito';
+            deskCard.classList.remove('completed');
+            deskCard.querySelector('.slot-checkbox-label span').textContent = 'Marcar como feito';
+            deskCard.querySelector('input[type="checkbox"]').checked = false;
           }
         }
+
+        // Atualiza card no mobile
+        const mobCard = document.getElementById(`mob-card-${slotKey}`);
+        if (mobCard) {
+          if (isDone) {
+            mobCard.classList.add('completed');
+            mobCard.querySelector('.slot-checkbox-label span').textContent = 'Concluído';
+            mobCard.querySelector('input[type="checkbox"]').checked = true;
+          } else {
+            mobCard.classList.remove('completed');
+            mobCard.querySelector('.slot-checkbox-label span').textContent = 'Marcar como feito';
+            mobCard.querySelector('input[type="checkbox"]').checked = false;
+          }
+        }
+      },
+
+      renderMobileSchedule() {
+        const pillsBar = document.getElementById('mobileDayPillsBar');
+        if (!pillsBar || !this.schedule || !this.schedule.columns) return;
+
+        pillsBar.innerHTML = '';
+        this.schedule.columns.forEach((col, idx) => {
+          const pill = document.createElement('button');
+          pill.className = `mobile-day-pill ${idx === this.currentMobileDayIndex ? 'active' : ''}`;
+          pill.textContent = col.dia;
+          pill.onclick = () => App.setMobileScheduleDay(idx);
+          pillsBar.appendChild(pill);
+        });
+
+        this.renderMobileDaySchedule();
+      },
+
+      setMobileScheduleDay(idx) {
+        if (!this.schedule || !this.schedule.columns || this.schedule.columns.length === 0) return;
+        this.currentMobileDayIndex = Math.max(0, Math.min(idx, this.schedule.columns.length - 1));
+        
+        const pills = document.querySelectorAll('.mobile-day-pill');
+        pills.forEach((p, i) => {
+          if (i === this.currentMobileDayIndex) {
+            p.classList.add('active');
+            p.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          } else {
+            p.classList.remove('active');
+          }
+        });
+
+        this.renderMobileDaySchedule();
+      },
+
+      nextMobileScheduleDay() {
+        if (!this.schedule || !this.schedule.columns || this.schedule.columns.length === 0) return;
+        const count = this.schedule.columns.length;
+        if (this.currentMobileDayIndex < count - 1) {
+          this.setMobileScheduleDay(this.currentMobileDayIndex + 1);
+        } else {
+          this.setMobileScheduleDay(0);
+        }
+      },
+
+      prevMobileScheduleDay() {
+        if (!this.schedule || !this.schedule.columns || this.schedule.columns.length === 0) return;
+        const count = this.schedule.columns.length;
+        if (this.currentMobileDayIndex > 0) {
+          this.setMobileScheduleDay(this.currentMobileDayIndex - 1);
+        } else {
+          this.setMobileScheduleDay(count - 1);
+        }
+      },
+
+      renderMobileDaySchedule() {
+        const slotsList = document.getElementById('mobileSlotsList');
+        const labelEl = document.getElementById('mobileCurrentDayLabel');
+        if (!slotsList || !this.schedule || !this.schedule.columns) return;
+
+        const currentCol = this.schedule.columns[this.currentMobileDayIndex];
+        if (!currentCol) return;
+
+        if (labelEl) {
+          labelEl.innerHTML = `
+            <span class="mobile-day-title">${currentCol.dia}</span>
+            <span class="mobile-day-subtitle">${currentCol.slots.length} bloco${currentCol.slots.length === 1 ? '' : 's'} de estudo</span>
+          `;
+        }
+
+        slotsList.innerHTML = '';
+        currentCol.slots.forEach(slot => {
+          const pal = this.getPalette(slot.paletteId);
+          const isCompleted = !!this.completedSlots[slot.slotKey];
+
+          const slotCard = document.createElement('div');
+          slotCard.className = `schedule-slot-card ${isCompleted ? 'completed' : ''}`;
+          slotCard.id = `mob-card-${slot.slotKey}`;
+          slotCard.style.backgroundColor = pal.bg;
+          slotCard.style.borderColor = pal.border;
+          slotCard.style.color = pal.text;
+
+          slotCard.innerHTML = `
+            <div class="slot-meta">
+              <span>SESSÃO ${slot.slotNumber}</span>
+              <span>${this.schedule.blockDuration} min</span>
+            </div>
+            <div class="slot-subject-title">${App.escapeHtml(slot.subjectName)}</div>
+            <div class="slot-topic-desc" title="${App.escapeHtml(slot.topic)}">${App.escapeHtml(slot.topic)}</div>
+            <label class="slot-checkbox-label">
+              <input type="checkbox" ${isCompleted ? 'checked' : ''} onchange="App.toggleSlotCompleted('${slot.slotKey}')">
+              <span>${isCompleted ? 'Concluído' : 'Marcar como feito'}</span>
+            </label>
+          `;
+
+          slotsList.appendChild(slotCard);
+        });
+      },
+
+      initSwipeListeners() {
+        const container = document.getElementById('mobileDayScheduleContainer');
+        if (!container) return;
+
+        let startX = 0;
+        let startY = 0;
+        let isSwiping = false;
+
+        container.addEventListener('touchstart', (e) => {
+          if (!e.touches || e.touches.length === 0) return;
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          isSwiping = true;
+        }, { passive: true });
+
+        container.addEventListener('touchend', (e) => {
+          if (!isSwiping || !e.changedTouches || e.changedTouches.length === 0) return;
+          isSwiping = false;
+
+          const diffX = e.changedTouches[0].clientX - startX;
+          const diffY = e.changedTouches[0].clientY - startY;
+
+          // Deslize com tolerância mínima de 40px no eixo horizontal
+          if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+            if (diffX < 0) {
+              App.nextMobileScheduleDay();
+            } else {
+              App.prevMobileScheduleDay();
+            }
+          }
+        }, { passive: true });
       },
 
       resetCompletedSlots() {
@@ -2668,6 +3860,159 @@
           .replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;')
           .replace(/'/g, '&#039;');
+      },
+
+      /* Exportar Cronograma em PDF com Alta Resolução */
+      async exportScheduleToPdf() {
+        if (!this.schedule || !this.schedule.columns || this.schedule.columns.length === 0) {
+          alert('Por favor, gere um cronograma antes de salvar em PDF.');
+          return;
+        }
+
+        const btn = document.getElementById('btnDownloadPdf');
+        const origText = btn ? btn.innerHTML : '';
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '⏳ Gerando PDF...';
+        }
+        this.showToast('Montando o PDF do seu cronograma...', 'info');
+
+        try {
+          // Paletas fixas em Hexadecimal para garantir cores nítidas e legíveis na impressão/PDF
+          const HEX_PALETTES = {
+            blue:   { bg: '#e0f2fe', border: '#bae6fd', text: '#0369a1' },
+            purple: { bg: '#ede9fe', border: '#ddd6fe', text: '#6d28d9' },
+            green:  { bg: '#dcfce7', border: '#bbf7d0', text: '#15803d' },
+            amber:  { bg: '#fef3c7', border: '#fde68a', text: '#b45309' },
+            rose:   { bg: '#ffe4e6', border: '#fecdd3', text: '#be123c' },
+            teal:   { bg: '#ccfbf1', border: '#99f6e4', text: '#0f766e' },
+            indigo: { bg: '#e0e7ff', border: '#c7d2fe', text: '#4338ca' },
+            peach:  { bg: '#ffedd5', border: '#fed7aa', text: '#c2410c' }
+          };
+
+          // Cria elemento temporário estilizado especificamente para formato de página A4
+          const pdfWrapper = document.createElement('div');
+          pdfWrapper.style.position = 'fixed';
+          pdfWrapper.style.left = '-9999px';
+          pdfWrapper.style.top = '0';
+          pdfWrapper.style.width = this.schedule.columns.length > 4 ? '1120px' : '820px';
+          pdfWrapper.style.backgroundColor = '#ffffff';
+          pdfWrapper.style.color = '#0f172a';
+          pdfWrapper.style.fontFamily = "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+          pdfWrapper.style.padding = '24px';
+          pdfWrapper.style.boxSizing = 'border-box';
+
+          let totalSessions = 0;
+          this.schedule.columns.forEach(c => totalSessions += c.slots.length);
+
+          // Cabeçalho formal do documento PDF
+          let html = `
+            <div style="border-bottom: 2px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <h1 style="font-size: 20px; font-weight: 800; color: #1e293b; margin: 0 0 4px 0;">
+                    📚 CRONOGRAMA DE ESTUDOS PARA CONCURSOS
+                  </h1>
+                  <p style="font-size: 11px; color: #64748b; margin: 0;">
+                    Plano de estudos semanal personalizado • Gerado em ${new Date().toLocaleDateString('pt-BR')}
+                  </p>
+                </div>
+                <div style="display: flex; gap: 8px; font-size: 11px;">
+                  <span style="background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-weight: 600; color: #334155;">
+                    ${this.data.materias.length} Disciplinas
+                  </span>
+                  <span style="background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-weight: 600; color: #334155;">
+                    ${totalSessions} Sessões / Semana
+                  </span>
+                  <span style="background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-weight: 600; color: #334155;">
+                    Blocos de ${this.schedule.blockDuration} min
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Grade Semanal do PDF -->
+            <div style="display: grid; grid-template-columns: repeat(${this.schedule.columns.length}, 1fr); gap: 10px;">
+          `;
+
+          this.schedule.columns.forEach(colData => {
+            html += `
+              <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column;">
+                <div style="background: #f8fafc; border-bottom: 1px solid #cbd5e1; padding: 8px 10px; text-align: center;">
+                  <div style="font-size: 13px; font-weight: 700; color: #1e293b;">${colData.dia}</div>
+                  <div style="font-size: 10px; color: #64748b;">${colData.slots.length} sessões</div>
+                </div>
+                <div style="padding: 8px; display: flex; flex-direction: column; gap: 8px;">
+            `;
+
+            colData.slots.forEach(slot => {
+              const pal = HEX_PALETTES[slot.paletteId] || { bg: '#f1f5f9', border: '#e2e8f0', text: '#334155' };
+              const isDone = !!this.completedSlots[slot.slotKey];
+
+              html += `
+                <div style="background-color: ${pal.bg}; border: 1px solid ${pal.border}; border-radius: 6px; padding: 8px; font-size: 11px; display: flex; flex-direction: column; gap: 4px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 9px; font-weight: 700; color: ${pal.text}; opacity: 0.85;">
+                    <span>SESSÃO ${slot.slotNumber}</span>
+                    <span>${this.schedule.blockDuration}m</span>
+                  </div>
+                  <div style="font-weight: 700; font-size: 11px; color: ${pal.text}; line-height: 1.25;">
+                    ${App.escapeHtml(slot.subjectName)}
+                  </div>
+                  <div style="font-size: 10px; color: #334155; line-height: 1.35; margin-top: 2px;">
+                    ${App.escapeHtml(slot.topic)}
+                  </div>
+                  <div style="margin-top: 4px; font-size: 9px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 4px;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border: 1px solid #94a3b8; border-radius: 2px; text-align: center; line-height: 9px; font-size: 8px;">
+                      ${isDone ? '✓' : ''}
+                    </span>
+                    <span>${isDone ? 'Concluído' : 'Estudar'}</span>
+                  </div>
+                </div>
+              `;
+            });
+
+            html += `
+                </div>
+              </div>
+            `;
+          });
+
+          html += `
+            </div>
+            <div style="margin-top: 14px; text-align: right; font-size: 9px; color: #94a3b8;">
+              Gerador de Cronograma de Estudos para Concursos
+            </div>
+          `;
+
+          pdfWrapper.innerHTML = html;
+          document.body.appendChild(pdfWrapper);
+
+          const opt = {
+            margin: [8, 8, 8, 8],
+            filename: `Cronograma_Estudos_${new Date().toISOString().slice(0, 10)}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, logging: false },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: this.schedule.columns.length > 4 ? 'landscape' : 'portrait' }
+          };
+
+          if (window.html2pdf) {
+            await html2pdf().set(opt).from(pdfWrapper).save();
+            this.showToast('Cronograma em PDF baixado com sucesso!', 'success');
+          } else {
+            window.print();
+          }
+
+          document.body.removeChild(pdfWrapper);
+        } catch (err) {
+          console.error('Erro na exportação para PDF:', err);
+          this.showToast('Tentando abrir diálogo de impressão...', 'warning');
+          window.print();
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = origText;
+          }
+        }
       }
     };
 

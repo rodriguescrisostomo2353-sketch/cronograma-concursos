@@ -1,2 +1,15 @@
 # Arquivos locais que não devem ir para o GitHub
 nogit/
+node_modules/
+prepare_android.ps1
+setup_and_build.ps1
+build_apk.ps1
+sync_and_build_apk.ps1
+update_android_icons.ps1
+check_sdk_and_build.ps1
+abrir_android_studio.bat
+html2pdf.bundle.min.js
+www/
+android/
+apk/
+*.log
