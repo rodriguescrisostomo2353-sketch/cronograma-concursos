@@ -2590,6 +2590,43 @@
     };
 
     /**
+     * =========================================================================
+     * SISTEMA DE VERSÃO E ATUALIZAÇÃO DO APLICATIVO
+     * =========================================================================
+     */
+    const APP_VERSION = "1.0.0";
+    const REMOTE_VERSION_URL = (typeof window !== 'undefined' && window.location && window.location.hostname === 'localhost')
+      ? "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json"
+      : "./version.json";
+
+    /**
+     * Compara duas versões no formato semântico (major.minor.patch) de forma numérica.
+     * Retorna: 1 se v1 > v2, -1 se v1 < v2, 0 se v1 == v2
+     */
+    function compareVersions(v1, v2) {
+      const parse = (v) => {
+        if (!v || typeof v !== 'string') return [0, 0, 0];
+        const clean = v.trim().replace(/^[^\d]*/, '');
+        const parts = clean.split('.').map(n => {
+          const num = parseInt(n, 10);
+          return isNaN(num) ? 0 : num;
+        });
+        while (parts.length < 3) parts.push(0);
+        return parts.slice(0, 3);
+      };
+      const [maj1, min1, pat1] = parse(v1);
+      const [maj2, min2, pat2] = parse(v2);
+
+      if (maj1 > maj2) return 1;
+      if (maj1 < maj2) return -1;
+      if (min1 > min2) return 1;
+      if (min1 < min2) return -1;
+      if (pat1 > pat2) return 1;
+      if (pat1 < pat2) return -1;
+      return 0;
+    }
+
+    /**
      * ESTADO GLOBAL DA APLICAÇÃO
      */
     const App = {
@@ -2610,9 +2647,12 @@
         this.loadFromStorage();
         this.bindEvents();
         this.initSwipeListeners();
+        this.initVersionDisplay();
+        this.initUpdateListeners();
         this.renderAll();
         this.updateHoursBadge();
         this.updateEstimatedBlocks();
+        this.checkUpdates(false);
 
         // Se houver matérias gravadas, inicia em Matérias; se vazio, inicia em Upload
         const initialTab = (this.data.materias && this.data.materias.length > 0) ? 'tab-subjects' : 'tab-upload';
@@ -2845,6 +2885,201 @@
         // Salvar modais
         document.getElementById('btnSaveSubjectModal').addEventListener('click', () => App.saveSubjectModal());
         document.getElementById('btnSaveTopicModal').addEventListener('click', () => App.saveTopicModal());
+
+        // Botão de checagem manual de atualizações
+        const btnCheck = document.getElementById('btnCheckUpdates');
+        if (btnCheck) {
+          btnCheck.addEventListener('click', async () => {
+            const origHtml = btnCheck.innerHTML;
+            btnCheck.disabled = true;
+            btnCheck.innerHTML = `⏳ Verificando...`;
+            try {
+              await App.checkUpdates(true);
+            } finally {
+              setTimeout(() => {
+                btnCheck.disabled = false;
+                btnCheck.innerHTML = origHtml;
+              }, 400);
+            }
+          });
+        }
+      },
+
+      /* Gestão e Verificação de Atualizações (Parte B) */
+      initVersionDisplay() {
+        const topEl = document.getElementById('updateCurrentVersionText');
+        const settingsEl = document.getElementById('settingsAppVersion');
+        if (topEl) topEl.textContent = `v${APP_VERSION}`;
+        if (settingsEl) settingsEl.textContent = `v${APP_VERSION}`;
+
+        // Restaura badge caso haja atualização pendente já gravada
+        try {
+          const cached = localStorage.getItem('concurso_pending_update');
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (compareVersions(parsed.version, APP_VERSION) > 0) {
+              this.applyUpdateUi(parsed, false);
+            } else {
+              localStorage.removeItem('concurso_pending_update');
+            }
+          }
+        } catch (e) {}
+      },
+
+      initUpdateListeners() {
+        const handleResume = () => {
+          App.checkUpdates(false);
+        };
+
+        // Ao voltar ao primeiro plano
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') {
+            handleResume();
+          }
+        });
+
+        window.addEventListener('focus', () => {
+          handleResume();
+        });
+
+        // Suporte nativo ao ciclo de vida do Capacitor (quando em APK Android)
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+          try {
+            window.Capacitor.Plugins.App.addListener('appStateChange', (state) => {
+              if (state && state.isActive) {
+                handleResume();
+              }
+            });
+          } catch (e) {}
+        }
+      },
+
+      async checkUpdates(force = false) {
+        const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
+        const now = Date.now();
+        const lastCheckStr = localStorage.getItem('concurso_last_version_check');
+        const lastCheck = lastCheckStr ? parseInt(lastCheckStr, 10) : 0;
+
+        // Limita a verificação automática ao voltar ao primeiro plano a cada 6 horas
+        if (!force && (now - lastCheck < SIX_HOURS_MS)) {
+          return;
+        }
+
+        const url = `${REMOTE_VERSION_URL}${REMOTE_VERSION_URL.includes('?') ? '&' : '?'}t=${now}`;
+
+        try {
+          const response = await fetch(url, {
+            cache: 'no-store',
+            headers: { 'Accept': 'application/json' }
+          });
+
+          if (!response.ok) {
+            if (force) {
+              this.showToast('Não foi possível verificar atualizações no momento.', 'warning');
+            }
+            return;
+          }
+
+          const remoteData = await response.json();
+          localStorage.setItem('concurso_last_version_check', String(Date.now()));
+          this.processVersionData(remoteData, force);
+        } catch (err) {
+          // Se estiver offline ou der erro de rede, ignorar silenciosamente sem travar o app
+          console.warn('[Atualizações] Erro ao consultar version.json:', err.message || err);
+          if (force) {
+            this.showToast('Sem conexão com a internet para verificar.', 'warning');
+          }
+        }
+      },
+
+      processVersionData(remoteData, isManual = false) {
+        if (!remoteData || !remoteData.version) return;
+
+        const isNewer = compareVersions(remoteData.version, APP_VERSION) > 0;
+
+        if (isNewer) {
+          localStorage.setItem('concurso_pending_update', JSON.stringify(remoteData));
+          this.applyUpdateUi(remoteData, isManual);
+        } else {
+          localStorage.removeItem('concurso_pending_update');
+          this.applyLatestUi(isManual);
+        }
+
+        if (Array.isArray(remoteData.history)) {
+          this.renderUpdateHistory(remoteData.history);
+        }
+      },
+
+      applyUpdateUi(remoteData, isManual = false) {
+        const topDot = document.getElementById('topUpdatesBadgeDot');
+        const bottomDot = document.getElementById('updatesBadgeDot');
+        const newVerBox = document.getElementById('newVersionBox');
+        const statusMsg = document.getElementById('updateStatusMsg');
+        const tag = document.getElementById('newVersionTag');
+        const dateEl = document.getElementById('newVersionDate');
+        const notesList = document.getElementById('newVersionNotesList');
+        const btnApk = document.getElementById('btnDownloadApk');
+
+        if (topDot) topDot.style.display = 'inline-block';
+        if (bottomDot) bottomDot.style.display = 'block';
+
+        if (newVerBox) newVerBox.style.display = 'block';
+        if (tag) tag.textContent = `v${remoteData.version}`;
+        if (dateEl) dateEl.textContent = `Lançada em: ${remoteData.date || 'Recente'}`;
+        if (btnApk) btnApk.href = remoteData.apkUrl || '#';
+
+        if (notesList && Array.isArray(remoteData.notes)) {
+          notesList.innerHTML = remoteData.notes.map(n => `<li>${App.escapeHtml(n)}</li>`).join('');
+        }
+
+        if (statusMsg) {
+          statusMsg.innerHTML = `⚠️ <strong>Nova versão disponível: v${remoteData.version}</strong>. Toque abaixo para atualizar seu aplicativo.`;
+        }
+
+        if (isManual) {
+          this.showToast(`Nova versão v${remoteData.version} encontrada! 🎉`, 'success');
+        }
+      },
+
+      applyLatestUi(isManual = false) {
+        const topDot = document.getElementById('topUpdatesBadgeDot');
+        const bottomDot = document.getElementById('updatesBadgeDot');
+        const newVerBox = document.getElementById('newVersionBox');
+        const statusMsg = document.getElementById('updateStatusMsg');
+
+        if (topDot) topDot.style.display = 'none';
+        if (bottomDot) bottomDot.style.display = 'none';
+        if (newVerBox) newVerBox.style.display = 'none';
+
+        if (statusMsg) {
+          statusMsg.innerHTML = `✅ <strong>Você está na versão mais recente (v${APP_VERSION})</strong>. Seu app está com todas as novidades e melhorias atualizadas.`;
+        }
+
+        if (isManual) {
+          this.showToast('Você já está na versão mais recente!', 'info');
+        }
+      },
+
+      renderUpdateHistory(historyList) {
+        const container = document.getElementById('updateHistoryList');
+        if (!container || !Array.isArray(historyList) || historyList.length === 0) return;
+
+        let html = '';
+        historyList.forEach(item => {
+          const isCurrent = (item.version === APP_VERSION);
+          html += `
+            <div class="history-item">
+              <div class="history-item-header">
+                <strong>Versão ${App.escapeHtml(item.version)}</strong>
+                <span class="history-date">${isCurrent ? '⭐ Instalada' : App.escapeHtml(item.date || '')}</span>
+              </div>
+              <ul class="history-notes">
+                ${Array.isArray(item.notes) ? item.notes.map(n => `<li>${App.escapeHtml(n)}</li>`).join('') : ''}
+              </ul>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
       },
 
       switchTab(tabId) {

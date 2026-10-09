@@ -1,0 +1,28 @@
+{
+  "version": "1.1.0",
+  "date": "2026-10-09",
+  "notes": [
+    "Novo layout mobile reorganizado com barra de navegação inferior fixa",
+    "Visualização do cronograma em 1 dia por vez no celular com abas dos dias e gestos de deslize (swipe)",
+    "Matérias organizadas em cards compactos e expansíveis (accordion)",
+    "Nova aba de Atualizações com verificação automática de novas versões do APK",
+    "Nova aba de Ajustes com alternância de tema claro/escuro e gerenciamento de dados",
+    "Tela de carregamento animada durante a leitura de editais em PDF",
+    "Exportação do cronograma em arquivo PDF de alta resolução"
+  ],
+  "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/CronogramaDeEstudos.apk",
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-01",
+      "notes": [
+        "Lançamento inicial do aplicativo",
+        "Extração inteligente de matérias e tópicos de editais em PDF",
+        "Geração automática de cronograma de estudos semanal",
+        "Exportação do cronograma para PDF",
+        "Suporte a tema claro e escuro suave",
+        "Suporte a PWA instalável e aplicativo nativo Android (APK)"
+      ]
+    }
+  ]
+}

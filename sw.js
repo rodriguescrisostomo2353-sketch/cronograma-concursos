@@ -1,5 +1,5 @@
 // Service Worker para o PWA Cronograma de Estudos para Concursos
-const CACHE_NAME = 'cronograma-concursos-v2';
+const CACHE_NAME = 'cronograma-concursos-v3';
 
 // Recursos essenciais para funcionamento offline (caminhos relativos e CDNs)
 const PRECACHE_ASSETS = [
@@ -53,6 +53,9 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   // Apenas intercepta requisições GET
   if (event.request.method !== 'GET') return;
+
+  // Nunca intercepta nem armazena em cache o version.json (verificação sempre online em tempo real)
+  if (event.request.url.includes('version.json')) return;
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {

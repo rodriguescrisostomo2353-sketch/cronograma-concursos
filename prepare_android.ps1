@@ -7,6 +7,7 @@ if (-not (Test-Path $targetDir)) {
 Copy-Item -Path (Join-Path $PSScriptRoot "index.html") -Destination $targetDir -Force
 Copy-Item -Path (Join-Path $PSScriptRoot "manifest.json") -Destination $targetDir -Force
 Copy-Item -Path (Join-Path $PSScriptRoot "sw.js") -Destination $targetDir -Force
+Copy-Item -Path (Join-Path $PSScriptRoot "version.json") -Destination $targetDir -Force
 
 $libPdf = Join-Path $PSScriptRoot "html2pdf.bundle.min.js"
 if (Test-Path $libPdf) {

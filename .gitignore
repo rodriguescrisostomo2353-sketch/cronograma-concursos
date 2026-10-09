@@ -1,6 +1,39 @@
-# Arquivos locais que não devem ir para o GitHub
-nogit/
+# ==============================================================================
+# SEGURANÇA: Chaves de Assinatura, Senhas e Credenciais (NUNCA ENVIAR!)
+# ==============================================================================
+*.keystore
+*.jks
+*.p12
+*.key
+*.pem
+*.env
+*.env.*
+*.secret
+credentials*.json
+google-services.json
+
+# ==============================================================================
+# DEPENDÊNCIAS & ARQUIVOS PRIVADOS
+# ==============================================================================
 node_modules/
+nogit/
+
+# ==============================================================================
+# BUILDS, ARQUIVOS COMPILADOS & BINÁRIOS ANDROID
+# ==============================================================================
+*.apk
+*.aab
+apk/
+build/
+*/build/
+android/app/build/
+android/.gradle/
+.gradle/
+www/
+
+# ==============================================================================
+# SCRIPTS LOCAIS ESPECÍFICOS & LIBS GRANDES LOCAIS
+# ==============================================================================
 prepare_android.ps1
 setup_and_build.ps1
 build_apk.ps1
@@ -9,7 +42,14 @@ update_android_icons.ps1
 check_sdk_and_build.ps1
 abrir_android_studio.bat
 html2pdf.bundle.min.js
-www/
 android/
-apk/
+
+# ==============================================================================
+# LOGS & ARQUIVOS DE SISTEMA / IDE
+# ==============================================================================
 *.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.tmp
