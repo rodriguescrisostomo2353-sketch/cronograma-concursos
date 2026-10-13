@@ -1889,6 +1889,469 @@
     }
 
     /* ==========================================================================
+       ETAPA 2: LAYOUT LIMPO, ORGANIZADO E MINIMALISTA DO CRONOGRAMA
+       ========================================================================== */
+    .schedule-clean-header {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+    .sched-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-width: 0;
+      flex: 1;
+    }
+    .sched-switcher-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sched-switcher-select {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      max-width: 220px;
+      outline: none;
+    }
+    .sched-mode-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 10px;
+      background: var(--pastel-indigo-bg);
+      color: var(--pastel-indigo-text);
+      border: 1px solid var(--pastel-indigo-border);
+      white-space: nowrap;
+    }
+    .sched-quick-chips {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .sched-chip-btn {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .sched-chip-btn:hover {
+      background: var(--bg-card);
+      border-color: #6366f1;
+    }
+    .sched-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .btn-more-dots {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 1.25rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      line-height: 1;
+    }
+    .btn-more-dots:hover {
+      background: var(--bg-card);
+      border-color: #6366f1;
+    }
+    .dropdown-menu-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 230px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      padding: 6px;
+      z-index: 120;
+      display: flex;
+      flex-direction: column;
+      animation: fadeIn 0.15s ease-out;
+    }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 8px 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: left;
+      transition: var(--transition);
+    }
+    .dropdown-item:hover {
+      background: var(--bg-subtle);
+      color: #4f46e5;
+    }
+    .dropdown-item.danger:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border-color);
+      margin: 4px 0;
+    }
+
+    /* Barra de Progresso Compacta em 1 Linha */
+    .schedule-progress-compact {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 8px 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .progress-compact-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+    .progress-compact-title strong {
+      color: var(--text-main);
+      font-size: 0.85rem;
+    }
+    .progress-compact-track {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-subtle);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .progress-compact-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #059669);
+      border-radius: 6px;
+      transition: width 0.3s ease;
+    }
+
+    /* Cartão de Sessão Limpo e Minimalista */
+    .clean-slot-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--card-accent, #6366f1);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 7px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 4px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      position: relative;
+    }
+    .clean-slot-card:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      transform: translateY(-1px);
+    }
+    :root[data-theme="dark"] .clean-slot-card:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    .clean-slot-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: 6px;
+    }
+    .clean-slot-meta {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+      min-width: 0;
+      flex: 1;
+    }
+    .clean-slot-time {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      line-height: 1;
+    }
+    .clean-slot-tag {
+      font-size: 0.74rem;
+      line-height: 1;
+    }
+    .clean-slot-check {
+      width: 18px;
+      height: 18px;
+      accent-color: #10b981;
+      cursor: pointer;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .clean-slot-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.25;
+      word-break: break-word;
+    }
+    .clean-slot-topic {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      opacity: 0.9;
+    }
+    .clean-slot-card.completed {
+      opacity: 0.55;
+      background: var(--bg-subtle) !important;
+    }
+    .clean-slot-card.completed .clean-slot-title {
+      text-decoration: line-through;
+    }
+    .clean-slot-card.locked {
+      box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.4);
+    }
+
+    /* Modal / Bottom Sheet de Detalhes da Sessão */
+    .modal-sheet-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      animation: fadeIn 0.2s ease-out;
+    }
+    @media (max-width: 768px) {
+      .modal-overlay:has(.modal-sheet-card) {
+        align-items: flex-end;
+        padding: 0;
+      }
+      .modal-sheet-card {
+        border-radius: 20px 20px 0 0;
+        max-width: 100%;
+        max-height: 82vh;
+        overflow-y: auto;
+        border-bottom: none;
+        padding: 16px 20px 32px 20px;
+        animation: slideUpSheet 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+    }
+    .modal-sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 14px;
+    }
+    .session-sheet-title-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .session-palette-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .session-sheet-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .session-meta-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .session-meta-chip {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-main);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .session-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .session-topic-box, .session-notes-box {
+      margin-bottom: 14px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+    }
+    .session-topic-content {
+      font-size: 0.85rem;
+      color: var(--text-main);
+      line-height: 1.45;
+    }
+    .session-notes-content {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      font-style: italic;
+    }
+    .session-status-toggle-wrap {
+      margin-bottom: 16px;
+      padding: 8px 12px;
+      background: var(--bg-subtle);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+    .session-toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+    .session-toggle-label input {
+      width: 18px;
+      height: 18px;
+      accent-color: #10b981;
+    }
+    .modal-sheet-footer {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Floating Action Button (FAB) no Mobile */
+    .fab-add-session {
+      display: none;
+    }
+    @media (max-width: 768px) {
+      .fab-add-session {
+        display: flex;
+        position: fixed;
+        bottom: 74px;
+        right: 18px;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: #4f46e5;
+        color: #ffffff;
+        border: none;
+        font-size: 26px;
+        font-weight: 300;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 16px rgba(79, 70, 229, 0.45);
+        z-index: 95;
+        cursor: pointer;
+        transition: transform 0.15s ease;
+      }
+      .fab-add-session:active {
+        transform: scale(0.92);
+      }
+    }
+
+    /* Pílula do dia com destaque 'Hoje' */
+    .mobile-day-pill.today-highlight {
+      border-color: #4f46e5;
+      position: relative;
+    }
+    .mobile-day-pill.today-highlight::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #4f46e5;
+    }
+
+    /* Botão Toggle Opções Avançadas */
+    .btn-toggle-advanced {
+      background: var(--bg-subtle);
+      border: 1px dashed var(--border-color);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      padding: 9px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin: 14px 0 10px 0;
+      transition: var(--transition);
+    }
+    .btn-toggle-advanced:hover {
+      background: var(--bg-card);
+      border-color: #6366f1;
+      color: var(--text-main);
+    }
+
+    /* ==========================================================================
        8. MODAIS & TOASTS
        ========================================================================== */
     .modal-overlay {
@@ -2853,33 +3316,83 @@
          ======================================================================== -->
     <section id="tab-schedule" class="tab-content">
       
-      <!-- 1. Barra de Seleção e Gestão de Múltiplos Cronogramas -->
-      <div class="schedule-manager-bar" id="scheduleManagerBar">
-        <div class="schedule-manager-left">
-          <span class="schedule-manager-label">📁 Cronograma Ativo:</span>
-          <select id="selectActiveSchedule" class="schedule-select-dropdown" aria-label="Selecione o cronograma ativo">
-            <!-- Preenchido dinamicamente via JS -->
-          </select>
-          <span class="schedule-type-badge" id="scheduleTypeBadge">⚡ Automático</span>
+      <!-- 1. Cabeçalho Enxuto e Unificado (Etapa 2) -->
+      <div class="schedule-clean-header" id="scheduleCleanHeader">
+        <div class="sched-header-left">
+          <div class="sched-switcher-wrap">
+            <select id="selectActiveSchedule" class="sched-switcher-select" aria-label="Selecione o cronograma ativo">
+              <!-- Preenchido dinamicamente via JS -->
+            </select>
+            <span class="sched-mode-badge" id="scheduleTypeBadge">⚡ Auto</span>
+          </div>
+
+          <!-- Pílulas Rápidas Compactas para Prova e Revisões -->
+          <div class="sched-quick-chips">
+            <button type="button" class="sched-chip-btn hidden" id="chipExamCountdown" onclick="App.openExamDateModal()" title="Configurar ou ver contagem da prova">
+              🎯 <span id="chipExamText">Prova</span>
+            </button>
+            <button type="button" class="sched-chip-btn hidden" id="chipSpacedReviews" onclick="App.toggleSpacedReviewsCollapse()" title="Ver revisões espaçadas programadas">
+              🧠 <span id="chipSpacedText">Revisões</span>
+            </button>
+          </div>
         </div>
-        <div class="schedule-manager-actions">
-          <button id="btnOpenNewScheduleModal" class="btn btn-primary btn-sm" title="Criar um novo cronograma">
-            ➕ Novo Cronograma
+
+        <div class="sched-header-right">
+          <!-- Botão Principal de Ação (Ajustar / Configurar) -->
+          <button type="button" class="btn btn-primary btn-sm" id="btnSchedulePrimaryAction" onclick="App.toggleScheduleConfigPanel()">
+            ⚡ Ajustar
           </button>
-          <button id="btnRenameSchedule" class="btn btn-secondary btn-sm" title="Renomear este cronograma">
-            ✏️ Renomear
-          </button>
-          <button id="btnDuplicateSchedule" class="btn btn-secondary btn-sm" title="Duplicar este cronograma">
-            📋 Duplicar
-          </button>
-          <button id="btnDeleteSchedule" class="btn btn-danger-soft btn-sm" title="Excluir este cronograma">
-            🗑️ Excluir
-          </button>
+          
+          <!-- Menu de Ações Secundárias (três pontinhos ⋮) -->
+          <div class="dropdown-menu-wrapper" id="schedMoreMenuWrapper">
+            <button type="button" class="btn-more-dots" id="btnScheduleMoreMenu" aria-label="Mais ações" onclick="App.toggleScheduleMoreMenu(event)">
+              ⋮
+            </button>
+            <div class="dropdown-menu-popover" id="schedDropdownPopover" style="display: none;">
+              <button type="button" class="dropdown-item" id="btnOpenNewScheduleModal" onclick="App.closeScheduleMoreMenu()">
+                <span>➕</span> Novo Cronograma
+              </button>
+              <button type="button" class="dropdown-item" id="btnRenameSchedule" onclick="App.closeScheduleMoreMenu()">
+                <span>✏️</span> Renomear Cronograma
+              </button>
+              <button type="button" class="dropdown-item" id="btnDuplicateSchedule" onclick="App.closeScheduleMoreMenu()">
+                <span>📋</span> Duplicar Cronograma
+              </button>
+              <button type="button" class="dropdown-item danger" id="btnDeleteSchedule" onclick="App.closeScheduleMoreMenu()">
+                <span>🗑️</span> Excluir Cronograma
+              </button>
+              <div class="dropdown-divider"></div>
+              <button type="button" class="dropdown-item" id="btnOpenPomodoro" onclick="App.closeScheduleMoreMenu()">
+                <span>⏱️</span> Timer Pomodoro
+              </button>
+              <button type="button" class="dropdown-item" id="btnDownloadPdf" onclick="App.closeScheduleMoreMenu()">
+                <span>📥</span> Salvar em PDF
+              </button>
+              <button type="button" class="dropdown-item" id="btnExportImage" onclick="App.closeScheduleMoreMenu()">
+                <span>🖼️</span> Exportar Imagem (PNG)
+              </button>
+              <button type="button" class="dropdown-item" id="btnShareSchedule" onclick="App.closeScheduleMoreMenu()">
+                <span>🔗</span> Compartilhar Resumo
+              </button>
+              <button type="button" class="dropdown-item" id="btnPrintSchedule" onclick="App.closeScheduleMoreMenu()">
+                <span>🖨️</span> Imprimir
+              </button>
+              <div class="dropdown-divider"></div>
+              <button type="button" class="dropdown-item" id="btnResetCompleted" onclick="App.closeScheduleMoreMenu()">
+                <span>🔄</span> Desmarcar Concluídos
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- 2. Duas Opções Claras: Gerar Automaticamente vs Criar Manualmente -->
-      <div class="schedule-mode-toggle" id="scheduleModeToggle">
+      <!-- 2. Barra de Progresso Compacta em 1 Linha -->
+      <div class="schedule-progress-compact" id="scheduleProgressContainer">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+
+      <!-- 3. Seletor de Modo: Gerar Automaticamente vs Criar Manualmente (Oculto ao ver cronograma ativo) -->
+      <div class="schedule-mode-toggle" id="scheduleModeToggle" style="display: none;">
         <button class="mode-toggle-card active" id="btnModeAuto" type="button">
           <div class="mode-toggle-icon">⚡</div>
           <div class="mode-toggle-info">
@@ -2896,32 +3409,32 @@
         </button>
       </div>
 
-      <!-- 3. Painel de Geração Automática Configurável (Parte B) -->
-      <div id="panelScheduleAuto">
-        <div class="config-card" style="padding: 20px 24px;">
+      <!-- 4. Painel de Geração Automática Configurável -->
+      <div id="panelScheduleAuto" style="display: none;">
+        <div class="config-card" style="padding: 18px 22px; margin-bottom: 16px;">
           <div class="config-title" style="margin-bottom: 6px;">
-            <span>⚡ Geração Automática Inteligente de Cronograma</span>
+            <span>⚡ Configuração da Geração Automática</span>
           </div>
-          <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 16px 0;">
-            Configure as frequências de cada matéria, limites por dia e disponibilidade. O sistema distribuirá tudo de forma intercalada com pré-visualização.
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 14px 0;">
+            Ajuste a frequência semanal de cada disciplina e clique em gerar.
           </p>
 
-          <!-- Barra de Modelos Prontos (Presets) -->
+          <!-- Modelos Prontos (Presets) -->
           <div class="presets-bar" id="presetsBar">
             <span class="presets-bar-title">⚡ Modelos Prontos:</span>
             <button type="button" class="btn-preset" id="presetIntensivo" onclick="App.applyAutoPreset('intensivo')">
-              🚀 Intensivo (6d • 4h • 50m)
+              🚀 Intensivo (6d • 4h)
             </button>
             <button type="button" class="btn-preset active" id="presetEquilibrado" onclick="App.applyAutoPreset('equilibrado')">
-              🎯 Equilibrado (5d • 3h • 60m)
+              🎯 Equilibrado (5d • 3h)
             </button>
             <button type="button" class="btn-preset" id="presetLeve" onclick="App.applyAutoPreset('leve')">
-              🌱 Leve (4d • 2h • 45m)
+              🌱 Leve (4d • 2h)
             </button>
           </div>
 
-          <!-- 1. Matérias Participantes & Frequência Semanal -->
-          <div class="auto-config-card-group">
+          <!-- Matérias Participantes & Frequência Semanal -->
+          <div class="auto-config-card-group" style="margin-bottom: 14px;">
             <div class="auto-config-header">
               <div class="auto-config-title">
                 <span>📚 1. Matérias Participantes & Frequência Semanal</span>
@@ -2941,62 +3454,12 @@
             <div class="subject-freq-grid" id="autoSubjectsFreqList">
               <!-- Cards das matérias com steppers renderizados dinamicamente via JS -->
             </div>
-            <span class="config-hint" style="margin-top: 8px; display: block;">
-              Marque quais matérias entram e use os botões <strong>+</strong> e <strong>-</strong> para definir quantas vezes na semana cada uma será estudada.
-            </span>
           </div>
 
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px;">
-            <!-- 2. Quantidade Máxima de Matérias por Dia -->
-            <div class="auto-config-card-group" style="margin-bottom: 0;">
-              <div class="auto-config-title" style="margin-bottom: 8px;">
-                <span>🎯 2. Máx. Matérias / Dia</span>
-              </div>
-              <select id="selectMaxSubjectsPerDay" class="input-field" style="padding: 9px 12px; margin-bottom: 4px;">
-                <option value="1">1 matéria por dia</option>
-                <option value="2" selected>2 matérias por dia</option>
-                <option value="3">3 matérias por dia</option>
-                <option value="4">4 matérias por dia</option>
-                <option value="999">Sem limite (Livre)</option>
-              </select>
-              <span class="config-hint">Alterna disciplinas sem sobrecarga.</span>
-            </div>
-
-            <!-- 3. Duração de Cada Sessão -->
-            <div class="auto-config-card-group" style="margin-bottom: 0;">
-              <div class="auto-config-title" style="margin-bottom: 8px;">
-                <span>⏱️ 3. Duração do Bloco</span>
-              </div>
-              <select id="selectBlockDuration" class="input-field" style="padding: 9px 12px; margin-bottom: 4px;">
-                <option value="30">30 min (Sessões rápidas)</option>
-                <option value="45">45 min</option>
-                <option value="50">50 min (Pomodoro)</option>
-                <option value="60" selected>1 hora (60 min)</option>
-                <option value="90">1h 30min (90 min)</option>
-                <option value="120">2 horas (120 min)</option>
-              </select>
-              <span class="config-hint">Tempo focado por bloco ininterrupto.</span>
-            </div>
-
-            <!-- 3b. Pausa / Intervalo entre Sessões -->
-            <div class="auto-config-card-group" style="margin-bottom: 0;">
-              <div class="auto-config-title" style="margin-bottom: 8px;">
-                <span>☕ 3b. Intervalo / Pausa</span>
-              </div>
-              <select id="selectSessionBreak" class="input-field" style="padding: 9px 12px; margin-bottom: 4px;">
-                <option value="0">Sem intervalo (Direto)</option>
-                <option value="5" selected>5 minutos (Pausa rápida)</option>
-                <option value="10">10 minutos (Pomodoro)</option>
-                <option value="15">15 minutos (Descanso maior)</option>
-              </select>
-              <span class="config-hint">Descanso para água e fixação mental.</span>
-            </div>
-          </div>
-
-          <!-- 4. Dias Disponíveis para Estudo -->
-          <div class="auto-config-card-group" style="margin-top: 16px; margin-bottom: 16px;">
+          <!-- Dias da Semana Disponíveis -->
+          <div class="auto-config-card-group" style="margin-bottom: 14px;">
             <div class="auto-config-title" style="margin-bottom: 8px;">
-              <span>🗓️ 4. Dias da Semana Disponíveis</span>
+              <span>🗓️ 2. Dias da Semana Disponíveis</span>
             </div>
             <div class="days-picker" id="daysPicker">
               <label class="day-chip">
@@ -3028,78 +3491,123 @@
                 <span class="day-chip-label">Dom</span>
               </label>
             </div>
-            <span class="config-hint" style="margin-top: 6px; display: block;">Marque quais dias você terá tempo para estudar.</span>
           </div>
 
-          <!-- 5. Horas de Estudo por Dia (Opção de definir igual ou diferente por dia) -->
-          <div class="auto-config-card-group">
-            <div class="auto-config-header">
-              <div class="auto-config-title">
-                <span>⏰ 5. Horas de Estudo por Dia</span>
+          <!-- Duração de Cada Sessão -->
+          <div class="auto-config-card-group" style="margin-bottom: 14px;">
+            <div class="auto-config-title" style="margin-bottom: 8px;">
+              <span>⏱️ 3. Duração do Bloco</span>
+            </div>
+            <select id="selectBlockDuration" class="input-field" style="padding: 8px 12px;">
+              <option value="30">30 min (Sessões rápidas)</option>
+              <option value="45">45 min</option>
+              <option value="50">50 min (Pomodoro)</option>
+              <option value="60" selected>1 hora (60 min)</option>
+              <option value="90">1h 30min (90 min)</option>
+              <option value="120">2 horas (120 min)</option>
+            </select>
+          </div>
+
+          <!-- Botão Expansível de Opções Avançadas -->
+          <button type="button" class="btn-toggle-advanced" id="btnToggleAdvancedOptions" onclick="App.toggleAutoAdvancedOptions()">
+            <span>⚙️ Opções Avançadas (Intervalos, Horários por Dia, Revisão)</span>
+            <span id="iconAdvancedToggle">▼</span>
+          </button>
+
+          <!-- Bloco Recolhível de Opções Avançadas -->
+          <div id="autoAdvancedOptions" style="display: none;">
+            <!-- Quantidade Máxima de Matérias por Dia -->
+            <div class="auto-config-card-group" style="margin-bottom: 14px;">
+              <div class="auto-config-title" style="margin-bottom: 8px;">
+                <span>🎯 Máx. Matérias Diferentes / Dia</span>
               </div>
-              <div class="hours-mode-toggle">
-                <button type="button" class="hours-mode-btn active" id="btnHoursModeSame" onclick="App.setDailyHoursMode('same')">
-                  Mesmas horas todo dia
-                </button>
-                <button type="button" class="hours-mode-btn" id="btnHoursModeDiff" onclick="App.setDailyHoursMode('different')">
-                  Diferente em cada dia
-                </button>
+              <select id="selectMaxSubjectsPerDay" class="input-field" style="padding: 8px 12px;">
+                <option value="1">1 matéria por dia</option>
+                <option value="2" selected>2 matérias por dia</option>
+                <option value="3">3 matérias por dia</option>
+                <option value="4">4 matérias por dia</option>
+                <option value="999">Sem limite (Livre)</option>
+              </select>
+            </div>
+
+            <!-- Pausa / Intervalo entre Sessões -->
+            <div class="auto-config-card-group" style="margin-bottom: 14px;">
+              <div class="auto-config-title" style="margin-bottom: 8px;">
+                <span>☕ Intervalo / Pausa entre Blocos</span>
+              </div>
+              <select id="selectSessionBreak" class="input-field" style="padding: 8px 12px;">
+                <option value="0">Sem intervalo (Direto)</option>
+                <option value="5" selected>5 minutos (Pausa rápida)</option>
+                <option value="10">10 minutos (Pomodoro)</option>
+                <option value="15">15 minutos (Descanso maior)</option>
+              </select>
+            </div>
+
+            <!-- Horas de Estudo por Dia -->
+            <div class="auto-config-card-group" style="margin-bottom: 14px;">
+              <div class="auto-config-header">
+                <div class="auto-config-title">
+                  <span>⏰ Horas de Estudo por Dia</span>
+                </div>
+                <div class="hours-mode-toggle">
+                  <button type="button" class="hours-mode-btn active" id="btnHoursModeSame" onclick="App.setDailyHoursMode('same')">
+                    Mesmas horas todo dia
+                  </button>
+                  <button type="button" class="hours-mode-btn" id="btnHoursModeDiff" onclick="App.setDailyHoursMode('different')">
+                    Diferente por dia
+                  </button>
+                </div>
+              </div>
+
+              <div id="boxHoursModeSame">
+                <div class="range-picker">
+                  <input type="range" id="inputHoursPerDay" min="1" max="8" value="3" step="1">
+                  <span class="range-val-badge" id="badgeHoursPerDay">3h / dia</span>
+                </div>
+              </div>
+
+              <div id="boxHoursModeDiff" style="display: none;">
+                <div class="daily-hours-grid" id="dailyHoursCustomGrid">
+                  <!-- Gerado dinamicamente -->
+                </div>
               </div>
             </div>
 
-            <!-- Modo 1: Mesmas horas todo dia -->
-            <div id="boxHoursModeSame">
-              <div class="range-picker">
-                <input type="range" id="inputHoursPerDay" min="1" max="8" value="3" step="1">
-                <span class="range-val-badge" id="badgeHoursPerDay">3h / dia</span>
+            <!-- Dia Exclusivo de Revisão Semanal & Simulado -->
+            <div class="auto-config-card-group" style="margin-bottom: 14px;">
+              <div class="auto-config-header">
+                <div class="auto-config-title">
+                  <span>📝 Dia Exclusivo de Revisão & Simulado</span>
+                </div>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="chkEnableWeeklyReview" onchange="App.toggleWeeklyReview(this.checked)">
+                  <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-main);">Ativar</span>
+                </label>
               </div>
-              <span class="config-hint" style="margin-top: 6px; display: block;">Aplicado a todos os dias selecionados acima.</span>
+              <div id="boxWeeklyReviewOptions" style="display: none; margin-top: 8px;">
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                  <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-main);">Reservar o dia:</label>
+                  <select id="selectWeeklyReviewDay" class="input-field" style="width: auto; padding: 6px 10px;" onchange="App.setWeeklyReviewDay(this.value)">
+                    <option value="Domingo" selected>Domingo</option>
+                    <option value="Sábado">Sábado</option>
+                    <option value="Sexta">Sexta-feira</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
-            <!-- Modo 2: Horas personalizadas por dia -->
-            <div id="boxHoursModeDiff" style="display: none;">
-              <div class="daily-hours-grid" id="dailyHoursCustomGrid">
-                <!-- Mini seletores por dia gerados dinamicamente via JS -->
+            <!-- Diagnóstico Matemático em Tempo Real -->
+            <div id="autoConfigDiagnosisBox" class="config-diagnosis-box ok">
+              <span id="autoConfigDiagnosisIcon" style="font-size: 1.2rem;">✨</span>
+              <div id="autoConfigDiagnosisText">
+                Carregando diagnóstico...
               </div>
-              <span class="config-hint" style="margin-top: 8px; display: block;">Defina o tempo disponível de acordo com a sua rotina real de cada dia.</span>
             </div>
           </div>
 
-          <!-- 6. Dia Exclusivo de Revisão Semanal & Simulado -->
-          <div class="auto-config-card-group" style="margin-top: 16px;">
-            <div class="auto-config-header">
-              <div class="auto-config-title">
-                <span>📝 6. Dia de Revisão Semanal & Simulado</span>
-              </div>
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                <input type="checkbox" id="chkEnableWeeklyReview" onchange="App.toggleWeeklyReview(this.checked)">
-                <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-main);">Ativar Dia de Revisão</span>
-              </label>
-            </div>
-            <div id="boxWeeklyReviewOptions" style="display: none; margin-top: 10px;">
-              <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Reservar o dia:</label>
-                <select id="selectWeeklyReviewDay" class="input-field" style="width: auto; padding: 6px 12px;" onchange="App.setWeeklyReviewDay(this.value)">
-                  <option value="Domingo" selected>Domingo</option>
-                  <option value="Sábado">Sábado</option>
-                  <option value="Sexta">Sexta-feira</option>
-                </select>
-                <span class="config-hint" style="margin: 0;">Esse dia será dedicado à revisão dos tópicos da semana e resolução de bateria de questões/simulados.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 7. Diagnóstico Matemático em Tempo Real (Avisa sem bloquear!) -->
-          <div id="autoConfigDiagnosisBox" class="config-diagnosis-box ok">
-            <span id="autoConfigDiagnosisIcon" style="font-size: 1.2rem;">✨</span>
-            <div id="autoConfigDiagnosisText">
-              Carregando diagnóstico da distribuição...
-            </div>
-          </div>
-
-          <!-- 7. Barra de Ação de Geração com Pré-Visualização -->
-          <div class="action-bar-generate" style="margin-top: 18px;">
-            <div style="font-size: 0.85rem; color: var(--text-muted);" id="estimatedBlocksText">
+          <!-- Barra de Ação de Geração -->
+          <div class="action-bar-generate" style="margin-top: 14px;">
+            <div style="font-size: 0.82rem; color: var(--text-muted);" id="estimatedBlocksText">
               Estimativa: <strong>Calculando sessões...</strong>
             </div>
             <button id="btnGenerateSchedule" class="btn btn-primary btn-lg" style="box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);">
@@ -3109,21 +3617,21 @@
         </div>
       </div>
 
-      <!-- 4. Painel de Controle de Cronograma Manual -->
-      <div id="panelScheduleManual" style="display: none; margin-bottom: 20px;">
-        <div class="config-card" style="padding: 18px 22px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <!-- 5. Painel de Controle de Cronograma Manual -->
+      <div id="panelScheduleManual" style="display: none; margin-bottom: 16px;">
+        <div class="config-card" style="padding: 16px 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div>
-              <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">
-                ✏️ Montagem do Cronograma Manual
+              <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">
+                ✏️ Montagem Manual do Cronograma
               </h3>
-              <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">
-                Adicione sessões livres em qualquer dia. Em computadores, você pode <strong>arrastar e soltar</strong> as sessões entre os dias.
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">
+                Adicione sessões livres em qualquer dia ou arraste para reorganizar.
               </p>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <button id="btnManualAddSession" class="btn btn-primary btn-sm">
-                ➕ Adicionar Sessão de Estudo
+                ➕ Nova Sessão
               </button>
               <button id="btnManualAddExtraSubject" class="btn btn-secondary btn-sm" title="Adicionar disciplina que não veio do edital">
                 📚 + Matéria Avulsa
@@ -3133,84 +3641,43 @@
         </div>
       </div>
 
-      <!-- 5. Exibição do Cronograma (Grade Desktop & Mobile) -->
+      <!-- 6. Exibição do Cronograma (Grade Desktop & Mobile) -->
       <div id="scheduleResultsWrapper" class="schedule-wrapper" style="display: none;">
-        <div class="schedule-topbar">
-          <div class="schedule-stats">
-            <span>Cronograma: <strong id="schedStatsName">Principal</strong></span>
-            <span>•</span>
-            <span>Matérias: <span class="schedule-stats-badge" id="schedStatsSubjects">0</span></span>
-            <span>•</span>
-            <span>Sessões: <span class="schedule-stats-badge" id="schedStatsSessions">0</span></span>
-          </div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button class="btn btn-pastel-purple btn-sm" id="btnOpenPomodoro" title="Abrir Timer Pomodoro de Estudos">
-              ⏱️ Pomodoro
-            </button>
-            <button class="btn btn-secondary btn-sm" id="btnExportImage" title="Salvar imagem PNG do cronograma em alta resolução">
-              🖼️ Imagem (PNG)
-            </button>
-            <button class="btn btn-secondary btn-sm" id="btnShareSchedule" title="Compartilhar resumo da rotina de estudos">
-              🔗 Compartilhar
-            </button>
-            <button class="btn btn-primary btn-sm" id="btnDownloadPdf" title="Baixar arquivo PDF com o cronograma formatado">
-              📥 Salvar em PDF
-            </button>
-            <button class="btn btn-secondary btn-sm" id="btnPrintSchedule" title="Imprimir diretamente na impressora">
-              🖨️ Imprimir
-            </button>
-            <button class="btn btn-secondary btn-sm" id="btnResetCompleted" title="Desmarcar blocos concluídos">
-              🔄 Limpar Feitos
-            </button>
-          </div>
-        </div>
-
-        <!-- 5a. Widget de Contagem Regressiva para a Prova do Concurso -->
-        <div class="exam-countdown-card" id="examCountdownCard">
+        
+        <!-- Widget Opcional de Contagem Regressiva para a Prova -->
+        <div class="exam-countdown-card hidden" id="examCountdownCard" style="margin-bottom: 12px;">
           <div class="exam-countdown-left">
             <span class="exam-countdown-icon">🎯</span>
             <div>
-              <div class="exam-countdown-title" id="examCountdownTitle">Contagem Regressiva para a Prova</div>
-              <div class="exam-countdown-subtitle" id="examCountdownSubtitle">Defina a data prevista do seu edital ou concurso</div>
+              <div class="exam-countdown-title" id="examTitleDisplay">Contagem Regressiva para a Prova</div>
+              <div class="exam-countdown-subtitle" id="examCalculationDetails">Defina a data prevista do seu edital ou concurso</div>
             </div>
           </div>
           <div class="exam-countdown-right">
-            <div class="exam-countdown-badge" id="examCountdownBadge">📅 Definir Data</div>
+            <div class="countdown-badge normal" id="examStatusBadge">
+              <span id="examDaysNumber">--</span> dias
+            </div>
             <button type="button" class="btn btn-secondary btn-sm" id="btnConfigExamDate" style="padding: 4px 10px; font-size: 0.75rem;">
-              ⚙️ Configurar
+              ⚙️ Ajustar
             </button>
           </div>
         </div>
 
-        <!-- 5b. Barra de Progresso Semanal e por Disciplina -->
-        <div class="schedule-progress-container" id="scheduleProgressContainer">
-          <div class="progress-bar-header">
-            <span class="progress-bar-label">📊 Progresso da Semana:</span>
-            <span class="progress-bar-percent" id="scheduleProgressPercent">0% (0 de 0 sessões)</span>
-          </div>
-          <div class="progress-bar-wrap">
-            <div class="progress-bar-fill" id="scheduleProgressBarFill" style="width: 0%;"></div>
-          </div>
-          <div class="subject-progress-grid" id="subjectProgressGrid">
-            <!-- Chips com progresso individual de cada matéria renderizados via JS -->
-          </div>
-        </div>
-
-        <!-- 5c. Card de Revisões Espaçadas Pendentes (1d, 7d, 30d) -->
-        <div class="spaced-reviews-card" id="spacedReviewsCard" style="display: none;">
+        <!-- Card Opcional de Revisões Espaçadas Pendentes -->
+        <div class="spaced-reviews-card hidden" id="spacedReviewsCard" style="margin-bottom: 12px;">
           <div class="spaced-reviews-header" onclick="App.toggleSpacedReviewsCollapse()">
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span>🧠 Revisões Espaçadas Programadas (1d • 7d • 30d)</span>
-              <span id="spacedReviewsCountBadge" style="background: var(--primary); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 1px 7px; border-radius: 10px;">0</span>
+              <span>🧠 Revisões Espaçadas Programadas (D+1 • D+7 • D+30)</span>
+              <span id="spacedReviewsBadge" class="spaced-badge due" style="display: none;">0</span>
             </div>
-            <button type="button" class="btn-icon" id="btnToggleSpacedReviews" style="font-size: 0.8rem;">▼</button>
+            <button type="button" class="btn-icon" id="spacedCollapseIcon" style="font-size: 0.8rem;">▼</button>
           </div>
           <div class="spaced-reviews-body" id="spacedReviewsList">
-            <!-- Lista de revisões agendadas para hoje e pendentes -->
+            <!-- Lista renderizada via JS -->
           </div>
         </div>
 
-        <!-- Visualização Desktop (Grade Completa com Todas as Colunas) -->
+        <!-- Visualização Desktop (Grade Completa com Colunas) -->
         <div class="schedule-desktop-view">
           <div id="scheduleGridContainer" class="schedule-grid">
             <!-- Renderizado dinamicamente via JS -->
@@ -3244,16 +3711,16 @@
         </div>
       </div>
 
-      <!-- Estado Vazio para Cronogramas Manuais sem Sessões -->
+      <!-- Estado Vazio Amigável para Cronogramas Manuais sem Sessões -->
       <div id="scheduleEmptyState" class="empty-state" style="display: none; margin-top: 20px;">
         <div class="empty-state-icon">🗓️</div>
         <h3>Nenhuma sessão cadastrada neste cronograma</h3>
-        <p>Você pode adicionar sua primeira sessão de estudos em qualquer dia da semana ou gerar automaticamente.</p>
+        <p>Você pode adicionar sua primeira sessão de estudos ou gerar automaticamente com inteligência.</p>
         <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
           <button class="btn btn-primary" onclick="App.openAddSessionModal()">
             ➕ Adicionar Primeira Sessão
           </button>
-          <button class="btn btn-secondary" onclick="App.setScheduleMode('auto')">
+          <button class="btn btn-secondary" onclick="App.toggleScheduleConfigPanel()">
             ⚡ Ir para Geração Automática
           </button>
         </div>
@@ -3840,6 +4307,69 @@
     </div>
   </div>
 
+  <!-- Modal / Bottom Sheet: Detalhes da Sessão de Estudos (Clean UI) -->
+  <div class="modal-overlay hidden" id="modalSessionDetails">
+    <div class="modal-card modal-sheet-card" style="max-width: 480px;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span id="sessionDetailsColorDot" style="width: 14px; height: 14px; border-radius: 50%; display: inline-block; background: var(--primary);"></span>
+          <div>
+            <h3 id="sessionDetailsSubject" style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-main);">Matéria</h3>
+            <span id="sessionDetailsDaySlot" style="font-size: 0.78rem; color: var(--text-muted); font-weight: 500;">Segunda-feira • Sessão 1</span>
+          </div>
+        </div>
+        <button type="button" class="btn-icon" onclick="App.closeSessionDetailsModal()">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding: 16px;">
+        <!-- Horário e Status -->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <span id="sessionDetailsTimeBadge" class="slot-time-badge" style="font-size: 0.85rem; padding: 4px 10px;">⏰ 08:00 - 09:00</span>
+            <span id="sessionDetailsConflictBadge" class="slot-conflict-tag" style="display: none;">⚠️ Conflito de Horário</span>
+            <span id="sessionDetailsLockedBadge" style="display: none; font-size: 0.78rem; background: var(--bg-tertiary); padding: 3px 8px; border-radius: 12px; font-weight: 600;">🔒 Horário Fixo</span>
+          </div>
+          <button type="button" id="btnSessionDetailsToggleDone" class="btn btn-sm" onclick="App.toggleSessionDetailsCompleted()" style="font-weight: 600;">
+            ✅ Marcar como Feito
+          </button>
+        </div>
+
+        <!-- Tópico de Estudo -->
+        <div style="margin-bottom: 14px; background: var(--bg-tertiary); border-radius: 10px; padding: 12px;">
+          <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 4px; letter-spacing: 0.5px;">
+            📖 Tópico Programado
+          </label>
+          <div id="sessionDetailsTopic" style="font-size: 0.95rem; color: var(--text-main); line-height: 1.45; font-weight: 500;">
+            -
+          </div>
+        </div>
+
+        <!-- Anotações do Aluno -->
+        <div id="sessionDetailsNotesWrapper" style="margin-bottom: 16px; background: var(--bg-secondary); border-radius: 10px; padding: 12px; border: 1px dashed var(--border-color);">
+          <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 4px; letter-spacing: 0.5px;">
+            📝 Anotações Pessoais
+          </label>
+          <div id="sessionDetailsNotes" style="font-size: 0.88rem; color: var(--text-main); line-height: 1.4; white-space: pre-wrap;">
+            Nenhuma anotação nesta sessão.
+          </div>
+        </div>
+
+        <!-- Ações da Sessão -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px;">
+          <button type="button" class="btn btn-secondary btn-sm" id="btnSessionDetailsLock" onclick="App.toggleCurrentSessionLock()" style="font-size: 0.8rem; padding: 8px 6px; justify-content: center;">
+            🔒 Fixar
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="App.editCurrentSession()" style="font-size: 0.8rem; padding: 8px 6px; justify-content: center;">
+            ✏️ Editar
+          </button>
+          <button type="button" class="btn btn-danger-soft btn-sm" onclick="App.deleteCurrentSession()" style="font-size: 0.8rem; padding: 8px 6px; justify-content: center;">
+            🗑️ Excluir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Container de Notificações Toast -->
   <div class="toast-container" id="toastContainer"></div>
 
@@ -4004,7 +4534,7 @@
      * SISTEMA DE VERSÃO E ATUALIZAÇÃO DO APLICATIVO
      * =========================================================================
      */
-    const APP_VERSION = "1.2.0";
+    const APP_VERSION = "1.3.0";
     const REMOTE_VERSION_URL = (typeof window !== 'undefined' && window.location && window.location.hostname === 'localhost')
       ? "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json"
       : "./version.json";
@@ -4453,6 +4983,17 @@
         const selSched = document.getElementById('selectActiveSchedule');
         if (selSched) selSched.addEventListener('change', (e) => App.switchActiveSchedule(e.target.value));
 
+        // Fechar dropdown de ações secundárias ao clicar fora
+        document.addEventListener('click', (e) => {
+          const popover = document.getElementById('schedDropdownPopover');
+          const btnMore = document.getElementById('btnScheduleMoreMenu');
+          if (popover && popover.style.display !== 'none') {
+            if (!popover.contains(e.target) && e.target !== btnMore && !btnMore?.contains(e.target)) {
+              popover.style.display = 'none';
+            }
+          }
+        });
+
         const btnNewSched = document.getElementById('btnOpenNewScheduleModal');
         if (btnNewSched) btnNewSched.addEventListener('click', () => App.openCreateScheduleModal('manual'));
 
@@ -4777,13 +5318,20 @@
           fab.onclick = () => App.openAddSubjectModal();
         } else if (tabId === 'tab-schedule') {
           fab.style.display = 'inline-flex';
-          icon.textContent = '🚀';
-          label.textContent = 'Gerar Cronograma';
-          fab.onclick = () => {
-            App.generateSchedule();
-            const res = document.getElementById('scheduleResultsWrapper');
-            if (res) res.scrollIntoView({ behavior: 'smooth' });
-          };
+          const hasSched = this.schedule && this.schedule.columns && this.schedule.columns.length > 0;
+          if (hasSched) {
+            icon.textContent = '➕';
+            label.textContent = 'Nova Sessão';
+            fab.onclick = () => App.openAddSessionFromFab();
+          } else {
+            icon.textContent = '🚀';
+            label.textContent = 'Gerar Cronograma';
+            fab.onclick = () => {
+              App.generateSchedule();
+              const res = document.getElementById('scheduleResultsWrapper');
+              if (res) res.scrollIntoView({ behavior: 'smooth' });
+            };
+          }
         } else if (tabId === 'tab-upload') {
           fab.style.display = 'inline-flex';
           icon.textContent = '📂';
@@ -5429,10 +5977,15 @@
       },
 
       closeModals() {
-        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+        document.querySelectorAll('.modal-overlay').forEach(m => {
+          m.classList.remove('open');
+          m.classList.add('hidden');
+        });
         this.activeModalSubjectId = null;
         this.activeModalTopicMeta = null;
         this.editingSessionMeta = null;
+        this.activeSessionDetails = null;
+        this.closeScheduleMoreMenu();
       },
 
       /* ========================================================================
@@ -5513,6 +6066,187 @@
         this.saveToStorage();
         this.renderSchedule();
         this.showToast(`Cronograma "${target.name}" ativado!`, 'info');
+      },
+
+      /* Menu de Ações Secundárias (3 pontinhos) e Painel de Ajuste */
+      toggleScheduleMoreMenu(e) {
+        if (e) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        const popover = document.getElementById('schedDropdownPopover');
+        if (!popover) return;
+        const isHidden = popover.style.display === 'none' || !popover.style.display;
+        popover.style.display = isHidden ? 'flex' : 'none';
+      },
+
+      closeScheduleMoreMenu() {
+        const popover = document.getElementById('schedDropdownPopover');
+        if (popover) popover.style.display = 'none';
+      },
+
+      toggleScheduleConfigPanel() {
+        const modeToggle = document.getElementById('scheduleModeToggle');
+        const panelAuto = document.getElementById('panelScheduleAuto');
+        const panelManual = document.getElementById('panelScheduleManual');
+        const primaryBtn = document.getElementById('btnSchedulePrimaryAction');
+        
+        const isCurrentlyOpen = (modeToggle && modeToggle.style.display !== 'none') ||
+                                (panelAuto && panelAuto.style.display !== 'none') ||
+                                (panelManual && panelManual.style.display !== 'none');
+
+        if (isCurrentlyOpen) {
+          if (modeToggle) modeToggle.style.display = 'none';
+          if (panelAuto) panelAuto.style.display = 'none';
+          if (panelManual) panelManual.style.display = 'none';
+          if (primaryBtn) primaryBtn.innerHTML = '⚡ Ajustar';
+        } else {
+          if (modeToggle) modeToggle.style.display = 'flex';
+          if (primaryBtn) primaryBtn.innerHTML = '👁️ Ver Grade';
+          if (this.scheduleMode === 'manual') {
+            if (panelManual) panelManual.style.display = 'block';
+            if (panelAuto) panelAuto.style.display = 'none';
+          } else {
+            if (panelAuto) panelAuto.style.display = 'block';
+            if (panelManual) panelManual.style.display = 'none';
+          }
+        }
+      },
+
+      toggleAutoAdvancedOptions() {
+        const adv = document.getElementById('autoAdvancedOptions');
+        const btn = document.getElementById('btnToggleAdvancedOptions') || document.getElementById('btnToggleAdvanced');
+        if (!adv) return;
+        const isHidden = adv.style.display === 'none' || !adv.style.display;
+        adv.style.display = isHidden ? 'block' : 'none';
+        if (btn) {
+          btn.innerHTML = isHidden 
+            ? '<span>Opções Avançadas (turnos, horários, peso)</span> <span>▲</span>' 
+            : '<span>Opções Avançadas (turnos, horários, peso)</span> <span>▼</span>';
+        }
+      },
+
+      openAddSessionFromFab() {
+        if (this.schedule && this.schedule.columns && this.schedule.columns.length > 0) {
+          const col = this.schedule.columns[this.currentMobileDayIndex] || this.schedule.columns[0];
+          this.openAddSessionModal(col.dia);
+        } else {
+          this.openAddSessionModal();
+        }
+      },
+
+      /* Modal / Bottom Sheet de Detalhes da Sessão */
+      openSessionDetailsModal(dia, slotId) {
+        if (!this.schedule || !this.schedule.columns) return;
+        const col = this.schedule.columns.find(c => c.dia === dia);
+        if (!col) return;
+        const slot = col.slots.find(s => s.slotId === slotId);
+        if (!slot) return;
+
+        this.activeSessionDetails = { dia, slotId, slotKey: slot.slotKey };
+
+        const modal = document.getElementById('modalSessionDetails');
+        const subjEl = document.getElementById('sessionDetailsSubject');
+        const daySlotEl = document.getElementById('sessionDetailsDaySlot');
+        const colorDot = document.getElementById('sessionDetailsColorDot');
+        const timeBadge = document.getElementById('sessionDetailsTimeBadge');
+        const conflictBadge = document.getElementById('sessionDetailsConflictBadge');
+        const lockedBadge = document.getElementById('sessionDetailsLockedBadge');
+        const doneBtn = document.getElementById('btnSessionDetailsToggleDone');
+        const topicEl = document.getElementById('sessionDetailsTopic');
+        const notesEl = document.getElementById('sessionDetailsNotes');
+        const lockBtn = document.getElementById('btnSessionDetailsLock');
+
+        const pal = this.getPalette(slot.paletteId);
+        const isCompleted = !!this.completedSlots[slot.slotKey];
+        const isLocked = !!(slot.isLocked || slot.locked);
+        const hasConflict = this.hasSlotConflictInSchedule(dia, slot);
+
+        if (colorDot) colorDot.style.background = pal.text || 'var(--primary)';
+        if (subjEl) subjEl.textContent = slot.subjectName;
+        if (daySlotEl) daySlotEl.textContent = `${dia} • Sessão ${slot.slotNumber || 1}`;
+
+        if (timeBadge) {
+          timeBadge.textContent = slot.startTime
+            ? `⏰ ${slot.startTime}${slot.endTime ? ' - ' + slot.endTime : ''} (${slot.duration || 60} min)`
+            : `⏱️ ${slot.duration || this.schedule.blockDuration || 60} minutos`;
+        }
+
+        if (conflictBadge) conflictBadge.style.display = hasConflict ? 'inline-block' : 'none';
+        if (lockedBadge) lockedBadge.style.display = isLocked ? 'inline-block' : 'none';
+
+        if (doneBtn) {
+          if (isCompleted) {
+            doneBtn.className = 'btn btn-success btn-sm';
+            doneBtn.innerHTML = '✅ Concluído';
+          } else {
+            doneBtn.className = 'btn btn-secondary btn-sm';
+            doneBtn.innerHTML = '☐ Marcar como Feito';
+          }
+        }
+
+        if (topicEl) topicEl.textContent = slot.topic || '(Nenhum tópico específico definido)';
+        if (notesEl) notesEl.textContent = slot.notes || 'Nenhuma anotação nesta sessão.';
+
+        if (lockBtn) {
+          lockBtn.innerHTML = isLocked ? '🔓 Desbloquear' : '🔒 Fixar';
+        }
+
+        if (modal) modal.classList.remove('hidden');
+      },
+
+      closeSessionDetailsModal() {
+        const modal = document.getElementById('modalSessionDetails');
+        if (modal) modal.classList.add('hidden');
+        this.activeSessionDetails = null;
+      },
+
+      toggleSessionDetailsCompleted() {
+        if (!this.activeSessionDetails) return;
+        const { slotKey } = this.activeSessionDetails;
+        this.toggleSlotCompleted(slotKey);
+
+        const doneBtn = document.getElementById('btnSessionDetailsToggleDone');
+        const isCompleted = !!this.completedSlots[slotKey];
+        if (doneBtn) {
+          if (isCompleted) {
+            doneBtn.className = 'btn btn-success btn-sm';
+            doneBtn.innerHTML = '✅ Concluído';
+          } else {
+            doneBtn.className = 'btn btn-secondary btn-sm';
+            doneBtn.innerHTML = '☐ Marcar como Feito';
+          }
+        }
+      },
+
+      toggleCurrentSessionLock() {
+        if (!this.activeSessionDetails) return;
+        const { dia, slotId } = this.activeSessionDetails;
+        this.toggleSlotLock(dia, slotId);
+
+        const col = this.schedule?.columns?.find(c => c.dia === dia);
+        const slot = col?.slots?.find(s => s.slotId === slotId);
+        const isLocked = slot ? !!(slot.isLocked || slot.locked) : false;
+
+        const lockBtn = document.getElementById('btnSessionDetailsLock');
+        if (lockBtn) lockBtn.innerHTML = isLocked ? '🔓 Desbloquear' : '🔒 Fixar';
+
+        const lockedBadge = document.getElementById('sessionDetailsLockedBadge');
+        if (lockedBadge) lockedBadge.style.display = isLocked ? 'inline-block' : 'none';
+      },
+
+      editCurrentSession() {
+        if (!this.activeSessionDetails) return;
+        const { dia, slotId } = this.activeSessionDetails;
+        this.closeSessionDetailsModal();
+        this.openEditSessionModal(dia, slotId);
+      },
+
+      deleteCurrentSession() {
+        if (!this.activeSessionDetails) return;
+        const { dia, slotId } = this.activeSessionDetails;
+        this.closeSessionDetailsModal();
+        this.deleteSession(dia, slotId);
       },
 
       setScheduleMode(mode, saveType = true) {
@@ -7213,7 +7947,7 @@
         }
       },
 
-      /* 6. Renderização da Grade de Estudos (Desktop & Mobile) */
+      /* 6. Renderização da Grade de Estudos (Desktop & Mobile - Clean UI) */
       renderSchedule() {
         this.renderScheduleManagerBar();
 
@@ -7224,6 +7958,7 @@
         if (!this.schedule || !this.schedule.columns || this.schedule.columns.length === 0) {
           if (wrapper) wrapper.style.display = 'none';
           if (emptyState) emptyState.style.display = 'block';
+          this.updateFab(this.activeTab);
           return;
         }
 
@@ -7239,11 +7974,14 @@
         } else if (totalSessionsCount === 0) {
           if (wrapper) wrapper.style.display = 'none';
           if (emptyState) emptyState.style.display = 'block';
+          this.updateFab(this.activeTab);
           return;
         } else {
           if (emptyState) emptyState.style.display = 'none';
           if (wrapper) wrapper.style.display = 'block';
         }
+
+        this.updateFab(this.activeTab);
 
         container.innerHTML = '';
         container.style.gridTemplateColumns = `repeat(${this.schedule.columns.length}, minmax(190px, 1fr))`;
@@ -7270,55 +8008,48 @@
             const pal = this.getPalette(slot.paletteId);
             const isCompleted = !!this.completedSlots[slot.slotKey];
             const hasConflict = this.hasSlotConflictInSchedule(colData.dia, slot);
-            const isLocked = !!slot.locked;
+            const isLocked = !!(slot.isLocked || slot.locked);
 
             const slotCard = document.createElement('div');
-            slotCard.className = `schedule-slot-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`;
+            slotCard.className = `clean-slot-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`;
             slotCard.id = `card-${slot.slotKey}`;
-            slotCard.style.backgroundColor = pal.bg;
-            slotCard.style.borderColor = pal.border;
+            slotCard.style.borderLeftColor = pal.border || 'var(--primary)';
+            slotCard.style.background = pal.bg;
             slotCard.style.color = pal.text;
             slotCard.draggable = true;
 
             slotCard.ondragstart = (e) => App.handleSlotDragStart(e, colData.dia, slot.slotId);
             slotCard.ondragend = (e) => App.handleSlotDragEnd(e);
 
-            const timeBadge = slot.startTime
-              ? `<span class="slot-time-badge">⏰ ${slot.startTime}${slot.endTime ? ' - ' + slot.endTime : ''}</span>`
-              : `<span>${slot.duration || this.schedule.blockDuration || 60} min</span>`;
+            slotCard.onclick = (e) => {
+              if (e.target && e.target.type === 'checkbox') return;
+              App.openSessionDetailsModal(colData.dia, slot.slotId);
+            };
 
-            const conflictBadge = hasConflict
-              ? `<span class="slot-conflict-tag" title="Este horário colide com outra sessão no mesmo dia">⚠️ Conflito</span>`
-              : '';
-
-            const notesHtml = slot.notes
-              ? `<div class="slot-notes-desc">📝 ${App.escapeHtml(slot.notes)}</div>`
-              : '';
+            const timeBadgeText = slot.startTime
+              ? `⏰ ${slot.startTime}${slot.endTime ? ' - ' + slot.endTime : ''}`
+              : `⏱️ ${slot.duration || this.schedule.blockDuration || 60} min`;
 
             slotCard.innerHTML = `
-              <div class="slot-meta">
-                <span>SESSÃO ${slot.slotNumber}</span>
-                ${timeBadge}
-                ${conflictBadge}
-                <div class="slot-card-actions">
-                  <button class="slot-action-btn ${isLocked ? 'locked' : ''}" title="${isLocked ? 'Desbloquear sessão (livre para reorganização)' : 'Travar sessão neste dia/horário'}" onclick="event.stopPropagation(); App.toggleSlotLock('${colData.dia}', '${slot.slotId}', event)">${isLocked ? '🔒' : '🔓'}</button>
-                  <button class="slot-action-btn" title="Editar sessão" onclick="event.stopPropagation(); App.openEditSessionModal('${colData.dia}', '${slot.slotId}')">✏️</button>
-                  <button class="slot-action-btn" title="Excluir sessão" onclick="event.stopPropagation(); App.deleteSession('${colData.dia}', '${slot.slotId}')">🗑️</button>
+              <div class="clean-slot-header">
+                <div class="clean-slot-meta">
+                  <span class="clean-slot-time">${timeBadgeText}</span>
+                  ${isLocked ? '<span class="clean-slot-tag" title="Horário fixo (bloqueado)">🔒</span>' : ''}
+                  ${hasConflict ? '<span class="clean-slot-tag conflict" title="Conflito de horário">⚠️</span>' : ''}
                 </div>
+                <input type="checkbox" class="clean-slot-check" ${isCompleted ? 'checked' : ''} 
+                       title="${isCompleted ? 'Desmarcar' : 'Concluir'}" 
+                       onclick="event.stopPropagation();" 
+                       onchange="App.toggleSlotCompleted('${slot.slotKey}')">
               </div>
-              <div class="slot-subject-title">${App.escapeHtml(slot.subjectName)}</div>
-              <div class="slot-topic-desc" title="${App.escapeHtml(slot.topic)}">${App.escapeHtml(slot.topic)}</div>
-              ${notesHtml}
-              <label class="slot-checkbox-label">
-                <input type="checkbox" ${isCompleted ? 'checked' : ''} onchange="App.toggleSlotCompleted('${slot.slotKey}')">
-                <span>${isCompleted ? 'Concluído' : 'Marcar como feito'}</span>
-              </label>
+              <div class="clean-slot-title">${App.escapeHtml(slot.subjectName)}</div>
+              <div class="clean-slot-topic">${App.escapeHtml(slot.topic || 'Estudo e resolução de questões')}</div>
             `;
 
             bodyEl.appendChild(slotCard);
           });
 
-          // Botão rápido para adicionar sessão nesta coluna específica
+          // Botão limpo para adicionar sessão nesta coluna específica
           const addBtn = document.createElement('button');
           addBtn.type = 'button';
           addBtn.className = 'col-add-session-btn';
@@ -7357,29 +8088,17 @@
         // Atualiza card no desktop
         const deskCard = document.getElementById(`card-${slotKey}`);
         if (deskCard) {
-          if (isDone) {
-            deskCard.classList.add('completed');
-            deskCard.querySelector('.slot-checkbox-label span').textContent = 'Concluído';
-            deskCard.querySelector('input[type="checkbox"]').checked = true;
-          } else {
-            deskCard.classList.remove('completed');
-            deskCard.querySelector('.slot-checkbox-label span').textContent = 'Marcar como feito';
-            deskCard.querySelector('input[type="checkbox"]').checked = false;
-          }
+          deskCard.classList.toggle('completed', isDone);
+          const chk = deskCard.querySelector('input[type="checkbox"]');
+          if (chk) chk.checked = isDone;
         }
 
         // Atualiza card no mobile
         const mobCard = document.getElementById(`mob-card-${slotKey}`);
         if (mobCard) {
-          if (isDone) {
-            mobCard.classList.add('completed');
-            mobCard.querySelector('.slot-checkbox-label span').textContent = 'Concluído';
-            mobCard.querySelector('input[type="checkbox"]').checked = true;
-          } else {
-            mobCard.classList.remove('completed');
-            mobCard.querySelector('.slot-checkbox-label span').textContent = 'Marcar como feito';
-            mobCard.querySelector('input[type="checkbox"]').checked = false;
-          }
+          mobCard.classList.toggle('completed', isDone);
+          const chk = mobCard.querySelector('input[type="checkbox"]');
+          if (chk) chk.checked = isDone;
         }
 
         // Atualiza métricas de progresso e revisões espaçadas
@@ -7404,11 +8123,17 @@
         const pillsBar = document.getElementById('mobileDayPillsBar');
         if (!pillsBar || !this.schedule || !this.schedule.columns) return;
 
+        const dayIdx = new Date().getDay();
+        const dayPrefixes = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb', 'sab'];
+        const curPrefix = dayPrefixes[dayIdx];
+
         pillsBar.innerHTML = '';
         this.schedule.columns.forEach((col, idx) => {
+          const isToday = col.dia.toLowerCase().startsWith(curPrefix) || 
+                          (dayIdx === 6 && col.dia.toLowerCase().includes('sab'));
           const pill = document.createElement('button');
-          pill.className = `mobile-day-pill ${idx === this.currentMobileDayIndex ? 'active' : ''}`;
-          pill.textContent = col.dia;
+          pill.className = `mobile-day-pill ${idx === this.currentMobileDayIndex ? 'active' : ''} ${isToday ? 'today-highlight' : ''}`;
+          pill.innerHTML = isToday ? `${col.dia} <small style="font-size:0.65rem;opacity:0.85;">(Hoje)</small>` : col.dia;
           pill.onclick = () => App.setMobileScheduleDay(idx);
           pillsBar.appendChild(pill);
         });
@@ -7470,62 +8195,68 @@
 
         slotsList.innerHTML = '';
 
-        // Botão para adicionar sessão diretamente neste dia no mobile
-        const topAddBtn = document.createElement('button');
-        topAddBtn.type = 'button';
-        topAddBtn.className = 'col-add-session-btn';
-        topAddBtn.style.marginBottom = '12px';
-        topAddBtn.innerHTML = `➕ Adicionar Sessão em ${currentCol.dia}`;
-        topAddBtn.onclick = () => App.openAddSessionModal(currentCol.dia);
-        slotsList.appendChild(topAddBtn);
-
-        currentCol.slots.forEach(slot => {
-          const pal = this.getPalette(slot.paletteId);
-          const isCompleted = !!this.completedSlots[slot.slotKey];
-          const isLocked = !!slot.isLocked;
-          const hasConflict = this.hasSlotConflictInSchedule(currentCol.dia, slot);
-
-          const slotCard = document.createElement('div');
-          slotCard.className = `schedule-slot-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`;
-          slotCard.id = `mob-card-${slot.slotKey}`;
-          slotCard.style.backgroundColor = pal.bg;
-          slotCard.style.borderColor = pal.border;
-          slotCard.style.color = pal.text;
-
-          const timeBadge = slot.startTime
-            ? `<span class="slot-time-badge">⏰ ${slot.startTime}${slot.endTime ? ' - ' + slot.endTime : ''}</span>`
-            : `<span>${slot.duration || this.schedule.blockDuration || 60} min</span>`;
-
-          const conflictBadge = hasConflict
-            ? `<span class="slot-conflict-tag">⚠️ Conflito</span>`
-            : '';
-
-          const notesHtml = slot.notes
-            ? `<div class="slot-notes-desc">📝 ${App.escapeHtml(slot.notes)}</div>`
-            : '';
-
-          slotCard.innerHTML = `
-            <div class="slot-meta">
-              <span>SESSÃO ${slot.slotNumber}</span>
-              ${timeBadge}
-              ${conflictBadge}
-              <div class="slot-card-actions">
-                <button class="slot-action-btn ${isLocked ? 'slot-lock-active' : ''}" title="${isLocked ? 'Desbloquear horário' : 'Bloquear (fixar) este horário ao regerar'}" onclick="event.stopPropagation(); App.toggleSlotLock('${currentCol.dia}', '${slot.slotId}', event)">${isLocked ? '🔒' : '🔓'}</button>
-                <button class="slot-action-btn" title="Editar sessão" onclick="event.stopPropagation(); App.openEditSessionModal('${currentCol.dia}', '${slot.slotId}')">✏️</button>
-                <button class="slot-action-btn" title="Excluir sessão" onclick="event.stopPropagation(); App.deleteSession('${currentCol.dia}', '${slot.slotId}')">🗑️</button>
-              </div>
-            </div>
-            <div class="slot-subject-title">${App.escapeHtml(slot.subjectName)}</div>
-            <div class="slot-topic-desc" title="${App.escapeHtml(slot.topic)}">${App.escapeHtml(slot.topic)}</div>
-            ${notesHtml}
-            <label class="slot-checkbox-label">
-              <input type="checkbox" ${isCompleted ? 'checked' : ''} onchange="App.toggleSlotCompleted('${slot.slotKey}')">
-              <span>${isCompleted ? 'Concluído' : 'Marcar como feito'}</span>
-            </label>
+        if (!currentCol.slots || currentCol.slots.length === 0) {
+          const emptyDay = document.createElement('div');
+          emptyDay.style.textAlign = 'center';
+          emptyDay.style.padding = '30px 15px';
+          emptyDay.style.color = 'var(--text-muted)';
+          emptyDay.innerHTML = `
+            <div style="font-size: 2rem; margin-bottom: 8px;">☕</div>
+            <div style="font-weight: 600; font-size: 0.95rem;">Nenhuma sessão para este dia</div>
+            <div style="font-size: 0.8rem; margin-top: 4px;">Aproveite para descansar ou adicione uma sessão abaixo.</div>
           `;
+          slotsList.appendChild(emptyDay);
+        } else {
+          currentCol.slots.forEach(slot => {
+            const pal = this.getPalette(slot.paletteId);
+            const isCompleted = !!this.completedSlots[slot.slotKey];
+            const isLocked = !!(slot.isLocked || slot.locked);
+            const hasConflict = this.hasSlotConflictInSchedule(currentCol.dia, slot);
 
-          slotsList.appendChild(slotCard);
-        });
+            const slotCard = document.createElement('div');
+            slotCard.className = `clean-slot-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`;
+            slotCard.id = `mob-card-${slot.slotKey}`;
+            slotCard.style.borderLeftColor = pal.border || 'var(--primary)';
+            slotCard.style.background = pal.bg;
+            slotCard.style.color = pal.text;
+
+            slotCard.onclick = (e) => {
+              if (e.target && e.target.type === 'checkbox') return;
+              App.openSessionDetailsModal(currentCol.dia, slot.slotId);
+            };
+
+            const timeBadgeText = slot.startTime
+              ? `⏰ ${slot.startTime}${slot.endTime ? ' - ' + slot.endTime : ''}`
+              : `⏱️ ${slot.duration || this.schedule.blockDuration || 60} min`;
+
+            slotCard.innerHTML = `
+              <div class="clean-slot-header">
+                <div class="clean-slot-meta">
+                  <span class="clean-slot-time">${timeBadgeText}</span>
+                  ${isLocked ? '<span class="clean-slot-tag" title="Horário fixo (bloqueado)">🔒</span>' : ''}
+                  ${hasConflict ? '<span class="clean-slot-tag conflict" title="Conflito de horário">⚠️</span>' : ''}
+                </div>
+                <input type="checkbox" class="clean-slot-check" ${isCompleted ? 'checked' : ''} 
+                       title="${isCompleted ? 'Desmarcar' : 'Concluir'}" 
+                       onclick="event.stopPropagation();" 
+                       onchange="App.toggleSlotCompleted('${slot.slotKey}')">
+              </div>
+              <div class="clean-slot-title">${App.escapeHtml(slot.subjectName)}</div>
+              <div class="clean-slot-topic">${App.escapeHtml(slot.topic || 'Estudo e resolução de questões')}</div>
+            `;
+
+            slotsList.appendChild(slotCard);
+          });
+        }
+
+        // Botão limpo no rodapé do dia
+        const bottomAddBtn = document.createElement('button');
+        bottomAddBtn.type = 'button';
+        bottomAddBtn.className = 'col-add-session-btn';
+        bottomAddBtn.style.marginTop = '10px';
+        bottomAddBtn.innerHTML = `➕ Adicionar Sessão em ${currentCol.dia}`;
+        bottomAddBtn.onclick = () => App.openAddSessionModal(currentCol.dia);
+        slotsList.appendChild(bottomAddBtn);
       },
 
       initSwipeListeners() {
@@ -7770,18 +8501,34 @@
 
       renderExamCountdown() {
         const card = document.getElementById('examCountdownCard');
-        if (!card) return;
+        const chip = document.getElementById('chipExamCountdown');
+        const chipText = document.getElementById('chipExamText');
+
         if (!this.examDate) {
-          card.classList.add('hidden');
+          if (card) card.classList.add('hidden');
+          if (chip) chip.classList.add('hidden');
           return;
         }
 
         const days = this.calculateDaysToExam(this.examDate);
         if (days === null) {
-          card.classList.add('hidden');
+          if (card) card.classList.add('hidden');
+          if (chip) chip.classList.add('hidden');
           return;
         }
 
+        if (chip && chipText) {
+          chip.classList.remove('hidden');
+          if (days < 0) {
+            chipText.textContent = 'Prova realizada';
+          } else if (days === 0) {
+            chipText.textContent = 'Prova é hoje! 🎯';
+          } else {
+            chipText.textContent = `${days}d para a prova`;
+          }
+        }
+
+        if (!card) return;
         card.classList.remove('hidden');
         const titleEl = document.getElementById('examTitleDisplay');
         const daysEl = document.getElementById('examDaysNumber');
@@ -7908,7 +8655,7 @@
         }
       },
 
-      /* Barra de Progresso / Cumprimento Semanal */
+      /* Barra de Progresso / Cumprimento Semanal (Compact Clean) */
       renderScheduleProgress() {
         const cont = document.getElementById('scheduleProgressContainer');
         if (!cont) return;
@@ -7945,19 +8692,12 @@
         const doneHours = (completedMinutes / 60).toFixed(1);
 
         cont.innerHTML = `
-          <div class="progress-card">
-            <div class="progress-card-header">
-              <span class="progress-card-title">📊 Cumprimento Semanal</span>
-              <span class="progress-card-pct">${pct}%</span>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill" style="width: ${pct}%;"></div>
-            </div>
-            <div class="progress-stats">
-              <span><b>${completedCount}</b> de <b>${totalSlots}</b> blocos concluídos</span>
-              <span><b>${doneHours}h</b> / <b>${totalHours}h</b> cumpridas</span>
-            </div>
+          <div class="progress-compact-bar" title="${pct}% concluído">
+            <div class="progress-compact-fill" style="width: ${pct}%;"></div>
           </div>
+          <span class="progress-compact-text">
+            <b>${completedCount}/${totalSlots}</b> sessões (${pct}%) • <b>${doneHours}h</b> de ${totalHours}h cumpridas
+          </span>
         `;
       },
 
@@ -8010,18 +8750,31 @@
         const card = document.getElementById('spacedReviewsCard');
         const list = document.getElementById('spacedReviewsList');
         const badge = document.getElementById('spacedReviewsBadge');
-        if (!card || !list) return;
+        const chip = document.getElementById('chipSpacedReviews');
+        const chipText = document.getElementById('chipSpacedText');
 
         if (!this.spacedReviews || this.spacedReviews.length === 0) {
-          card.classList.add('hidden');
+          if (card) card.classList.add('hidden');
+          if (chip) chip.classList.add('hidden');
           return;
         }
-
-        card.classList.remove('hidden');
 
         const todayStr = new Date().toISOString().split('T')[0];
         const pending = this.spacedReviews.filter(r => !r.completed);
         const countDue = pending.filter(r => r.dueDate <= todayStr).length;
+
+        if (chip && chipText) {
+          chip.classList.remove('hidden');
+          if (countDue > 0) {
+            chipText.textContent = `${countDue} revisão(ões) hoje`;
+          } else if (pending.length > 0) {
+            chipText.textContent = `${pending.length} pendentes`;
+          } else {
+            chipText.textContent = 'Revisões em dia ✨';
+          }
+        }
+
+        if (!card || !list) return;
 
         if (badge) {
           if (countDue > 0) {
@@ -8074,11 +8827,18 @@
       },
 
       toggleSpacedReviewsCollapse() {
+        const card = document.getElementById('spacedReviewsCard');
         const list = document.getElementById('spacedReviewsList');
         const icon = document.getElementById('spacedCollapseIcon');
-        if (!list) return;
-        const isCollapsed = list.classList.toggle('collapsed');
-        if (icon) icon.textContent = isCollapsed ? '▶' : '▼';
+        if (!card) return;
+        if (card.classList.contains('hidden')) {
+          card.classList.remove('hidden');
+          if (list) list.classList.remove('collapsed');
+          if (icon) icon.textContent = '▼';
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          card.classList.add('hidden');
+        }
       },
 
       /* Pomodoro Timer Integrado */
