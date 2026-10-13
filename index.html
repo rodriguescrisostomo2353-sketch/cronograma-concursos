@@ -1045,10 +1045,13 @@
     /* Grade em Colunas */
     .schedule-grid {
       display: grid;
-      gap: 14px;
-      align-items: stretch;
+      gap: 12px;
+      align-items: start;
       overflow-x: auto;
-      padding-bottom: 16px;
+      padding-bottom: 12px;
+      width: 100%;
+      box-sizing: border-box;
+      -webkit-overflow-scrolling: touch;
     }
 
     .schedule-column {
@@ -1059,47 +1062,65 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      min-width: 220px;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .schedule-col-header {
-      padding: 14px 16px;
+      padding: 12px 14px;
       background: var(--bg-subtle);
       border-bottom: 1px solid var(--border-color);
       text-align: center;
+      box-sizing: border-box;
+      width: 100%;
+      min-width: 0;
     }
 
     .schedule-col-header h4 {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 700;
       color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
     }
 
     .schedule-col-header span {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
       font-weight: 500;
     }
 
     .schedule-col-body {
-      padding: 12px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       flex: 1;
       background: var(--bg-card);
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
     /* Bloco de Sessão / Matéria no Cronograma */
     .schedule-slot-card {
       border-radius: var(--radius-md);
-      padding: 12px;
+      padding: 10px 12px;
       border: 1px solid transparent;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
       transition: var(--transition);
       position: relative;
+      box-sizing: border-box;
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     .schedule-slot-card:hover {
@@ -1114,23 +1135,36 @@
       font-size: 0.725rem;
       font-weight: 600;
       opacity: 0.85;
+      min-width: 0;
+      width: 100%;
     }
 
     .slot-subject-title {
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       font-weight: 700;
-      line-height: 1.3;
-    }
-
-    .slot-topic-desc {
-      font-size: 0.78rem;
-      line-height: 1.35;
-      opacity: 0.9;
+      line-height: 1.25;
       display: -webkit-box;
-      -webkit-line-clamp: 4;
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      max-height: 2.5em;
+    }
+
+    .slot-topic-desc {
+      font-size: 0.74rem;
+      line-height: 1.25;
+      opacity: 0.9;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      max-height: 2.5em;
       margin-top: 2px;
     }
 
@@ -2135,6 +2169,11 @@
       cursor: pointer;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
       position: relative;
+      box-sizing: border-box;
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
     }
     .clean-slot-card:hover {
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -2149,6 +2188,7 @@
       justify-content: space-between;
       width: 100%;
       gap: 6px;
+      min-width: 0;
     }
     .clean-slot-meta {
       display: flex;
@@ -2163,6 +2203,7 @@
       font-weight: 700;
       color: var(--text-muted);
       line-height: 1;
+      white-space: nowrap;
     }
     .clean-slot-tag {
       font-size: 0.74rem;
@@ -2177,19 +2218,31 @@
       flex-shrink: 0;
     }
     .clean-slot-title {
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 700;
       color: var(--text-main);
       line-height: 1.25;
-      word-break: break-word;
-    }
-    .clean-slot-topic {
-      font-size: 0.73rem;
-      color: var(--text-muted);
-      line-height: 1.2;
-      white-space: nowrap;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      max-height: 2.5em;
+    }
+    .clean-slot-topic {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      line-height: 1.25;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      max-height: 2.5em;
       opacity: 0.9;
     }
     .clean-slot-card.completed {
@@ -2201,6 +2254,114 @@
     }
     .clean-slot-card.locked {
       box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.4);
+    }
+
+    /* Modal de Pré-Visualização com Topo Fixo e Rodapé Fixo */
+    .modal-preview-card {
+      max-width: 1040px;
+      width: 96vw;
+      max-height: 92vh;
+      height: 92vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 0 !important;
+      border-radius: var(--radius-lg);
+    }
+    .modal-preview-header {
+      padding: 14px 20px 10px 20px;
+      border-bottom: 1px solid var(--border-color);
+      flex-shrink: 0;
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .preview-modal-top {
+      padding: 10px 20px;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-color);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .preview-modal-body {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      overflow-x: auto;
+      min-height: 0;
+      padding: 14px 20px;
+      -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
+    }
+    .modal-preview-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border-color);
+      flex-shrink: 0;
+      background: var(--bg-card);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      position: sticky;
+      bottom: 0;
+      z-index: 10;
+    }
+    .preview-capacity-pill {
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .preview-capacity-pill.shortage {
+      border-color: #f59e0b;
+      color: #b45309;
+      background: rgba(245, 158, 11, 0.08);
+    }
+    .preview-mobile-tabs {
+      display: none;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .preview-tab-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-main);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+    .preview-tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+    }
+    @media (max-width: 768px) {
+      .preview-mobile-tabs {
+        display: flex;
+      }
+      .modal-preview-card {
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+      }
     }
 
     /* Modal / Bottom Sheet de Detalhes da Sessão */
@@ -5235,8 +5396,8 @@
 
   <!-- Modal: Pré-Visualização do Cronograma Automático (Parte B) -->
   <div class="modal-overlay" id="modalSchedulePreview">
-    <div class="modal-card" style="max-width: 980px; width: 95vw;">
-      <div class="modal-header">
+    <div class="modal-card modal-preview-card">
+      <div class="modal-header modal-preview-header">
         <div>
           <h3 style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
             👁️ Pré-Visualização do Cronograma Gerado
@@ -5248,9 +5409,10 @@
         <button class="btn-icon" onclick="App.closeModals()">✕</button>
       </div>
 
-      <div class="preview-modal-body">
+      <!-- Topo Fixo com Métricas e Aviso de Capacidade -->
+      <div class="preview-modal-top">
         <!-- Barra de resumo de métricas do preview -->
-        <div class="preview-stats-bar">
+        <div class="preview-stats-bar" style="margin: 0;">
           <span>Sessões Semanais: <strong class="preview-stats-pill" id="previewTotalSessions">0</strong></span>
           <span>•</span>
           <span>Horas Semanais: <strong class="preview-stats-pill" id="previewTotalHours">0h</strong></span>
@@ -5261,15 +5423,48 @@
           </span>
         </div>
 
-        <!-- Alerta de conflito / ajuste no preview (se houver) -->
-        <div id="previewConflictNotice" class="config-diagnosis-box warning" style="display: none; margin-bottom: 16px;"></div>
+        <!-- Banner Fixo de Ajuste de Capacidade com Ações Rápidas -->
+        <div id="previewConflictNotice" class="config-diagnosis-box warning" style="display: none; margin: 0; padding: 10px 14px; border-radius: 8px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+            <div id="previewCapacityTitle" style="font-weight: 700; font-size: 0.85rem; color: #b45309; display: flex; align-items: center; gap: 6px;">
+              ⚠️ Só couberam 12 de 34 sessões pedidas
+            </div>
+            <span style="font-size: 0.74rem; color: var(--text-muted);">Ajuste o cronograma com as ações abaixo:</span>
+          </div>
+
+          <!-- Pílulas de Distribuição por Matéria -->
+          <div id="previewCapacityBreakdown" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;"></div>
+
+          <!-- 4 Botões de Ação Rápida -->
+          <div class="preview-quick-actions" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
+            <button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 3px 8px;" onclick="App.quickAdjustPreviewCapacity('add_block')">
+              ➕ +1 bloco/dia
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 3px 8px;" onclick="App.quickAdjustPreviewCapacity('add_time')">
+              ⏱️ +30 min/dia
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 3px 8px;" onclick="App.quickAdjustPreviewCapacity('add_day')">
+              📅 +1 dia de estudo
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 3px 8px;" onclick="App.quickAdjustPreviewCapacity('fit_frequencies')">
+              🎯 Reduzir frequências
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Corpo com Rolagem Segura da Grade -->
+      <div class="preview-modal-body">
+        <!-- Navegação Mobile por Abas de Dias (aparece apenas em telas pequenas) -->
+        <div id="previewMobileDayTabs" class="preview-mobile-tabs"></div>
 
         <!-- Grade Semanal de Pré-Visualização -->
-        <div class="schedule-desktop-view">
+        <div class="schedule-desktop-view" style="width: 100%;">
           <div id="previewGridContainer" class="schedule-grid" style="margin-bottom: 6px;">
             <!-- Renderizado dinamicamente via JS -->
           </div>
         </div>
+
         <!-- Opção de Destino: Salvar como Novo ou Substituir Atual -->
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 14px; padding: 12px 16px; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.85rem;">
           <span style="font-weight: 700; color: var(--text-main);">Destino ao Salvar:</span>
@@ -5286,7 +5481,8 @@
         </div>
       </div>
 
-      <div class="modal-footer" style="justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+      <!-- Rodapé Paginado e Sempre Visível -->
+      <div class="modal-footer modal-preview-footer">
         <button type="button" class="btn btn-secondary" id="btnPreviewAdjustConfig">
           ⚙️ Ajustar Configurações
         </button>
@@ -6541,7 +6737,7 @@
      * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.6.0";
+    const APP_VERSION = "1.6.1";
     const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
     const REMOTE_VERSION_URL = UPDATE_URL; // Mantido para compatibilidade
     const GITHUB_RELEASES_URL = "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases";
@@ -7901,42 +8097,85 @@
       },
 
       /* Lista de disciplinas conhecidas para identificação de cabeçalhos de edital */
+      /* Lista de disciplinas conhecidas para identificação de cabeçalhos de edital (PROBLEMA 3) */
       KNOWN_SUBJECTS: [
-        'LÍNGUA PORTUGUESA', 'PORTUGUÊS', 'LÍNGUA INGLESA', 'INGLÊS',
+        'LÍNGUA PORTUGUESA', 'PORTUGUÊS', 'LÍNGUA INGLESA', 'INGLÊS', 'LÍNGUA ESPANHOLA', 'ESPANHOL',
         'DIREITO CONSTITUCIONAL', 'DIREITO ADMINISTRATIVO', 'DIREITO PENAL',
         'DIREITO PROCESSUAL PENAL', 'DIREITO CIVIL', 'DIREITO PROCESSUAL CIVIL',
         'DIREITO TRIBUTÁRIO', 'DIREITO PREVIDENCIÁRIO', 'DIREITO DO TRABALHO',
         'DIREITO PROCESSUAL DO TRABALHO', 'DIREITO ELEITORAL', 'DIREITO FINANCEIRO',
-        'RACIOCÍNIO LÓGICO', 'RACIOCÍNIO LÓGICO-MATEMÁTICO', 'MATEMÁTICA',
-        'MATEMÁTICA FINANCEIRA', 'ESTATÍSTICA', 'INFORMÁTICA',
-        'NOÇÕES DE INFORMÁTICA', 'TECNOLOGIA DA INFORMAÇÃO', 'LEGISLAÇÃO APLICADA',
-        'LEGISLAÇÃO ESPECÍFICA', 'ÉTICA NO SERVIÇO PÚBLICO', 'ÉTICA E CONDUTA',
-        'ADMINISTRAÇÃO PÚBLICA', 'GESTÃO PÚBLICA', 'CONTABILIDADE GERAL',
-        'CONTABILIDADE PÚBLICA', 'ADMINISTRAÇÃO FINANCEIRA E ORÇAMENTÁRIA',
-        'AFO', 'ATUALIDADES', 'GEOGRAFIA', 'HISTÓRIA', 'CONHECIMENTOS GERAIS'
+        'DIREITO AMBIENTAL', 'DIREITOS HUMANOS', 'DIREITO DA CRIANÇA E DO ADOLESCENTE',
+        'RACIOCÍNIO LÓGICO', 'RACIOCÍNIO LÓGICO-MATEMÁTICO', 'MATEMÁTICA E RACIOCÍNIO LÓGICO',
+        'MATEMÁTICA', 'MATEMÁTICA FINANCEIRA', 'ESTATÍSTICA BÁSICA', 'ESTATÍSTICA DESCRITIVA', 'ESTATÍSTICA',
+        'INFORMÁTICA BÁSICA', 'INFORMÁTICA APLICADA', 'NOÇÕES DE INFORMÁTICA', 'INFORMÁTICA',
+        'TECNOLOGIA DA INFORMAÇÃO', 'LEGISLAÇÃO APLICADA', 'LEGISLAÇÃO ESPECÍFICA', 'LEGISLAÇÃO INSTITUCIONAL',
+        'ÉTICA NO SERVIÇO PÚBLICO', 'ÉTICA E CONDUTA', 'ADMINISTRAÇÃO PÚBLICA', 'GESTÃO PÚBLICA',
+        'ADMINISTRAÇÃO GERAL', 'CONTABILIDADE GERAL', 'CONTABILIDADE PÚBLICA', 'CONTABILIDADE DE CUSTOS',
+        'ADMINISTRAÇÃO FINANCEIRA E ORÇAMENTÁRIA', 'AFO', 'ATUALIDADES', 'GEOGRAFIA', 'HISTÓRIA',
+        'CONHECIMENTOS GERAIS', 'CONHECIMENTOS ESPECÍFICOS', 'CONHECIMENTOS BÁSICOS'
       ],
 
-      /* Identifica se uma linha é título de matéria */
-      isSubjectHeader(line) {
+      /* Extrai o nome da matéria e o eventual texto restante na mesma linha (PROBLEMA 3) */
+      extractSubjectHeaderAndRemainder(line) {
         if (!line || typeof line !== 'string') return null;
-        const clean = line.replace(/^[0-9\.\-\:\s]+/, '').trim().toUpperCase();
+        const trimmed = line.trim();
+        if (!trimmed) return null;
 
-        // 1. Coincidência direta com disciplina conhecida
+        // Remove marcadores iniciais de número ou rótulos como "3. ", "IV - ", "DISCIPLINA: "
+        const cleanNoPrefix = trimmed.replace(/^(?:(?:[0-9]{1,2}|[IVXLCDM]+)[\.\-\:\)\s]+|(?:DISCIPLINA|MATÉRIA|COMPONENTE)[\s\:\-]+)+/i, '').trim();
+        const upperClean = cleanNoPrefix.toUpperCase();
+
+        // 1. Coincidência com disciplinas conhecidas
         for (let subj of this.KNOWN_SUBJECTS) {
-          if (clean === subj || clean.startsWith(subj + ':') || clean.startsWith(subj + ' -')) {
-            return clean.split(':')[0].split(' -')[0].trim();
+          if (upperClean === subj ||
+              upperClean.startsWith(subj + ':') ||
+              upperClean.startsWith(subj + ' -') ||
+              upperClean.startsWith(subj + ' –') ||
+              upperClean.startsWith(subj + ' —')) {
+            const remainder = cleanNoPrefix.substring(subj.length).replace(/^[\:\-\–\—\s]+/, '').trim();
+            return { subject: subj, remainder: remainder };
+          }
+
+          // Se a matéria conhecida estiver seguida de sufixo ou numeração de subitens na mesma linha
+          if (upperClean.startsWith(subj + ' ') || upperClean.startsWith(subj + '.')) {
+            const rest = upperClean.substring(subj.length).trim();
+            if (/^(?:BÁSICA|APLICADA|GERAL|ESPECÍFICA|AVANÇADA|DESCRITIVA)\b/i.test(rest)) {
+              const fullSubj = subj + ' ' + rest.split(/\s+|[\.\:\-]/)[0];
+              const remainder = cleanNoPrefix.substring(fullSubj.length).replace(/^[\:\-\–\—\s]+/, '').trim();
+              return { subject: fullSubj, remainder: remainder };
+            }
+            if (/^[0-9]/.test(rest)) {
+              const remainder = cleanNoPrefix.substring(subj.length).trim();
+              return { subject: subj, remainder: remainder };
+            }
           }
         }
 
-        // 2. Linha em caixa alta de tamanho moderado com palavras-chave de disciplina
-        const isAllUpper = (clean === clean.toUpperCase()) && clean.length > 4 && clean.length < 50;
+        // 2. Linha numerada com título em caixa alta (ex: "3. INFORMÁTICA BÁSICA", "4. DIREITO CONSTITUCIONAL")
+        const isNumberedUppercase = /^(?:[0-9]{1,2}|[IVXLCDM]+)[\.\-\)\s]+[A-ZÁÀÂÃÉÈÊÍÏÓÒÔÕÚÜÇ\s]{3,45}$/.test(trimmed);
+        if (isNumberedUppercase) {
+          const title = cleanNoPrefix.replace(/[:\-–—]/g, '').trim();
+          if (title.length >= 3 && !/^(?:ANEXO|QUADRO|TABELA|CARGO|PROVA|EDITAL|FASE|PÁGINA|ITEM)\b/i.test(title)) {
+            return { subject: title, remainder: '' };
+          }
+        }
+
+        // 3. Linha em caixa alta de tamanho moderado com palavras-chave de disciplina
+        const isAllUpper = (upperClean === cleanNoPrefix) && upperClean.length >= 4 && upperClean.length <= 50;
         if (isAllUpper) {
-          if (clean.includes('DIREITO') || clean.includes('NOÇÕES DE') || clean.includes('LEGISLAÇÃO') || clean.includes('LÍNGUA') || clean.includes('CONHECIMENTOS DE')) {
-            return clean.replace(/[:\-]/g, '').trim();
+          if (upperClean.includes('DIREITO') || upperClean.includes('NOÇÕES DE') || upperClean.includes('LEGISLAÇÃO') || upperClean.includes('LÍNGUA') || upperClean.includes('CONHECIMENTOS DE')) {
+            const title = cleanNoPrefix.replace(/[:\-–—]/g, '').trim();
+            return { subject: title, remainder: '' };
           }
         }
 
         return null;
+      },
+
+      /* Identifica se uma linha é título de matéria */
+      isSubjectHeader(line) {
+        const info = this.extractSubjectHeaderAndRemainder(line);
+        return info ? info.subject : null;
       },
 
       /* ETAPA 3: Heurística para detecção de matérias e tópicos com separação sequencial */
@@ -7951,8 +8190,9 @@
         };
 
         for (let line of lines) {
-          const detectedSubjectName = this.isSubjectHeader(line);
-          if (detectedSubjectName) {
+          const headerInfo = this.extractSubjectHeaderAndRemainder(line);
+          if (headerInfo) {
+            const detectedSubjectName = headerInfo.subject;
             // Nova matéria encontrada
             let existing = materiasMap.find(m => m.nome.toLowerCase() === detectedSubjectName.toLowerCase());
             if (!existing) {
@@ -7965,6 +8205,18 @@
               materiasMap.push(currentMateria);
             } else {
               currentMateria = existing;
+            }
+
+            // Se havia tópicos na mesma linha do cabeçalho (ex: "3. INFORMÁTICA BÁSICA 3.1 Equipamentos...")
+            if (headerInfo.remainder && headerInfo.remainder.trim()) {
+              const separated = this.smartSplitTopics(headerInfo.remainder);
+              if (separated.length > 0) {
+                separated.forEach(t => {
+                  if (t.trim()) currentMateria.topicos.push(t.trim());
+                });
+              } else {
+                currentMateria.topicos.push(headerInfo.remainder.trim());
+              }
             }
             continue;
           }
@@ -8241,6 +8493,45 @@
         };
       },
 
+      /* PROBLEMA 2: Extrai o título limpo e curto de um tópico para exibição nos cards */
+      getShortTopicTitle(rawTopic) {
+        if (!rawTopic || typeof rawTopic !== 'string') return '';
+        let str = rawTopic.trim();
+
+        // Preserva prefixos especiais como "🔄 [Revisão/Questões] "
+        const prefixMatch = str.match(/^(?:🔄\s*\[[^\]]+\]\s*)/);
+        let prefix = '';
+        if (prefixMatch) {
+          prefix = prefixMatch[0];
+          str = str.substring(prefix.length).trim();
+        }
+
+        // 1. Se múltiplos tópicos numerados vierem colados (ex: "1 Compreensão de textos. 2 Reconhecimento...")
+        // Extrai apenas o primeiro item como título
+        const multiNumberedMatch = str.match(/^((?:[0-9]{1,2}(?:\.[0-9]{1,2})*|[\(\[]?[0-9]{1,2}[\)\]]|(?:Art(?:igo|\.)?\s*[0-9]+[ºª]?)|[IVXLCDM]+)[\.\-\)\s]+[^.]+?(?:\.|\;|\:|\b))\s*(?:(?:[0-9]{1,2}(?:\.[0-9]{1,2})*|[\(\[]?[0-9]{1,2}[\)\]]|[IVXLCDM]+)[\.\-\)\s]+[A-ZÁÀÂÃÉÈÊÍÏÓÒÔÕÚÜÇ])/);
+        if (multiNumberedMatch && multiNumberedMatch[1]) {
+          str = multiNumberedMatch[1].trim();
+        }
+
+        // 2. Se for muito longo (> 65 chars), corta na primeira oração terminada em ponto, dois-pontos ou ponto-e-vírgula
+        if (str.length > 65) {
+          const punctMatch = str.match(/^(.{15,65}?)(?:[\.;:]\s+|$)/);
+          if (punctMatch && punctMatch[1] && punctMatch[1].length < str.length - 10) {
+            str = punctMatch[1].trim();
+          }
+        }
+
+        // Limpa pontuações finais soltas
+        str = str.replace(/[\.\;\:\,\-\s]+$/, '').trim();
+
+        // Garante que não ultrapasse 75 caracteres antes de reticências
+        if (str.length > 75) {
+          str = str.substring(0, 72).trim() + '...';
+        }
+
+        return prefix + str;
+      },
+
       /* ETAPA 4: Validação de Integridade do Conteúdo Extraído */
       calculateEditalIntegrity(continuousLines, parseResult) {
         if (!continuousLines || continuousLines.length === 0) return { percentage: 100, inputChars: 0, savedChars: 0, unclassifiedCount: 0 };
@@ -8272,14 +8563,14 @@
         };
       },
 
-      /* ETAPA 4: Modal de Revisão da Divisão do Edital */
+      /* ETAPA 4: Modal de Revisão da Divisão do Edital (PROBLEMA 3: Edição, Criação e Movimentação de Tópicos) */
       openReviewEditalModal(parseResult, integrity) {
         const modal = document.getElementById('modalReviewEditalDivision');
         if (!modal) return;
 
-        const dataToReview = parseResult || {
-          materias: this.data.materias || [],
-          naoClassificado: this.data.naoClassificado || [],
+        this.dataToReview = parseResult || {
+          materias: (this.data.materias || []).map(m => ({ ...m, topicos: [...(m.topicos || [])] })),
+          naoClassificado: [...(this.data.naoClassificado || [])],
           totalTopicos: (this.data.materias || []).reduce((acc, m) => acc + (m.topicos ? m.topicos.length : 0), 0)
         };
 
@@ -8288,51 +8579,77 @@
         const statIntegrity = document.getElementById('reviewStatIntegrity');
         const listContainer = document.getElementById('reviewDivisionListContainer');
 
-        if (statSubjects) statSubjects.textContent = dataToReview.materias.length;
-        if (statTopics) statTopics.textContent = dataToReview.totalTopicos;
+        const currentTotalTopics = (this.dataToReview.materias || []).reduce((acc, m) => acc + (m.topicos ? m.topicos.length : 0), 0);
+        this.dataToReview.totalTopicos = currentTotalTopics;
 
-        const integ = integrity || (this.data.lastExtractedEditalLines ? this.calculateEditalIntegrity(this.data.lastExtractedEditalLines, dataToReview) : { percentage: 100 });
+        if (statSubjects) statSubjects.textContent = this.dataToReview.materias.length;
+        if (statTopics) statTopics.textContent = currentTotalTopics;
+
+        const integ = integrity || (this.data.lastExtractedEditalLines ? this.calculateEditalIntegrity(this.data.lastExtractedEditalLines, this.dataToReview) : { percentage: 100 });
         if (statIntegrity) {
           statIntegrity.textContent = `${integ.percentage}% Preservado`;
           statIntegrity.style.color = integ.percentage >= 98 ? 'var(--pastel-green-text, #16a34a)' : 'var(--primary, #4f46e5)';
         }
 
         if (listContainer) {
-          if (dataToReview.materias.length === 0) {
-            listContainer.innerHTML = `
+          // Barra de ações rápidas no topo do modal de revisão
+          const hasBackup = !!localStorage.getItem('concurso_backup_before_reprocess');
+          let topBarHtml = `
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; justify-content: space-between; align-items: center;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.createSubjectInReview()" style="font-size: 0.8rem; padding: 4px 10px;">
+                ➕ Nova Matéria
+              </button>
+              ${hasBackup ? `
+                <button type="button" class="btn btn-pastel-indigo btn-sm" onclick="App.restoreReprocessBackup()" style="font-size: 0.8rem; padding: 4px 10px;">
+                  ↩️ Desfazer Último Reprocessamento
+                </button>
+              ` : ''}
+            </div>
+          `;
+
+          if (this.dataToReview.materias.length === 0) {
+            listContainer.innerHTML = topBarHtml + `
               <div style="text-align: center; padding: 24px; color: var(--text-muted);">
-                Nenhuma matéria identificada no momento. Faça o upload de um PDF de edital.
+                Nenhuma matéria identificada no momento. Faça o upload de um PDF de edital ou crie uma nova matéria acima.
               </div>
             `;
           } else {
-            listContainer.innerHTML = dataToReview.materias.map((m) => {
+            const allSubjects = this.dataToReview.materias;
+            const cardsHtml = allSubjects.map((m) => {
               const pal = this.getPalette(m.paletteId);
+              const otherSubjects = allSubjects.filter(o => o.id !== m.id);
+
               return `
-                <div class="review-subject-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 8px;">
-                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                      <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${pal.text};"></span>
+                <div class="review-subject-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 8px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+                    <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+                      <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${pal.text}; flex-shrink: 0;"></span>
                       <strong style="font-size: 0.95rem; color: var(--text-main);">${this.escapeHtml(m.nome)}</strong>
+                      <button type="button" class="btn btn-xs btn-outline" onclick="App.renameSubjectInReview('${m.id}')" title="Renomear esta matéria" style="padding: 1px 6px; font-size: 0.72rem;">
+                        ✏️
+                      </button>
                     </div>
-                    <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); background: var(--bg-subtle); padding: 2px 8px; border-radius: 10px;">
-                      ${m.topicos ? m.topicos.length : 0} tópico${(m.topicos && m.topicos.length === 1) ? '' : 's'}
-                    </span>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: var(--bg-subtle); padding: 2px 8px; border-radius: 10px;">
+                        ${m.topicos ? m.topicos.length : 0} tópico${(m.topicos && m.topicos.length === 1) ? '' : 's'}
+                      </span>
+                    </div>
                   </div>
 
-                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <div style="display: flex; flex-direction: column; gap: 5px;">
                     ${(m.topicos || []).map((t, tIdx) => {
                       const hInfo = this.getTopicHierarchyInfo(t);
-                      const nextT = m.topicos[tIdx + 1];
-                      const nextH = nextT ? this.getTopicHierarchyInfo(nextT) : null;
-                      const isParent = Boolean(nextH && nextH.num && hInfo.num && nextH.num.startsWith(hInfo.num + '.') && nextH.level > hInfo.level);
-                      const padLeft = hInfo.level === 0 ? 0 : (hInfo.level === 1 ? 14 : (hInfo.level === 2 ? 26 : 38));
-                      const bg = isParent ? 'var(--bg-subtle)' : 'transparent';
-                      const borderLeft = isParent ? '3px solid #6366f1' : (hInfo.level > 0 ? '2px solid var(--border-color)' : 'none');
+                      const padLeft = hInfo.level === 0 ? 0 : (hInfo.level === 1 ? 12 : 22);
 
                       return `
-                        <div style="display: flex; align-items: flex-start; gap: 6px; padding: 6px 10px; margin-left: ${padLeft}px; background: ${bg}; border-left: ${borderLeft}; border-radius: 4px; font-size: 0.84rem; line-height: 1.4;">
-                          ${isParent ? '<span class="topic-parent-badge">Tópico Principal</span>' : ''}
-                          <span style="flex: 1; color: var(--text-main);">${this.escapeHtml(t)}</span>
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 5px 8px; margin-left: ${padLeft}px; background: var(--bg-subtle); border-radius: 4px; font-size: 0.82rem; line-height: 1.35;">
+                          <span style="flex: 1; min-width: 0; color: var(--text-main); word-break: break-word;">${this.escapeHtml(t)}</span>
+                          <select class="input-field" style="width: auto; padding: 2px 4px; font-size: 0.7rem; height: 24px; border-radius: 4px; flex-shrink: 0;" onchange="App.moveTopicInReview('${m.id}', ${tIdx}, this.value)">
+                            <option value="" disabled selected>Mover para... ▾</option>
+                            ${otherSubjects.map(os => `<option value="${os.id}">📁 ${this.escapeHtml(os.nome)}</option>`).join('')}
+                            <option value="__NEW__">➕ Nova Matéria...</option>
+                            <option value="__UNCLASSIFIED__">⚠️ Não Classificado</option>
+                          </select>
                         </div>
                       `;
                     }).join('')}
@@ -8341,27 +8658,155 @@
               `;
             }).join('');
 
-            // Se houver trechos não classificados
-            if (dataToReview.naoClassificado && dataToReview.naoClassificado.length > 0) {
-              listContainer.innerHTML += `
+            // Trechos não classificados com opção de mover para qualquer matéria
+            let unclassifiedHtml = '';
+            if (this.dataToReview.naoClassificado && this.dataToReview.naoClassificado.length > 0) {
+              unclassifiedHtml = `
                 <div style="background: rgba(245, 158, 11, 0.08); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: var(--radius-sm); padding: 12px; margin-top: 10px;">
                   <div style="font-weight: 700; font-size: 0.85rem; color: #b45309; margin-bottom: 6px;">
-                    ⚠️ Trechos Não Classificados (${dataToReview.naoClassificado.length} itens mantidos com segurança):
+                    ⚠️ Trechos Não Classificados (${this.dataToReview.naoClassificado.length} itens preservados):
                   </div>
-                  <div style="font-size: 0.8rem; color: var(--text-main); max-height: 120px; overflow-y: auto;">
-                    ${dataToReview.naoClassificado.map(nc => `<div style="padding: 4px 0; border-bottom: 1px dotted rgba(245, 158, 11, 0.2);">${this.escapeHtml(nc)}</div>`).join('')}
+                  <div style="font-size: 0.8rem; color: var(--text-main); max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                    ${this.dataToReview.naoClassificado.map((nc, ncIdx) => `
+                      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 6px; background: var(--bg-card); border-radius: 4px;">
+                        <span style="flex: 1; word-break: break-word;">${this.escapeHtml(nc)}</span>
+                        <select class="input-field" style="width: auto; padding: 2px 4px; font-size: 0.7rem; height: 24px; border-radius: 4px; flex-shrink: 0;" onchange="App.moveUnclassifiedInReview(${ncIdx}, this.value)">
+                          <option value="" disabled selected>Mover para... ▾</option>
+                          ${allSubjects.map(sub => `<option value="${sub.id}">📁 ${this.escapeHtml(sub.nome)}</option>`).join('')}
+                          <option value="__NEW__">➕ Nova Matéria...</option>
+                        </select>
+                      </div>
+                    `).join('')}
                   </div>
                 </div>
               `;
             }
+
+            listContainer.innerHTML = topBarHtml + cardsHtml + unclassifiedHtml;
           }
         }
 
         modal.classList.add('open');
       },
 
+      /* Move tópico de uma matéria para outra durante a revisão (PROBLEMA 3) */
+      moveTopicInReview(fromSubjectId, topicIndex, targetSubjectId) {
+        if (!this.dataToReview || !this.dataToReview.materias) return;
+
+        const fromSubj = this.dataToReview.materias.find(m => m.id === fromSubjectId);
+        if (!fromSubj || !fromSubj.topicos || !fromSubj.topicos[topicIndex]) return;
+
+        const topicText = fromSubj.topicos.splice(topicIndex, 1)[0];
+
+        if (targetSubjectId === '__UNCLASSIFIED__') {
+          if (!this.dataToReview.naoClassificado) this.dataToReview.naoClassificado = [];
+          this.dataToReview.naoClassificado.push(topicText);
+          this.showToast('Tópico movido para Não Classificado.', 'info');
+        } else if (targetSubjectId === '__NEW__') {
+          const name = prompt('Nome da nova matéria:');
+          if (!name || !name.trim()) {
+            fromSubj.topicos.splice(topicIndex, 0, topicText);
+            return;
+          }
+          const palettes = ['blue', 'green', 'purple', 'amber', 'rose', 'teal', 'indigo', 'peach'];
+          const newSubj = {
+            id: 'mat-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+            nome: name.trim().toUpperCase(),
+            paletteId: palettes[this.dataToReview.materias.length % palettes.length],
+            topicos: [topicText]
+          };
+          this.dataToReview.materias.push(newSubj);
+          this.showToast(`Matéria "${newSubj.nome}" criada e tópico incluído!`, 'success');
+        } else {
+          const toSubj = this.dataToReview.materias.find(m => m.id === targetSubjectId);
+          if (toSubj) {
+            if (!toSubj.topicos) toSubj.topicos = [];
+            toSubj.topicos.push(topicText);
+            this.showToast(`Tópico movido para "${toSubj.nome}"!`, 'success');
+          } else {
+            fromSubj.topicos.splice(topicIndex, 0, topicText);
+          }
+        }
+
+        this.openReviewEditalModal(this.dataToReview);
+      },
+
+      /* Move trecho não classificado para uma matéria (PROBLEMA 3) */
+      moveUnclassifiedInReview(ncIndex, targetSubjectId) {
+        if (!this.dataToReview || !this.dataToReview.naoClassificado) return;
+
+        const text = this.dataToReview.naoClassificado.splice(ncIndex, 1)[0];
+        if (!text) return;
+
+        if (targetSubjectId === '__NEW__') {
+          const name = prompt('Nome da nova matéria:');
+          if (!name || !name.trim()) {
+            this.dataToReview.naoClassificado.splice(ncIndex, 0, text);
+            return;
+          }
+          const palettes = ['blue', 'green', 'purple', 'amber', 'rose', 'teal', 'indigo', 'peach'];
+          const newSubj = {
+            id: 'mat-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+            nome: name.trim().toUpperCase(),
+            paletteId: palettes[this.dataToReview.materias.length % palettes.length],
+            topicos: [text]
+          };
+          this.dataToReview.materias.push(newSubj);
+          this.showToast(`Matéria "${newSubj.nome}" criada e tópico incluído!`, 'success');
+        } else {
+          const toSubj = this.dataToReview.materias.find(m => m.id === targetSubjectId);
+          if (toSubj) {
+            if (!toSubj.topicos) toSubj.topicos = [];
+            toSubj.topicos.push(text);
+            this.showToast(`Item movido para "${toSubj.nome}"!`, 'success');
+          } else {
+            this.dataToReview.naoClassificado.splice(ncIndex, 0, text);
+          }
+        }
+
+        this.openReviewEditalModal(this.dataToReview);
+      },
+
+      /* Cria nova matéria durante a revisão do edital (PROBLEMA 3) */
+      createSubjectInReview() {
+        if (!this.dataToReview) return;
+        const name = prompt('Nome da nova disciplina/matéria:');
+        if (!name || !name.trim()) return;
+
+        const palettes = ['blue', 'green', 'purple', 'amber', 'rose', 'teal', 'indigo', 'peach'];
+        const newSubj = {
+          id: 'mat-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+          nome: name.trim().toUpperCase(),
+          paletteId: palettes[this.dataToReview.materias.length % palettes.length],
+          topicos: []
+        };
+        this.dataToReview.materias.push(newSubj);
+        this.openReviewEditalModal(this.dataToReview);
+        this.showToast(`Matéria "${newSubj.nome}" adicionada!`, 'success');
+      },
+
+      /* Renomeia matéria durante a revisão do edital (PROBLEMA 3) */
+      renameSubjectInReview(subjectId) {
+        if (!this.dataToReview || !this.dataToReview.materias) return;
+        const subj = this.dataToReview.materias.find(m => m.id === subjectId);
+        if (!subj) return;
+
+        const newName = prompt(`Renomear matéria "${subj.nome}":`, subj.nome);
+        if (newName && newName.trim()) {
+          subj.nome = newName.trim().toUpperCase();
+          this.openReviewEditalModal(this.dataToReview);
+          this.showToast('Matéria renomeada com sucesso!', 'success');
+        }
+      },
+
       /* ETAPA 4: Confirmação e Fechamento da Revisão */
       confirmEditalReview() {
+        if (this.dataToReview) {
+          this.data.materias = this.dataToReview.materias;
+          this.data.naoClassificado = this.dataToReview.naoClassificado;
+          this.saveToStorage();
+          this.renderAll();
+        }
         this.closeModals();
         this.showToast('Divisão do edital confirmada com sucesso!', 'success');
         this.switchTab('tab-subjects');
@@ -8425,6 +8870,7 @@
             if (b.completedSlots) this.completedSlots = b.completedSlots;
             this.saveToStorage();
             this.renderAll();
+            this.closeModals();
             this.showToast('Backup anterior restaurado com sucesso!', 'success');
           }
         } catch (err) {
@@ -10708,7 +11154,7 @@
         textEl.innerHTML = `<strong>Distribuição Perfeita!</strong> As <strong>${requestedSessions} sessões</strong> solicitadas preenchem com exatidão os <strong>${totalCapacity} blocos (${totalHours}h)</strong> da sua semana.`;
       },
 
-      /* 6. Algoritmo Inteligente de Distribuição Intercalada (Com Preservação de Sessões Travadas e Dia de Revisão) */
+      /* 6. Algoritmo Inteligente de Distribuição Intercalada (Com Garantia de Vagas, Round-Robin Proporcional e Agrupamento de Tópicos) */
       generateSmartSchedule(variationIndex = 1) {
         const activeDays = Array.from(document.querySelectorAll('#daysPicker input:checked')).map(i => i.value);
         if (activeDays.length === 0) {
@@ -10749,21 +11195,15 @@
           requestedFreq: Math.max(1, (this.autoConfig.frequencies && this.autoConfig.frequencies[m.id]) || 2)
         }));
 
-        // Ordenação com suporte a variações
-        subjectsToSchedule.sort((a, b) => {
-          if (b.requestedFreq !== a.requestedFreq) return b.requestedFreq - a.requestedFreq;
-          const hashA = (a.id.length * 17 + variationIndex * 31) % 97;
-          const hashB = (b.id.length * 17 + variationIndex * 31) % 97;
-          return hashA - hashB;
-        });
-
         // 1. Preserva sessões travadas (locked) do cronograma ativo
         const lockedSlotsByDay = {};
+        let totalLockedCount = 0;
         if (this.schedule && this.schedule.columns) {
           this.schedule.columns.forEach(col => {
             const locked = (col.slots || []).filter(s => s.locked);
             if (locked.length > 0) {
               lockedSlotsByDay[col.dia] = locked.map(s => ({ ...s }));
+              totalLockedCount += locked.length;
             }
           });
         }
@@ -10771,7 +11211,71 @@
         // 2. Identifica dia de revisão semanal exclusivo (se ativo)
         const isWeeklyReviewActive = !!(this.weeklyReview && this.weeklyReview.enabled && activeDays.includes(this.weeklyReview.day));
         const reviewDayName = isWeeklyReviewActive ? this.weeklyReview.day : null;
+        const reviewSlotsCount = isWeeklyReviewActive ? (dayCapacities[reviewDayName] || 0) : 0;
 
+        // Vagas totais disponíveis para as matérias comuns
+        const availableSlotsCount = Math.max(0, totalCapacity - totalLockedCount - reviewSlotsCount);
+        const warnings = [];
+
+        // Ordenação por prioridade/frequência pedida com variação pseudo-aleatória
+        const sortedSubjects = [...subjectsToSchedule].sort((a, b) => {
+          if (b.requestedFreq !== a.requestedFreq) return b.requestedFreq - a.requestedFreq;
+          const hashA = (a.id.length * 17 + variationIndex * 31) % 97;
+          const hashB = (b.id.length * 17 + variationIndex * 31) % 97;
+          return hashA - hashB;
+        });
+
+        // PROBLEMA 5: ALOCAÇÃO JUSTA (FAIR ROUND-ROBIN PROPORCIONAL)
+        const allocatedCounts = {};
+        const requestedCounts = {};
+        subjectsToSchedule.forEach(s => {
+          allocatedCounts[s.id] = 0;
+          requestedCounts[s.id] = s.requestedFreq;
+        });
+
+        let slotsLeftToDistribute = availableSlotsCount;
+        const numSubjects = sortedSubjects.length;
+
+        // FASE 1: Garantia de pelo menos 1 sessão para cada matéria selecionada
+        if (availableSlotsCount >= numSubjects) {
+          sortedSubjects.forEach(s => {
+            allocatedCounts[s.id] = 1;
+            slotsLeftToDistribute--;
+          });
+        } else {
+          // Capacidade é menor que o número de matérias
+          for (let i = 0; i < availableSlotsCount; i++) {
+            allocatedCounts[sortedSubjects[i].id] = 1;
+            slotsLeftToDistribute--;
+          }
+          const zeroList = sortedSubjects.slice(availableSlotsCount).map(s => s.nome);
+          warnings.push(`Capacidade crítica: apenas ${availableSlotsCount} vagas para ${numSubjects} matérias. Ficaram sem sessão: ${zeroList.join(', ')}.`);
+        }
+
+        // FASE 2: Distribuição proporcional das vagas restantes com base no déficit da frequência pedida
+        while (slotsLeftToDistribute > 0) {
+          let candidates = sortedSubjects.filter(s => allocatedCounts[s.id] < s.requestedFreq);
+          if (candidates.length === 0) {
+            candidates = sortedSubjects;
+          }
+
+          // Prioriza quem tem menor proporção atendida ou maior frequência pendente
+          candidates.sort((a, b) => {
+            const ratioA = allocatedCounts[a.id] / a.requestedFreq;
+            const ratioB = allocatedCounts[b.id] / b.requestedFreq;
+            if (ratioA !== ratioB) return ratioA - ratioB;
+            if (b.requestedFreq !== a.requestedFreq) return b.requestedFreq - a.requestedFreq;
+            const hashA = (a.id.length * 17 + variationIndex * 31) % 97;
+            const hashB = (b.id.length * 17 + variationIndex * 31) % 97;
+            return hashA - hashB;
+          });
+
+          const chosen = candidates[0];
+          allocatedCounts[chosen.id]++;
+          slotsLeftToDistribute--;
+        }
+
+        // 3. Monta colunas da semana
         const columns = activeDays.map(dia => {
           const lockedForDay = lockedSlotsByDay[dia] || [];
           return {
@@ -10780,60 +11284,6 @@
             isReviewDay: dia === reviewDayName,
             slots: [...lockedForDay]
           };
-        });
-
-        const numDays = activeDays.length;
-
-        // 3. Distribuição com espaçamento inteligente para matérias livres
-        subjectsToSchedule.forEach((subj, subjIdx) => {
-          const freq = subj.requestedFreq;
-          const startOffset = (subjIdx * 2 + (variationIndex - 1)) % numDays;
-
-          for (let f = 0; f < freq; f++) {
-            const idealDayIndex = Math.round(startOffset + (f * numDays) / freq) % numDays;
-
-            let bestCol = null;
-            let lowestPenalty = Infinity;
-
-            for (let offset = 0; offset < numDays; offset++) {
-              const candidateIdx = (idealDayIndex + offset) % numDays;
-              const col = columns[candidateIdx];
-
-              if (col.slots.length >= col.capacity) continue;
-
-              let penalty = offset * 2;
-
-              // Evita agendar matéria comum no dia reservado para revisão/simulado
-              if (col.isReviewDay) {
-                penalty += 5000;
-              }
-
-              const alreadyInDay = col.slots.some(s => s.subjectId === subj.id);
-              if (alreadyInDay) penalty += 1000;
-
-              const distinctInDay = new Set(col.slots.map(s => s.subjectId));
-              if (!distinctInDay.has(subj.id) && distinctInDay.size >= maxDistinctPerDay && maxDistinctPerDay < 999) {
-                penalty += 500;
-              }
-
-              penalty += (col.slots.length / col.capacity) * 5;
-
-              if (penalty < lowestPenalty) {
-                lowestPenalty = penalty;
-                bestCol = col;
-              }
-            }
-
-            if (bestCol) {
-              bestCol.slots.push({
-                subjectId: subj.id,
-                subjectName: subj.nome,
-                paletteId: subj.paletteId,
-                duration: blockDuration,
-                locked: false
-              });
-            }
-          }
         });
 
         // 4. Preenche o dia de revisão semanal exclusivo com blocos dedicados
@@ -10854,6 +11304,7 @@
                 paletteId: 'indigo',
                 duration: blockDuration,
                 topic: t.desc,
+                shortTopic: t.title,
                 locked: false,
                 isReviewSlot: true
               });
@@ -10862,28 +11313,95 @@
           }
         });
 
-        // 5. Preenche eventuais blocos de folga restantes nos dias comuns com ciclo contínuo
-        const totalPlaced = columns.reduce((acc, c) => acc + c.slots.length, 0);
-        if (totalPlaced < totalCapacity) {
-          let rotationIndex = variationIndex;
-          columns.forEach(col => {
-            if (col.isReviewDay) return;
-            while (col.slots.length < col.capacity) {
-              const pick = subjectsToSchedule[rotationIndex % subjectsToSchedule.length];
-              rotationIndex++;
-              col.slots.push({
-                subjectId: pick.id,
-                subjectName: pick.nome,
-                paletteId: pick.paletteId,
+        // 5. Distribuição espacial entre os dias: Espaçamento Inteligente e Evitar Dias Seguidos
+        const numDays = activeDays.length;
+        const subjectDayMap = {};
+        subjectsToSchedule.forEach(s => { subjectDayMap[s.id] = new Set(); });
+
+        // Ordena matérias por quantidade alocada (maiores alocações distribuídas primeiro)
+        const subjectsPlacementList = [...sortedSubjects].sort((a, b) => allocatedCounts[b.id] - allocatedCounts[a.id]);
+
+        subjectsPlacementList.forEach((subj, sIdx) => {
+          const countToPlace = allocatedCounts[subj.id];
+          if (countToPlace <= 0) return;
+
+          const startOffset = (sIdx * 2 + (variationIndex - 1)) % numDays;
+
+          for (let i = 0; i < countToPlace; i++) {
+            const idealDayIdx = Math.round(startOffset + (i * numDays) / countToPlace) % numDays;
+            let bestCol = null;
+            let lowestPenalty = Infinity;
+
+            for (let offset = 0; offset < numDays; offset++) {
+              const candidateIdx = (idealDayIdx + offset) % numDays;
+              const col = columns[candidateIdx];
+
+              if (col.slots.length >= col.capacity || col.isReviewDay) continue;
+
+              let penalty = offset * 2;
+
+              // Não repetir a mesma matéria no mesmo dia se houver outras opções
+              if (subjectDayMap[subj.id].has(candidateIdx)) {
+                penalty += 1000;
+              }
+
+              // Evitar colocar a mesma matéria em dias consecutivos se possível
+              const prevDay = (candidateIdx - 1 + numDays) % numDays;
+              const nextDay = (candidateIdx + 1) % numDays;
+              if (subjectDayMap[subj.id].has(prevDay)) penalty += 25;
+              if (subjectDayMap[subj.id].has(nextDay)) penalty += 25;
+
+              // Respeitar o limite de matérias distintas por dia
+              const distinctInDay = new Set(col.slots.map(s => s.subjectId));
+              if (!distinctInDay.has(subj.id) && distinctInDay.size >= maxDistinctPerDay && maxDistinctPerDay < 999) {
+                penalty += 500;
+              }
+
+              // Equilibrar ocupação dos dias
+              penalty += (col.slots.length / col.capacity) * 5;
+
+              if (penalty < lowestPenalty) {
+                lowestPenalty = penalty;
+                bestCol = col;
+              }
+            }
+
+            if (bestCol) {
+              bestCol.slots.push({
+                subjectId: subj.id,
+                subjectName: subj.nome,
+                paletteId: subj.paletteId,
                 duration: blockDuration,
-                isExtraCycle: true,
                 locked: false
               });
+              const placedDayIdx = columns.indexOf(bestCol);
+              if (placedDayIdx !== -1) {
+                subjectDayMap[subj.id].add(placedDayIdx);
+              }
             }
-          });
-        }
+          }
+        });
 
-        // 6. Sequenciamento de tópicos
+        // 6. Preenchimento de folgas residuais (se restarem vagas)
+        columns.forEach(col => {
+          if (col.isReviewDay) return;
+          let fillIndex = variationIndex;
+          while (col.slots.length < col.capacity) {
+            const pick = sortedSubjects[fillIndex % sortedSubjects.length];
+            fillIndex++;
+            col.slots.push({
+              subjectId: pick.id,
+              subjectName: pick.nome,
+              paletteId: pick.paletteId,
+              duration: blockDuration,
+              isExtraCycle: true,
+              locked: false
+            });
+            allocatedCounts[pick.id]++;
+          }
+        });
+
+        // 7. Sequenciamento de Tópicos e Agrupamento de Tópicos Curtos (PROBLEMA 2)
         const topicCursor = {};
         subjectsToSchedule.forEach(s => { topicCursor[s.id] = 0; });
 
@@ -10893,7 +11411,8 @@
             if (s.locked) {
               return {
                 ...s,
-                slotNumber: idx + 1
+                slotNumber: idx + 1,
+                shortTopic: s.shortTopic || App.getShortTopicTitle(s.topic || '')
               };
             }
 
@@ -10912,6 +11431,7 @@
                 startTime: s.startTime || '',
                 endTime: s.endTime || '',
                 topic: s.topic,
+                shortTopic: s.shortTopic || App.getShortTopicTitle(s.topic),
                 notes: s.notes || '',
                 locked: false,
                 breakMin: this.sessionBreakMin || 5
@@ -10920,6 +11440,7 @@
 
             const subj = subjectsToSchedule.find(sub => sub.id === s.subjectId);
             let topicText = '';
+            let shortTopicText = '';
 
             if (subj && subj.topicos.length > 0) {
               const granularity = document.getElementById('selectTopicGranularity') ? document.getElementById('selectTopicGranularity').value : 'detailed';
@@ -10937,12 +11458,36 @@
               }
 
               const curIdx = topicCursor[s.subjectId] || 0;
-              const topicItem = eligibleTopics[curIdx % eligibleTopics.length];
+              const primaryTopic = eligibleTopics[curIdx % eligibleTopics.length];
               const isCycleRevisao = Math.floor(curIdx / eligibleTopics.length) > 0;
-              topicText = (isCycleRevisao ? '🔄 [Revisão/Questões] ' : '') + topicItem;
-              topicCursor[s.subjectId] = curIdx + 1;
+              const revPrefix = isCycleRevisao ? '🔄 [Revisão/Questões] ' : '';
+
+              // Agrupamento Inteligente: se o tópico for curto (<40 chars), tenta agrupar até 2 ou 3 tópicos curtos
+              let groupedTopics = [primaryTopic];
+              let advanceCount = 1;
+
+              if (primaryTopic.length < 40 && eligibleTopics.length > 1) {
+                const nextIdx = (curIdx + 1) % eligibleTopics.length;
+                const nextTopic = eligibleTopics[nextIdx];
+                if (nextTopic && nextTopic.length < 40 && nextIdx > curIdx) {
+                  groupedTopics.push(nextTopic);
+                  advanceCount = 2;
+
+                  const thirdIdx = (curIdx + 2) % eligibleTopics.length;
+                  const thirdTopic = eligibleTopics[thirdIdx];
+                  if (thirdTopic && thirdTopic.length < 35 && thirdIdx > nextIdx) {
+                    groupedTopics.push(thirdTopic);
+                    advanceCount = 3;
+                  }
+                }
+              }
+
+              topicText = revPrefix + groupedTopics.join(' • ');
+              shortTopicText = App.getShortTopicTitle(topicText);
+              topicCursor[s.subjectId] = curIdx + advanceCount;
             } else {
               topicText = 'Leitura teórica, resolução de questões e resumo.';
+              shortTopicText = 'Teoria & Questões';
             }
 
             const slotId = 'slot-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
@@ -10959,6 +11504,7 @@
               startTime: '',
               endTime: '',
               topic: topicText,
+              shortTopic: shortTopicText,
               notes: '',
               locked: false,
               breakMin: this.sessionBreakMin || 5
@@ -10981,7 +11527,10 @@
           materiasIds: validSubjects.map(m => m.id),
           columns: finalColumns,
           generatedAt: new Date().toLocaleDateString('pt-BR'),
-          variationIndex: variationIndex
+          variationIndex: variationIndex,
+          allocatedSummary: allocatedCounts,
+          requestedSummary: requestedCounts,
+          warnings: warnings
         };
       },
 
@@ -11028,6 +11577,7 @@
         this.openAutoSchedulePreview();
       },
 
+      /* PROBLEMA 4: Renderização do Modal de Pré-Visualização com Banner de Capacidade e Ações Rápidas */
       renderPreviewModal(schedule) {
         if (!schedule || !schedule.columns) return;
 
@@ -11052,19 +11602,44 @@
         const elVar = document.getElementById('previewVariationBadge');
         if (elVar) elVar.textContent = `Variação #${schedule.variationIndex || 1}`;
 
+        // Banner de Capacidade (PROBLEMA 4)
         const noticeEl = document.getElementById('previewConflictNotice');
-        if (noticeEl) {
-          const requested = (this.autoConfig.includedSubjectIds || []).reduce((acc, id) => {
-            return acc + ((this.autoConfig.frequencies && this.autoConfig.frequencies[id]) || 2);
-          }, 0);
+        const titleEl = document.getElementById('previewCapacityTitle');
+        const breakdownEl = document.getElementById('previewCapacityBreakdown');
 
-          if (totalSessions < requested) {
-            noticeEl.style.display = 'flex';
-            noticeEl.className = 'config-diagnosis-box warning';
-            noticeEl.innerHTML = `⚠️ <strong>Ajuste de Capacidade:</strong> Foram distribuídas <strong>${totalSessions}</strong> de <strong>${requested} sessões</strong> pedidas devido ao limite de tempo configurado.`;
+        const included = this.autoConfig.includedSubjectIds || [];
+        const requested = included.reduce((acc, id) => {
+          return acc + ((this.autoConfig.frequencies && this.autoConfig.frequencies[id]) || 2);
+        }, 0);
+
+        if (noticeEl) {
+          const hasShortage = totalSessions < requested;
+          const hasCriticalWarning = schedule.warnings && schedule.warnings.length > 0;
+
+          if (hasShortage || hasCriticalWarning) {
+            noticeEl.style.display = 'block';
+
+            if (titleEl) {
+              if (hasCriticalWarning) {
+                titleEl.innerHTML = `⚠️ <strong>Capacidade Crítica:</strong> Só couberam <strong>${totalSessions}</strong> de <strong>${requested} sessões</strong> pedidas! Verifique as matérias abaixo:`;
+              } else {
+                titleEl.innerHTML = `⚠️ <strong>Ajuste de Capacidade:</strong> Só couberam <strong>${totalSessions}</strong> de <strong>${requested} sessões</strong> pedidas.`;
+              }
+            }
+
+            if (breakdownEl) {
+              const validSubjects = (this.data.materias || []).filter(m => included.includes(m.id));
+              breakdownEl.innerHTML = validSubjects.map(m => {
+                const alloc = schedule.allocatedSummary ? (schedule.allocatedSummary[m.id] || 0) : 0;
+                const req = (this.autoConfig.frequencies && this.autoConfig.frequencies[m.id]) || 2;
+                const isShortage = alloc < req;
+                const isZero = alloc === 0;
+                const cls = isZero ? 'preview-capacity-pill shortage' : (isShortage ? 'preview-capacity-pill shortage' : 'preview-capacity-pill');
+                return `<span class="${cls}">${this.escapeHtml(m.nome)}: <strong>${alloc}/${req}</strong></span>`;
+              }).join('');
+            }
           } else {
             noticeEl.style.display = 'none';
-            noticeEl.innerHTML = '';
           }
         }
 
@@ -11084,16 +11659,140 @@
         this.renderPreviewGrid(schedule);
       },
 
+      /* Ações Rápidas de Ajuste de Capacidade no Banner (PROBLEMA 4) */
+      quickAdjustPreviewCapacity(action) {
+        if (!this.autoConfig) this.autoConfig = {};
+
+        if (action === 'add_block') {
+          // Aumenta o tempo de estudo em 1 bloco
+          const currentHours = parseFloat(this.autoConfig.hoursPerDay || (document.getElementById('inputHoursPerDay') ? document.getElementById('inputHoursPerDay').value : 3)) || 3;
+          const blockMin = parseInt(this.autoConfig.blockDuration || 60, 10);
+          const addHours = +(blockMin / 60).toFixed(1);
+          const newHours = Math.min(12, currentHours + addHours);
+          this.autoConfig.hoursPerDay = newHours;
+          const inputH = document.getElementById('inputHoursPerDay');
+          if (inputH) inputH.value = Math.round(newHours);
+          this.saveAutoConfig();
+          this.showToast(`+1 bloco diário adicionado! Nova carga diária: ${newHours}h.`, 'info');
+        } else if (action === 'add_time') {
+          // Aumenta tempo de estudo diário em +30 min (+0.5h)
+          const currentHours = parseFloat(this.autoConfig.hoursPerDay || (document.getElementById('inputHoursPerDay') ? document.getElementById('inputHoursPerDay').value : 3)) || 3;
+          const newHours = Math.min(12, currentHours + 0.5);
+          this.autoConfig.hoursPerDay = newHours;
+          const inputH = document.getElementById('inputHoursPerDay');
+          if (inputH) inputH.value = newHours;
+          this.saveAutoConfig();
+          this.showToast(`+30 minutos diários adicionados! Nova carga diária: ${newHours}h.`, 'info');
+        } else if (action === 'add_day') {
+          // Adiciona mais um dia de estudo na semana se houver dia livre
+          const allWeekDays = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+          const activeDays = Array.from(document.querySelectorAll('#daysPicker input:checked')).map(i => i.value);
+          const availableDay = allWeekDays.find(d => !activeDays.includes(d));
+          if (availableDay) {
+            const chk = document.querySelector(`#daysPicker input[value="${availableDay}"]`);
+            if (chk) chk.checked = true;
+            this.autoConfig.days = [...activeDays, availableDay];
+            this.saveAutoConfig();
+            this.showToast(`Dia adicionado ao cronograma: ${availableDay}!`, 'info');
+          } else {
+            this.showToast('Todos os 7 dias da semana já estão selecionados.', 'warning');
+            return;
+          }
+        } else if (action === 'fit_frequencies') {
+          // Reduz frequências proporcionalmente para caber exatamente no limite
+          const includedIds = this.autoConfig.includedSubjectIds || [];
+          if (includedIds.length === 0) return;
+          const blockDur = parseInt(this.autoConfig.blockDuration || 60, 10);
+          const activeDays = Array.from(document.querySelectorAll('#daysPicker input:checked')).map(i => i.value);
+          const hours = parseFloat(this.autoConfig.hoursPerDay || 3);
+          const totalSlots = activeDays.length * Math.max(1, Math.floor((hours * 60) / blockDur));
+
+          if (!this.autoConfig.frequencies) this.autoConfig.frequencies = {};
+
+          if (totalSlots >= includedIds.length) {
+            let remaining = totalSlots;
+            includedIds.forEach(id => {
+              this.autoConfig.frequencies[id] = 1;
+              remaining--;
+            });
+            while (remaining > 0) {
+              const cand = includedIds.slice().sort((a, b) => {
+                return (this.autoConfig.frequencies[a] || 1) - (this.autoConfig.frequencies[b] || 1);
+              })[0];
+              this.autoConfig.frequencies[cand]++;
+              remaining--;
+            }
+          } else {
+            includedIds.forEach((id, idx) => {
+              this.autoConfig.frequencies[id] = idx < totalSlots ? 1 : 0;
+            });
+          }
+          this.saveAutoConfig();
+          this.renderAutoConfigPanel();
+          this.showToast('Frequências ajustadas para caber perfeitamente na semana!', 'success');
+        }
+
+        // Regenera o preview imediatamente
+        try {
+          this.previewSchedule = this.generateSmartSchedule(this.previewVariationIndex || 1);
+          this.renderPreviewModal(this.previewSchedule);
+        } catch (err) {
+          console.error(err);
+        }
+      },
+
+      /* PROBLEMA 1 & 2: Renderização da Grade de Pré-Visualização com Grid Proporcional e Abas Mobile */
       renderPreviewGrid(schedule) {
         const container = document.getElementById('previewGridContainer');
+        const mobileTabs = document.getElementById('previewMobileDayTabs');
         if (!container || !schedule || !schedule.columns) return;
 
         container.innerHTML = '';
-        container.style.gridTemplateColumns = `repeat(${schedule.columns.length}, minmax(170px, 1fr))`;
+        container.style.gridTemplateColumns = `repeat(${schedule.columns.length}, minmax(0, 1fr))`;
 
-        schedule.columns.forEach(colData => {
+        // Renderiza abas de dias no mobile (PROBLEMA 1)
+        if (mobileTabs) {
+          mobileTabs.innerHTML = '';
+          schedule.columns.forEach((colData, colIdx) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `preview-tab-btn ${colIdx === 0 ? 'active' : ''}`;
+            btn.textContent = colData.dia.substring(0, 3);
+            btn.title = colData.dia;
+            btn.onclick = () => {
+              mobileTabs.querySelectorAll('.preview-tab-btn').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+              container.querySelectorAll('.schedule-column').forEach((colEl, i) => {
+                colEl.style.display = (i === colIdx) ? 'flex' : 'none';
+              });
+            };
+            mobileTabs.appendChild(btn);
+          });
+
+          // Botão para ver todos os dias lado a lado
+          const btnAll = document.createElement('button');
+          btnAll.type = 'button';
+          btnAll.className = 'preview-tab-btn';
+          btnAll.textContent = 'Todos';
+          btnAll.onclick = () => {
+            mobileTabs.querySelectorAll('.preview-tab-btn').forEach(b => b.classList.remove('active'));
+            btnAll.classList.add('active');
+            container.querySelectorAll('.schedule-column').forEach(colEl => {
+              colEl.style.display = 'flex';
+            });
+          };
+          mobileTabs.appendChild(btnAll);
+        }
+
+        const isMobileScreen = window.innerWidth <= 768;
+
+        schedule.columns.forEach((colData, colIdx) => {
           const colEl = document.createElement('div');
           colEl.className = 'schedule-column';
+          if (isMobileScreen && colIdx > 0) {
+            colEl.style.display = 'none';
+          }
+
           colEl.innerHTML = `
             <div class="schedule-col-header">
               <h4>${colData.dia}</h4>
@@ -11111,16 +11810,23 @@
             slotCard.style.backgroundColor = pal.bg;
             slotCard.style.borderColor = pal.border;
             slotCard.style.color = pal.text;
-            slotCard.style.cursor = 'default';
-            slotCard.style.marginBottom = '8px';
+            slotCard.style.cursor = 'pointer';
+            slotCard.style.marginBottom = '6px';
+            slotCard.title = `${slot.subjectName}\n\n${slot.topic}`;
+
+            slotCard.onclick = () => {
+              alert(`📚 ${slot.subjectName}\n\n⏱️ Duração: ${slot.duration || schedule.blockDuration || 60} min\n\n📖 Conteúdo Programado:\n${slot.topic}`);
+            };
+
+            const displayTopic = slot.shortTopic || App.getShortTopicTitle(slot.topic);
 
             slotCard.innerHTML = `
-              <div class="slot-meta" style="margin-bottom: 4px;">
+              <div class="slot-meta" style="margin-bottom: 2px;">
                 <span style="font-size: 0.72rem; font-weight: 800;">SESSÃO ${slot.slotNumber}</span>
                 <span class="slot-time-badge">${slot.duration || schedule.blockDuration || 60} min</span>
               </div>
-              <div class="slot-subject-title" style="font-size: 0.88rem; margin-bottom: 4px;">${App.escapeHtml(slot.subjectName)}</div>
-              <div class="slot-topic-desc" style="font-size: 0.78rem; opacity: 0.9;" title="${App.escapeHtml(slot.topic)}">${App.escapeHtml(slot.topic)}</div>
+              <div class="slot-subject-title" style="font-size: 0.86rem; margin-bottom: 2px;">${App.escapeHtml(slot.subjectName)}</div>
+              <div class="slot-topic-desc" style="font-size: 0.74rem; opacity: 0.9;" title="${App.escapeHtml(slot.topic)}">${App.escapeHtml(displayTopic)}</div>
             `;
 
             bodyEl.appendChild(slotCard);
@@ -11232,7 +11938,7 @@
         this.updateFab(this.activeTab);
 
         container.innerHTML = '';
-        container.style.gridTemplateColumns = `repeat(${this.schedule.columns.length}, minmax(190px, 1fr))`;
+        container.style.gridTemplateColumns = `repeat(${this.schedule.columns.length}, minmax(0, 1fr))`;
 
         this.schedule.columns.forEach(colData => {
           const colEl = document.createElement('div');
@@ -11265,6 +11971,7 @@
             slotCard.style.background = pal.bg;
             slotCard.style.color = pal.text;
             slotCard.draggable = true;
+            slotCard.title = `${slot.subjectName}\n\n${slot.topic || ''}`;
 
             slotCard.ondragstart = (e) => App.handleSlotDragStart(e, colData.dia, slot.slotId);
             slotCard.ondragend = (e) => App.handleSlotDragEnd(e);
@@ -11277,6 +11984,8 @@
             const timeBadgeText = slot.startTime
               ? `⏰ ${slot.startTime}${slot.endTime ? ' - ' + slot.endTime : ''}`
               : `⏱️ ${slot.duration || this.schedule.blockDuration || 60} min`;
+
+            const displayTopic = slot.shortTopic || App.getShortTopicTitle(slot.topic || 'Estudo e resolução de questões');
 
             slotCard.innerHTML = `
               <div class="clean-slot-header">
@@ -11291,7 +12000,7 @@
                        onchange="App.toggleSlotCompleted('${slot.slotKey}')">
               </div>
               <div class="clean-slot-title">${App.escapeHtml(slot.subjectName)}</div>
-              <div class="clean-slot-topic">${App.escapeHtml(slot.topic || 'Estudo e resolução de questões')}</div>
+              <div class="clean-slot-topic" title="${App.escapeHtml(slot.topic || '')}">${App.escapeHtml(displayTopic)}</div>
             `;
 
             bodyEl.appendChild(slotCard);

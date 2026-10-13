@@ -1,17 +1,29 @@
 {
-  "version": "1.6.0",
+  "version": "1.6.1",
   "date": "2026-10-13",
   "notes": [
-    "Autenticação e sincronização em nuvem em tempo real com Supabase (Web + APK Android)",
-    "Mesma conta e dados sincronizados no celular e no computador (matérias, tópicos, cronogramas e progresso)",
-    "Arquitetura Offline-First: funciona 100% sem internet e sincroniza automaticamente ao reconectar",
-    "Resolução de conflitos inteligente no primeiro login (Upload, Download com backup ou Mesclagem sem duplicações)",
-    "Indicadores visuais discretos de status de nuvem no cabeçalho e na tela de Ajustes",
-    "Sincronização de preferências, anotações/marcações do leitor de PDF e revisões programadas",
-    "Recuperação de senha por e-mail e opção de exclusão definitiva de conta e dados da nuvem"
+    "Grade de horários corrigida: colunas proporcionais via CSS Grid sem sobreposição ou corte de cards no computador e mobile",
+    "Cards simplificados: título curto de tópico em até 2 linhas e texto completo ao tocar na sessão de estudo",
+    "Identificação precisa de matérias no edital, isolando títulos compostos com subitens na mesma linha",
+    "Revisar Divisão completo: mover tópicos entre matérias, criar novas disciplinas e renomear com backup automático de segurança",
+    "Aviso de capacidade na pré-visualização com pílulas de matérias e botões de ajuste rápido (+1 bloco, +30min, +1 dia, ajustar frequências)",
+    "Distribuição justa (Round-Robin proporcional) garantindo todas as matérias selecionadas sem dias consecutivos repetidos"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.6.0",
+      "date": "2026-10-13",
+      "notes": [
+        "Autenticação e sincronização em nuvem em tempo real com Supabase (Web + APK Android)",
+        "Mesma conta e dados sincronizados no celular e no computador (matérias, tópicos, cronogramas e progresso)",
+        "Arquitetura Offline-First: funciona 100% sem internet e sincroniza automaticamente ao reconectar",
+        "Resolução de conflitos inteligente no primeiro login (Upload, Download com backup ou Mesclagem sem duplicações)",
+        "Indicadores visuais discretos de status de nuvem no cabeçalho e na tela de Ajustes",
+        "Sincronização de preferências, anotações/marcações do leitor de PDF e revisões programadas",
+        "Recuperação de senha por e-mail e opção de exclusão definitiva de conta e dados da nuvem"
+      ]
+    },
     {
       "version": "1.5.0",
       "date": "2026-10-13",
