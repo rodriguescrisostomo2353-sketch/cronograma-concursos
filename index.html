@@ -702,6 +702,52 @@
       border-color: var(--border-focus);
     }
 
+    /* Hierarquia e Subníveis de Tópicos (Etapa 3) */
+    .topic-item.topic-parent {
+      background: var(--bg-subtle);
+      border-left: 3px solid #6366f1;
+    }
+
+    .topic-parent-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(99, 102, 241, 0.12);
+      color: #4f46e5;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    [data-theme="dark"] .topic-parent-badge {
+      background: rgba(99, 102, 241, 0.25);
+      color: #a5b4fc;
+    }
+
+    .topic-item.topic-level-1 {
+      margin-left: 14px;
+      border-left: 2px solid var(--border-color);
+    }
+
+    .topic-item.topic-level-2 {
+      margin-left: 28px;
+      border-left: 2px dashed var(--border-color);
+    }
+
+    .topic-item.topic-level-3 {
+      margin-left: 40px;
+      border-left: 2px dotted var(--border-color);
+    }
+
+    @media (max-width: 600px) {
+      .topic-item.topic-level-1 { margin-left: 8px; }
+      .topic-item.topic-level-2 { margin-left: 16px; }
+      .topic-item.topic-level-3 { margin-left: 22px; }
+    }
+
     .topic-text {
       flex: 1;
       white-space: pre-wrap;
@@ -3112,31 +3158,73 @@
       .fab-btn {
         display: none !important;
       }
+      .subject-header-desktop-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .subject-header-mobile-actions {
+        display: none !important;
+      }
     }
 
     @media (max-width: 768px) {
       body {
-        padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+        padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
       }
       header {
-        padding: max(14px, env(safe-area-inset-top, 0px)) 0 12px 0;
+        padding: max(12px, env(safe-area-inset-top, 0px)) 14px 10px 14px;
       }
       .container {
         padding: 0 14px;
       }
       .header-inner {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        min-height: 48px;
+      }
+      .logo-titles p {
+        display: none !important;
+      }
+      .logo-titles h1 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin: 0;
+      }
+      .logo-badge {
+        font-size: 1.25rem;
       }
       .header-actions {
-        display: none;
+        display: flex !important;
+        align-items: center;
+        gap: 6px;
+      }
+      .header-actions #btnLoadDemo,
+      .header-actions #btnClearAll {
+        display: none !important;
+      }
+      .header-actions #btnToggleTheme {
+        padding: 8px 12px;
+        min-height: 44px;
+        min-width: 44px;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-sm);
+      }
+      #themeToggleText {
+        display: none !important;
       }
       .nav-tabs {
         display: none !important;
       }
       .bottom-nav {
         display: flex !important;
+        height: calc(64px + env(safe-area-inset-bottom, 0px));
+        padding-bottom: env(safe-area-inset-bottom, 0px);
       }
       .schedule-desktop-view {
         display: none;
@@ -3161,6 +3249,466 @@
       }
       .subject-body {
         padding: 12px 14px;
+      }
+
+      /* Matérias & Tópicos Mobile Clean */
+      .subject-header-desktop-actions {
+        display: none !important;
+      }
+      .subject-header-mobile-actions {
+        display: flex !important;
+        align-items: center;
+        gap: 8px;
+      }
+      .topic-actions {
+        display: none !important;
+      }
+      .topic-item {
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(79, 70, 229, 0.08);
+        padding: 10px 12px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        border-radius: var(--radius-sm);
+        transition: background 0.15s ease;
+      }
+      .topic-item:active {
+        background: var(--bg-subtle);
+      }
+      .add-topic-row {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .add-topic-row .input-field {
+        min-height: 44px;
+      }
+      .add-topic-row .btn {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+      }
+
+      /* Upload de Edital Mobile Clean */
+      .upload-card {
+        padding: 24px 16px;
+        border-radius: var(--radius-md);
+      }
+      .upload-card h3 {
+        font-size: 1.05rem;
+      }
+      .upload-card p {
+        font-size: 0.85rem;
+      }
+      .upload-card .btn-primary {
+        width: 100%;
+        min-height: 48px;
+        justify-content: center;
+        font-size: 0.95rem;
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .feature-box {
+        padding: 12px 14px;
+      }
+      .feature-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1.1rem;
+      }
+      .feature-box h4 {
+        font-size: 0.9rem;
+      }
+      .feature-box p {
+        font-size: 0.78rem;
+      }
+
+      /* Toque amigável no mobile (alvo mínimo de toque) */
+      button, input, select, textarea {
+        touch-action: manipulation;
+      }
+    }
+
+    /* ==========================================================================
+       16. LEITOR DE PDF COM MARCAÇÕES & OFFLINE (PARTE B)
+       ========================================================================== */
+    .pdf-reader-toolbar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+    .pdf-toolbar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .pdf-toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .pdf-doc-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: var(--bg-subtle);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+    .pdf-page-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .pdf-page-indicator input {
+      width: 48px;
+      padding: 4px 6px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: var(--bg-page);
+      color: var(--text-main);
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .pdf-zoom-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      min-width: 42px;
+      text-align: center;
+    }
+    .pdf-tools-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-color);
+    }
+    .pdf-tools-left, .pdf-tools-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .pdf-tool-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-main);
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      user-select: none;
+    }
+    .pdf-tool-btn:hover {
+      background: var(--bg-subtle);
+    }
+    .pdf-tool-btn.active {
+      background: #4f46e5;
+      color: #ffffff;
+      border-color: #4f46e5;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+    }
+    :root[data-theme="dark"] .pdf-tool-btn.active {
+      background: #6366f1;
+      border-color: #6366f1;
+    }
+    .pdf-palette-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-subtle);
+      padding: 4px 8px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+    }
+    .palette-swatch {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .palette-swatch:hover {
+      transform: scale(1.15);
+    }
+    .palette-swatch.active {
+      border-color: var(--text-main);
+      transform: scale(1.22);
+      box-shadow: 0 0 0 1px var(--bg-card);
+    }
+    .pdf-stroke-size {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-subtle);
+      padding: 2px 6px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+    .stroke-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .stroke-btn.active {
+      color: #4f46e5;
+      background: var(--bg-card);
+    }
+    :root[data-theme="dark"] .stroke-btn.active {
+      color: #818cf8;
+    }
+
+    /* Layout Visualizador & Sidebar */
+    .pdf-viewer-layout {
+      display: flex;
+      gap: 14px;
+      position: relative;
+    }
+    .pdf-bookmarks-sidebar {
+      width: 230px;
+      flex-shrink: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      max-height: 80vh;
+      overflow-y: auto;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    .pdf-bookmarks-sidebar.hidden {
+      display: none;
+    }
+    .pdf-bookmarks-sidebar .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .pdf-bookmarks-sidebar h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--text-main);
+    }
+    .sidebar-empty {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 14px 6px;
+      line-height: 1.4;
+    }
+    .sidebar-bookmark-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
+      background: var(--bg-subtle);
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .sidebar-bookmark-item:hover {
+      background: #4f46e5;
+      color: #fff;
+    }
+
+    /* Área do Canvas */
+    .pdf-canvas-viewport {
+      flex: 1;
+      min-height: 72vh;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+      overflow: auto;
+      position: relative;
+    }
+    .pdf-canvas-viewport.pdf-night-mode {
+      background: #090d16;
+    }
+    .pdf-canvas-viewport.pdf-night-mode #pdfRenderCanvas {
+      filter: invert(0.9) hue-rotate(180deg) brightness(0.95);
+      background: #0f172a;
+    }
+    .pdf-empty-state {
+      text-align: center;
+      max-width: 480px;
+      margin: 40px auto;
+      padding: 30px 20px;
+    }
+    .pdf-empty-state .empty-icon {
+      font-size: 3.5rem;
+      margin-bottom: 12px;
+    }
+    .pdf-empty-state h3 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .pdf-empty-state p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+    .empty-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Container de Página e Camadas */
+    .pdf-page-container {
+      display: inline-block;
+      box-shadow: var(--shadow-lg);
+      border-radius: 4px;
+      background: #ffffff;
+      position: relative;
+      margin: 0 auto;
+    }
+    .pdf-page-stage {
+      position: relative;
+      display: block;
+      line-height: 0;
+    }
+    #pdfRenderCanvas {
+      display: block;
+      max-width: none;
+    }
+    #pdfAnnotationCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      -webkit-touch-callout: none;
+      user-select: none;
+      cursor: crosshair;
+    }
+    .pdf-tool-hand #pdfAnnotationCanvas {
+      pointer-events: none;
+      cursor: default;
+    }
+    .pdf-notes-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .pdf-note-pin {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      font-size: 1.4rem;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: transform 0.15s ease;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+    }
+    .pdf-note-pin:hover, .pdf-note-pin:active {
+      transform: translate(-50%, -115%) scale(1.25);
+    }
+    .pdf-page-spinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(15, 23, 42, 0.85);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      backdrop-filter: blur(8px);
+      z-index: 50;
+    }
+    .pdf-page-spinner.hidden {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .pdf-reader-toolbar {
+        padding: 8px 10px;
+        gap: 8px;
+      }
+      .pdf-toolbar-row {
+        gap: 6px;
+      }
+      .pdf-tools-bar {
+        gap: 6px;
+      }
+      .pdf-tool-btn {
+        padding: 6px 8px;
+        font-size: 0.78rem;
+        min-height: 40px;
+      }
+      .tool-name {
+        display: none;
+      }
+      .pdf-canvas-viewport {
+        padding: 8px 4px;
+        min-height: 60vh;
+      }
+      .pdf-bookmarks-sidebar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 100;
       }
     }
   </style>
@@ -3207,6 +3755,9 @@
       </button>
       <button class="nav-tab-btn" data-tab="tab-schedule">
         🗓️ Cronograma
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-pdf-reader">
+        📖 Leitor de PDF
       </button>
       <button class="nav-tab-btn" data-tab="tab-upload">
         📄 Upload do Edital
@@ -3279,13 +3830,43 @@
           <span>Matérias Identificadas</span>
           <span class="section-count" id="headerCountLabel">0 matérias cadastradas</span>
         </div>
-        <div style="display: flex; gap: 8px;">
+        <!-- Ações no Computador (Desktop) -->
+        <div class="subject-header-desktop-actions">
+          <button class="btn btn-secondary btn-sm" id="btnReviewEditalDivision" onclick="App.openReviewEditalModal()" title="Revisar matérias e tópicos divididos">
+            📑 Revisar Divisão
+          </button>
+          <button class="btn btn-secondary btn-sm" id="btnReprocessEdital" onclick="App.reprocessEditalPrompt()" title="Reprocessar edital com a inteligência aprimorada">
+            🔄 Reprocessar Edital
+          </button>
           <button class="btn btn-secondary btn-sm" id="btnExpandAll">
             ↕️ Expandir/Recolher
           </button>
           <button class="btn btn-pastel-purple btn-sm" id="btnOpenAddSubjectModal">
-            ➕ Adicionar Matéria Manualmente
+            ➕ Adicionar Matéria
           </button>
+        </div>
+
+        <!-- Ações no Celular (Mobile) -->
+        <div class="subject-header-mobile-actions">
+          <button type="button" class="btn btn-pastel-purple btn-sm" onclick="App.openAddSubjectModal()" style="min-height: 40px; padding: 6px 12px; font-weight: 600;">
+            ➕ Nova
+          </button>
+          <div class="dropdown-menu-wrapper" id="subjectMoreMenuWrapper">
+            <button type="button" class="btn-more-dots" id="btnSubjectMoreMenu" aria-label="Mais opções de matérias" onclick="App.toggleSubjectMoreMenu(event)">
+              ⋮
+            </button>
+            <div class="dropdown-menu-popover" id="subjectDropdownPopover" style="display: none;">
+              <button type="button" class="dropdown-item" onclick="App.closeSubjectMoreMenu(); App.openReviewEditalModal();">
+                <span>📑</span> Revisar Divisão
+              </button>
+              <button type="button" class="dropdown-item" onclick="App.closeSubjectMoreMenu(); App.reprocessEditalPrompt();">
+                <span>🔄</span> Reprocessar Edital
+              </button>
+              <button type="button" class="dropdown-item" onclick="App.closeSubjectMoreMenu(); App.toggleExpandAll();">
+                <span>↕️</span> Expandir / Recolher Tudo
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -3516,6 +4097,17 @@
 
           <!-- Bloco Recolhível de Opções Avançadas -->
           <div id="autoAdvancedOptions" style="display: none;">
+            <!-- Divisão dos Tópicos no Cronograma (Etapa 3) -->
+            <div class="auto-config-card-group" style="margin-bottom: 14px;">
+              <div class="auto-config-title" style="margin-bottom: 8px;">
+                <span>📚 Divisão dos Tópicos no Cronograma</span>
+              </div>
+              <select id="selectTopicGranularity" class="input-field" style="padding: 8px 12px;" onchange="App.saveAutoConfigSettings()">
+                <option value="detailed" selected>Todos os subtópicos detalhados (Recomendado para fechar 100% do edital)</option>
+                <option value="parents">Apenas tópicos principais (Agrupar subtópicos)</option>
+              </select>
+            </div>
+
             <!-- Quantidade Máxima de Matérias por Dia -->
             <div class="auto-config-card-group" style="margin-bottom: 14px;">
               <div class="auto-config-title" style="margin-bottom: 8px;">
@@ -3724,6 +4316,164 @@
             ⚡ Ir para Geração Automática
           </button>
         </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================================
+         ABA: LEITOR DE PDF COM MARCAÇÕES & OFFLINE (PARTE B)
+         ======================================================================== -->
+    <section id="tab-pdf-reader" class="tab-content">
+      
+      <!-- Barra Superior de Controle do Leitor -->
+      <div class="pdf-reader-toolbar" id="pdfReaderToolbar">
+        
+        <!-- Linha 1: Arquivo, Páginas e Ações Principais -->
+        <div class="pdf-toolbar-row">
+          <div class="pdf-toolbar-group">
+            <input type="file" id="pdfReaderFileInput" accept="application/pdf" style="display: none;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btnPdfOpenNew" onclick="document.getElementById('pdfReaderFileInput').click()" title="Abrir qualquer PDF do aparelho">
+              📂 Abrir PDF
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnPdfOpenEdital" onclick="App.openEditalInReader()" title="Abrir o edital já carregado no app" style="display: none;">
+              📑 Edital
+            </button>
+            <span class="pdf-doc-title" id="pdfReaderDocTitle" title="Nome do documento aberto">Nenhum PDF</span>
+          </div>
+
+          <!-- Navegação de Páginas -->
+          <div class="pdf-toolbar-group pdf-nav-group">
+            <button type="button" class="btn-icon" id="btnPdfPrevPage" onclick="App.pdfReaderPrevPage()" title="Página anterior">◀</button>
+            <div class="pdf-page-indicator">
+              <input type="number" id="inputPdfCurrentPage" min="1" value="1" onchange="App.pdfReaderGoToPage(this.value)">
+              <span>/ <strong id="labelPdfTotalPages">0</strong></span>
+            </div>
+            <button type="button" class="btn-icon" id="btnPdfNextPage" onclick="App.pdfReaderNextPage()" title="Próxima página">▶</button>
+            <button type="button" class="btn-icon" id="btnPdfBookmark" onclick="App.pdfReaderToggleBookmark()" title="Favoritar esta página">
+              <span id="iconPdfBookmark">☆</span>
+            </button>
+          </div>
+
+          <!-- Visualização, Zoom e Exportação -->
+          <div class="pdf-toolbar-group pdf-zoom-group">
+            <button type="button" class="btn-icon" id="btnPdfZoomOut" onclick="App.pdfReaderZoom(-0.15)" title="Diminuir zoom">➖</button>
+            <span class="pdf-zoom-label" id="labelPdfZoom">100%</span>
+            <button type="button" class="btn-icon" id="btnPdfZoomIn" onclick="App.pdfReaderZoom(0.15)" title="Aumentar zoom">➕</button>
+            <button type="button" class="btn-icon" id="btnPdfFitWidth" onclick="App.pdfReaderFitWidth()" title="Ajustar à largura da tela">↔️</button>
+            <button type="button" class="btn-icon" id="btnPdfNightMode" onclick="App.pdfReaderToggleNightMode()" title="Modo leitura noturna / escuro">🌙</button>
+            <button type="button" class="btn-icon" id="btnPdfBookmarksList" onclick="App.pdfReaderToggleSidebar()" title="Páginas favoritas e miniaturas">⭐</button>
+            <button type="button" class="btn btn-primary btn-sm" id="btnPdfExport" onclick="App.pdfReaderExportAnnotated()" title="Exportar PDF com marcações">
+              📥 Exportar
+            </button>
+          </div>
+        </div>
+
+        <!-- Linha 2: Ferramentas de Marcação (Marca-texto, Caneta, Notas, Limpar) -->
+        <div class="pdf-tools-bar" id="pdfToolsBar">
+          <div class="pdf-tools-left">
+            <!-- Ferramenta Mão / Navegar -->
+            <button type="button" class="pdf-tool-btn active" id="btnToolHand" onclick="App.pdfReaderSetTool('hand')" title="Mover / Leitura">
+              ✋ <span class="tool-name">Navegar</span>
+            </button>
+
+            <!-- Marca-texto -->
+            <button type="button" class="pdf-tool-btn" id="btnToolHighlight" onclick="App.pdfReaderSetTool('highlight')" title="Marca-texto suave">
+              🖍️ <span class="tool-name">Marca-texto</span>
+            </button>
+
+            <!-- Caneta Livre -->
+            <button type="button" class="pdf-tool-btn" id="btnToolPen" onclick="App.pdfReaderSetTool('pen')" title="Caneta livre">
+              ✏️ <span class="tool-name">Caneta</span>
+            </button>
+
+            <!-- Nota Fixada -->
+            <button type="button" class="pdf-tool-btn" id="btnToolNote" onclick="App.pdfReaderSetTool('note')" title="Adicionar nota ou comentário">
+              📌 <span class="tool-name">Nota</span>
+            </button>
+
+            <!-- Paleta de Cores Dinâmica -->
+            <div class="pdf-palette-selector" id="pdfPaletteSelector">
+              <span class="palette-swatch active" data-color="#fef08a" style="background: #fef08a;" onclick="App.pdfReaderSetColor('#fef08a')" title="Amarelo"></span>
+              <span class="palette-swatch" data-color="#bbf7d0" style="background: #bbf7d0;" onclick="App.pdfReaderSetColor('#bbf7d0')" title="Verde"></span>
+              <span class="palette-swatch" data-color="#bae6fd" style="background: #bae6fd;" onclick="App.pdfReaderSetColor('#bae6fd')" title="Azul"></span>
+              <span class="palette-swatch" data-color="#fbcfe8" style="background: #fbcfe8;" onclick="App.pdfReaderSetColor('#fbcfe8')" title="Rosa"></span>
+              <span class="palette-swatch" data-color="#ef4444" style="background: #ef4444;" onclick="App.pdfReaderSetColor('#ef4444')" title="Vermelho"></span>
+              <span class="palette-swatch" data-color="#1e293b" style="background: #1e293b;" onclick="App.pdfReaderSetColor('#1e293b')" title="Preto"></span>
+            </div>
+
+            <!-- Espessura da Linha -->
+            <div class="pdf-stroke-size" id="pdfStrokeSizeSelector">
+              <button type="button" class="stroke-btn active" data-size="3" onclick="App.pdfReaderSetStrokeSize(3)" title="Fina">•</button>
+              <button type="button" class="stroke-btn" data-size="6" onclick="App.pdfReaderSetStrokeSize(6)" title="Média">●</button>
+              <button type="button" class="stroke-btn" data-size="12" onclick="App.pdfReaderSetStrokeSize(12)" title="Grossa">⬤</button>
+            </div>
+          </div>
+
+          <!-- Ações de Borracha / Desfazer / Limpar -->
+          <div class="pdf-tools-right">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.pdfReaderUndoStroke()" title="Desfazer último traço">
+              ↩️ Desfazer
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.pdfReaderClearPage()" title="Limpar marcações desta página">
+              🧹 Limpar Página
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Container Principal do Visualizador de PDF com Drawer Lateral -->
+      <div class="pdf-viewer-layout">
+        
+        <!-- Sidebar de Favoritos & Miniaturas (Recolhível) -->
+        <aside class="pdf-bookmarks-sidebar hidden" id="pdfBookmarksSidebar">
+          <div class="sidebar-header">
+            <h4>⭐ Páginas Favoritas</h4>
+            <button type="button" class="btn-icon" onclick="App.pdfReaderToggleSidebar()">✕</button>
+          </div>
+          <div class="sidebar-list" id="pdfBookmarksListContainer">
+            <p class="sidebar-empty">Nenhuma página favoritada ainda.<br>Clique em ☆ para marcar.</p>
+          </div>
+        </aside>
+
+        <!-- Área de Renderização do PDF -->
+        <div class="pdf-canvas-viewport" id="pdfCanvasViewport">
+          
+          <!-- Estado Inicial Vazio -->
+          <div class="pdf-empty-state" id="pdfEmptyState">
+            <div class="empty-icon">📖</div>
+            <h3>Leitor de PDF Offline com Marcações</h3>
+            <p>Abra qualquer edital, lei seca, apostila ou resumo. Suas anotações, desenhos e marca-textos são salvos automaticamente no seu dispositivo (IndexedDB).</p>
+            <div class="empty-buttons">
+              <button type="button" class="btn btn-primary btn-lg" onclick="document.getElementById('pdfReaderFileInput').click()">
+                📂 Selecionar Arquivo PDF
+              </button>
+              <button type="button" class="btn btn-secondary btn-lg" id="btnEmptyOpenEdital" onclick="App.openEditalInReader()" style="display: none;">
+                📑 Abrir Edital Já Carregado
+              </button>
+            </div>
+          </div>
+
+          <!-- Container da Página do PDF com Camada de Anotação -->
+          <div class="pdf-page-container" id="pdfPageContainer" style="display: none;">
+            <div class="pdf-page-stage" id="pdfPageStage">
+              <!-- Canvas da Página PDF -->
+              <canvas id="pdfRenderCanvas"></canvas>
+              <!-- Canvas Interativo de Anotações Sobreposto -->
+              <canvas id="pdfAnnotationCanvas"></canvas>
+              <!-- Camada de Notas Flutuantes -->
+              <div id="pdfNotesOverlay" class="pdf-notes-overlay"></div>
+            </div>
+          </div>
+
+          <!-- Indicador de Carregamento da Página -->
+          <div class="pdf-page-spinner hidden" id="pdfPageSpinner">
+            <div class="spinner-circle"></div>
+            <span>Renderizando página...</span>
+          </div>
+
+        </div>
+
       </div>
 
     </section>
@@ -4322,6 +5072,49 @@
     </div>
   </div>
 
+  <!-- Modal: Revisar Divisão do Edital (Etapa 4) -->
+  <div class="modal-overlay" id="modalReviewEditalDivision">
+    <div class="modal-card" style="max-width: 840px; width: 95vw; max-height: 92vh; display: flex; flex-direction: column;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <div>
+          <h3 style="display: flex; align-items: center; gap: 8px; margin: 0 0 4px 0; font-size: 1.15rem;">
+            📑 Revisar Divisão do Edital
+          </h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">
+            Confira a organização das matérias e tópicos extraídos do PDF antes de salvar.
+          </p>
+        </div>
+        <button type="button" class="btn-icon" onclick="App.closeModals()">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding: 16px 0; overflow-y: auto; flex: 1;">
+        <!-- Estatísticas e Integridade -->
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; background: var(--bg-subtle); padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-bottom: 14px; align-items: center;">
+          <span style="font-size: 0.85rem; color: var(--text-main);">📚 Matérias: <strong id="reviewStatSubjectsCount">0</strong></span>
+          <span style="color: var(--text-light);">•</span>
+          <span style="font-size: 0.85rem; color: var(--text-main);">📝 Tópicos: <strong id="reviewStatTopicsCount">0</strong></span>
+          <span style="color: var(--text-light);">•</span>
+          <span style="font-size: 0.85rem; color: var(--text-main);">🛡️ Integridade: <strong id="reviewStatIntegrity" style="color: var(--pastel-green-text, #16a34a);">100% Preservado</strong></span>
+          <span style="margin-left: auto; font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Zero perda de conteúdo</span>
+        </div>
+
+        <!-- Lista de Matérias e Tópicos -->
+        <div id="reviewDivisionListContainer" style="display: flex; flex-direction: column; gap: 10px; padding-right: 4px;">
+          <!-- Preenchido via JS -->
+        </div>
+      </div>
+
+      <div class="modal-actions" style="border-top: 1px solid var(--border-color); padding-top: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <button type="button" class="btn btn-secondary" onclick="App.reprocessEditalPrompt()">
+          🔄 Reprocessar Edital
+        </button>
+        <button type="button" class="btn btn-primary" onclick="App.confirmEditalReview()">
+          ✅ Confirmar e Ir para Matérias
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal / Bottom Sheet: Detalhes da Sessão de Estudos (Clean UI) -->
   <div class="modal-overlay hidden" id="modalSessionDetails">
     <div class="modal-card modal-sheet-card" style="max-width: 480px;">
@@ -4385,6 +5178,88 @@
     </div>
   </div>
 
+  <!-- Modal / Bottom Sheet: Ações do Tópico (Clean UI Mobile) -->
+  <div class="modal-overlay hidden" id="modalTopicActionsSheet">
+    <div class="modal-card modal-sheet-card" style="max-width: 440px;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span id="topicSheetSubjectBadge" class="badge" style="font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: var(--pastel-blue-bg); color: var(--pastel-blue-text);">Matéria</span>
+          <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Opções do Tópico</span>
+        </div>
+        <button type="button" class="btn-icon" onclick="App.closeTopicActionsSheet()">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <div id="topicSheetContent" style="font-size: 0.92rem; line-height: 1.45; font-weight: 600; color: var(--text-main); margin-bottom: 18px; background: var(--bg-subtle); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); word-break: break-word;">
+          Texto do Tópico
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button type="button" class="btn btn-primary" id="btnTopicSheetEdit" style="min-height: 46px; justify-content: center; font-weight: 600;">
+            ✏️ Editar Tópico
+          </button>
+          <button type="button" class="btn btn-danger-soft" id="btnTopicSheetDelete" style="min-height: 46px; justify-content: center; font-weight: 600;">
+            🗑️ Excluir Tópico
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="App.closeTopicActionsSheet()" style="min-height: 44px; justify-content: center;">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Nova / Editar Nota no PDF -->
+  <div class="modal-overlay hidden" id="modalPdfNote">
+    <div class="modal-card" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 8px;">
+          📌 Anotação da Página <span id="pdfNotePageNum">1</span>
+        </h3>
+        <button type="button" class="btn-icon" onclick="App.closePdfNoteModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <label class="config-label" for="textareaPdfNote">Comentário ou Resumo:</label>
+        <textarea id="textareaPdfNote" class="input-field" rows="4" placeholder="Escreva sua anotação ou ponto de atenção aqui..."></textarea>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button type="button" class="btn btn-danger-soft btn-sm" id="btnDeletePdfNote" onclick="App.deleteCurrentPdfNote()">
+          🗑️ Excluir Nota
+        </button>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="App.closePdfNoteModal()">Cancelar</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="App.savePdfNote()">💾 Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal / Bottom Sheet: Menu Mais Opções (Mobile) -->
+  <div class="modal-overlay hidden" id="modalMoreSheet">
+    <div class="modal-card modal-sheet-card" style="max-width: 440px;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-main);">
+          ⋯ Mais Opções
+        </h3>
+        <button type="button" class="btn-icon" onclick="App.closeMoreMenuSheet()">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+        <button type="button" class="btn btn-secondary" onclick="App.switchTab('tab-updates'); App.closeMoreMenuSheet();" style="justify-content: flex-start; min-height: 48px; font-weight: 600;">
+          <span style="font-size: 1.2rem; margin-right: 8px;">🔄</span> Atualizações do Aplicativo
+          <span class="tab-badge-dot" id="sheetUpdatesBadgeDot" style="display: none; margin-left: auto;"></span>
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="App.switchTab('tab-settings'); App.closeMoreMenuSheet();" style="justify-content: flex-start; min-height: 48px; font-weight: 600;">
+          <span style="font-size: 1.2rem; margin-right: 8px;">⚙️</span> Ajustes & Aparência
+        </button>
+        <div class="dropdown-divider" style="margin: 4px 0;"></div>
+        <button type="button" class="btn btn-secondary" onclick="App.loadDemoData(); App.closeMoreMenuSheet();" style="justify-content: flex-start; min-height: 46px;">
+          <span style="font-size: 1.1rem; margin-right: 8px;">✨</span> Carregar Exemplo de Estudo
+        </button>
+        <button type="button" class="btn btn-danger-soft" onclick="App.clearAllData(); App.closeMoreMenuSheet();" style="justify-content: flex-start; min-height: 46px;">
+          <span style="font-size: 1.1rem; margin-right: 8px;">🗑️</span> Limpar Todos os Dados Salvos
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Container de Notificações Toast -->
   <div class="toast-container" id="toastContainer"></div>
 
@@ -4413,24 +5288,24 @@
       </div>
       <span class="bottom-nav-label">Cronograma</span>
     </button>
+    <button class="bottom-nav-item" data-tab="tab-pdf-reader">
+      <div class="bottom-nav-icon-wrapper">
+        <span class="bottom-nav-icon">📖</span>
+      </div>
+      <span class="bottom-nav-label">Leitor</span>
+    </button>
     <button class="bottom-nav-item" data-tab="tab-upload">
       <div class="bottom-nav-icon-wrapper">
         <span class="bottom-nav-icon">📄</span>
       </div>
       <span class="bottom-nav-label">Edital</span>
     </button>
-    <button class="bottom-nav-item" data-tab="tab-updates">
+    <button class="bottom-nav-item" data-tab="tab-more" id="bottomNavMoreBtn" onclick="App.openMoreMenuSheet()">
       <div class="bottom-nav-icon-wrapper">
-        <span class="bottom-nav-icon">🔄</span>
+        <span class="bottom-nav-icon">⋯</span>
         <span class="bottom-nav-dot" id="updatesBadgeDot" style="display: none;"></span>
       </div>
-      <span class="bottom-nav-label">Atualizações</span>
-    </button>
-    <button class="bottom-nav-item" data-tab="tab-settings">
-      <div class="bottom-nav-icon-wrapper">
-        <span class="bottom-nav-icon">⚙️</span>
-      </div>
-      <span class="bottom-nav-label">Ajustes</span>
+      <span class="bottom-nav-label">Mais</span>
     </button>
   </nav>
 
@@ -4457,6 +5332,162 @@
        JAVASCRIPT DA APLICAÇÃO
        ========================================================================== -->
   <script>
+    /**
+     * GERENCIADOR DE ARMAZENAMENTO OFFLINE DO LEITOR DE PDF (INDEXEDDB)
+     * Salva o PDF ativo, anotações (marca-texto e caneta em coordenadas relativas) e favoritos.
+     */
+    const PdfStorage = {
+      dbName: 'ConcursoPdfReaderDB',
+      dbVersion: 1,
+      db: null,
+
+      async getDb() {
+        if (this.db) return this.db;
+        return new Promise((resolve, reject) => {
+          const request = indexedDB.open(this.dbName, this.dbVersion);
+          request.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('files')) {
+              db.createObjectStore('files', { keyPath: 'id' });
+            }
+            if (!db.objectStoreNames.contains('annotations')) {
+              db.createObjectStore('annotations', { keyPath: 'id' });
+            }
+            if (!db.objectStoreNames.contains('bookmarks')) {
+              db.createObjectStore('bookmarks', { keyPath: 'id' });
+            }
+          };
+          request.onsuccess = (e) => {
+            this.db = e.target.result;
+            resolve(this.db);
+          };
+          request.onerror = (e) => {
+            console.error('[PdfStorage] Erro ao abrir IndexedDB:', e);
+            reject(e.target.error);
+          };
+        });
+      },
+
+      async saveFile(id, name, arrayBuffer, totalPages = 0) {
+        try {
+          const db = await this.getDb();
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction('files', 'readwrite');
+            const store = tx.objectStore('files');
+            store.put({ id, name, data: arrayBuffer, totalPages, updatedAt: Date.now() });
+            tx.oncomplete = () => resolve(true);
+            tx.onerror = () => reject(tx.error);
+          });
+        } catch (err) {
+          console.warn('[PdfStorage] Erro ao salvar arquivo:', err);
+          return false;
+        }
+      },
+
+      async getFile(id = 'active') {
+        try {
+          const db = await this.getDb();
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction('files', 'readonly');
+            const store = tx.objectStore('files');
+            const req = store.get(id);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => reject(req.error);
+          });
+        } catch (err) {
+          console.warn('[PdfStorage] Erro ao buscar arquivo:', err);
+          return null;
+        }
+      },
+
+      async savePageAnnotations(docId, pageNum, data) {
+        try {
+          const db = await this.getDb();
+          const id = `${docId}_page_${pageNum}`;
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction('annotations', 'readwrite');
+            const store = tx.objectStore('annotations');
+            store.put({ id, docId, page: pageNum, ...data });
+            tx.oncomplete = () => resolve(true);
+            tx.onerror = () => reject(tx.error);
+          });
+        } catch (err) {
+          console.warn('[PdfStorage] Erro ao salvar anotações:', err);
+          return false;
+        }
+      },
+
+      async getPageAnnotations(docId, pageNum) {
+        try {
+          const db = await this.getDb();
+          const id = `${docId}_page_${pageNum}`;
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction('annotations', 'readonly');
+            const store = tx.objectStore('annotations');
+            const req = store.get(id);
+            req.onsuccess = () => resolve(req.result || { strokes: [], notes: [] });
+            req.onerror = () => reject(req.error);
+          });
+        } catch (err) {
+          return { strokes: [], notes: [] };
+        }
+      },
+
+      async getAllAnnotationsForDoc(docId) {
+        try {
+          const db = await this.getDb();
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction('annotations', 'readonly');
+            const store = tx.objectStore('annotations');
+            const req = store.getAll();
+            req.onsuccess = () => {
+              const list = req.result || [];
+              const map = {};
+              list.forEach(item => {
+                if (item.docId === docId) {
+                  map[item.page] = { strokes: item.strokes || [], notes: item.notes || [] };
+                }
+              });
+              resolve(map);
+            };
+            req.onerror = () => reject(req.error);
+          });
+        } catch (err) {
+          return {};
+        }
+      },
+
+      async saveBookmarks(docId, pages) {
+        try {
+          const db = await this.getDb();
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction('bookmarks', 'readwrite');
+            const store = tx.objectStore('bookmarks');
+            store.put({ id: `${docId}_bookmarks`, docId, pages });
+            tx.oncomplete = () => resolve(true);
+            tx.onerror = () => reject(tx.error);
+          });
+        } catch (err) {
+          return false;
+        }
+      },
+
+      async getBookmarks(docId) {
+        try {
+          const db = await this.getDb();
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction('bookmarks', 'readonly');
+            const store = tx.objectStore('bookmarks');
+            const req = store.get(`${docId}_bookmarks`);
+            req.onsuccess = () => resolve(req.result ? req.result.pages : []);
+            req.onerror = () => reject(req.error);
+          });
+        } catch (err) {
+          return [];
+        }
+      }
+    };
+
     /**
      * PALETAS EM TONS PASTEL
      * Usam variáveis CSS para refletir a alternância entre tema claro e escuro automaticamente.
@@ -4552,7 +5583,7 @@
      * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.3.1";
+    const APP_VERSION = "1.4.0";
     const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
     const REMOTE_VERSION_URL = UPDATE_URL; // Mantido para compatibilidade
     const GITHUB_RELEASES_URL = "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases";
@@ -4701,6 +5732,28 @@
         isRunning: false
       },
 
+      /* Estado do Leitor de PDF Offline com Anotações (Parte B) */
+      pdfReader: {
+        doc: null,
+        currentDocId: 'active',
+        docName: '',
+        numPages: 0,
+        currentPage: 1,
+        zoom: 1.0,
+        nightMode: false,
+        tool: 'hand', // 'hand', 'highlight', 'pen', 'note'
+        color: '#fef08a',
+        strokeSize: 3,
+        bookmarks: [],
+        annotations: {}, // { [pageNum]: { strokes: [], notes: [] } }
+        isDrawing: false,
+        currentStroke: null,
+        activeNoteId: null,
+        pendingNoteCoords: null,
+        renderTask: null,
+        scale: 1.0
+      },
+
       init() {
         this.initTheme();
         this.loadFromStorage();
@@ -4709,6 +5762,7 @@
         this.initSwipeListeners();
         this.initVersionDisplay();
         this.initUpdateListeners();
+        this.initPdfReader();
         this.renderAll();
         this.renderAutoConfigPanel();
         this.updateHoursBadge();
@@ -4973,6 +6027,10 @@
         document.querySelectorAll('.bottom-nav-item').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const targetTab = e.currentTarget.getAttribute('data-tab');
+            if (targetTab === 'tab-more') {
+              App.openMoreMenuSheet();
+              return;
+            }
             App.switchTab(targetTab);
           });
         });
@@ -5063,13 +6121,20 @@
         const selSched = document.getElementById('selectActiveSchedule');
         if (selSched) selSched.addEventListener('change', (e) => App.switchActiveSchedule(e.target.value));
 
-        // Fechar dropdown de ações secundárias ao clicar fora
+        // Fechar dropdown de ações secundárias e matérias ao clicar fora
         document.addEventListener('click', (e) => {
           const popover = document.getElementById('schedDropdownPopover');
           const btnMore = document.getElementById('btnScheduleMoreMenu');
           if (popover && popover.style.display !== 'none') {
             if (!popover.contains(e.target) && e.target !== btnMore && !btnMore?.contains(e.target)) {
               popover.style.display = 'none';
+            }
+          }
+          const subjPopover = document.getElementById('subjectDropdownPopover');
+          const btnSubjMore = document.getElementById('btnSubjectMoreMenu');
+          if (subjPopover && subjPopover.style.display !== 'none') {
+            if (!subjPopover.contains(e.target) && e.target !== btnSubjMore && !btnSubjMore?.contains(e.target)) {
+              subjPopover.style.display = 'none';
             }
           }
         });
@@ -5448,11 +6513,27 @@
         const targetContent = document.getElementById(tabId);
 
         if (targetTopBtn) targetTopBtn.classList.add('active');
-        if (targetBottomBtn) targetBottomBtn.classList.add('active');
+        if (targetBottomBtn) {
+          targetBottomBtn.classList.add('active');
+        } else if (tabId === 'tab-updates' || tabId === 'tab-settings') {
+          const moreBtn = document.getElementById('bottomNavMoreBtn');
+          if (moreBtn) moreBtn.classList.add('active');
+        }
         if (targetContent) targetContent.classList.add('active');
 
         this.activeTab = tabId;
         this.updateFab(tabId);
+
+        // Se abriu a aba do leitor e já temos um documento, ajusta se necessário
+        if (tabId === 'tab-pdf-reader' && this.pdfReader && this.pdfReader.doc) {
+          setTimeout(() => {
+            if (window.innerWidth <= 768 && !this.pdfReader._didAutoFit) {
+              this.pdfReader._didAutoFit = true;
+              App.pdfReaderFitWidth();
+            }
+          }, 100);
+        }
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },
 
@@ -5483,6 +6564,14 @@
               if (res) res.scrollIntoView({ behavior: 'smooth' });
             };
           }
+        } else if (tabId === 'tab-pdf-reader') {
+          fab.style.display = 'inline-flex';
+          icon.textContent = '📂';
+          label.textContent = 'Abrir PDF';
+          fab.onclick = () => {
+            const fi = document.getElementById('pdfReaderFileInput');
+            if (fi) fi.click();
+          };
         } else if (tabId === 'tab-upload') {
           fab.style.display = 'inline-flex';
           icon.textContent = '📂';
@@ -5557,9 +6646,21 @@
 
         try {
           const arrayBuffer = await file.arrayBuffer();
+          // Salva cópia do edital no IndexedDB para o Leitor de PDF offline
+          try {
+            await PdfStorage.saveFile('edital', file.name || 'Edital.pdf', arrayBuffer.slice(0), 0);
+            App.updatePdfEditalButtons(true);
+          } catch (e) {
+            console.warn('[handlePdfFile] Erro ao salvar edital no IndexedDB:', e);
+          }
           const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
           const pdfDoc = await loadingTask.promise;
           const totalPages = pdfDoc.numPages;
+
+          // Atualiza total de páginas
+          try {
+            await PdfStorage.saveFile('edital', file.name || 'Edital.pdf', arrayBuffer.slice(0), totalPages);
+          } catch (_) {}
 
           let fullTextLines = [];
 
@@ -5586,8 +6687,18 @@
           progressText.textContent = 'Processando matérias e tópicos do edital...';
           if (overlayMsg) overlayMsg.textContent = 'Organizando matérias e tópicos programáticos...';
           
-          // Heurística de identificação de matérias sem descartar nada
-          const parseResult = App.parseEditalText(fullTextLines);
+          // ETAPA 2: Reconstrução de parágrafos contínuos e des-hifenização de fim de linha
+          const continuousLines = App.unifyLinesIntoParagraphs(fullTextLines);
+
+          // Heurística de identificação de matérias sem descartar nada (Etapas 2 & 3)
+          const parseResult = App.parseEditalText(continuousLines);
+
+          // ETAPA 4: Guarda linhas contínuas brutas para permitir Reprocessar Edital a qualquer momento
+          App.data.lastExtractedEditalLines = continuousLines;
+
+          // ETAPA 4: Validação de Integridade do Conteúdo
+          const integrity = App.calculateEditalIntegrity(continuousLines, parseResult);
+          App.data.lastEditalIntegrity = integrity;
 
           // Salva no estado
           App.data.materias = parseResult.materias;
@@ -5597,8 +6708,10 @@
 
           progressContainer.style.display = 'none';
           if (overlay) overlay.style.display = 'none';
+
+          // ETAPA 4: Abre o modal de Revisão da Divisão para o usuário conferir com total clareza
+          App.openReviewEditalModal(parseResult, integrity);
           App.showToast(`Edital lido! ${parseResult.materias.length} matérias e ${parseResult.totalTopicos} tópicos identificados.`, 'success');
-          App.switchTab('tab-subjects');
 
         } catch (error) {
           console.error('Erro na leitura do PDF:', error);
@@ -5608,107 +6721,269 @@
         }
       },
 
-      /* Extrai linhas de texto de uma página do PDF preservando fluxo */
-      extractLinesFromPage(textContent) {
-        if (!textContent || !textContent.items) return [];
+      /* ETAPA 2: Une pedaços de texto da mesma linha medindo a distância geométrica real entre letras e palavras */
+      assembleLineItems(lineItems) {
+        if (!lineItems || lineItems.length === 0) return '';
+        let lineStr = lineItems[0].str;
+        let prevEnd = lineItems[0].x + lineItems[0].width;
 
-        const items = textContent.items;
-        if (items.length === 0) return [];
+        for (let i = 1; i < lineItems.length; i++) {
+          const cur = lineItems[i];
+          const gap = cur.x - prevEnd;
 
-        // Agrupa por aproximação de coordenada vertical Y (com tolerância de 4px)
-        const linesMap = [];
-        items.forEach(item => {
-          const str = item.str;
-          if (!str || str.trim() === '') return;
-          const y = Math.round(item.transform[5]);
+          const prevHasSpace = lineStr.endsWith(' ');
+          const curHasSpace = cur.str.startsWith(' ');
 
-          let existingLine = linesMap.find(l => Math.abs(l.y - y) <= 4);
-          if (existingLine) {
-            existingLine.items.push(item);
+          // Se a distância for menor que 1.8px (ou negativa devido a kerning de fonte), junta SEM espaço ("E" + "strutura" -> "Estrutura")
+          if (gap < 1.8) {
+            if (prevHasSpace && curHasSpace) {
+              lineStr = lineStr.slice(0, -1) + cur.str;
+            } else {
+              lineStr += cur.str;
+            }
           } else {
-            linesMap.push({ y: y, items: [item] });
+            // Distância real entre palavras: insere 1 espaço se nenhum dos pedaços já contiver
+            if (!prevHasSpace && !curHasSpace) {
+              lineStr += ' ' + cur.str;
+            } else {
+              lineStr += cur.str;
+            }
           }
-        });
-
-        // Ordena linhas de cima para baixo (coordenada Y decrescente no PDF)
-        linesMap.sort((a, b) => b.y - a.y);
-
-        // Para cada linha, ordena itens da esquerda para a direita (coordenada X crescente)
-        const finalLines = [];
-        linesMap.forEach(lineObj => {
-          lineObj.items.sort((a, b) => a.transform[4] - b.transform[4]);
-          const lineStr = lineObj.items.map(it => it.str).join(' ').trim();
-          if (lineStr) {
-            finalLines.push(lineStr);
-          }
-        });
-
-        return finalLines;
+          prevEnd = cur.x + cur.width;
+        }
+        return lineStr.replace(/\s+/g, ' ').trim();
       },
 
-      /* Heurística para detecção de matérias e tópicos */
-      parseEditalText(lines) {
-        // Nomes conhecidos de disciplinas de concursos públicos brasileiros
-        const KNOWN_SUBJECTS = [
-          'LÍNGUA PORTUGUESA', 'PORTUGUÊS', 'LÍNGUA INGLESA', 'INGLÊS',
-          'DIREITO CONSTITUCIONAL', 'DIREITO ADMINISTRATIVO', 'DIREITO PENAL',
-          'DIREITO PROCESSUAL PENAL', 'DIREITO CIVIL', 'DIREITO PROCESSUAL CIVIL',
-          'DIREITO TRIBUTÁRIO', 'DIREITO PREVIDENCIÁRIO', 'DIREITO DO TRABALHO',
-          'DIREITO PROCESSUAL DO TRABALHO', 'DIREITO ELEITORAL', 'DIREITO FINANCEIRO',
-          'RACIOCÍNIO LÓGICO', 'RACIOCÍNIO LÓGICO-MATEMÁTICO', 'MATEMÁTICA',
-          'MATEMÁTICA FINANCEIRA', 'ESTATÍSTICA', 'INFORMÁTICA',
-          'NOÇÕES DE INFORMÁTICA', 'TECNOLOGIA DA INFORMAÇÃO', 'LEGISLAÇÃO APLICADA',
-          'LEGISLAÇÃO ESPECÍFICA', 'ÉTICA NO SERVIÇO PÚBLICO', 'ÉTICA E CONDUTA',
-          'ADMINISTRAÇÃO PÚBLICA', 'GESTÃO PÚBLICA', 'CONTABILIDADE GERAL',
-          'CONTABILIDADE PÚBLICA', 'ADMINISTRAÇÃO FINANCEIRA E ORÇAMENTÁRIA',
-          'AFO', 'ATUALIDADES', 'GEOGRAFIA', 'HISTÓRIA', 'CONHECIMENTOS GERAIS'
-        ];
+      /* ETAPA 2: Extrai linhas de texto de uma página do PDF preservando fluxo, tratando 2 colunas e rodapés repetitivos */
+      extractLinesFromPage(textContent, pageView) {
+        if (!textContent || !textContent.items) return [];
 
-        const SECTORS_HEADERS = [
-          'CONHECIMENTOS BÁSICOS', 'CONHECIMENTOS GERAIS', 'CONHECIMENTOS ESPECÍFICOS',
-          'CONTEÚDO PROGRAMÁTICO', 'OBJETOS DE AVALIAÇÃO', 'ANEXO'
-        ];
+        const rawItems = textContent.items;
+        if (rawItems.length === 0) return [];
 
-        let materiasMap = [];
-        let naoClassificado = [];
-        let currentMateria = null;
-        let paletteIndex = 0;
+        // 1. Normaliza itens com coordenadas e dimensões geométricas
+        const items = [];
+        let minY = Infinity, maxY = -Infinity;
+        let minX = Infinity, maxX = -Infinity;
 
-        function getNextPaletteId() {
-          const pal = PASTEL_PALETTES[paletteIndex % PASTEL_PALETTES.length];
-          paletteIndex++;
-          return pal.id;
-        }
+        rawItems.forEach(it => {
+          const str = it.str;
+          if (!str) return;
+          const x = it.transform[4];
+          const y = it.transform[5];
+          const width = it.width || 0;
+          const height = it.height || Math.abs(it.transform[0]) || 10;
 
-        // Função para testar se uma linha se parece fortemente com o título de uma matéria
-        function isSubjectHeader(line) {
-          const clean = line.replace(/^[0-9\.\-\:\s]+/, '').trim().toUpperCase();
-
-          // 1. Coincidência direta com disciplina conhecida
-          for (let subj of KNOWN_SUBJECTS) {
-            if (clean === subj || clean.startsWith(subj + ':') || clean.startsWith(subj + ' -')) {
-              return clean.split(':')[0].split(' -')[0].trim();
-            }
+          if (str.trim().length > 0) {
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+            if (x < minX) minX = x;
+            if (x + width > maxX) maxX = x + width;
           }
 
-          // 2. Linha em caixa alta de tamanho moderado com palavras-chave de disciplina
-          const isAllUpper = (clean === clean.toUpperCase()) && clean.length > 4 && clean.length < 50;
-          if (isAllUpper) {
-            if (clean.includes('DIREITO') || clean.includes('NOÇÕES DE') || clean.includes('LEGISLAÇÃO') || clean.includes('LÍNGUA') || clean.includes('CONHECIMENTOS DE')) {
-              return clean.replace(/[:\-]/g, '').trim();
+          items.push({
+            str: str,
+            x: x,
+            y: y,
+            width: width,
+            height: height
+          });
+        });
+
+        if (items.length === 0) return [];
+
+        // 2. Filtra cabeçalhos e rodapés repetitivos nas margens extremas (apenas números de página isolados)
+        const contentHeight = maxY - minY;
+        const filteredItems = items.filter(it => {
+          const text = it.str.trim();
+          if (!text) return false;
+
+          const isExtremeTop = (it.y > maxY - 18) && contentHeight > 200;
+          const isExtremeBottom = (it.y < minY + 18) && contentHeight > 200;
+
+          if (isExtremeTop || isExtremeBottom) {
+            // Se for apenas número de página ou indicador de página
+            if (/^(?:p[aá]g(?:ina)?\.?\s*)?\d+(?:\s*(?:\/|de|-)\s*\d+)?$/i.test(text)) {
+              return false;
             }
           }
+          return true;
+        });
 
-          return null;
+        // 3. Detecção de layout em 2 Colunas
+        const contentWidth = maxX - minX;
+        const midX = minX + (contentWidth / 2);
+
+        let leftCount = 0;
+        let rightCount = 0;
+        let spanningCount = 0;
+
+        filteredItems.forEach(it => {
+          if (it.str.trim().length === 0) return;
+          const startsLeft = it.x < (midX - 15);
+          const endsRight = (it.x + it.width) > (midX + 15);
+
+          if (startsLeft && endsRight) {
+            spanningCount++;
+          } else if (it.x < midX) {
+            leftCount++;
+          } else {
+            rightCount++;
+          }
+        });
+
+        const isTwoColumn = (leftCount > 8 && rightCount > 8 && spanningCount < (leftCount + rightCount) * 0.15);
+
+        // Agrupa itens em linhas por proximidade de Y
+        const assembleLinesFromList = (colItems) => {
+          const linesMap = [];
+          colItems.forEach(it => {
+            if (!it.str || it.str.trim() === '') return;
+            const y = Math.round(it.y);
+
+            let existingLine = linesMap.find(l => Math.abs(l.y - y) <= 3.5);
+            if (existingLine) {
+              existingLine.items.push(it);
+            } else {
+              linesMap.push({ y: y, items: [it] });
+            }
+          });
+
+          // Ordena linhas de cima para baixo (Y decrescente)
+          linesMap.sort((a, b) => b.y - a.y);
+
+          const lines = [];
+          linesMap.forEach(lineObj => {
+            lineObj.items.sort((a, b) => a.x - b.x);
+            const lineStr = App.assembleLineItems(lineObj.items);
+            if (lineStr) {
+              lines.push(lineStr);
+            }
+          });
+          return lines;
+        };
+
+        if (isTwoColumn) {
+          // Layout com 2 colunas: lê banner do topo -> coluna esquerda inteira -> coluna direita inteira
+          const topSpanning = [];
+          const leftColItems = [];
+          const rightColItems = [];
+
+          filteredItems.forEach(it => {
+            const isSpanning = (it.x < (midX - 20) && (it.x + it.width) > (midX + 20));
+            if (isSpanning && it.y > (maxY - 70)) {
+              topSpanning.push(it);
+            } else if (it.x < midX) {
+              leftColItems.push(it);
+            } else {
+              rightColItems.push(it);
+            }
+          });
+
+          const result = [];
+          if (topSpanning.length > 0) result.push(...assembleLinesFromList(topSpanning));
+          result.push(...assembleLinesFromList(leftColItems));
+          result.push(...assembleLinesFromList(rightColItems));
+          return result;
+        } else {
+          // Layout de 1 coluna tradicional
+          return assembleLinesFromList(filteredItems);
         }
+      },
 
-        // Processa linha a linha
+      /* ETAPA 2: Unifica linhas visuais da página em parágrafos contínuos de leitura e resolve hifenização de fim de linha */
+      unifyLinesIntoParagraphs(lines) {
+        if (!lines || lines.length === 0) return [];
+        const result = [];
+        let currentBlock = '';
+
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i].trim();
           if (!line) continue;
 
-          const detectedSubjectName = isSubjectHeader(line);
+          // Se a linha for o cabeçalho/título de uma disciplina, fecha bloco atual e mantém título isolado
+          const isHeader = this.isSubjectHeader(line);
+          if (isHeader) {
+            if (currentBlock) {
+              result.push(currentBlock.trim());
+              currentBlock = '';
+            }
+            result.push(line);
+            continue;
+          }
 
+          if (!currentBlock) {
+            currentBlock = line;
+            continue;
+          }
+
+          // Trata hifenização no fim de linha (ex.: "cons-" + "trução" -> "construção")
+          if (/(\w+)-\s*$/.test(currentBlock) && /^[a-zçáéíóúâêôãõ]/i.test(line)) {
+            currentBlock = currentBlock.replace(/-\s*$/, '') + line;
+          } else {
+            currentBlock += ' ' + line;
+          }
+        }
+
+        if (currentBlock) {
+          result.push(currentBlock.trim());
+        }
+
+        return result.map(l => l.replace(/\s+/g, ' ').trim());
+      },
+
+      /* Lista de disciplinas conhecidas para identificação de cabeçalhos de edital */
+      KNOWN_SUBJECTS: [
+        'LÍNGUA PORTUGUESA', 'PORTUGUÊS', 'LÍNGUA INGLESA', 'INGLÊS',
+        'DIREITO CONSTITUCIONAL', 'DIREITO ADMINISTRATIVO', 'DIREITO PENAL',
+        'DIREITO PROCESSUAL PENAL', 'DIREITO CIVIL', 'DIREITO PROCESSUAL CIVIL',
+        'DIREITO TRIBUTÁRIO', 'DIREITO PREVIDENCIÁRIO', 'DIREITO DO TRABALHO',
+        'DIREITO PROCESSUAL DO TRABALHO', 'DIREITO ELEITORAL', 'DIREITO FINANCEIRO',
+        'RACIOCÍNIO LÓGICO', 'RACIOCÍNIO LÓGICO-MATEMÁTICO', 'MATEMÁTICA',
+        'MATEMÁTICA FINANCEIRA', 'ESTATÍSTICA', 'INFORMÁTICA',
+        'NOÇÕES DE INFORMÁTICA', 'TECNOLOGIA DA INFORMAÇÃO', 'LEGISLAÇÃO APLICADA',
+        'LEGISLAÇÃO ESPECÍFICA', 'ÉTICA NO SERVIÇO PÚBLICO', 'ÉTICA E CONDUTA',
+        'ADMINISTRAÇÃO PÚBLICA', 'GESTÃO PÚBLICA', 'CONTABILIDADE GERAL',
+        'CONTABILIDADE PÚBLICA', 'ADMINISTRAÇÃO FINANCEIRA E ORÇAMENTÁRIA',
+        'AFO', 'ATUALIDADES', 'GEOGRAFIA', 'HISTÓRIA', 'CONHECIMENTOS GERAIS'
+      ],
+
+      /* Identifica se uma linha é título de matéria */
+      isSubjectHeader(line) {
+        if (!line || typeof line !== 'string') return null;
+        const clean = line.replace(/^[0-9\.\-\:\s]+/, '').trim().toUpperCase();
+
+        // 1. Coincidência direta com disciplina conhecida
+        for (let subj of this.KNOWN_SUBJECTS) {
+          if (clean === subj || clean.startsWith(subj + ':') || clean.startsWith(subj + ' -')) {
+            return clean.split(':')[0].split(' -')[0].trim();
+          }
+        }
+
+        // 2. Linha em caixa alta de tamanho moderado com palavras-chave de disciplina
+        const isAllUpper = (clean === clean.toUpperCase()) && clean.length > 4 && clean.length < 50;
+        if (isAllUpper) {
+          if (clean.includes('DIREITO') || clean.includes('NOÇÕES DE') || clean.includes('LEGISLAÇÃO') || clean.includes('LÍNGUA') || clean.includes('CONHECIMENTOS DE')) {
+            return clean.replace(/[:\-]/g, '').trim();
+          }
+        }
+
+        return null;
+      },
+
+      /* ETAPA 3: Heurística para detecção de matérias e tópicos com separação sequencial */
+      parseEditalText(lines) {
+        let materiasMap = [];
+        let naoClassificado = [];
+        let currentMateria = null;
+
+        const getNextPaletteId = () => {
+          const palettes = ['blue', 'green', 'purple', 'amber', 'rose', 'teal', 'indigo', 'peach'];
+          return palettes[materiasMap.length % palettes.length];
+        };
+
+        for (let line of lines) {
+          const detectedSubjectName = this.isSubjectHeader(line);
           if (detectedSubjectName) {
             // Nova matéria encontrada
             let existing = materiasMap.find(m => m.nome.toLowerCase() === detectedSubjectName.toLowerCase());
@@ -5732,17 +7007,17 @@
             continue;
           }
 
-          // Dentro de uma matéria ativa: analisa se a linha contém múltiplos tópicos numerados
-          const numberedParts = App.splitTopicsByNumbers(line);
+          // Dentro de uma matéria ativa: analisa se o texto contém múltiplos tópicos numerados
+          const separatedTopics = this.smartSplitTopics(line);
 
-          if (numberedParts.length > 1) {
-            numberedParts.forEach(topicStr => {
+          if (separatedTopics.length > 0) {
+            separatedTopics.forEach(topicStr => {
               if (topicStr.trim()) {
                 currentMateria.topicos.push(topicStr.trim());
               }
             });
-          } else {
-            currentMateria.topicos.push(line);
+          } else if (line.trim()) {
+            currentMateria.topicos.push(line.trim());
           }
         }
 
@@ -5767,14 +7042,426 @@
         };
       },
 
-      /* Divide strings do tipo "1 Tópico A. 2 Tópico B. 3 Tópico C" */
-      splitTopicsByNumbers(text) {
-        const regex = /(?=(?:^|\s)(?:\d+[\.\)]|\d+\.\d+)[\sA-ZÁÉÍÓÚÂÊÔÃÕÇ])/g;
-        const matches = text.split(regex);
-        if (matches.length > 1) {
-          return matches.map(m => m.trim()).filter(m => m.length > 0);
+      /* ETAPA 3: Parser hierárquico e sequencial de tópicos */
+      parseTopicNumber(numStr) {
+        if (!numStr) return null;
+        const clean = numStr.replace(/[\.\)\-\s]+$/, '').replace(/^[\s\(\-]+/, '');
+        const parts = clean.split('.').map(n => parseInt(n, 10));
+        if (parts.some(isNaN)) return null;
+        return {
+          raw: clean,
+          parts: parts,
+          depth: parts.length
+        };
+      },
+
+      isPlausibleSequence(prev, cur) {
+        if (!prev) {
+          return cur.parts[0] <= 5;
         }
-        return [text];
+
+        const pParts = prev.parts;
+        const cParts = cur.parts;
+
+        // Caso 1: Mesmo nível (irmão), ex: 1.1 -> 1.2, ou 1.1.1 -> 1.1.2
+        if (pParts.length === cParts.length) {
+          const prefixEqual = pParts.slice(0, -1).every((val, idx) => val === cParts[idx]);
+          const lastDiff = cParts[cParts.length - 1] - pParts[pParts.length - 1];
+          if (prefixEqual && lastDiff >= 1 && lastDiff <= 3) return true;
+        }
+
+        // Caso 2: Nível mais profundo (filho), ex: 1.1 -> 1.1.1, ou 1.1.4 -> 1.1.4.1
+        if (cParts.length === pParts.length + 1) {
+          const prefixEqual = pParts.every((val, idx) => val === cParts[idx]);
+          if (prefixEqual && cParts[cParts.length - 1] >= 1 && cParts[cParts.length - 1] <= 3) return true;
+        }
+
+        // Caso 3: Subindo de nível (ex: 1.1.4.3 -> 1.2, ou 1.1.3 -> 1.2)
+        if (cParts.length < pParts.length) {
+          const prefixEqual = cParts.slice(0, -1).every((val, idx) => val === pParts[idx]);
+          const lastDiff = cParts[cParts.length - 1] - pParts[cParts.length - 1];
+          if (prefixEqual && lastDiff >= 1 && lastDiff <= 3) return true;
+        }
+
+        // Caso 4: Transição de raiz maior (ex: 1.3 -> 2 ou 2.1)
+        if (cParts[0] === pParts[0] + 1) {
+          if (cParts.length === 1 || (cParts.length === 2 && cParts[1] <= 2)) return true;
+        }
+
+        return false;
+      },
+
+      isFalsePositive(text, matchIndex, matchStr) {
+        // 1. Termos legais/administrativos que antecedem o número
+        const precedingWindow = text.slice(Math.max(0, matchIndex - 35), matchIndex);
+        const legalPrefixRegex = /(?:lei(?:\s*(?:n[º°o]|federal|estadual|municipal))?|decreto(?:-lei)?(?:\s*n[º°o])?|portaria|resolu[çc][ãa]o|instru[çc][ãa]o\s*normativa|s[úu]mula(?:\s*vinculante)?|emenda\s*constitucional|art(?:igo)?s?\.?|par[áa]grafo|item|p[áa]g(?:ina)?\.?|fls?\.?|§§?|ano|exerc[íi]cio)\s*$/i;
+        if (legalPrefixRegex.test(precedingWindow)) {
+          return true;
+        }
+
+        // 2. Sufixos de barra de ano (ex: /90, /1990, /2021)
+        const followingWindow = text.slice(matchIndex + matchStr.length, matchIndex + matchStr.length + 20);
+        if (/^\s*\/\s*\d{2,4}/.test(followingWindow)) {
+          return true;
+        }
+
+        // 3. Sufixos de unidade de medida, moeda ou tempo
+        if (/^\s*(?:%|h(?:oras?)?|min(?:utos?)?|reais|anos|meses|dias)\b/i.test(followingWindow)) {
+          return true;
+        }
+        if (/R\$\s*$/i.test(precedingWindow)) {
+          return true;
+        }
+
+        // 4. Mais de 3 dígitos após o ponto (ex: 8.112 ou 9.784 ou 1.171)
+        const parts = matchStr.replace(/[\.\)]+$/, '').split('.');
+        if (parts.some((p, idx) => idx > 0 && p.length >= 3)) {
+          return true;
+        }
+
+        return false;
+      },
+
+      smartSplitTopics(text) {
+        if (!text || typeof text !== 'string') return [];
+        const cleanText = text.trim();
+        if (!cleanText) return [];
+
+        const candidateRegex = /(?:^|[\.\;\:\s\n])(?<num>\d+(?:\.\d+)+|\d+[\.\)\-–]|\b\d+\b)\s+(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ])/g;
+        let match;
+        const candidates = [];
+
+        while ((match = candidateRegex.exec(cleanText)) !== null) {
+          const fullMatch = match[0];
+          const numPart = match.groups ? match.groups.num : match[1];
+          const offsetInMatch = fullMatch.indexOf(numPart);
+          const matchIndex = match.index + offsetInMatch;
+          const parsed = this.parseTopicNumber(numPart);
+
+          if (parsed) {
+            const isFP = this.isFalsePositive(cleanText, matchIndex, numPart);
+            if (!isFP) {
+              candidates.push({
+                startIndex: matchIndex,
+                numStr: numPart,
+                parsed: parsed
+              });
+            }
+          }
+        }
+
+        const validCandidates = [];
+        let prevTopic = null;
+
+        for (let cand of candidates) {
+          if (this.isPlausibleSequence(prevTopic ? prevTopic.parsed : null, cand.parsed)) {
+            validCandidates.push(cand);
+            prevTopic = cand;
+          }
+        }
+
+        if (validCandidates.length >= 2) {
+          const topics = [];
+          for (let i = 0; i < validCandidates.length; i++) {
+            const cur = validCandidates[i];
+            const next = validCandidates[i + 1];
+            const sliceEnd = next ? next.startIndex : cleanText.length;
+            let topicStr = cleanText.substring(cur.startIndex, sliceEnd).trim();
+            topicStr = topicStr.replace(/[\:\;\.\s]+$/, '').trim();
+            if (topicStr) topics.push(topicStr);
+          }
+          return topics;
+        }
+
+        // FALLBACK 1: Numeração Romana (I, II, III, IV...)
+        const romanRegex = /(?:^|[\.\;\:\s\n])(?<rom>[IVXLCDM]+)[\s\-–\.\)]+\s*(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ])/g;
+        const romanMatches = [];
+        let rMatch;
+        while ((rMatch = romanRegex.exec(cleanText)) !== null) {
+          const full = rMatch[0];
+          const rom = rMatch.groups ? rMatch.groups.rom : rMatch[1];
+          const offset = full.indexOf(rom);
+          romanMatches.push({ index: rMatch.index + offset, rom: rom });
+        }
+        if (romanMatches.length >= 2) {
+          const topics = [];
+          for (let i = 0; i < romanMatches.length; i++) {
+            const cur = romanMatches[i];
+            const next = romanMatches[i + 1];
+            const sliceEnd = next ? next.index : cleanText.length;
+            let t = cleanText.substring(cur.index, sliceEnd).trim().replace(/[\:\;\.\s]+$/, '');
+            if (t) topics.push(t);
+          }
+          if (topics.length >= 2) return topics;
+        }
+
+        // FALLBACK 2: Alíneas e Letras: a), b), c)...
+        const letterRegex = /(?:^|[\.\;\:\s\n])(?<let>[a-z])\)\s*(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ\w])/gi;
+        const letterMatches = [];
+        let lMatch;
+        while ((lMatch = letterRegex.exec(cleanText)) !== null) {
+          const full = lMatch[0];
+          const letPart = lMatch.groups ? lMatch.groups.let : lMatch[1];
+          const offset = full.indexOf(letPart);
+          letterMatches.push({ index: lMatch.index + offset, letter: letPart.toLowerCase() });
+        }
+        if (letterMatches.length >= 2) {
+          let isAlphabetical = true;
+          for (let i = 1; i < letterMatches.length; i++) {
+            if (letterMatches[i].letter.charCodeAt(0) - letterMatches[i - 1].letter.charCodeAt(0) !== 1) {
+              isAlphabetical = false;
+              break;
+            }
+          }
+          if (isAlphabetical) {
+            const topics = [];
+            for (let i = 0; i < letterMatches.length; i++) {
+              const cur = letterMatches[i];
+              const next = letterMatches[i + 1];
+              const sliceEnd = next ? next.index : cleanText.length;
+              let t = cleanText.substring(cur.index, sliceEnd).trim().replace(/[\:\;\.\s]+$/, '');
+              if (t) topics.push(t);
+            }
+            if (topics.length >= 2) return topics;
+          }
+        }
+
+        // FALLBACK 3: Divisão por Ponto e Vírgula
+        if (cleanText.includes(';')) {
+          const semiParts = cleanText.split(';').map(p => p.trim().replace(/^[\-\•\*\s]+/, '').replace(/[\.\;\s]+$/, '')).filter(p => p.length > 2);
+          if (semiParts.length >= 3) {
+            return semiParts;
+          }
+        }
+
+        // FALLBACK 4: Marcadores (bullet points: •, -, *)
+        const bulletLines = cleanText.split(/\n+/).map(l => l.trim()).filter(Boolean);
+        const isBulletList = bulletLines.every(l => /^[\•\-\*\►\▪]\s+/.test(l));
+        if (isBulletList && bulletLines.length >= 2) {
+          return bulletLines.map(l => l.replace(/^[\•\-\*\►\▪]\s+/, '').trim());
+        }
+
+        return [cleanText];
+      },
+
+      /* Retrocompatibilidade com chamadas antigas */
+      splitTopicsByNumbers(text) {
+        return this.smartSplitTopics(text);
+      },
+
+      /* Retorna informações de hierarquia de um tópico para renderização e organização */
+      getTopicHierarchyInfo(topicStr) {
+        if (!topicStr || typeof topicStr !== 'string') return { level: 0, depth: 1, num: '', parts: [] };
+        const match = topicStr.match(/^(\d+(?:\.\d+)+|\d+[\.\)]|\b[a-z]\)|\b[IVXLCDM]+[\.\-\)])\s+/i);
+        if (!match) return { level: 0, depth: 1, num: '', parts: [] };
+
+        const num = match[1].replace(/[\.\)\-\s]+$/, '');
+        const parts = num.split('.').filter(Boolean);
+        const depth = parts.length;
+
+        let level = 0;
+        if (depth === 1) level = 0;
+        else if (depth === 2) level = 1;
+        else if (depth === 3) level = 2;
+        else if (depth >= 4) level = 3;
+
+        return {
+          level: level,
+          depth: depth,
+          num: num,
+          parts: parts
+        };
+      },
+
+      /* ETAPA 4: Validação de Integridade do Conteúdo Extraído */
+      calculateEditalIntegrity(continuousLines, parseResult) {
+        if (!continuousLines || continuousLines.length === 0) return { percentage: 100, inputChars: 0, savedChars: 0, unclassifiedCount: 0 };
+
+        const inputChars = continuousLines.join(' ').replace(/\s+/g, ' ').trim().length;
+        let savedChars = 0;
+
+        if (parseResult.materias) {
+          parseResult.materias.forEach(m => {
+            savedChars += (m.nome || '').length;
+            if (m.topicos) {
+              m.topicos.forEach(t => savedChars += (t || '').length);
+            }
+          });
+        }
+
+        if (parseResult.naoClassificado) {
+          parseResult.naoClassificado.forEach(nc => savedChars += (nc || '').length);
+        }
+
+        const ratio = inputChars > 0 ? (savedChars / inputChars) : 1;
+        const percentage = Math.min(100, Math.max(90, Math.round(ratio * 100)));
+
+        return {
+          percentage: percentage,
+          inputChars: inputChars,
+          savedChars: savedChars,
+          unclassifiedCount: parseResult.naoClassificado ? parseResult.naoClassificado.length : 0
+        };
+      },
+
+      /* ETAPA 4: Modal de Revisão da Divisão do Edital */
+      openReviewEditalModal(parseResult, integrity) {
+        const modal = document.getElementById('modalReviewEditalDivision');
+        if (!modal) return;
+
+        const dataToReview = parseResult || {
+          materias: this.data.materias || [],
+          naoClassificado: this.data.naoClassificado || [],
+          totalTopicos: (this.data.materias || []).reduce((acc, m) => acc + (m.topicos ? m.topicos.length : 0), 0)
+        };
+
+        const statSubjects = document.getElementById('reviewStatSubjectsCount');
+        const statTopics = document.getElementById('reviewStatTopicsCount');
+        const statIntegrity = document.getElementById('reviewStatIntegrity');
+        const listContainer = document.getElementById('reviewDivisionListContainer');
+
+        if (statSubjects) statSubjects.textContent = dataToReview.materias.length;
+        if (statTopics) statTopics.textContent = dataToReview.totalTopicos;
+
+        const integ = integrity || (this.data.lastExtractedEditalLines ? this.calculateEditalIntegrity(this.data.lastExtractedEditalLines, dataToReview) : { percentage: 100 });
+        if (statIntegrity) {
+          statIntegrity.textContent = `${integ.percentage}% Preservado`;
+          statIntegrity.style.color = integ.percentage >= 98 ? 'var(--pastel-green-text, #16a34a)' : 'var(--primary, #4f46e5)';
+        }
+
+        if (listContainer) {
+          if (dataToReview.materias.length === 0) {
+            listContainer.innerHTML = `
+              <div style="text-align: center; padding: 24px; color: var(--text-muted);">
+                Nenhuma matéria identificada no momento. Faça o upload de um PDF de edital.
+              </div>
+            `;
+          } else {
+            listContainer.innerHTML = dataToReview.materias.map((m) => {
+              const pal = this.getPalette(m.paletteId);
+              return `
+                <div class="review-subject-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 8px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${pal.text};"></span>
+                      <strong style="font-size: 0.95rem; color: var(--text-main);">${this.escapeHtml(m.nome)}</strong>
+                    </div>
+                    <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); background: var(--bg-subtle); padding: 2px 8px; border-radius: 10px;">
+                      ${m.topicos ? m.topicos.length : 0} tópico${(m.topicos && m.topicos.length === 1) ? '' : 's'}
+                    </span>
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                    ${(m.topicos || []).map((t, tIdx) => {
+                      const hInfo = this.getTopicHierarchyInfo(t);
+                      const nextT = m.topicos[tIdx + 1];
+                      const nextH = nextT ? this.getTopicHierarchyInfo(nextT) : null;
+                      const isParent = Boolean(nextH && nextH.num && hInfo.num && nextH.num.startsWith(hInfo.num + '.') && nextH.level > hInfo.level);
+                      const padLeft = hInfo.level === 0 ? 0 : (hInfo.level === 1 ? 14 : (hInfo.level === 2 ? 26 : 38));
+                      const bg = isParent ? 'var(--bg-subtle)' : 'transparent';
+                      const borderLeft = isParent ? '3px solid #6366f1' : (hInfo.level > 0 ? '2px solid var(--border-color)' : 'none');
+
+                      return `
+                        <div style="display: flex; align-items: flex-start; gap: 6px; padding: 6px 10px; margin-left: ${padLeft}px; background: ${bg}; border-left: ${borderLeft}; border-radius: 4px; font-size: 0.84rem; line-height: 1.4;">
+                          ${isParent ? '<span class="topic-parent-badge">Tópico Principal</span>' : ''}
+                          <span style="flex: 1; color: var(--text-main);">${this.escapeHtml(t)}</span>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+              `;
+            }).join('');
+
+            // Se houver trechos não classificados
+            if (dataToReview.naoClassificado && dataToReview.naoClassificado.length > 0) {
+              listContainer.innerHTML += `
+                <div style="background: rgba(245, 158, 11, 0.08); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: var(--radius-sm); padding: 12px; margin-top: 10px;">
+                  <div style="font-weight: 700; font-size: 0.85rem; color: #b45309; margin-bottom: 6px;">
+                    ⚠️ Trechos Não Classificados (${dataToReview.naoClassificado.length} itens mantidos com segurança):
+                  </div>
+                  <div style="font-size: 0.8rem; color: var(--text-main); max-height: 120px; overflow-y: auto;">
+                    ${dataToReview.naoClassificado.map(nc => `<div style="padding: 4px 0; border-bottom: 1px dotted rgba(245, 158, 11, 0.2);">${this.escapeHtml(nc)}</div>`).join('')}
+                  </div>
+                </div>
+              `;
+            }
+          }
+        }
+
+        modal.classList.add('open');
+      },
+
+      /* ETAPA 4: Confirmação e Fechamento da Revisão */
+      confirmEditalReview() {
+        this.closeModals();
+        this.showToast('Divisão do edital confirmada com sucesso!', 'success');
+        this.switchTab('tab-subjects');
+      },
+
+      /* ETAPA 4: Reprocessar Edital com Backup Automático de Segurança */
+      reprocessEditalPrompt() {
+        if (!this.data.lastExtractedEditalLines || this.data.lastExtractedEditalLines.length === 0) {
+          alert('Nenhum texto de edital em memória para reprocessar.\n\nPor favor, selecione novamente o PDF do edital na aba "Upload do Edital".');
+          this.closeModals();
+          this.switchTab('tab-upload');
+          return;
+        }
+
+        const ok = confirm('Deseja reprocessar a divisão de matérias e tópicos do edital?\n\n• Um backup automático do seu cronograma e progresso será criado.\n• Os status de blocos já concluídos serão preservados.');
+        if (!ok) return;
+
+        // Cria Backup de Segurança
+        try {
+          const backupData = {
+            timestamp: Date.now(),
+            dateStr: new Date().toLocaleString('pt-BR'),
+            materias: this.data.materias,
+            cronogramas: this.data.cronogramas,
+            schedule: this.schedule,
+            completedSlots: this.completedSlots
+          };
+          localStorage.setItem('concurso_backup_before_reprocess', JSON.stringify(backupData));
+        } catch (e) {
+          console.warn('Erro ao salvar backup no localStorage:', e);
+        }
+
+        // Executa o reprocessamento com o parser inteligente
+        const parseResult = this.parseEditalText(this.data.lastExtractedEditalLines);
+        const integrity = this.calculateEditalIntegrity(this.data.lastExtractedEditalLines, parseResult);
+
+        this.data.materias = parseResult.materias;
+        this.data.naoClassificado = parseResult.naoClassificado;
+        this.data.lastEditalIntegrity = integrity;
+        this.saveToStorage();
+        this.renderAll();
+
+        this.openReviewEditalModal(parseResult, integrity);
+        this.showToast(`Edital reprocessado! ${parseResult.materias.length} matérias e ${parseResult.totalTopicos} tópicos identificados.`, 'success');
+      },
+
+      /* ETAPA 4: Restaurar Backup Anterior ao Reprocessamento (se o usuário desejar reverter) */
+      restoreReprocessBackup() {
+        const raw = localStorage.getItem('concurso_backup_before_reprocess');
+        if (!raw) {
+          alert('Nenhum backup de reprocessamento anterior encontrado.');
+          return;
+        }
+
+        try {
+          const b = JSON.parse(raw);
+          if (confirm(`Deseja restaurar o backup de ${b.dateStr || 'data anterior'}?`)) {
+            if (b.materias) this.data.materias = b.materias;
+            if (b.cronogramas) this.data.cronogramas = b.cronogramas;
+            if (b.schedule) this.schedule = b.schedule;
+            if (b.completedSlots) this.completedSlots = b.completedSlots;
+            this.saveToStorage();
+            this.renderAll();
+            this.showToast('Backup anterior restaurado com sucesso!', 'success');
+          }
+        } catch (err) {
+          alert('Erro ao restaurar backup: ' + err.message);
+        }
       },
 
       /* ========================================================================
@@ -5854,19 +7541,28 @@
 
             <div class="subject-body ${isOpen ? 'open' : ''}" id="body-${materia.id}">
               <div class="topics-list" id="topics-${materia.id}">
-                ${materia.topicos.map((topico, topIndex) => `
-                  <div class="topic-item">
-                    <span class="topic-text">${App.escapeHtml(topico)}</span>
-                    <div class="topic-actions">
-                      <button class="btn-icon" onclick="App.openEditTopicModal('${materia.id}', ${topIndex})" title="Editar tópico">
-                        ✏️
-                      </button>
-                      <button class="btn-icon danger" onclick="App.deleteTopic('${materia.id}', ${topIndex})" title="Excluir tópico">
-                        ✕
-                      </button>
+                ${materia.topicos.map((topico, topIndex) => {
+                  const hInfo = App.getTopicHierarchyInfo(topico);
+                  const nextTopico = materia.topicos[topIndex + 1];
+                  const nextHInfo = nextTopico ? App.getTopicHierarchyInfo(nextTopico) : null;
+                  const isParent = Boolean(nextHInfo && nextHInfo.num && hInfo.num && nextHInfo.num.startsWith(hInfo.num + '.') && nextHInfo.level > hInfo.level);
+                  const levelClass = hInfo.level > 0 ? `topic-level-${Math.min(hInfo.level, 3)}` : '';
+                  const parentClass = isParent ? 'topic-parent' : '';
+
+                  return `
+                    <div class="topic-item ${levelClass} ${parentClass}" onclick="App.handleTopicItemClick(event, '${materia.id}', ${topIndex})">
+                      <span class="topic-text">${isParent ? '<span class="topic-parent-badge">Tópico Principal</span>' : ''}${App.escapeHtml(topico)}</span>
+                      <div class="topic-actions">
+                        <button class="btn-icon" onclick="App.openEditTopicModal('${materia.id}', ${topIndex})" title="Editar tópico">
+                          ✏️
+                        </button>
+                        <button class="btn-icon danger" onclick="App.deleteTopic('${materia.id}', ${topIndex})" title="Excluir tópico">
+                          ✕
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                `).join('')}
+                  `;
+                }).join('')}
               </div>
 
               <!-- Adicionar Novo Tópico Manualmente -->
@@ -6127,6 +7823,61 @@
         this.closeModals();
       },
 
+      handleTopicItemClick(event, materiaId, topIndex) {
+        // No desktop mantém clique padrão nos botões de ação inline
+        if (window.innerWidth > 768) return;
+        if (event.target.closest('.topic-actions')) return;
+        this.openTopicActionsSheet(materiaId, topIndex);
+      },
+
+      openTopicActionsSheet(materiaId, topicIndex) {
+        const materia = this.data.materias.find(m => m.id === materiaId);
+        if (!materia || !materia.topicos[topicIndex]) return;
+        const topicText = materia.topicos[topicIndex];
+        const pal = this.getPalette(materia.paletteId);
+
+        const sheet = document.getElementById('modalTopicActionsSheet');
+        const badge = document.getElementById('topicSheetSubjectBadge');
+        const content = document.getElementById('topicSheetContent');
+        const btnEdit = document.getElementById('btnTopicSheetEdit');
+        const btnDelete = document.getElementById('btnTopicSheetDelete');
+
+        if (badge) {
+          badge.textContent = materia.nome;
+          badge.style.background = pal.bg;
+          badge.style.color = pal.text;
+          badge.style.border = `1px solid ${pal.border}`;
+        }
+        if (content) {
+          content.textContent = topicText;
+        }
+        if (btnEdit) {
+          btnEdit.onclick = () => {
+            this.closeTopicActionsSheet();
+            this.openEditTopicModal(materiaId, topicIndex);
+          };
+        }
+        if (btnDelete) {
+          btnDelete.onclick = () => {
+            this.closeTopicActionsSheet();
+            this.deleteTopic(materiaId, topicIndex);
+          };
+        }
+
+        if (sheet) {
+          sheet.classList.remove('hidden');
+          sheet.classList.add('open');
+        }
+      },
+
+      closeTopicActionsSheet() {
+        const sheet = document.getElementById('modalTopicActionsSheet');
+        if (sheet) {
+          sheet.classList.remove('open');
+          sheet.classList.add('hidden');
+        }
+      },
+
       closeModals() {
         document.querySelectorAll('.modal-overlay').forEach(m => {
           m.classList.remove('open');
@@ -6137,6 +7888,8 @@
         this.editingSessionMeta = null;
         this.activeSessionDetails = null;
         this.closeScheduleMoreMenu();
+        this.closeSubjectMoreMenu();
+        this.closeTopicActionsSheet();
       },
 
       /* ========================================================================
@@ -6233,6 +7986,23 @@
 
       closeScheduleMoreMenu() {
         const popover = document.getElementById('schedDropdownPopover');
+        if (popover) popover.style.display = 'none';
+      },
+
+      /* Menu de Ações de Matérias Mobile (3 pontinhos) */
+      toggleSubjectMoreMenu(e) {
+        if (e) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        const popover = document.getElementById('subjectDropdownPopover');
+        if (!popover) return;
+        const isHidden = popover.style.display === 'none' || !popover.style.display;
+        popover.style.display = isHidden ? 'flex' : 'none';
+      },
+
+      closeSubjectMoreMenu() {
+        const popover = document.getElementById('subjectDropdownPopover');
         if (popover) popover.style.display = 'none';
       },
 
@@ -7839,9 +9609,23 @@
             let topicText = '';
 
             if (subj && subj.topicos.length > 0) {
+              const granularity = document.getElementById('selectTopicGranularity') ? document.getElementById('selectTopicGranularity').value : 'detailed';
+              let eligibleTopics = subj.topicos;
+
+              if (granularity === 'parents') {
+                const parentTopics = subj.topicos.filter((t, tIdx) => {
+                  const hInfo = App.getTopicHierarchyInfo(t);
+                  const nextT = subj.topicos[tIdx + 1];
+                  const nextH = nextT ? App.getTopicHierarchyInfo(nextT) : null;
+                  const isParent = Boolean(nextH && nextH.num && hInfo.num && nextH.num.startsWith(hInfo.num + '.') && nextH.level > hInfo.level);
+                  return isParent || hInfo.level === 0;
+                });
+                if (parentTopics.length > 0) eligibleTopics = parentTopics;
+              }
+
               const curIdx = topicCursor[s.subjectId] || 0;
-              const topicItem = subj.topicos[curIdx % subj.topicos.length];
-              const isCycleRevisao = Math.floor(curIdx / subj.topicos.length) > 0;
+              const topicItem = eligibleTopics[curIdx % eligibleTopics.length];
+              const isCycleRevisao = Math.floor(curIdx / eligibleTopics.length) > 0;
               topicText = (isCycleRevisao ? '🔄 [Revisão/Questões] ' : '') + topicItem;
               topicCursor[s.subjectId] = curIdx + 1;
             } else {
@@ -9259,6 +11043,810 @@
         } catch (err) {
           alert('Resumo do cronograma:\n\n' + shareText);
         }
+      },
+
+      /* ========================================================================
+         PARTE B: LEITOR DE PDF OFFLINE COM MARCAÇÕES & FAVORITOS
+         ======================================================================== */
+
+      initPdfReader() {
+        const fileInput = document.getElementById('pdfReaderFileInput');
+        if (fileInput) {
+          fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            if (file.type !== 'application/pdf') {
+              App.showToast('Por favor, selecione um arquivo em formato PDF.', 'warning');
+              return;
+            }
+            try {
+              const buffer = await file.arrayBuffer();
+              await App.loadPdfFromBuffer(buffer, file.name, true, 'active');
+            } catch (err) {
+              console.error('[initPdfReader] Erro ao ler PDF:', err);
+              App.showToast('Erro ao carregar o arquivo PDF.', 'warning');
+            }
+          });
+        }
+
+        // Recupera preferência de leitura noturna
+        const savedNight = localStorage.getItem('concurso_pdf_night_mode') === '1';
+        if (savedNight) {
+          this.pdfReader.nightMode = true;
+          const vp = document.getElementById('pdfCanvasViewport');
+          if (vp) vp.classList.add('pdf-night-mode');
+          const btn = document.getElementById('btnPdfNightMode');
+          if (btn) {
+            btn.style.background = 'var(--accent-primary)';
+            btn.style.color = '#ffffff';
+          }
+        }
+
+        // Configura eventos de ponteiro/toque para desenho no canvas
+        this.setupPdfDrawingEvents();
+
+        // Fechamento de modais ao clicar no fundo
+        const modalNote = document.getElementById('modalPdfNote');
+        if (modalNote) {
+          modalNote.addEventListener('click', (e) => {
+            if (e.target === modalNote) App.closePdfNoteModal();
+          });
+        }
+
+        const modalMore = document.getElementById('modalMoreSheet');
+        if (modalMore) {
+          modalMore.addEventListener('click', (e) => {
+            if (e.target === modalMore) App.closeMoreMenuSheet();
+          });
+        }
+
+        // Verifica se já existe um edital salvo para exibir os botões de atalho
+        PdfStorage.getFile('edital').then(rec => {
+          if (rec && rec.data) {
+            App.updatePdfEditalButtons(true);
+          }
+        }).catch(() => {});
+
+        // Restaura em segundo plano o último PDF aberto, se existir
+        PdfStorage.getFile('active').then(rec => {
+          if (rec && rec.data) {
+            App.loadPdfFromBuffer(rec.data, rec.name || 'Último PDF Aberto', false, 'active');
+          }
+        }).catch(() => {});
+      },
+
+      updatePdfEditalButtons(hasEdital) {
+        const b1 = document.getElementById('btnPdfOpenEdital');
+        const b2 = document.getElementById('btnEmptyOpenEdital');
+        if (b1) b1.style.display = hasEdital ? 'inline-flex' : 'none';
+        if (b2) b2.style.display = hasEdital ? 'inline-flex' : 'none';
+      },
+
+      async openEditalInReader() {
+        try {
+          const rec = await PdfStorage.getFile('edital');
+          if (rec && rec.data) {
+            await this.loadPdfFromBuffer(rec.data, rec.name || 'Edital.pdf', false, 'edital');
+            this.switchTab('tab-pdf-reader');
+            this.showToast('Edital aberto no leitor!', 'success');
+          } else {
+            this.showToast('Nenhum edital gravado. Envie o edital na aba Edital primeiro.', 'info');
+          }
+        } catch (err) {
+          this.showToast('Não foi possível abrir o edital.', 'warning');
+        }
+      },
+
+      async loadPdfFromBuffer(arrayBuffer, docName = 'Documento.pdf', saveToDb = true, docId = 'active') {
+        if (!window.pdfjsLib) {
+          this.showToast('Biblioteca PDF.js não disponível offline.', 'warning');
+          return;
+        }
+        const spinner = document.getElementById('pdfPageSpinner');
+        if (spinner) spinner.classList.remove('hidden');
+
+        try {
+          if (this.pdfReader.renderTask) {
+            try { this.pdfReader.renderTask.cancel(); } catch (_) {}
+            this.pdfReader.renderTask = null;
+          }
+
+          if (saveToDb) {
+            await PdfStorage.saveFile(docId, docName, arrayBuffer.slice(0), 0);
+          }
+
+          const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer.slice(0) });
+          const pdfDoc = await loadingTask.promise;
+
+          this.pdfReader.doc = pdfDoc;
+          this.pdfReader.currentDocId = docId;
+          this.pdfReader.docName = docName;
+          this.pdfReader.numPages = pdfDoc.numPages;
+          this.pdfReader.currentPage = 1;
+          this.pdfReader.zoom = 1.0;
+          this.pdfReader._didAutoFit = false;
+
+          const titleEl = document.getElementById('pdfReaderDocTitle');
+          if (titleEl) {
+            titleEl.textContent = docName.length > 25 ? docName.substring(0, 22) + '...' : docName;
+            titleEl.title = docName;
+          }
+          const totalEl = document.getElementById('labelPdfTotalPages');
+          if (totalEl) totalEl.textContent = pdfDoc.numPages;
+
+          const curInput = document.getElementById('inputPdfCurrentPage');
+          if (curInput) {
+            curInput.value = 1;
+            curInput.max = pdfDoc.numPages;
+          }
+
+          const zoomLabel = document.getElementById('labelPdfZoom');
+          if (zoomLabel) zoomLabel.textContent = '100%';
+
+          this.pdfReader.bookmarks = await PdfStorage.getBookmarks(docId);
+          this.pdfReader.annotations = await PdfStorage.getAllAnnotationsForDoc(docId);
+
+          const emptyState = document.getElementById('pdfEmptyState');
+          if (emptyState) emptyState.style.display = 'none';
+          const pageContainer = document.getElementById('pdfPageContainer');
+          if (pageContainer) pageContainer.style.display = 'block';
+
+          await this.renderPdfPage(1);
+
+          this.updateBookmarkIcon();
+          this.renderBookmarksSidebarList();
+
+          if (saveToDb) {
+            try {
+              await PdfStorage.saveFile(docId, docName, arrayBuffer.slice(0), pdfDoc.numPages);
+            } catch (_) {}
+            this.showToast(`PDF carregado! ${pdfDoc.numPages} páginas disponíveis.`, 'success');
+          }
+        } catch (err) {
+          console.error('[loadPdfFromBuffer] Erro ao carregar PDF:', err);
+          this.showToast('Erro ao carregar o arquivo PDF.', 'warning');
+        } finally {
+          if (spinner) spinner.classList.add('hidden');
+        }
+      },
+
+      async renderPdfPage(pageNum) {
+        if (!this.pdfReader.doc) return;
+        pageNum = Math.max(1, Math.min(this.pdfReader.numPages, parseInt(pageNum, 10) || 1));
+        this.pdfReader.currentPage = pageNum;
+
+        const curInput = document.getElementById('inputPdfCurrentPage');
+        if (curInput) curInput.value = pageNum;
+
+        this.updateBookmarkIcon();
+
+        const spinner = document.getElementById('pdfPageSpinner');
+        if (spinner) spinner.classList.remove('hidden');
+
+        if (this.pdfReader.renderTask) {
+          try { this.pdfReader.renderTask.cancel(); } catch (_) {}
+          this.pdfReader.renderTask = null;
+        }
+
+        try {
+          const page = await this.pdfReader.doc.getPage(pageNum);
+          const scale = this.pdfReader.zoom || 1.0;
+          const viewport = page.getViewport({ scale });
+          const dpr = window.devicePixelRatio || 1;
+
+          const renderCanvas = document.getElementById('pdfRenderCanvas');
+          const annotCanvas = document.getElementById('pdfAnnotationCanvas');
+          const notesOverlay = document.getElementById('pdfNotesOverlay');
+          const stage = document.getElementById('pdfPageStage');
+
+          const cssW = Math.floor(viewport.width);
+          const cssH = Math.floor(viewport.height);
+
+          if (stage) {
+            stage.style.width = cssW + 'px';
+            stage.style.height = cssH + 'px';
+          }
+
+          renderCanvas.width = Math.floor(viewport.width * dpr);
+          renderCanvas.height = Math.floor(viewport.height * dpr);
+          renderCanvas.style.width = cssW + 'px';
+          renderCanvas.style.height = cssH + 'px';
+
+          annotCanvas.width = renderCanvas.width;
+          annotCanvas.height = renderCanvas.height;
+          annotCanvas.style.width = cssW + 'px';
+          annotCanvas.style.height = cssH + 'px';
+
+          notesOverlay.style.width = cssW + 'px';
+          notesOverlay.style.height = cssH + 'px';
+
+          const ctx = renderCanvas.getContext('2d');
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.scale(dpr, dpr);
+
+          const renderContext = {
+            canvasContext: ctx,
+            viewport: viewport
+          };
+
+          this.pdfReader.renderTask = page.render(renderContext);
+          await this.pdfReader.renderTask.promise;
+          this.pdfReader.renderTask = null;
+
+          this.renderAnnotationsForPage(pageNum);
+        } catch (err) {
+          if (err && err.name !== 'RenderingCancelledException') {
+            console.warn('[renderPdfPage] Erro ao renderizar página:', err);
+          }
+        } finally {
+          if (spinner) spinner.classList.add('hidden');
+        }
+      },
+
+      renderAnnotationsForPage(pageNum) {
+        const canvas = document.getElementById('pdfAnnotationCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const pageData = this.pdfReader.annotations[pageNum] || { strokes: [], notes: [] };
+        const strokes = pageData.strokes || [];
+        const W = canvas.width;
+        const H = canvas.height;
+
+        strokes.forEach(stroke => {
+          if (!stroke.points || stroke.points.length === 0) return;
+          ctx.save();
+          ctx.beginPath();
+
+          if (stroke.tool === 'highlight') {
+            ctx.globalAlpha = 0.38;
+            ctx.strokeStyle = stroke.color || '#fef08a';
+            ctx.lineWidth = Math.max(14, (stroke.size || 6) * 3.5) * (W / 800);
+            ctx.lineCap = 'square';
+            ctx.lineJoin = 'round';
+          } else {
+            ctx.globalAlpha = 0.95;
+            ctx.strokeStyle = stroke.color || '#1e293b';
+            ctx.lineWidth = Math.max(2, (stroke.size || 3)) * (W / 800);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+          }
+
+          const pts = stroke.points;
+          ctx.moveTo(pts[0].x * W, pts[0].y * H);
+          for (let i = 1; i < pts.length; i++) {
+            ctx.lineTo(pts[i].x * W, pts[i].y * H);
+          }
+          ctx.stroke();
+          ctx.restore();
+        });
+
+        this.renderNotesForPage(pageNum);
+      },
+
+      setupPdfDrawingEvents() {
+        const canvas = document.getElementById('pdfAnnotationCanvas');
+        if (!canvas) return;
+
+        const getCoords = (e) => {
+          const rect = canvas.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width;
+          const y = (e.clientY - rect.top) / rect.height;
+          return {
+            x: Math.max(0, Math.min(1, x)),
+            y: Math.max(0, Math.min(1, y))
+          };
+        };
+
+        canvas.addEventListener('pointerdown', (e) => {
+          if (this.pdfReader.tool === 'hand') return;
+          e.preventDefault();
+
+          const { x, y } = getCoords(e);
+
+          if (this.pdfReader.tool === 'note') {
+            this.openNewPdfNote(x, y);
+            return;
+          }
+
+          try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+          this.pdfReader.isDrawing = true;
+          this.pdfReader.currentStroke = {
+            tool: this.pdfReader.tool,
+            color: this.pdfReader.color,
+            size: this.pdfReader.strokeSize,
+            points: [{ x, y }]
+          };
+        });
+
+        canvas.addEventListener('pointermove', (e) => {
+          if (!this.pdfReader.isDrawing || !this.pdfReader.currentStroke) return;
+          e.preventDefault();
+
+          const { x, y } = getCoords(e);
+          const pts = this.pdfReader.currentStroke.points;
+          const lastPt = pts[pts.length - 1];
+          pts.push({ x, y });
+
+          const ctx = canvas.getContext('2d');
+          ctx.save();
+          ctx.beginPath();
+          const W = canvas.width;
+          const H = canvas.height;
+
+          if (this.pdfReader.currentStroke.tool === 'highlight') {
+            ctx.globalAlpha = 0.38;
+            ctx.strokeStyle = this.pdfReader.currentStroke.color;
+            ctx.lineWidth = Math.max(14, this.pdfReader.currentStroke.size * 3.5) * (W / 800);
+            ctx.lineCap = 'square';
+            ctx.lineJoin = 'round';
+          } else {
+            ctx.globalAlpha = 0.95;
+            ctx.strokeStyle = this.pdfReader.currentStroke.color;
+            ctx.lineWidth = Math.max(2, this.pdfReader.currentStroke.size) * (W / 800);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+          }
+
+          ctx.moveTo(lastPt.x * W, lastPt.y * H);
+          ctx.lineTo(x * W, y * H);
+          ctx.stroke();
+          ctx.restore();
+        });
+
+        const endStroke = async (e) => {
+          if (!this.pdfReader.isDrawing || !this.pdfReader.currentStroke) return;
+          this.pdfReader.isDrawing = false;
+          try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+
+          const pageNum = this.pdfReader.currentPage;
+          if (!this.pdfReader.annotations[pageNum]) {
+            this.pdfReader.annotations[pageNum] = { strokes: [], notes: [] };
+          }
+          if (!this.pdfReader.annotations[pageNum].strokes) {
+            this.pdfReader.annotations[pageNum].strokes = [];
+          }
+          this.pdfReader.annotations[pageNum].strokes.push(this.pdfReader.currentStroke);
+          this.pdfReader.currentStroke = null;
+
+          await PdfStorage.savePageAnnotations(
+            this.pdfReader.currentDocId,
+            pageNum,
+            this.pdfReader.annotations[pageNum]
+          );
+
+          this.renderAnnotationsForPage(pageNum);
+        };
+
+        canvas.addEventListener('pointerup', endStroke);
+        canvas.addEventListener('pointercancel', endStroke);
+      },
+
+      pdfReaderSetTool(tool) {
+        this.pdfReader.tool = tool;
+        document.querySelectorAll('.pdf-tool-btn').forEach(b => b.classList.remove('active'));
+        const btn = document.getElementById({
+          hand: 'btnToolHand',
+          highlight: 'btnToolHighlight',
+          pen: 'btnToolPen',
+          note: 'btnToolNote'
+        }[tool]);
+        if (btn) btn.classList.add('active');
+
+        const viewport = document.getElementById('pdfCanvasViewport');
+        if (viewport) {
+          if (tool === 'hand') {
+            viewport.classList.add('pdf-tool-hand');
+          } else {
+            viewport.classList.remove('pdf-tool-hand');
+          }
+        }
+
+        const annotCanvas = document.getElementById('pdfAnnotationCanvas');
+        if (annotCanvas) {
+          annotCanvas.style.pointerEvents = (tool === 'hand') ? 'none' : 'auto';
+          annotCanvas.style.cursor = (tool === 'note') ? 'cell' : (tool === 'hand' ? 'default' : 'crosshair');
+        }
+      },
+
+      pdfReaderSetColor(color) {
+        this.pdfReader.color = color;
+        document.querySelectorAll('.palette-swatch').forEach(sw => {
+          if (sw.getAttribute('data-color') === color) {
+            sw.classList.add('active');
+          } else {
+            sw.classList.remove('active');
+          }
+        });
+      },
+
+      pdfReaderSetStrokeSize(size) {
+        this.pdfReader.strokeSize = parseInt(size, 10) || 3;
+        document.querySelectorAll('.stroke-btn').forEach(btn => {
+          if (parseInt(btn.getAttribute('data-size'), 10) === this.pdfReader.strokeSize) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+      },
+
+      pdfReaderPrevPage() {
+        if (this.pdfReader.currentPage > 1) {
+          this.renderPdfPage(this.pdfReader.currentPage - 1);
+        }
+      },
+
+      pdfReaderNextPage() {
+        if (this.pdfReader.currentPage < this.pdfReader.numPages) {
+          this.renderPdfPage(this.pdfReader.currentPage + 1);
+        }
+      },
+
+      pdfReaderGoToPage(val) {
+        const page = parseInt(val, 10);
+        if (!isNaN(page) && page >= 1 && page <= this.pdfReader.numPages) {
+          this.renderPdfPage(page);
+        } else {
+          const curInput = document.getElementById('inputPdfCurrentPage');
+          if (curInput) curInput.value = this.pdfReader.currentPage;
+        }
+      },
+
+      pdfReaderZoom(delta) {
+        let newZoom = Math.round((this.pdfReader.zoom + delta) * 100) / 100;
+        newZoom = Math.max(0.5, Math.min(3.0, newZoom));
+        this.pdfReader.zoom = newZoom;
+        const label = document.getElementById('labelPdfZoom');
+        if (label) label.textContent = `${Math.round(newZoom * 100)}%`;
+        this.renderPdfPage(this.pdfReader.currentPage);
+      },
+
+      async pdfReaderFitWidth() {
+        if (!this.pdfReader.doc) return;
+        const viewportEl = document.getElementById('pdfCanvasViewport');
+        if (!viewportEl) return;
+        const availableWidth = viewportEl.clientWidth - 28;
+        if (availableWidth <= 0) return;
+
+        try {
+          const page = await this.pdfReader.doc.getPage(this.pdfReader.currentPage);
+          const baseViewport = page.getViewport({ scale: 1.0 });
+          const fitScale = Math.round((availableWidth / baseViewport.width) * 100) / 100;
+          this.pdfReader.zoom = Math.max(0.5, Math.min(3.0, fitScale));
+          const label = document.getElementById('labelPdfZoom');
+          if (label) label.textContent = `${Math.round(this.pdfReader.zoom * 100)}%`;
+          this.renderPdfPage(this.pdfReader.currentPage);
+        } catch (e) {}
+      },
+
+      pdfReaderToggleNightMode() {
+        this.pdfReader.nightMode = !this.pdfReader.nightMode;
+        const viewport = document.getElementById('pdfCanvasViewport');
+        const btn = document.getElementById('btnPdfNightMode');
+        if (this.pdfReader.nightMode) {
+          if (viewport) viewport.classList.add('pdf-night-mode');
+          if (btn) {
+            btn.style.background = 'var(--accent-primary)';
+            btn.style.color = '#ffffff';
+          }
+          this.showToast('Modo de leitura noturna ativado.', 'info');
+        } else {
+          if (viewport) viewport.classList.remove('pdf-night-mode');
+          if (btn) {
+            btn.style.background = '';
+            btn.style.color = '';
+          }
+          this.showToast('Modo de leitura diurna ativado.', 'info');
+        }
+        localStorage.setItem('concurso_pdf_night_mode', this.pdfReader.nightMode ? '1' : '0');
+      },
+
+      async pdfReaderToggleBookmark() {
+        const page = this.pdfReader.currentPage;
+        let bmarks = this.pdfReader.bookmarks || [];
+        const idx = bmarks.indexOf(page);
+        if (idx >= 0) {
+          bmarks.splice(idx, 1);
+          this.showToast(`Página ${page} removida dos favoritos.`, 'info');
+        } else {
+          bmarks.push(page);
+          bmarks.sort((a, b) => a - b);
+          this.showToast(`Página ${page} favoritada! ⭐`, 'success');
+        }
+        this.pdfReader.bookmarks = bmarks;
+        await PdfStorage.saveBookmarks(this.pdfReader.currentDocId, bmarks);
+        this.updateBookmarkIcon();
+        this.renderBookmarksSidebarList();
+      },
+
+      updateBookmarkIcon() {
+        const page = this.pdfReader.currentPage;
+        const icon = document.getElementById('iconPdfBookmark');
+        if (!icon) return;
+        const isBookmarked = (this.pdfReader.bookmarks || []).includes(page);
+        icon.textContent = isBookmarked ? '★' : '☆';
+        icon.style.color = isBookmarked ? '#f59e0b' : '';
+      },
+
+      pdfReaderToggleSidebar() {
+        const sidebar = document.getElementById('pdfBookmarksSidebar');
+        if (!sidebar) return;
+        sidebar.classList.toggle('hidden');
+        if (!sidebar.classList.contains('hidden')) {
+          this.renderBookmarksSidebarList();
+        }
+      },
+
+      renderBookmarksSidebarList() {
+        const container = document.getElementById('pdfBookmarksListContainer');
+        if (!container) return;
+        const bmarks = this.pdfReader.bookmarks || [];
+        if (bmarks.length === 0) {
+          container.innerHTML = `<p class="sidebar-empty">Nenhuma página favoritada ainda.<br>Clique no ícone ☆ para marcar.</p>`;
+          return;
+        }
+
+        let html = '';
+        bmarks.forEach(p => {
+          const isCurrent = p === this.pdfReader.currentPage;
+          const notesCount = (this.pdfReader.annotations[p]?.notes || []).length;
+          const strokesCount = (this.pdfReader.annotations[p]?.strokes || []).length;
+          let badges = [];
+          if (notesCount > 0) badges.push(`📌 ${notesCount} nota${notesCount > 1 ? 's' : ''}`);
+          if (strokesCount > 0) badges.push(`🖍️ ${strokesCount} traço${strokesCount > 1 ? 's' : ''}`);
+
+          html += `
+            <div class="sidebar-item ${isCurrent ? 'active' : ''}" onclick="App.pdfReaderGoToPage(${p}); App.pdfReaderToggleSidebar();">
+              <div class="sidebar-item-info">
+                <strong>Página ${p}</strong>
+                <span class="sidebar-item-sub">${badges.join(' • ') || 'Página marcada'}</span>
+              </div>
+              <span class="sidebar-item-arrow">➔</span>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      },
+
+      async pdfReaderUndoStroke() {
+        const pageNum = this.pdfReader.currentPage;
+        const pageData = this.pdfReader.annotations[pageNum];
+        if (pageData && pageData.strokes && pageData.strokes.length > 0) {
+          pageData.strokes.pop();
+          await PdfStorage.savePageAnnotations(
+            this.pdfReader.currentDocId,
+            pageNum,
+            pageData
+          );
+          this.renderAnnotationsForPage(pageNum);
+          this.showToast('Último traço desfeito.', 'info');
+        } else {
+          this.showToast('Não há traços para desfazer nesta página.', 'info');
+        }
+      },
+
+      async pdfReaderClearPage() {
+        const pageNum = this.pdfReader.currentPage;
+        const pageData = this.pdfReader.annotations[pageNum];
+        const hasContent = pageData && ((pageData.strokes && pageData.strokes.length > 0) || (pageData.notes && pageData.notes.length > 0));
+        if (!hasContent) {
+          this.showToast('Esta página já não possui marcações.', 'info');
+          return;
+        }
+        if (!confirm(`Deseja limpar todos os desenhos e notas da página ${pageNum}?`)) return;
+
+        this.pdfReader.annotations[pageNum] = { strokes: [], notes: [] };
+        await PdfStorage.savePageAnnotations(
+          this.pdfReader.currentDocId,
+          pageNum,
+          this.pdfReader.annotations[pageNum]
+        );
+        this.renderAnnotationsForPage(pageNum);
+        this.showToast(`Marcações da página ${pageNum} apagadas.`, 'info');
+      },
+
+      async pdfReaderExportAnnotated() {
+        if (!this.pdfReader.doc) {
+          this.showToast('Nenhum PDF aberto para exportar.', 'warning');
+          return;
+        }
+        const renderCanvas = document.getElementById('pdfRenderCanvas');
+        const annotCanvas = document.getElementById('pdfAnnotationCanvas');
+        if (!renderCanvas || !annotCanvas) return;
+
+        const merged = document.createElement('canvas');
+        merged.width = renderCanvas.width;
+        merged.height = renderCanvas.height;
+        const mCtx = merged.getContext('2d');
+
+        mCtx.fillStyle = '#ffffff';
+        mCtx.fillRect(0, 0, merged.width, merged.height);
+        mCtx.drawImage(renderCanvas, 0, 0);
+        mCtx.drawImage(annotCanvas, 0, 0);
+
+        const pageData = this.pdfReader.annotations[this.pdfReader.currentPage] || { notes: [] };
+        if (pageData.notes && pageData.notes.length > 0) {
+          const noteHeight = 50 + (pageData.notes.length * 32);
+          const finalCanvas = document.createElement('canvas');
+          finalCanvas.width = merged.width;
+          finalCanvas.height = merged.height + noteHeight;
+          const fCtx = finalCanvas.getContext('2d');
+
+          fCtx.fillStyle = '#ffffff';
+          fCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+          fCtx.drawImage(merged, 0, 0);
+
+          fCtx.fillStyle = '#f8fafc';
+          fCtx.fillRect(0, merged.height, finalCanvas.width, noteHeight);
+          fCtx.fillStyle = '#cbd5e1';
+          fCtx.fillRect(0, merged.height, finalCanvas.width, 2);
+
+          fCtx.fillStyle = '#0f172a';
+          fCtx.font = 'bold 16px Plus Jakarta Sans, sans-serif';
+          fCtx.fillText(`Notas e Comentários da Página ${this.pdfReader.currentPage}:`, 20, merged.height + 28);
+
+          fCtx.font = '14px Plus Jakarta Sans, sans-serif';
+          fCtx.fillStyle = '#334155';
+          pageData.notes.forEach((n, idx) => {
+            fCtx.fillText(`• ${n.text}`, 25, merged.height + 56 + (idx * 28));
+          });
+
+          const link = document.createElement('a');
+          link.download = `${(this.pdfReader.docName || 'documento').replace(/\.pdf$/i, '')}_pag_${this.pdfReader.currentPage}_anotada.png`;
+          link.href = finalCanvas.toDataURL('image/png');
+          link.click();
+        } else {
+          const link = document.createElement('a');
+          link.download = `${(this.pdfReader.docName || 'documento').replace(/\.pdf$/i, '')}_pag_${this.pdfReader.currentPage}_anotada.png`;
+          link.href = merged.toDataURL('image/png');
+          link.click();
+        }
+        this.showToast('Página anotada exportada com sucesso!', 'success');
+      },
+
+      openNewPdfNote(nx, ny) {
+        this.pdfReader.pendingNoteCoords = { x: nx, y: ny };
+        this.pdfReader.activeNoteId = null;
+        const numEl = document.getElementById('pdfNotePageNum');
+        if (numEl) numEl.textContent = this.pdfReader.currentPage;
+        const textEl = document.getElementById('textareaPdfNote');
+        if (textEl) textEl.value = '';
+        const delBtn = document.getElementById('btnDeletePdfNote');
+        if (delBtn) delBtn.style.display = 'none';
+        const modal = document.getElementById('modalPdfNote');
+        if (modal) modal.classList.remove('hidden');
+        if (textEl) setTimeout(() => textEl.focus(), 100);
+      },
+
+      editPdfNote(noteId) {
+        const pageNum = this.pdfReader.currentPage;
+        const pageData = this.pdfReader.annotations[pageNum] || { strokes: [], notes: [] };
+        const note = (pageData.notes || []).find(n => n.id === noteId);
+        if (!note) return;
+
+        this.pdfReader.activeNoteId = noteId;
+        this.pdfReader.pendingNoteCoords = null;
+        const numEl = document.getElementById('pdfNotePageNum');
+        if (numEl) numEl.textContent = pageNum;
+        const textEl = document.getElementById('textareaPdfNote');
+        if (textEl) textEl.value = note.text || '';
+        const delBtn = document.getElementById('btnDeletePdfNote');
+        if (delBtn) delBtn.style.display = 'inline-flex';
+        const modal = document.getElementById('modalPdfNote');
+        if (modal) modal.classList.remove('hidden');
+        if (textEl) setTimeout(() => textEl.focus(), 100);
+      },
+
+      closePdfNoteModal() {
+        const modal = document.getElementById('modalPdfNote');
+        if (modal) modal.classList.add('hidden');
+        this.pdfReader.activeNoteId = null;
+        this.pdfReader.pendingNoteCoords = null;
+      },
+
+      async savePdfNote() {
+        const textEl = document.getElementById('textareaPdfNote');
+        const text = textEl ? textEl.value.trim() : '';
+        if (!text) {
+          this.showToast('Escreva sua anotação antes de salvar.', 'warning');
+          return;
+        }
+
+        const pageNum = this.pdfReader.currentPage;
+        if (!this.pdfReader.annotations[pageNum]) {
+          this.pdfReader.annotations[pageNum] = { strokes: [], notes: [] };
+        }
+        if (!this.pdfReader.annotations[pageNum].notes) {
+          this.pdfReader.annotations[pageNum].notes = [];
+        }
+
+        if (this.pdfReader.activeNoteId) {
+          const note = this.pdfReader.annotations[pageNum].notes.find(n => n.id === this.pdfReader.activeNoteId);
+          if (note) {
+            note.text = text;
+            note.updatedAt = Date.now();
+          }
+        } else if (this.pdfReader.pendingNoteCoords) {
+          const newNote = {
+            id: 'note_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+            x: this.pdfReader.pendingNoteCoords.x,
+            y: this.pdfReader.pendingNoteCoords.y,
+            text: text,
+            color: this.pdfReader.color,
+            createdAt: Date.now()
+          };
+          this.pdfReader.annotations[pageNum].notes.push(newNote);
+        }
+
+        await PdfStorage.savePageAnnotations(
+          this.pdfReader.currentDocId,
+          pageNum,
+          this.pdfReader.annotations[pageNum]
+        );
+
+        this.closePdfNoteModal();
+        this.renderNotesForPage(pageNum);
+        this.showToast('Anotação salva com sucesso!', 'success');
+      },
+
+      async deleteCurrentPdfNote() {
+        if (!this.pdfReader.activeNoteId) return;
+        if (!confirm('Deseja excluir esta nota fixada?')) return;
+
+        const pageNum = this.pdfReader.currentPage;
+        if (this.pdfReader.annotations[pageNum] && this.pdfReader.annotations[pageNum].notes) {
+          this.pdfReader.annotations[pageNum].notes = this.pdfReader.annotations[pageNum].notes.filter(
+            n => n.id !== this.pdfReader.activeNoteId
+          );
+          await PdfStorage.savePageAnnotations(
+            this.pdfReader.currentDocId,
+            pageNum,
+            this.pdfReader.annotations[pageNum]
+          );
+        }
+
+        this.closePdfNoteModal();
+        this.renderNotesForPage(pageNum);
+        this.showToast('Anotação removida.', 'info');
+      },
+
+      renderNotesForPage(pageNum) {
+        const overlay = document.getElementById('pdfNotesOverlay');
+        if (!overlay) return;
+        overlay.innerHTML = '';
+
+        const pageData = this.pdfReader.annotations[pageNum] || { strokes: [], notes: [] };
+        const notes = pageData.notes || [];
+
+        notes.forEach(note => {
+          const pin = document.createElement('div');
+          pin.className = 'pdf-note-pin';
+          pin.style.left = `${(note.x * 100).toFixed(2)}%`;
+          pin.style.top = `${(note.y * 100).toFixed(2)}%`;
+          pin.title = note.text;
+
+          const preview = note.text.length > 40 ? note.text.substring(0, 40) + '…' : note.text;
+          pin.innerHTML = `📌<span class="note-tooltip">${App.escapeHtml(preview)}</span>`;
+
+          pin.addEventListener('click', (e) => {
+            e.stopPropagation();
+            App.editPdfNote(note.id);
+          });
+
+          overlay.appendChild(pin);
+        });
+      },
+
+      openMoreMenuSheet() {
+        const sheet = document.getElementById('modalMoreSheet');
+        if (sheet) sheet.classList.remove('hidden');
+      },
+
+      closeMoreMenuSheet() {
+        const sheet = document.getElementById('modalMoreSheet');
+        if (sheet) sheet.classList.add('hidden');
       }
     };
 
