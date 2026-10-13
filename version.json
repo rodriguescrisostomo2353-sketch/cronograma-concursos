@@ -1,16 +1,31 @@
 {
-  "version": "1.4.0",
+  "version": "1.5.0",
   "date": "2026-10-13",
   "notes": [
-    "Layout mobile ultra limpo e organizado: cabeçalho enxuto e compacto com alternância rápida de tema claro/escuro",
-    "Menu discreto de 3 pontinhos (⋮) nas matérias com Revisar Divisão, Reprocessar Edital e Expandir/Recolher Tudo",
-    "Lista de tópicos despoluída no celular: remoção dos botões repetitivos e inclusão de janela inferior (Bottom Sheet) ao tocar no tópico",
-    "Área de toque aprimorada (≥ 44px) em todos os botões e campos no celular",
-    "Suporte refinado a barras seguras (safe-area) para entalhes/câmeras e navegação por gestos do Android",
-    "Layout do computador 100% preservado com todas as ações e ferramentas originais"
+    "Nova aba dedicada: Leitor de PDF com marcações para estudo direto no app (100% offline)",
+    "Ferramentas completas de anotação: Marca-texto suave em várias cores e Caneta livre com controle de espessura",
+    "Notas e comentários fixados (pins 📌) com texto customizado e edição rápida na página",
+    "Marcador de favoritos com painel lateral (drawer) de navegação entre páginas marcadas",
+    "Modo de leitura noturna/escuro com alto contraste suave para estudar sem cansar a vista",
+    "Zoom dinâmico (+ / - / ajuste à largura da tela) e navegação direta por número de página",
+    "Armazenamento offline no aparelho via IndexedDB (PDFs, anotações e favoritos salvos localmente)",
+    "Exportação da página com anotações e comentários em imagem de alta resolução",
+    "Abertura de qualquer PDF do dispositivo ou do Edital já carregado com 1 clique"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.4.0",
+      "date": "2026-10-13",
+      "notes": [
+        "Layout mobile ultra limpo e organizado: cabeçalho enxuto e compacto com alternância rápida de tema claro/escuro",
+        "Menu discreto de 3 pontinhos (⋮) nas matérias com Revisar Divisão, Reprocessar Edital e Expandir/Recolher Tudo",
+        "Lista de tópicos despoluída no celular: remoção dos botões repetitivos e inclusão de janela inferior (Bottom Sheet) ao tocar no tópico",
+        "Área de toque aprimorada (≥ 44px) em todos os botões e campos no celular",
+        "Suporte refinado a barras seguras (safe-area) para entalhes/câmeras e navegação por gestos do Android",
+        "Layout do computador 100% preservado com todas as ações e ferramentas originais"
+      ]
+    },
     {
       "version": "1.3.2",
       "date": "2026-10-13",
