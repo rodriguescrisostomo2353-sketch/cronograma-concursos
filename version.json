@@ -1,16 +1,28 @@
 {
-  "version": "1.6.1",
+  "version": "1.6.2",
   "date": "2026-10-13",
   "notes": [
-    "Grade de horários corrigida: colunas proporcionais via CSS Grid sem sobreposição ou corte de cards no computador e mobile",
-    "Cards simplificados: título curto de tópico em até 2 linhas e texto completo ao tocar na sessão de estudo",
-    "Identificação precisa de matérias no edital, isolando títulos compostos com subitens na mesma linha",
-    "Revisar Divisão completo: mover tópicos entre matérias, criar novas disciplinas e renomear com backup automático de segurança",
-    "Aviso de capacidade na pré-visualização com pílulas de matérias e botões de ajuste rápido (+1 bloco, +30min, +1 dia, ajustar frequências)",
-    "Distribuição justa (Round-Robin proporcional) garantindo todas as matérias selecionadas sem dias consecutivos repetidos"
+    "Divisão inteligente de tópicos do edital por numeração hierárquica (divisor-topicos.js) com detecção exata de itens e subitens (7.1, 7.1.1, 1.1.4.1)",
+    "Filtro avançado contra falsos positivos: leis, decretos, súmulas, artigos e incisos preservados integralmente dentro de seus respectivos tópicos",
+    "Auto-migração de matérias já salvas ao abrir o app (com backup de segurança automático) sem necessidade de reenviar o PDF",
+    "Botões 'Reprocessar Edital' e 'Dividir por numeração' para reorganização instantânea sob demanda",
+    "Hierarquia visual refinada: tópicos principais (nível 2) com distintivo e subtópicos (níveis 3, 4 e 5) recuados e recolhíveis com setas dinâmicas",
+    "Preservação integral do progresso de estudo: status concluído, sessões e cronogramas mantidos intactos"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.6.1",
+      "date": "2026-10-13",
+      "notes": [
+        "Grade de horários corrigida: colunas proporcionais via CSS Grid sem sobreposição ou corte de cards no computador e mobile",
+        "Cards simplificados: título curto de tópico em até 2 linhas e texto completo ao tocar na sessão de estudo",
+        "Identificação precisa de matérias no edital, isolando títulos compostos com subitens na mesma linha",
+        "Revisar Divisão completo: mover tópicos entre matérias, criar novas disciplinas e renomear com backup automático de segurança",
+        "Aviso de capacidade na pré-visualização com pílulas de matérias e botões de ajuste rápido (+1 bloco, +30min, +1 dia, ajustar frequências)",
+        "Distribuição justa (Round-Robin proporcional) garantindo todas as matérias selecionadas sem dias consecutivos repetidos"
+      ]
+    },
     {
       "version": "1.6.0",
       "date": "2026-10-13",

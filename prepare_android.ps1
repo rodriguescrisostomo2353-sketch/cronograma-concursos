@@ -9,6 +9,11 @@ Copy-Item -Path (Join-Path $PSScriptRoot "manifest.json") -Destination $targetDi
 Copy-Item -Path (Join-Path $PSScriptRoot "sw.js") -Destination $targetDir -Force
 Copy-Item -Path (Join-Path $PSScriptRoot "version.json") -Destination $targetDir -Force
 
+$divisorFile = Join-Path $PSScriptRoot "divisor-topicos.js"
+if (Test-Path $divisorFile) {
+    Copy-Item -Path $divisorFile -Destination $targetDir -Force
+}
+
 $libPdf = Join-Path $PSScriptRoot "html2pdf.bundle.min.js"
 if (Test-Path $libPdf) {
     Copy-Item -Path $libPdf -Destination $targetDir -Force

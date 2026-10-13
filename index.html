@@ -705,10 +705,11 @@
       border-color: var(--border-focus);
     }
 
-    /* Hierarquia e Subníveis de Tópicos (Etapa 3) */
+    /* Hierarquia e Subníveis de Tópicos (divisor-topicos.js) */
     .topic-item.topic-parent {
       background: var(--bg-subtle);
       border-left: 3px solid #6366f1;
+      font-weight: 600;
     }
 
     .topic-parent-badge {
@@ -730,25 +731,85 @@
       color: #a5b4fc;
     }
 
-    .topic-item.topic-level-1 {
-      margin-left: 14px;
-      border-left: 2px solid var(--border-color);
+    .topic-collapse-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      margin-right: 4px;
+      cursor: pointer;
+      border-radius: 4px;
+      user-select: none;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      transition: transform 0.2s ease, background-color 0.15s ease;
+      flex-shrink: 0;
     }
 
+    .topic-collapse-arrow:hover {
+      background: var(--bg-hover);
+      color: var(--text-main);
+    }
+
+    .topic-collapse-arrow.collapsed {
+      transform: rotate(-90deg);
+    }
+
+    .topic-item.collapsed-subtopic {
+      display: none !important;
+    }
+
+    /* Nível 2: Tópico Principal (ex: 7.1) */
     .topic-item.topic-level-2 {
-      margin-left: 28px;
-      border-left: 2px dashed var(--border-color);
+      margin-left: 0;
     }
 
+    /* Nível 3: Subtópico 1º nível (ex: 7.1.1) */
     .topic-item.topic-level-3 {
-      margin-left: 40px;
+      margin-left: 22px;
+      border-left: 2px solid var(--border-color);
+      font-size: 0.92rem;
+    }
+
+    /* Nível 4: Subtópico 2º nível (ex: 7.1.1.1) */
+    .topic-item.topic-level-4 {
+      margin-left: 38px;
+      border-left: 2px dashed var(--border-color);
+      font-size: 0.88rem;
+    }
+
+    /* Nível 5+: Subtópico 3º nível */
+    .topic-item.topic-level-5 {
+      margin-left: 52px;
       border-left: 2px dotted var(--border-color);
+      font-size: 0.85rem;
     }
 
     @media (max-width: 600px) {
-      .topic-item.topic-level-1 { margin-left: 8px; }
-      .topic-item.topic-level-2 { margin-left: 16px; }
-      .topic-item.topic-level-3 { margin-left: 22px; }
+      .topic-item.topic-level-3 { margin-left: 12px; }
+      .topic-item.topic-level-4 { margin-left: 20px; }
+      .topic-item.topic-level-5 { margin-left: 28px; }
+    }
+
+    .subject-warning-banner {
+      background: rgba(239, 68, 68, 0.10);
+      color: #dc2626;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin: 10px 16px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.4;
+    }
+
+    [data-theme="dark"] .subject-warning-banner {
+      background: rgba(239, 68, 68, 0.18);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.35);
     }
 
     .topic-text {
@@ -4243,6 +4304,9 @@
           <button class="btn btn-secondary btn-sm" id="btnReprocessEdital" onclick="App.reprocessEditalPrompt()" title="Reprocessar edital com a inteligência aprimorada">
             🔄 Reprocessar Edital
           </button>
+          <button class="btn btn-secondary btn-sm" id="btnSplitByNumbering" onclick="App.dividirTopicosPorNumeracaoPrompt()" title="Dividir tópicos por numeração hierárquica (ex.: 7.1, 7.1.1)">
+            🔢 Dividir por numeração
+          </button>
           <button class="btn btn-secondary btn-sm" id="btnExpandAll">
             ↕️ Expandir/Recolher
           </button>
@@ -4266,6 +4330,9 @@
               </button>
               <button type="button" class="dropdown-item" onclick="App.closeSubjectMoreMenu(); App.reprocessEditalPrompt();">
                 <span>🔄</span> Reprocessar Edital
+              </button>
+              <button type="button" class="dropdown-item" onclick="App.closeSubjectMoreMenu(); App.dividirTopicosPorNumeracaoPrompt();">
+                <span>🔢</span> Dividir por numeração
               </button>
               <button type="button" class="dropdown-item" onclick="App.closeSubjectMoreMenu(); App.toggleExpandAll();">
                 <span>↕️</span> Expandir / Recolher Tudo
@@ -6737,7 +6804,7 @@
      * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.6.1";
+    const APP_VERSION = "1.6.2";
     const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
     const REMOTE_VERSION_URL = UPDATE_URL; // Mantido para compatibilidade
     const GITHUB_RELEASES_URL = "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases";
@@ -6831,6 +6898,71 @@
       return 0;
     }
 
+    /* =========================================================================
+     * DIVISOR INTELIGENTE DE TÓPICOS POR NUMERAÇÃO HIERÁRQUICA (divisor-topicos.js)
+     * ========================================================================= */
+    const REF_ANTES = /(?:\b(?:lei|leis|decreto|decreto-lei|resolu[çc][ãa]o|portaria|s[úu]mula|artigo|art|arts|inciso|n[ºo°]|nº)\.?|§)\s*$/i;
+
+    function normalizarTexto(t) {
+      return String(t)
+        .replace(/[\u00A0\u2007\u202F]/g, ' ')
+        .replace(/[\u200B-\u200D\uFEFF]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function dividirTopicos(textoBruto) {
+      const texto = normalizarTexto(textoBruto);
+
+      // número hierárquico (7.1 | 7.1.1 | 1.1.1.1 | 3.) seguido de espaço e letra
+      const re = /(^|[\s;:.,)])(\d{1,2}(?:\.\d{1,2})*)(\.?)(?=\s+[A-Za-zÀ-ÿ(\["“])/g;
+
+      let achados = [];
+      let m;
+      while ((m = re.exec(texto)) !== null) {
+        const inicio = m.index + m[1].length;
+        const numero = m[2];
+        const partes = numero.split('.').map(Number);
+        const terminaComPonto = m[3] === '.';
+        // precisa ter pelo menos um nível com ponto (7.1) OU terminar com ponto (3.)
+        if (partes.length < 2 && !terminaComPonto) continue;
+        // ignorar referências tipo "Lei 8.", "art. 5.", "nº 3."
+        if (REF_ANTES.test(texto.slice(Math.max(0, inicio - 15), inicio))) continue;
+        achados.push({ inicio, numero, partes, nivel: partes.length });
+      }
+
+      // manter só os números da raiz dominante (ex.: tudo que começa com "7")
+      if (achados.length) {
+        const contagem = {};
+        achados.forEach(a => { contagem[a.partes[0]] = (contagem[a.partes[0]] || 0) + 1; });
+        const raiz = Object.keys(contagem).sort((a, b) => contagem[b] - contagem[a])[0];
+        achados = achados.filter(a => String(a.partes[0]) === raiz);
+      }
+
+      // trava de segurança: poucos números encontrados em texto grande = falha
+      if (achados.length < 2 && texto.length > 400) {
+        return { topicos: [{ numero: null, nivel: 1, texto }], falhou: true, motivo: 'Poucos números encontrados' };
+      }
+
+      const topicos = [];
+      if (achados.length && achados[0].inicio > 0) {
+        const intro = texto.slice(0, achados[0].inicio).trim();
+        if (intro) topicos.push({ numero: null, nivel: 0, texto: intro });
+      }
+      achados.forEach((a, i) => {
+        const fim = i + 1 < achados.length ? achados[i + 1].inicio : texto.length;
+        topicos.push({ numero: a.numero, nivel: a.nivel, texto: texto.slice(a.inicio, fim).trim() });
+      });
+
+      // teste de integridade: nada pode se perder
+      const junto = normalizarTexto(topicos.map(t => t.texto).join(' '));
+      const falhou = junto !== texto;
+      return { topicos, falhou, motivo: falhou ? 'Perda de texto na divisão' : null };
+    }
+
+    window.normalizarTexto = normalizarTexto;
+    window.dividirTopicos = dividirTopicos;
+
     /**
      * ESTADO GLOBAL DA APLICAÇÃO
      */
@@ -6908,9 +7040,34 @@
         scale: 1.0
       },
 
+      collapsedParentTopics: new Set(),
+
+      getTopicText(t) {
+        if (!t) return '';
+        if (typeof t === 'object' && t !== null) return t.texto || '';
+        return String(t);
+      },
+
+      dividirTopicos: dividirTopicos,
+      normalizarTexto: normalizarTexto,
+
       init() {
         this.initTheme();
         this.loadFromStorage();
+
+        // Migração automática v1.6.2: divide tópicos salvos com divisor-topicos.js UMA vez (com backup)
+        const migratedV162 = localStorage.getItem('concurso_v162_divisor_migrated');
+        if (!migratedV162) {
+          try {
+            if (this.data.materias && this.data.materias.length > 0) {
+              this.dividirMateriasSalvasPorNumeracao(true);
+            }
+            localStorage.setItem('concurso_v162_divisor_migrated', 'true');
+          } catch (errMig) {
+            console.warn('Aviso ao executar migração automática v1.6.2:', errMig);
+          }
+        }
+
         this.loadAutoConfig();
         this.bindEvents();
         this.initSwipeListeners();
@@ -8178,82 +8335,102 @@
         return info ? info.subject : null;
       },
 
-      /* ETAPA 3: Heurística para detecção de matérias e tópicos com separação sequencial */
+      /* ETAPA 3: Parser de matérias e tópicos usando divisor-topicos.js */
       parseEditalText(lines) {
-        let materiasMap = [];
+        let materiasSections = [];
         let naoClassificado = [];
-        let currentMateria = null;
+        let currentSection = null;
 
         const getNextPaletteId = () => {
           const palettes = ['blue', 'green', 'purple', 'amber', 'rose', 'teal', 'indigo', 'peach'];
-          return palettes[materiasMap.length % palettes.length];
+          return palettes[materiasSections.length % palettes.length];
         };
 
         for (let line of lines) {
           const headerInfo = this.extractSubjectHeaderAndRemainder(line);
           if (headerInfo) {
-            const detectedSubjectName = headerInfo.subject;
-            // Nova matéria encontrada
-            let existing = materiasMap.find(m => m.nome.toLowerCase() === detectedSubjectName.toLowerCase());
-            if (!existing) {
-              currentMateria = {
-                id: 'mat-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
-                nome: detectedSubjectName,
-                paletteId: getNextPaletteId(),
-                topicos: []
-              };
-              materiasMap.push(currentMateria);
-            } else {
-              currentMateria = existing;
-            }
-
-            // Se havia tópicos na mesma linha do cabeçalho (ex: "3. INFORMÁTICA BÁSICA 3.1 Equipamentos...")
+            currentSection = {
+              nome: headerInfo.subject,
+              lines: []
+            };
             if (headerInfo.remainder && headerInfo.remainder.trim()) {
-              const separated = this.smartSplitTopics(headerInfo.remainder);
-              if (separated.length > 0) {
-                separated.forEach(t => {
-                  if (t.trim()) currentMateria.topicos.push(t.trim());
-                });
-              } else {
-                currentMateria.topicos.push(headerInfo.remainder.trim());
-              }
+              currentSection.lines.push(headerInfo.remainder.trim());
             }
+            materiasSections.push(currentSection);
             continue;
           }
 
-          // Se ainda não encontramos nenhuma matéria ou é cabeçalho macro, direciona para Não Classificado
-          if (!currentMateria) {
-            naoClassificado.push(line);
-            continue;
-          }
-
-          // Dentro de uma matéria ativa: analisa se o texto contém múltiplos tópicos numerados
-          const separatedTopics = this.smartSplitTopics(line);
-
-          if (separatedTopics.length > 0) {
-            separatedTopics.forEach(topicStr => {
-              if (topicStr.trim()) {
-                currentMateria.topicos.push(topicStr.trim());
-              }
-            });
-          } else if (line.trim()) {
-            currentMateria.topicos.push(line.trim());
+          if (!currentSection) {
+            if (line && line.trim()) naoClassificado.push(line.trim());
+          } else {
+            if (line && line.trim()) currentSection.lines.push(line.trim());
           }
         }
 
-        // Se nenhuma matéria foi identificada, aloca tudo com segurança
+        // Agrupa matérias de mesmo nome se o cabeçalho tiver sido repetido (ex: quebra de página)
+        let materiasMap = [];
+        materiasSections.forEach(sec => {
+          let existing = materiasMap.find(m => m.nome.toLowerCase() === sec.nome.toLowerCase());
+          if (!existing) {
+            existing = {
+              id: 'mat-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
+              nome: sec.nome,
+              paletteId: getNextPaletteId(),
+              rawLines: [...sec.lines]
+            };
+            materiasMap.push(existing);
+          } else {
+            existing.rawLines.push(...sec.lines);
+          }
+        });
+
+        // Para cada matéria identificada: junta TODO o texto em uma única string contínua e passa por dividirTopicos()
+        materiasMap.forEach(m => {
+          const fullText = (m.rawLines || []).join(' ').trim();
+          delete m.rawLines;
+
+          if (!fullText) {
+            m.topicos = [];
+            m.divisaoFalhou = false;
+            return;
+          }
+
+          const res = App.dividirTopicos(fullText);
+          if (res && res.topicos && res.topicos.length > 0) {
+            m.topicos = res.topicos;
+            m.divisaoFalhou = !!res.falhou;
+            if (res.falhou) {
+              m.divisaoMotivo = res.motivo;
+            } else {
+              delete m.divisaoMotivo;
+            }
+          } else {
+            m.topicos = [{ numero: null, nivel: 1, texto: fullText }];
+            m.divisaoFalhou = true;
+            m.divisaoMotivo = (res && res.motivo) || 'Estrutura não reconhecida pelo divisor numérico';
+          }
+        });
+
+        // Se nenhuma matéria foi identificada, aloca tudo para Conteúdo Geral
         if (materiasMap.length === 0 && naoClassificado.length > 0) {
+          const fullGeneral = naoClassificado.join(' ').trim();
+          const res = App.dividirTopicos(fullGeneral);
+          const topicos = (res && res.topicos && res.topicos.length > 0)
+            ? res.topicos
+            : [{ numero: null, nivel: 1, texto: fullGeneral }];
           materiasMap.push({
             id: 'mat-geral',
             nome: 'Conteúdo Programático Geral',
             paletteId: 'blue',
-            topicos: [...naoClassificado]
+            topicos: topicos,
+            divisaoFalhou: !!(res && res.falhou),
+            divisaoMotivo: (res && res.motivo) || (res ? null : 'Não identificado')
           });
           naoClassificado = [];
         }
 
         let totalTopicos = 0;
-        materiasMap.forEach(m => totalTopicos += m.topicos.length);
+        materiasMap.forEach(m => totalTopicos += (m.topicos ? m.topicos.length : 0));
 
         return {
           materias: materiasMap,
@@ -8470,7 +8647,8 @@
       },
 
       /* Retorna informações de hierarquia de um tópico para renderização e organização */
-      getTopicHierarchyInfo(topicStr) {
+      getTopicHierarchyInfo(topicInput) {
+        const topicStr = this.getTopicText(topicInput);
         if (!topicStr || typeof topicStr !== 'string') return { level: 0, depth: 1, num: '', parts: [] };
         const match = topicStr.match(/^(\d+(?:\.\d+)+|\d+[\.\)]|\b[a-z]\)|\b[IVXLCDM]+[\.\-\)])\s+/i);
         if (!match) return { level: 0, depth: 1, num: '', parts: [] };
@@ -8543,7 +8721,7 @@
           parseResult.materias.forEach(m => {
             savedChars += (m.nome || '').length;
             if (m.topicos) {
-              m.topicos.forEach(t => savedChars += (t || '').length);
+              m.topicos.forEach(t => savedChars += (this.getTopicText(t) || '').length);
             }
           });
         }
@@ -8638,12 +8816,13 @@
 
                   <div style="display: flex; flex-direction: column; gap: 5px;">
                     ${(m.topicos || []).map((t, tIdx) => {
-                      const hInfo = this.getTopicHierarchyInfo(t);
+                      const topicText = this.getTopicText(t);
+                      const hInfo = this.getTopicHierarchyInfo(topicText);
                       const padLeft = hInfo.level === 0 ? 0 : (hInfo.level === 1 ? 12 : 22);
 
                       return `
                         <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 5px 8px; margin-left: ${padLeft}px; background: var(--bg-subtle); border-radius: 4px; font-size: 0.82rem; line-height: 1.35;">
-                          <span style="flex: 1; min-width: 0; color: var(--text-main); word-break: break-word;">${this.escapeHtml(t)}</span>
+                          <span style="flex: 1; min-width: 0; color: var(--text-main); word-break: break-word;">${this.escapeHtml(topicText)}</span>
                           <select class="input-field" style="width: auto; padding: 2px 4px; font-size: 0.7rem; height: 24px; border-radius: 4px; flex-shrink: 0;" onchange="App.moveTopicInReview('${m.id}', ${tIdx}, this.value)">
                             <option value="" disabled selected>Mover para... ▾</option>
                             ${otherSubjects.map(os => `<option value="${os.id}">📁 ${this.escapeHtml(os.nome)}</option>`).join('')}
@@ -8700,7 +8879,7 @@
 
         if (targetSubjectId === '__UNCLASSIFIED__') {
           if (!this.dataToReview.naoClassificado) this.dataToReview.naoClassificado = [];
-          this.dataToReview.naoClassificado.push(topicText);
+          this.dataToReview.naoClassificado.push(this.getTopicText(topicText));
           this.showToast('Tópico movido para Não Classificado.', 'info');
         } else if (targetSubjectId === '__NEW__') {
           const name = prompt('Nome da nova matéria:');
@@ -8815,9 +8994,20 @@
       /* ETAPA 4: Reprocessar Edital com Backup Automático de Segurança */
       reprocessEditalPrompt() {
         if (!this.data.lastExtractedEditalLines || this.data.lastExtractedEditalLines.length === 0) {
-          alert('Nenhum texto de edital em memória para reprocessar.\n\nPor favor, selecione novamente o PDF do edital na aba "Upload do Edital".');
-          this.closeModals();
-          this.switchTab('tab-upload');
+          // Se não há linhas brutas em memória, oferece reprocessar/dividir diretamente as matérias salvas
+          if (!this.data.materias || this.data.materias.length === 0) {
+            alert('Nenhum texto de edital em memória para reprocessar.\n\nPor favor, selecione novamente o PDF do edital na aba "Upload do Edital".');
+            this.closeModals();
+            this.switchTab('tab-upload');
+            return;
+          }
+
+          const okSaved = confirm('Deseja reprocessar a divisão por numeração diretamente sobre os tópicos salvos?\n\n• Um backup automático do seu cronograma e progresso será criado.');
+          if (!okSaved) return;
+
+          const res = this.dividirMateriasSalvasPorNumeracao(false);
+          this.renderAll();
+          this.showToast(`Matérias reprocessadas por numeração! ${res.alteradas} matérias organizadas.`, 'success');
           return;
         }
 
@@ -8851,6 +9041,92 @@
 
         this.openReviewEditalModal(parseResult, integrity);
         this.showToast(`Edital reprocessado! ${parseResult.materias.length} matérias e ${parseResult.totalTopicos} tópicos identificados.`, 'success');
+      },
+
+      /* DADOS JÁ SALVOS: Processa matérias salvas unindo os tópicos em string contínua e aplicando dividirTopicos() */
+      dividirMateriasSalvasPorNumeracao(isAutoMigration = false) {
+        if (!this.data || !this.data.materias || this.data.materias.length === 0) {
+          return { alteradas: 0, total: 0 };
+        }
+
+        // Backup automático antes de alterar
+        try {
+          const backupData = {
+            timestamp: Date.now(),
+            dateStr: new Date().toLocaleString('pt-BR'),
+            motivo: isAutoMigration ? 'Backup pré-migração v1.6.2 (divisor-topicos)' : 'Backup antes de Dividir por numeração',
+            materias: JSON.parse(JSON.stringify(this.data.materias)),
+            cronogramas: this.data.cronogramas,
+            schedule: this.schedule,
+            completedSlots: this.completedSlots
+          };
+          localStorage.setItem('concurso_backup_before_reprocess', JSON.stringify(backupData));
+          localStorage.setItem('concurso_backup_divisor_topicos', JSON.stringify(backupData));
+        } catch (e) {
+          console.warn('Aviso ao criar backup de divisão:', e);
+        }
+
+        let materiasAlteradas = 0;
+
+        this.data.materias.forEach(materia => {
+          const oldTopics = materia.topicos || [];
+          if (oldTopics.length === 0) return;
+
+          // Juntar o texto de todos os tópicos atuais: topicos.map(t => t.texto).join(' ')
+          const fullText = oldTopics.map(t => {
+            if (typeof t === 'object' && t !== null) return t.texto || '';
+            return String(t || '');
+          }).join(' ').trim();
+
+          if (!fullText) return;
+
+          // Mapeia tópicos concluídos antigos para preservar progresso
+          const completedOldTexts = oldTopics
+            .filter(ot => typeof ot === 'object' && ot !== null && ot.concluido)
+            .map(ot => (ot.texto || '').trim());
+
+          const res = App.dividirTopicos(fullText);
+          if (res && res.topicos && res.topicos.length > 0) {
+            // Preservar progresso: se um tópico antigo estava marcado como concluído,
+            // marcar como concluídos os novos tópicos que vieram dele
+            res.topicos.forEach(nt => {
+              nt.id = 'top-' + Date.now() + '-' + Math.floor(Math.random() * 1000000);
+              const ntText = (nt.texto || '').trim();
+              if (completedOldTexts.some(oldText => oldText.includes(ntText) || ntText.includes(oldText))) {
+                nt.concluido = true;
+              } else {
+                nt.concluido = false;
+              }
+            });
+
+            materia.topicos = res.topicos;
+            materia.divisaoFalhou = !!res.falhou;
+            if (res.falhou) {
+              materia.divisaoMotivo = res.motivo;
+            } else {
+              delete materia.divisaoMotivo;
+            }
+            materiasAlteradas++;
+          }
+        });
+
+        this.saveToStorage();
+        return { alteradas: materiasAlteradas, total: this.data.materias.length };
+      },
+
+      /* Botão "Dividir por numeração" */
+      dividirTopicosPorNumeracaoPrompt() {
+        if (!this.data.materias || this.data.materias.length === 0) {
+          alert('Nenhuma matéria cadastrada para dividir tópicos.');
+          return;
+        }
+
+        const ok = confirm('Deseja reorganizar todos os tópicos das matérias pela numeração hierárquica do edital (ex.: 7.1, 7.1.1)?\n\n• Um backup automático do seu progresso será salvo antes.\n• O status das sessões e do cronograma será 100% preservado.');
+        if (!ok) return;
+
+        const res = this.dividirMateriasSalvasPorNumeracao(false);
+        this.renderAll();
+        this.showToast(`Tópicos divididos por numeração com sucesso! (${res.alteradas} matérias organizadas)`, 'success');
       },
 
       /* ETAPA 4: Restaurar Backup Anterior ao Reprocessamento (se o usuário desejar reverter) */
@@ -8954,29 +9230,103 @@
             </div>
 
             <div class="subject-body ${isOpen ? 'open' : ''}" id="body-${materia.id}">
-              <div class="topics-list" id="topics-${materia.id}">
-                ${materia.topicos.map((topico, topIndex) => {
-                  const hInfo = App.getTopicHierarchyInfo(topico);
-                  const nextTopico = materia.topicos[topIndex + 1];
-                  const nextHInfo = nextTopico ? App.getTopicHierarchyInfo(nextTopico) : null;
-                  const isParent = Boolean(nextHInfo && nextHInfo.num && hInfo.num && nextHInfo.num.startsWith(hInfo.num + '.') && nextHInfo.level > hInfo.level);
-                  const levelClass = hInfo.level > 0 ? `topic-level-${Math.min(hInfo.level, 3)}` : '';
-                  const parentClass = isParent ? 'topic-parent' : '';
-
-                  return `
-                    <div class="topic-item ${levelClass} ${parentClass}" onclick="App.handleTopicItemClick(event, '${materia.id}', ${topIndex})">
-                      <span class="topic-text">${isParent ? '<span class="topic-parent-badge">Tópico Principal</span>' : ''}${App.escapeHtml(topico)}</span>
-                      <div class="topic-actions">
-                        <button class="btn-icon" onclick="App.openEditTopicModal('${materia.id}', ${topIndex})" title="Editar tópico">
-                          ✏️
-                        </button>
-                        <button class="btn-icon danger" onclick="App.deleteTopic('${materia.id}', ${topIndex})" title="Excluir tópico">
-                          ✕
-                        </button>
-                      </div>
+              ${materia.divisaoFalhou ? `
+                <div class="subject-warning-banner">
+                  <span style="font-size: 1.2rem; flex-shrink: 0;">⚠️</span>
+                  <div style="flex: 1;">
+                    <strong>Não consegui dividir este conteúdo automaticamente.</strong>
+                    <div style="font-size: 0.8rem; opacity: 0.9; margin-top: 2px;">
+                      ${materia.divisaoMotivo ? App.escapeHtml(materia.divisaoMotivo) : 'Estrutura não reconhecida pelo divisor numérico'}. Você pode editar ou adicionar tópicos manualmente.
                     </div>
-                  `;
-                }).join('')}
+                  </div>
+                </div>
+              ` : ''}
+
+              <div class="topics-list" id="topics-${materia.id}">
+                ${(() => {
+                  if (!materia.topicos || materia.topicos.length === 0) {
+                    return `<div style="padding: 12px; color: var(--text-muted); font-size: 0.85rem; text-align: center;">Nenhum tópico cadastrado.</div>`;
+                  }
+
+                  // 1. Extrai atributos de cada tópico
+                  const items = materia.topicos.map((topico, idx) => {
+                    const text = App.getTopicText(topico);
+                    let nivel = (typeof topico === 'object' && topico && topico.nivel !== undefined) ? topico.nivel : null;
+                    let num = (typeof topico === 'object' && topico && topico.numero) || null;
+                    if (nivel === null) {
+                      const h = App.getTopicHierarchyInfo(text);
+                      nivel = h.depth || 1;
+                      num = h.num || null;
+                    }
+                    return {
+                      idx: idx,
+                      text: text,
+                      nivel: nivel,
+                      num: num,
+                      isDone: typeof topico === 'object' && topico && !!topico.concluido
+                    };
+                  });
+
+                  // 2. Mapeia hierarquia pai-filho
+                  // nivel 2 = tópico principal (7.1, 1.1)
+                  // níveis 3, 4, 5 = subtópicos recuados e recolhíveis sob o pai anterior
+                  let activeParentIdx = -1;
+                  const parentMap = {}; // childIdx -> activeParentIdx
+
+                  items.forEach((it, i) => {
+                    const nextIt = items[i + 1];
+                    const hasChild = Boolean(nextIt && nextIt.nivel > it.nivel);
+                    it.hasChildren = hasChild;
+                    it.isPrincipal = (it.nivel === 2 || (it.nivel === 1 && it.num && it.num.includes('.')));
+
+                    if (hasChild) {
+                      activeParentIdx = i;
+                    } else if (nextIt && nextIt.nivel <= (items[activeParentIdx]?.nivel ?? 2)) {
+                      // Saiu do bloco pai
+                    }
+                    if (activeParentIdx !== -1 && i > activeParentIdx && it.nivel > items[activeParentIdx].nivel) {
+                      parentMap[i] = activeParentIdx;
+                    }
+                  });
+
+                  return items.map((it, topIndex) => {
+                    const pIdx = parentMap[topIndex];
+                    const isParentCollapsed = pIdx !== undefined && App.collapsedParentTopics && App.collapsedParentTopics.has(`${materia.id}-${pIdx}`);
+                    const isThisCollapsed = App.collapsedParentTopics && App.collapsedParentTopics.has(`${materia.id}-${topIndex}`);
+
+                    let levelClass = '';
+                    if (it.nivel === 2 || it.isPrincipal) levelClass = 'topic-level-2 topic-parent';
+                    else if (it.nivel === 3) levelClass = 'topic-level-3';
+                    else if (it.nivel === 4) levelClass = 'topic-level-4';
+                    else if (it.nivel >= 5) levelClass = 'topic-level-5';
+
+                    const collapsedClass = isParentCollapsed ? 'collapsed-subtopic' : '';
+                    const parentClass = it.hasChildren || it.isPrincipal ? 'topic-parent' : '';
+
+                    return `
+                      <div class="topic-item ${levelClass} ${parentClass} ${collapsedClass}" onclick="App.handleTopicItemClick(event, '${materia.id}', ${topIndex})">
+                        ${it.hasChildren ? `
+                          <span class="topic-collapse-arrow ${isThisCollapsed ? 'collapsed' : ''}" onclick="event.stopPropagation(); App.toggleTopicParentCollapse('${materia.id}', ${topIndex})" title="Recolher/expandir subtópicos">
+                            ▼
+                          </span>
+                        ` : ''}
+                        <span class="topic-text">
+                          ${it.isPrincipal ? '<span class="topic-parent-badge">Tópico Principal</span>' : ''}
+                          ${it.isDone ? '<span style="color: var(--success); font-weight: bold; margin-right: 4px;">✓</span>' : ''}
+                          ${App.escapeHtml(it.text)}
+                        </span>
+                        <div class="topic-actions">
+                          <button class="btn-icon" onclick="App.openEditTopicModal('${materia.id}', ${topIndex})" title="Editar tópico">
+                            ✏️
+                          </button>
+                          <button class="btn-icon danger" onclick="App.deleteTopic('${materia.id}', ${topIndex})" title="Excluir tópico">
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    `;
+                  }).join('');
+                })()}
               </div>
 
               <!-- Adicionar Novo Tópico Manualmente -->
@@ -9008,6 +9358,18 @@
           body.classList.add('open');
           if (header) header.classList.add('open');
         }
+      },
+
+      /* Recolhe ou expande subtópicos vinculados a um tópico principal (níveis 3, 4, 5) */
+      toggleTopicParentCollapse(materiaId, parentIndex) {
+        if (!this.collapsedParentTopics) this.collapsedParentTopics = new Set();
+        const key = `${materiaId}-${parentIndex}`;
+        if (this.collapsedParentTopics.has(key)) {
+          this.collapsedParentTopics.delete(key);
+        } else {
+          this.collapsedParentTopics.add(key);
+        }
+        this.renderSubjectList();
       },
 
       toggleExpandAll() {
@@ -9077,7 +9439,15 @@
 
         const materia = this.data.materias.find(m => m.id === materiaId);
         if (materia) {
-          materia.topicos.push(text);
+          const hInfo = this.getTopicHierarchyInfo(text);
+          materia.topicos.push({
+            id: 'top-' + Date.now(),
+            numero: hInfo.num || null,
+            nivel: hInfo.depth || 1,
+            texto: text,
+            concluido: false
+          });
+          input.value = '';
           this.saveToStorage();
           this.renderAll();
           this.showToast('Tópico adicionado com sucesso!');
@@ -9214,7 +9584,7 @@
         if (!materia || !materia.topicos[topicIndex]) return;
 
         this.activeModalTopicMeta = { materiaId, topicIndex };
-        document.getElementById('textareaTopicText').value = materia.topicos[topicIndex];
+        document.getElementById('textareaTopicText').value = this.getTopicText(materia.topicos[topicIndex]);
         document.getElementById('modalTopic').classList.add('open');
       },
 
@@ -9229,7 +9599,17 @@
         const { materiaId, topicIndex } = this.activeModalTopicMeta;
         const materia = this.data.materias.find(m => m.id === materiaId);
         if (materia) {
-          materia.topicos[topicIndex] = text;
+          const current = materia.topicos[topicIndex];
+          if (typeof current === 'object' && current !== null) {
+            current.texto = text;
+            const hInfo = this.getTopicHierarchyInfo(text);
+            if (hInfo && hInfo.num) {
+              current.numero = hInfo.num;
+              current.nivel = hInfo.depth;
+            }
+          } else {
+            materia.topicos[topicIndex] = text;
+          }
           this.saveToStorage();
           this.renderAll();
           this.showToast('Tópico atualizado!');
@@ -9247,7 +9627,7 @@
       openTopicActionsSheet(materiaId, topicIndex) {
         const materia = this.data.materias.find(m => m.id === materiaId);
         if (!materia || !materia.topicos[topicIndex]) return;
-        const topicText = materia.topicos[topicIndex];
+        const topicText = this.getTopicText(materia.topicos[topicIndex]);
         const pal = this.getPalette(materia.paletteId);
 
         const sheet = document.getElementById('modalTopicActionsSheet');
@@ -11463,20 +11843,23 @@
               const revPrefix = isCycleRevisao ? '🔄 [Revisão/Questões] ' : '';
 
               // Agrupamento Inteligente: se o tópico for curto (<40 chars), tenta agrupar até 2 ou 3 tópicos curtos
-              let groupedTopics = [primaryTopic];
+              const ptText = App.getTopicText(primaryTopic);
+              let groupedTopics = [ptText];
               let advanceCount = 1;
 
-              if (primaryTopic.length < 40 && eligibleTopics.length > 1) {
+              if (ptText.length < 40 && eligibleTopics.length > 1) {
                 const nextIdx = (curIdx + 1) % eligibleTopics.length;
                 const nextTopic = eligibleTopics[nextIdx];
-                if (nextTopic && nextTopic.length < 40 && nextIdx > curIdx) {
-                  groupedTopics.push(nextTopic);
+                const ntText = App.getTopicText(nextTopic);
+                if (ntText && ntText.length < 40 && nextIdx > curIdx) {
+                  groupedTopics.push(ntText);
                   advanceCount = 2;
 
                   const thirdIdx = (curIdx + 2) % eligibleTopics.length;
                   const thirdTopic = eligibleTopics[thirdIdx];
-                  if (thirdTopic && thirdTopic.length < 35 && thirdIdx > nextIdx) {
-                    groupedTopics.push(thirdTopic);
+                  const ttText = App.getTopicText(thirdTopic);
+                  if (ttText && ttText.length < 35 && thirdIdx > nextIdx) {
+                    groupedTopics.push(ttText);
                     advanceCount = 3;
                   }
                 }
