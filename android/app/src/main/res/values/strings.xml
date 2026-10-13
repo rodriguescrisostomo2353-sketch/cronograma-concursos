@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Cronograma de Estudos</string>
+    <string name="title_activity_main">Cronograma de Estudos</string>
+    <string name="package_name">com.thallisson.cronograma</string>
+    <string name="custom_url_scheme">com.thallisson.cronograma</string>
+</resources>

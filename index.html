@@ -52,6 +52,9 @@
   <!-- HTML2Canvas CDN para Exportação de Imagem PNG em Alta Resolução -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+  <!-- Supabase JS Client para Login e Sincronização em Nuvem (Parte C) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     /* ==========================================================================
        1. VARIÁVEIS DE DESIGN & TONS PASTEL (TEMA CLARO DEFAULT)
@@ -3711,6 +3714,241 @@
         z-index: 100;
       }
     }
+    /* ==========================================================================
+       PARTE C: ESTILOS DE AUTENTICAÇÃO E SINCRONIZAÇÃO EM NUVEM (SUPABASE)
+       ========================================================================== */
+    .header-auth-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .sync-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      transition: background-color 0.3s ease;
+    }
+    .sync-dot.mode-synced {
+      background-color: #22c55e;
+      box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+    }
+    .sync-dot.mode-syncing {
+      background-color: #eab308;
+      box-shadow: 0 0 6px rgba(234, 179, 8, 0.6);
+      animation: pulseSync 1.2s infinite;
+    }
+    .sync-dot.mode-local {
+      background-color: #94a3b8;
+    }
+    .sync-dot.mode-error {
+      background-color: #ef4444;
+      box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+    }
+    @keyframes pulseSync {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.6; }
+    }
+
+    /* Card de Conta em Ajustes */
+    .settings-auth-card {
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      background: var(--bg-card);
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      transition: border-color 0.2s ease;
+    }
+    .settings-auth-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 20px;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .auth-icon-badge {
+      font-size: 1.8rem;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+    .auth-user-info h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .auth-user-info p {
+      margin: 3px 0 0 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+    .settings-auth-body {
+      padding: 18px 20px;
+    }
+    .auth-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      font-size: 0.9rem;
+      border-bottom: 1px dashed var(--border-color);
+    }
+    .auth-meta-row:last-child {
+      border-bottom: none;
+    }
+    .badge-sync {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: var(--bg-subtle);
+    }
+    .settings-auth-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    /* Modal de Autenticação */
+    .auth-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 16px;
+    }
+    .auth-tab-btn {
+      flex: 1;
+      padding: 10px 14px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .auth-tab-btn.active {
+      color: var(--accent-primary);
+      border-bottom-color: var(--accent-primary);
+    }
+    .auth-form-group {
+      margin-bottom: 14px;
+    }
+    .auth-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .password-input-wrapper input {
+      width: 100%;
+      padding-right: 40px;
+    }
+    .password-toggle-btn {
+      position: absolute;
+      right: 8px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      padding: 4px;
+      line-height: 1;
+    }
+    .auth-helper-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: -6px;
+      margin-bottom: 14px;
+    }
+    .auth-link {
+      font-size: 0.82rem;
+      color: var(--accent-primary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+    .auth-feedback-box {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      margin-bottom: 14px;
+      display: none;
+      line-height: 1.35;
+    }
+    .auth-feedback-box.error {
+      display: block;
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+    .auth-feedback-box.success {
+      display: block;
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+    .auth-feedback-box.info {
+      display: block;
+      background: #eff6ff;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+
+    /* Modal de Mesclagem no Primeiro Login */
+    .merge-option-card {
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--bg-card);
+    }
+    .merge-option-card:hover {
+      border-color: var(--accent-primary);
+      background: var(--bg-subtle);
+    }
+    .merge-option-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+    .merge-option-desc {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.35;
+    }
   </style>
 </head>
 <body>
@@ -3728,6 +3966,12 @@
         </div>
       </div>
       <div class="header-actions">
+        <!-- Botão de Sincronização em Nuvem / Conta (Parte C) -->
+        <button id="btnHeaderAuth" class="btn btn-secondary btn-sm header-auth-btn" onclick="App.openAuthOrSyncModal()" title="Conta e Sincronização em Nuvem" aria-label="Conta e Sincronização">
+          <span id="headerSyncIcon">☁️</span>
+          <span id="headerAuthText">Entrar</span>
+          <span class="sync-dot mode-local" id="headerSyncDot" title="Modo Local"></span>
+        </button>
         <!-- Botão de Alternância de Tema Escuro / Claro -->
         <button id="btnToggleTheme" class="btn btn-secondary btn-sm theme-toggle-btn" title="Alternar entre tema claro e escuro" aria-label="Alternar tema">
           <span id="themeToggleIcon">🌙</span>
@@ -4579,6 +4823,62 @@
          ======================================================================== -->
     <section id="tab-settings" class="tab-content">
       <div class="settings-container">
+        <!-- Card 0: Conta & Sincronização em Nuvem (Parte C) -->
+        <div class="settings-auth-card" id="settingsAuthCard">
+          <div class="settings-auth-header">
+            <div class="auth-icon-badge" id="settingsAuthBadge">☁️</div>
+            <div class="auth-user-info">
+              <h3 id="settingsAuthStatusTitle">Modo Local (Offline)</h3>
+              <p id="settingsAuthStatusDesc">Seus dados ficam salvos apenas neste aparelho. Conecte sua conta para sincronizar entre o celular e o computador.</p>
+            </div>
+          </div>
+          <div class="settings-auth-body">
+            <!-- Estado Desconectado -->
+            <div id="settingsAuthLoggedOutState">
+              <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 14px;">
+                Crie uma conta gratuita ou faça login para manter suas matérias, cronogramas e anotações protegidos na nuvem e sincronizados em qualquer aparelho.
+              </p>
+              <div class="settings-auth-actions">
+                <button type="button" class="btn btn-primary" onclick="App.openAuthModal('login')">
+                  🔑 Entrar ou Criar Conta
+                </button>
+              </div>
+            </div>
+
+            <!-- Estado Conectado -->
+            <div id="settingsAuthLoggedInState" style="display: none;">
+              <div class="auth-meta-row">
+                <span style="color: var(--text-muted);">Conta Conectada:</span>
+                <strong id="settingsAuthUserEmail" style="color: var(--text-main);">usuario@email.com</strong>
+              </div>
+              <div class="auth-meta-row">
+                <span style="color: var(--text-muted);">Status da Nuvem:</span>
+                <span class="badge-sync" id="settingsSyncBadge">
+                  <span class="sync-dot mode-synced"></span> <span>Sincronizado</span>
+                </span>
+              </div>
+              <div class="auth-meta-row">
+                <span style="color: var(--text-muted);">Última Sincronização:</span>
+                <span id="settingsLastSyncTime" style="font-weight: 500;">Hoje</span>
+              </div>
+              <div class="settings-auth-actions" style="margin-top: 14px;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="App.manualSync()">
+                  🔄 Sincronizar Agora
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="App.authSignOut()">
+                  🚪 Sair da Conta
+                </button>
+              </div>
+              <div class="dropdown-divider" style="margin: 16px 0;"></div>
+              <div>
+                <button type="button" class="btn btn-danger-soft btn-sm" onclick="App.promptDeleteAccount()">
+                  ⚠️ Excluir Minha Conta e Meus Dados
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Card 1: Aparência -->
         <div class="settings-card">
           <div class="settings-card-header">
@@ -5242,6 +5542,11 @@
         <button type="button" class="btn-icon" onclick="App.closeMoreMenuSheet()">✕</button>
       </div>
       <div class="modal-body" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+        <button type="button" class="btn btn-secondary" onclick="App.openAuthOrSyncModal(); App.closeMoreMenuSheet();" style="justify-content: flex-start; min-height: 48px; font-weight: 600;">
+          <span style="font-size: 1.2rem; margin-right: 8px;">☁️</span>
+          <span id="sheetAuthBtnText">Conta & Sincronização em Nuvem</span>
+          <span class="sync-dot mode-local" id="sheetAuthDot" style="margin-left: auto;"></span>
+        </button>
         <button type="button" class="btn btn-secondary" onclick="App.switchTab('tab-updates'); App.closeMoreMenuSheet();" style="justify-content: flex-start; min-height: 48px; font-weight: 600;">
           <span style="font-size: 1.2rem; margin-right: 8px;">🔄</span> Atualizações do Aplicativo
           <span class="tab-badge-dot" id="sheetUpdatesBadgeDot" style="display: none; margin-left: auto;"></span>
@@ -5255,6 +5560,177 @@
         </button>
         <button type="button" class="btn btn-danger-soft" onclick="App.clearAllData(); App.closeMoreMenuSheet();" style="justify-content: flex-start; min-height: 46px;">
           <span style="font-size: 1.1rem; margin-right: 8px;">🗑️</span> Limpar Todos os Dados Salvos
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAIS DE AUTENTICAÇÃO E SINCRONIZAÇÃO EM NUVEM (PARTE C)
+       ========================================================================== -->
+
+  <!-- Modal: Login e Cadastro (Supabase Auth) -->
+  <div class="modal-overlay hidden" id="modalAuth">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.3rem;">☁️</span>
+          <div>
+            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--text-main);" id="authModalTitle">Conta em Nuvem</h3>
+            <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);" id="authModalSubtitle">Sincronize entre celular e computador</p>
+          </div>
+        </div>
+        <button type="button" class="btn-icon" onclick="App.closeAuthModal()">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding: 18px 20px 14px 20px;">
+        <!-- Abas de Alternância: Entrar vs Cadastrar -->
+        <div class="auth-tabs" id="authTabsNav">
+          <button type="button" class="auth-tab-btn active" id="tabBtnLogin" onclick="App.switchAuthTab('login')">
+            🔑 Entrar
+          </button>
+          <button type="button" class="auth-tab-btn" id="tabBtnSignUp" onclick="App.switchAuthTab('signup')">
+            ✨ Criar Conta
+          </button>
+        </div>
+
+        <!-- Caixa de Mensagem / Feedback -->
+        <div class="auth-feedback-box" id="authFeedbackBox"></div>
+
+        <!-- Formulário de Autenticação -->
+        <form id="formAuth" onsubmit="App.handleAuthSubmit(event)">
+          <div class="auth-form-group">
+            <label class="auth-label" for="authEmail">E-mail:</label>
+            <input type="email" id="authEmail" class="input-field" placeholder="seu@email.com" required autocomplete="email" style="width: 100%;">
+          </div>
+
+          <div class="auth-form-group" id="authGroupPassword">
+            <label class="auth-label" for="authPassword">Senha:</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="authPassword" class="input-field" placeholder="Sua senha secreta" autocomplete="current-password" minlength="6" style="width: 100%;">
+              <button type="button" class="password-toggle-btn" id="btnToggleAuthPassword" onclick="App.togglePasswordVisibility('authPassword', 'btnToggleAuthPassword')" title="Mostrar/ocultar senha">
+                👁️
+              </button>
+            </div>
+          </div>
+
+          <div class="auth-form-group" id="authGroupPasswordConfirm" style="display: none;">
+            <label class="auth-label" for="authPasswordConfirm">Confirmar Senha:</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="authPasswordConfirm" class="input-field" placeholder="Repita a senha" autocomplete="new-password" minlength="6" style="width: 100%;">
+              <button type="button" class="password-toggle-btn" id="btnToggleAuthPasswordConfirm" onclick="App.togglePasswordVisibility('authPasswordConfirm', 'btnToggleAuthPasswordConfirm')" title="Mostrar/ocultar senha">
+                👁️
+              </button>
+            </div>
+          </div>
+
+          <!-- Link de Esqueci Senha (Modo Login) -->
+          <div class="auth-helper-row" id="authHelperRow">
+            <button type="button" class="auth-link" onclick="App.switchAuthTab('forgot')">
+              Esqueci minha senha
+            </button>
+          </div>
+
+          <!-- Botão Principal de Envio -->
+          <div style="margin-top: 14px;">
+            <button type="submit" class="btn btn-primary" id="btnAuthSubmit" style="width: 100%; min-height: 46px; justify-content: center; font-weight: 700;">
+              Entrar na Conta
+            </button>
+          </div>
+        </form>
+
+        <!-- Voltar para Login quando em Recuperação de Senha -->
+        <div id="authBackToLoginRow" style="display: none; text-align: center; margin-top: 14px;">
+          <button type="button" class="auth-link" onclick="App.switchAuthTab('login')">
+            ← Voltar para a tela de login
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="border-top: 1px solid var(--border-color); padding: 12px 20px; justify-content: center;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="App.closeAuthModal()" style="font-size: 0.84rem;">
+          Continuar no Modo Local (Sem Conta)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Resolução de Conflito / Primeiro Login (Upload vs Download vs Mesclagem) -->
+  <div class="modal-overlay hidden" id="modalFirstSyncMerge">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.4rem;">🔄</span>
+          <div>
+            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--text-main);">Sincronização de Dados</h3>
+            <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Escolha como integrar os dados deste aparelho à sua conta</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-body" style="padding: 18px 20px;">
+        <p style="font-size: 0.88rem; color: var(--text-main); margin-bottom: 14px; line-height: 1.4;">
+          Você já possui matérias e cronogramas salvos neste aparelho. Como deseja sincronizar com a sua conta?
+        </p>
+
+        <!-- Opção 1: Mesclar Inteligentemente -->
+        <div class="merge-option-card" onclick="App.resolveFirstSync('merge')">
+          <div class="merge-option-header">
+            <span>🔀</span> <span>Mesclar Dados (Recomendado)</span>
+          </div>
+          <p class="merge-option-desc">
+            Combina as matérias e cronogramas deste aparelho com os que estão na nuvem, sem duplicar disciplinas já existentes.
+          </p>
+        </div>
+
+        <!-- Opção 2: Enviar deste aparelho para a nuvem -->
+        <div class="merge-option-card" onclick="App.resolveFirstSync('upload')">
+          <div class="merge-option-header">
+            <span>☁️</span> <span>Enviar Dados Deste Aparelho</span>
+          </div>
+          <p class="merge-option-desc">
+            Grava o conteúdo atual deste dispositivo na sua conta em nuvem, atualizando o servidor.
+          </p>
+        </div>
+
+        <!-- Opção 3: Baixar da nuvem -->
+        <div class="merge-option-card" onclick="App.resolveFirstSync('download')">
+          <div class="merge-option-header">
+            <span>📥</span> <span>Baixar Dados da Nuvem</span>
+          </div>
+          <p class="merge-option-desc">
+            Substitui os dados locais pelos dados salvos na sua conta em nuvem (um backup local de segurança será guardado automaticamente).
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Confirmação de Exclusão de Conta -->
+  <div class="modal-overlay hidden" id="modalDeleteAccountConfirm">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #dc2626;">
+          ⚠️ Excluir Conta e Dados
+        </h3>
+        <button type="button" class="btn-icon" onclick="App.closeDeleteAccountModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 18px 20px;">
+        <p style="font-size: 0.9rem; line-height: 1.45; color: var(--text-main); margin-bottom: 12px;">
+          Esta ação apagará permanentemente todos os seus dados salvos na nuvem (matérias, tópicos, cronogramas e anotações).
+        </p>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+          Para confirmar, digite sua senha abaixo:
+        </p>
+        <div class="auth-form-group">
+          <input type="password" id="inputDeleteAccountPassword" class="input-field" placeholder="Sua senha para confirmar" style="width: 100%;">
+        </div>
+        <div class="auth-feedback-box" id="deleteAccountFeedbackBox"></div>
+      </div>
+      <div class="modal-footer" style="border-top: 1px solid var(--border-color); padding: 12px 20px; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="btn btn-secondary" onclick="App.closeDeleteAccountModal()">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btnConfirmDeleteAccount" onclick="App.confirmDeleteAccount()">
+          Sim, Excluir Minha Conta
         </button>
       </div>
     </div>
@@ -5485,6 +5961,488 @@
         } catch (err) {
           return [];
         }
+      },
+
+      async exportAllAnnotationsAndBookmarks() {
+        try {
+          const db = await this.getDb();
+          const annotationsPromise = new Promise((resolve) => {
+            const tx = db.transaction('annotations', 'readonly');
+            const req = tx.objectStore('annotations').getAll();
+            req.onsuccess = () => resolve(req.result || []);
+            req.onerror = () => resolve([]);
+          });
+          const bookmarksPromise = new Promise((resolve) => {
+            const tx = db.transaction('bookmarks', 'readonly');
+            const req = tx.objectStore('bookmarks').getAll();
+            req.onsuccess = () => resolve(req.result || []);
+            req.onerror = () => resolve([]);
+          });
+          const [annotations, bookmarks] = await Promise.all([annotationsPromise, bookmarksPromise]);
+          return { annotations, bookmarks };
+        } catch (e) {
+          return { annotations: [], bookmarks: [] };
+        }
+      },
+
+      async importAllAnnotationsAndBookmarks(data) {
+        if (!data) return;
+        try {
+          const db = await this.getDb();
+          if (Array.isArray(data.annotations) && data.annotations.length > 0) {
+            const tx = db.transaction('annotations', 'readwrite');
+            const store = tx.objectStore('annotations');
+            data.annotations.forEach(item => {
+              if (item && item.id) store.put(item);
+            });
+          }
+          if (Array.isArray(data.bookmarks) && data.bookmarks.length > 0) {
+            const tx = db.transaction('bookmarks', 'readwrite');
+            const store = tx.objectStore('bookmarks');
+            data.bookmarks.forEach(item => {
+              if (item && item.id) store.put(item);
+            });
+          }
+        } catch (e) {
+          console.warn('[PdfStorage] Erro ao importar anotações/favoritos:', e);
+        }
+      }
+    };
+
+    /**
+     * =========================================================================
+     * SINCRONIZAÇÃO EM NUVEM E AUTENTICAÇÃO (PARTE C - SUPABASE)
+     * =========================================================================
+     */
+    const SUPABASE_CONFIG = {
+      url: 'https://arhhajxkmjpjwbrlcsqm.supabase.co',
+      anonKey: 'sb_publishable_zZUuqpP2FXG9am-Q7UY95g_musS2nA-'
+    };
+
+    const SyncManager = {
+      client: null,
+      user: null,
+      syncStatus: 'local', // 'local' | 'synced' | 'syncing' | 'error'
+      lastSyncTime: null,
+      debounceTimer: null,
+      isSyncing: false,
+      hasPendingSync: false,
+      pendingCloudData: null,
+
+      async init() {
+        try {
+          if (typeof supabase === 'undefined' || !supabase.createClient) {
+            console.warn('[SyncManager] Supabase JS SDK não carregado no cliente.');
+            this.setSyncStatus('local');
+            return;
+          }
+
+          this.client = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          });
+
+          // Recupera sessão existente
+          const { data: sessionData, error } = await this.client.auth.getSession();
+          if (!error && sessionData && sessionData.session) {
+            this.user = sessionData.session.user;
+            this.setSyncStatus('synced');
+          } else {
+            this.user = null;
+            this.setSyncStatus('local');
+          }
+          this.updateAuthUI();
+
+          // Monitora eventos de autenticação
+          this.client.auth.onAuthStateChange(async (event, session) => {
+            const prevUser = this.user;
+            this.user = session ? session.user : null;
+            this.updateAuthUI();
+
+            if (event === 'SIGNED_IN') {
+              if (!prevUser || prevUser.id !== this.user?.id) {
+                await this.handleInitialLoginSync();
+              }
+            } else if (event === 'SIGNED_OUT') {
+              this.setSyncStatus('local');
+              this.lastSyncTime = null;
+            } else if (event === 'PASSWORD_RECOVERY') {
+              App.showToast('Recuperação de senha: você pode atualizar sua senha nas configurações.', 'info');
+            }
+          });
+
+          // Conectividade de rede
+          window.addEventListener('online', () => {
+            if (this.user) {
+              if (this.hasPendingSync) {
+                this.syncUp();
+              } else {
+                this.setSyncStatus('synced');
+              }
+            }
+          });
+
+          window.addEventListener('offline', () => {
+            if (this.user) {
+              this.setSyncStatus('local', 'Offline');
+            }
+          });
+
+        } catch (err) {
+          console.warn('[SyncManager] Falha ao inicializar Supabase:', err);
+          this.setSyncStatus('local');
+        }
+      },
+
+      updateAuthUI() {
+        const isLoggedIn = !!this.user;
+        const email = this.user ? this.user.email : '';
+        const shortName = email ? email.split('@')[0] : 'Entrar';
+
+        // Botão no Header
+        const headerText = document.getElementById('headerAuthText');
+        if (headerText) {
+          headerText.textContent = isLoggedIn ? shortName : 'Entrar';
+        }
+
+        // Botão no Menu Mais (Mobile)
+        const sheetAuthBtnText = document.getElementById('sheetAuthBtnText');
+        if (sheetAuthBtnText) {
+          sheetAuthBtnText.textContent = isLoggedIn ? `Conta (${shortName})` : 'Conta & Sincronização em Nuvem';
+        }
+
+        // Card em Ajustes
+        const cardLoggedOut = document.getElementById('settingsAuthLoggedOutState');
+        const cardLoggedIn = document.getElementById('settingsAuthLoggedInState');
+        const statusTitle = document.getElementById('settingsAuthStatusTitle');
+        const statusDesc = document.getElementById('settingsAuthStatusDesc');
+        const userEmailSpan = document.getElementById('settingsAuthUserEmail');
+
+        if (cardLoggedOut && cardLoggedIn) {
+          if (isLoggedIn) {
+            cardLoggedOut.style.display = 'none';
+            cardLoggedIn.style.display = 'block';
+            if (statusTitle) statusTitle.textContent = 'Conta Conectada';
+            if (statusDesc) statusDesc.textContent = 'Seus dados são salvos na nuvem e sincronizados em tempo real entre seus dispositivos.';
+            if (userEmailSpan) userEmailSpan.textContent = email;
+          } else {
+            cardLoggedOut.style.display = 'block';
+            cardLoggedIn.style.display = 'none';
+            if (statusTitle) statusTitle.textContent = 'Modo Local (Offline)';
+            if (statusDesc) statusDesc.textContent = 'Seus dados ficam salvos apenas neste aparelho. Conecte sua conta para sincronizar entre o celular e o computador.';
+          }
+        }
+
+        this.renderLastSyncTime();
+      },
+
+      setSyncStatus(status, labelText = null) {
+        this.syncStatus = status;
+        const dotClasses = ['mode-local', 'mode-synced', 'mode-syncing', 'mode-error'];
+        const targetClass = `mode-${status}`;
+
+        const dots = [
+          document.getElementById('headerSyncDot'),
+          document.getElementById('sheetAuthDot')
+        ];
+
+        dots.forEach(dot => {
+          if (dot) {
+            dotClasses.forEach(c => dot.classList.remove(c));
+            dot.classList.add(targetClass);
+            dot.title = labelText || this.getStatusLabel(status);
+          }
+        });
+
+        const settingsBadge = document.getElementById('settingsSyncBadge');
+        if (settingsBadge) {
+          const text = labelText || this.getStatusLabel(status);
+          settingsBadge.innerHTML = `<span class="sync-dot ${targetClass}"></span> <span>${text}</span>`;
+        }
+      },
+
+      getStatusLabel(status) {
+        switch (status) {
+          case 'synced': return 'Sincronizado';
+          case 'syncing': return 'Sincronizando...';
+          case 'error': return 'Erro ao sincronizar';
+          case 'local':
+          default: return this.user ? 'Pendente (offline)' : 'Modo Local';
+        }
+      },
+
+      renderLastSyncTime() {
+        const el = document.getElementById('settingsLastSyncTime');
+        if (!el) return;
+        if (!this.user) {
+          el.textContent = 'Não aplicável (Modo local)';
+          return;
+        }
+        if (!this.lastSyncTime) {
+          el.textContent = 'Pendente';
+          return;
+        }
+        const d = new Date(this.lastSyncTime);
+        el.textContent = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      },
+
+      debouncedSync() {
+        if (!this.user || !this.client) return;
+
+        if (!navigator.onLine) {
+          this.hasPendingSync = true;
+          this.setSyncStatus('local', 'Offline (pendente)');
+          return;
+        }
+
+        this.setSyncStatus('syncing', 'Sincronizando...');
+        if (this.debounceTimer) clearTimeout(this.debounceTimer);
+
+        this.debounceTimer = setTimeout(() => {
+          this.syncUp();
+        }, 1500);
+      },
+
+      async gatherPayload() {
+        const pdfData = await PdfStorage.exportAllAnnotationsAndBookmarks();
+        return {
+          materias: App.data ? (App.data.materias || []) : [],
+          nao_classificado: App.data ? (App.data.naoClassificado || []) : [],
+          schedules: App.schedules || [],
+          active_schedule_id: App.activeScheduleId || null,
+          completed_slots: App.completedSlots || {},
+          priorities: App.priorities || {},
+          auto_config: (() => {
+            try {
+              const raw = localStorage.getItem('concurso_auto_config_last');
+              return raw ? JSON.parse(raw) : {};
+            } catch (e) { return {}; }
+          })(),
+          exam_date: App.examDate || null,
+          exam_title: App.examTitle || null,
+          spaced_reviews: App.spacedReviews || [],
+          theme: App.theme || 'light',
+          pdf_annotations: pdfData.annotations || [],
+          pdf_bookmarks: pdfData.bookmarks || []
+        };
+      },
+
+      async syncUp() {
+        if (!this.user || !this.client) return;
+        if (this.isSyncing) return;
+
+        try {
+          this.isSyncing = true;
+          this.setSyncStatus('syncing', 'Sincronizando...');
+
+          const payload = await this.gatherPayload();
+          payload.user_id = this.user.id;
+          payload.updated_at = new Date().toISOString();
+
+          const { error } = await this.client
+            .from('user_data')
+            .upsert(payload, { onConflict: 'user_id' });
+
+          if (error) throw error;
+
+          this.hasPendingSync = false;
+          this.lastSyncTime = new Date();
+          this.setSyncStatus('synced', 'Sincronizado');
+          this.renderLastSyncTime();
+        } catch (err) {
+          console.warn('[SyncManager] Erro no syncUp:', err);
+          this.hasPendingSync = true;
+          this.setSyncStatus('error', 'Erro ao salvar na nuvem');
+        } finally {
+          this.isSyncing = false;
+        }
+      },
+
+      async downloadFromCloud() {
+        if (!this.user || !this.client) return null;
+        try {
+          const { data, error } = await this.client
+            .from('user_data')
+            .select('*')
+            .eq('user_id', this.user.id)
+            .maybeSingle();
+
+          if (error) throw error;
+          return data;
+        } catch (err) {
+          console.warn('[SyncManager] Erro no downloadFromCloud:', err);
+          return null;
+        }
+      },
+
+      async applyCloudPayload(cloudData, saveLocal = true) {
+        if (!cloudData) return;
+
+        // Backup de segurança prévio no localStorage
+        try {
+          const backup = {
+            data: App.data,
+            schedules: App.schedules,
+            completedSlots: App.completedSlots,
+            timestamp: new Date().toISOString()
+          };
+          localStorage.setItem('concurso_cloud_prev_backup', JSON.stringify(backup));
+        } catch (e) {}
+
+        App.data = {
+          materias: Array.isArray(cloudData.materias) ? cloudData.materias : [],
+          naoClassificado: Array.isArray(cloudData.nao_classificado) ? cloudData.nao_classificado : []
+        };
+
+        App.schedules = Array.isArray(cloudData.schedules) ? cloudData.schedules : [];
+        App.activeScheduleId = cloudData.active_schedule_id || (App.schedules[0] ? App.schedules[0].id : null);
+        if (App.activeScheduleId && App.schedules.length > 0) {
+          const found = App.schedules.find(s => s.id === App.activeScheduleId);
+          App.schedule = found ? found.schedule : (App.schedules[0].schedule || null);
+        } else {
+          App.schedule = null;
+        }
+
+        App.completedSlots = cloudData.completed_slots || {};
+        App.priorities = cloudData.priorities || {};
+        App.examDate = cloudData.exam_date || null;
+        App.examTitle = cloudData.exam_title || '';
+        App.spacedReviews = Array.isArray(cloudData.spaced_reviews) ? cloudData.spaced_reviews : [];
+
+        if (cloudData.auto_config && Object.keys(cloudData.auto_config).length > 0) {
+          localStorage.setItem('concurso_auto_config_last', JSON.stringify(cloudData.auto_config));
+          App.loadAutoConfig();
+        }
+
+        if (cloudData.theme && (cloudData.theme === 'dark' || cloudData.theme === 'light')) {
+          App.setTheme(cloudData.theme, false);
+        }
+
+        if (cloudData.pdf_annotations || cloudData.pdf_bookmarks) {
+          await PdfStorage.importAllAnnotationsAndBookmarks({
+            annotations: cloudData.pdf_annotations || [],
+            bookmarks: cloudData.pdf_bookmarks || []
+          });
+        }
+
+        if (saveLocal) {
+          App.saveToStorage();
+        }
+
+        this.lastSyncTime = new Date();
+        this.setSyncStatus('synced', 'Sincronizado');
+        this.renderLastSyncTime();
+
+        App.renderAll();
+        App.updateHoursBadge();
+        App.renderExamCountdown();
+        App.renderSpacedReviews();
+        App.renderScheduleProgress();
+      },
+
+      mergePayloads(localData, cloudData) {
+        if (!cloudData) return localData;
+
+        // Mescla matérias sem duplicar
+        const localMaterias = (localData.materias || []);
+        const cloudMaterias = (cloudData.materias || []);
+        const mergedMaterias = [...localMaterias];
+
+        cloudMaterias.forEach(cMat => {
+          const existing = mergedMaterias.find(m => 
+            (m.id && cMat.id && m.id === cMat.id) || 
+            (m.nome && cMat.nome && m.nome.trim().toLowerCase() === cMat.nome.trim().toLowerCase())
+          );
+          if (!existing) {
+            mergedMaterias.push(cMat);
+          } else {
+            const existingTopicos = existing.topicos || [];
+            const cloudTopicos = cMat.topicos || [];
+            cloudTopicos.forEach(ct => {
+              const hasTopic = existingTopicos.find(et => 
+                (et.id && ct.id && et.id === ct.id) ||
+                (et.texto && ct.texto && et.texto.trim().toLowerCase() === ct.texto.trim().toLowerCase())
+              );
+              if (!hasTopic) {
+                existingTopicos.push(ct);
+              } else if (ct.concluido) {
+                hasTopic.concluido = true;
+              }
+            });
+            existing.topicos = existingTopicos;
+          }
+        });
+
+        // Mescla cronogramas
+        const localSchedules = localData.schedules || [];
+        const cloudSchedules = cloudData.schedules || [];
+        const mergedSchedules = [...localSchedules];
+        cloudSchedules.forEach(cs => {
+          const exists = mergedSchedules.find(s => s.id === cs.id || s.nome === cs.nome);
+          if (!exists) {
+            mergedSchedules.push(cs);
+          }
+        });
+
+        // União dos slots concluídos
+        const mergedCompleted = Object.assign({}, cloudData.completed_slots || {}, localData.completed_slots || {});
+
+        // Prioridades
+        const mergedPriorities = Object.assign({}, cloudData.priorities || {}, localData.priorities || {});
+
+        // Revisões espaçadas
+        const localReviews = localData.spaced_reviews || [];
+        const cloudReviews = cloudData.spaced_reviews || [];
+        const mergedReviews = [...localReviews];
+        cloudReviews.forEach(cr => {
+          if (!mergedReviews.find(lr => lr.id === cr.id)) {
+            mergedReviews.push(cr);
+          }
+        });
+
+        return {
+          materias: mergedMaterias,
+          nao_classificado: [...(localData.nao_classificado || []), ...(cloudData.nao_classificado || [])],
+          schedules: mergedSchedules,
+          active_schedule_id: localData.active_schedule_id || cloudData.active_schedule_id,
+          completed_slots: mergedCompleted,
+          priorities: mergedPriorities,
+          auto_config: Object.assign({}, cloudData.auto_config || {}, localData.auto_config || {}),
+          exam_date: localData.exam_date || cloudData.exam_date,
+          exam_title: localData.exam_title || cloudData.exam_title,
+          spaced_reviews: mergedReviews,
+          theme: localData.theme || cloudData.theme || 'light',
+          pdf_annotations: (localData.pdf_annotations || []).concat(cloudData.pdf_annotations || []),
+          pdf_bookmarks: (localData.pdf_bookmarks || []).concat(cloudData.pdf_bookmarks || [])
+        };
+      },
+
+      async handleInitialLoginSync() {
+        try {
+          this.setSyncStatus('syncing', 'Verificando nuvem...');
+          const cloudData = await this.downloadFromCloud();
+          const localHasData = (App.data.materias && App.data.materias.length > 0) || (App.schedules && App.schedules.length > 0);
+          const cloudHasData = cloudData && ((cloudData.materias && cloudData.materias.length > 0) || (cloudData.schedules && cloudData.schedules.length > 0));
+
+          if (localHasData && cloudHasData) {
+            this.pendingCloudData = cloudData;
+            App.openFirstSyncModal();
+          } else if (localHasData && !cloudHasData) {
+            await this.syncUp();
+            App.showToast('Dados locais enviados para sua conta em nuvem!', 'success');
+          } else if (!localHasData && cloudHasData) {
+            await this.applyCloudPayload(cloudData, true);
+            App.showToast('Dados da sua conta sincronizados!', 'success');
+          } else {
+            this.setSyncStatus('synced');
+          }
+        } catch (err) {
+          console.warn('[SyncManager] Erro no sync inicial de login:', err);
+          this.setSyncStatus('local');
+        }
       }
     };
 
@@ -5583,7 +6541,7 @@
      * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.5.0";
+    const APP_VERSION = "1.6.0";
     const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
     const REMOTE_VERSION_URL = UPDATE_URL; // Mantido para compatibilidade
     const GITHUB_RELEASES_URL = "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases";
@@ -5772,6 +6730,11 @@
         this.renderScheduleProgress();
         this.checkUpdates(false);
 
+        // Inicialização da sincronização em nuvem (Parte C)
+        if (typeof SyncManager !== 'undefined' && SyncManager.init) {
+          SyncManager.init();
+        }
+
         // Se houver matérias gravadas, inicia em Matérias; se vazio, inicia em Upload
         const initialTab = (this.data.materias && this.data.materias.length > 0) ? 'tab-subjects' : 'tab-upload';
         this.switchTab(initialTab);
@@ -5859,6 +6822,11 @@
           localStorage.setItem('concurso_weekly_review_config', JSON.stringify(this.weeklyReview || { enabled: false, day: 'Domingo' }));
         } catch (e) {
           console.error('Erro ao salvar no localStorage', e);
+        }
+
+        // Sincronização em nuvem automática (Parte C)
+        if (typeof SyncManager !== 'undefined' && SyncManager.debouncedSync) {
+          SyncManager.debouncedSync();
         }
       },
 
@@ -7878,6 +8846,350 @@
         }
       },
 
+      /* ========================================================================
+         PARTE C: AUTENTICAÇÃO E SINCRONIZAÇÃO EM NUVEM (SUPABASE)
+         ======================================================================== */
+
+      openAuthOrSyncModal() {
+        if (SyncManager && SyncManager.user) {
+          this.switchTab('tab-settings');
+          const card = document.getElementById('settingsAuthCard');
+          if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            card.classList.add('pulse-highlight');
+            setTimeout(() => card.classList.remove('pulse-highlight'), 1600);
+          }
+        } else {
+          this.openAuthModal('login');
+        }
+      },
+
+      openAuthModal(tab = 'login') {
+        const modal = document.getElementById('modalAuth');
+        if (!modal) return;
+        this.clearAuthFeedback();
+        this.switchAuthTab(tab);
+        modal.classList.remove('hidden');
+        modal.classList.add('open');
+        const emailInput = document.getElementById('authEmail');
+        if (emailInput) setTimeout(() => emailInput.focus(), 150);
+      },
+
+      closeAuthModal() {
+        const modal = document.getElementById('modalAuth');
+        if (!modal) return;
+        modal.classList.remove('open');
+        modal.classList.add('hidden');
+        this.clearAuthFeedback();
+      },
+
+      clearAuthFeedback() {
+        const box = document.getElementById('authFeedbackBox');
+        if (box) {
+          box.textContent = '';
+          box.className = 'auth-feedback-box';
+          box.style.display = 'none';
+        }
+      },
+
+      showAuthFeedback(message, type = 'error') {
+        const box = document.getElementById('authFeedbackBox');
+        if (!box) return;
+        box.textContent = message;
+        box.className = `auth-feedback-box ${type}`;
+        box.style.display = 'block';
+      },
+
+      switchAuthTab(tab) {
+        this.activeAuthTab = tab;
+        this.clearAuthFeedback();
+
+        const btnLogin = document.getElementById('tabBtnLogin');
+        const btnSignUp = document.getElementById('tabBtnSignUp');
+        const groupPassConfirm = document.getElementById('authGroupPasswordConfirm');
+        const helperRow = document.getElementById('authHelperRow');
+        const backToLoginRow = document.getElementById('authBackToLoginRow');
+        const submitBtn = document.getElementById('btnAuthSubmit');
+        const title = document.getElementById('authModalTitle');
+        const tabsNav = document.getElementById('authTabsNav');
+        const groupPass = document.getElementById('authGroupPassword');
+
+        if (tab === 'login') {
+          if (tabsNav) tabsNav.style.display = 'flex';
+          if (btnLogin) btnLogin.classList.add('active');
+          if (btnSignUp) btnSignUp.classList.remove('active');
+          if (groupPass) groupPass.style.display = 'block';
+          if (groupPassConfirm) groupPassConfirm.style.display = 'none';
+          if (helperRow) helperRow.style.display = 'flex';
+          if (backToLoginRow) backToLoginRow.style.display = 'none';
+          if (submitBtn) submitBtn.textContent = 'Entrar na Conta';
+          if (title) title.textContent = 'Entrar na Conta';
+        } else if (tab === 'signup') {
+          if (tabsNav) tabsNav.style.display = 'flex';
+          if (btnSignUp) btnSignUp.classList.add('active');
+          if (btnLogin) btnLogin.classList.remove('active');
+          if (groupPass) groupPass.style.display = 'block';
+          if (groupPassConfirm) groupPassConfirm.style.display = 'block';
+          if (helperRow) helperRow.style.display = 'none';
+          if (backToLoginRow) backToLoginRow.style.display = 'none';
+          if (submitBtn) submitBtn.textContent = 'Criar Conta Gratuita';
+          if (title) title.textContent = 'Criar Nova Conta';
+        } else if (tab === 'forgot') {
+          if (tabsNav) tabsNav.style.display = 'none';
+          if (groupPass) groupPass.style.display = 'none';
+          if (groupPassConfirm) groupPassConfirm.style.display = 'none';
+          if (helperRow) helperRow.style.display = 'none';
+          if (backToLoginRow) backToLoginRow.style.display = 'block';
+          if (submitBtn) submitBtn.textContent = 'Enviar Link de Recuperação';
+          if (title) title.textContent = 'Recuperar Senha';
+          this.showAuthFeedback('Informe seu e-mail para receber as instruções de recuperação.', 'info');
+        }
+      },
+
+      togglePasswordVisibility(inputId, btnId) {
+        const input = document.getElementById(inputId);
+        const btn = document.getElementById(btnId);
+        if (!input || !btn) return;
+        if (input.type === 'password') {
+          input.type = 'text';
+          btn.textContent = '🙈';
+        } else {
+          input.type = 'password';
+          btn.textContent = '👁️';
+        }
+      },
+
+      async handleAuthSubmit(e) {
+        if (e) e.preventDefault();
+        const emailInput = document.getElementById('authEmail');
+        const passInput = document.getElementById('authPassword');
+        const passConfirmInput = document.getElementById('authPasswordConfirm');
+        const submitBtn = document.getElementById('btnAuthSubmit');
+
+        const email = emailInput ? emailInput.value.trim() : '';
+        const password = passInput ? passInput.value : '';
+        const passConfirm = passConfirmInput ? passConfirmInput.value : '';
+
+        if (!email) {
+          this.showAuthFeedback('Por favor, informe seu e-mail.', 'error');
+          return;
+        }
+
+        if (!SyncManager || !SyncManager.client) {
+          this.showAuthFeedback('Serviço de autenticação temporariamente indisponível.', 'error');
+          return;
+        }
+
+        const originalText = submitBtn ? submitBtn.textContent : '';
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Aguarde...';
+        }
+
+        try {
+          if (this.activeAuthTab === 'signup') {
+            if (!password || password.length < 6) {
+              this.showAuthFeedback('A senha deve ter no mínimo 6 caracteres.', 'error');
+              return;
+            }
+            if (password !== passConfirm) {
+              this.showAuthFeedback('As senhas não coincidem.', 'error');
+              return;
+            }
+            const { data, error } = await SyncManager.client.auth.signUp({ email, password });
+            if (error) throw error;
+
+            if (data && data.user && data.session) {
+              this.showToast('Conta criada com sucesso! Sincronização ativada.', 'success');
+              this.closeAuthModal();
+            } else {
+              this.showAuthFeedback('Conta criada! Enviamos um link de confirmação para o seu e-mail. Por favor, confirme para entrar.', 'success');
+              if (passInput) passInput.value = '';
+              if (passConfirmInput) passConfirmInput.value = '';
+            }
+          } else if (this.activeAuthTab === 'forgot') {
+            const { error } = await SyncManager.client.auth.resetPasswordForEmail(email, {
+              redirectTo: window.location.href
+            });
+            if (error) throw error;
+            this.showAuthFeedback('E-mail de recuperação enviado! Verifique sua caixa de entrada e spam.', 'success');
+          } else {
+            // Login
+            if (!password) {
+              this.showAuthFeedback('Por favor, informe sua senha.', 'error');
+              return;
+            }
+            const { data, error } = await SyncManager.client.auth.signInWithPassword({ email, password });
+            if (error) {
+              if (error.message.includes('Invalid login credentials')) {
+                throw new Error('E-mail ou senha incorretos.');
+              }
+              if (error.message.includes('Email not confirmed')) {
+                throw new Error('E-mail ainda não confirmado. Verifique sua caixa de entrada.');
+              }
+              throw error;
+            }
+
+            this.showToast('Login realizado com sucesso!', 'success');
+            this.closeAuthModal();
+          }
+        } catch (err) {
+          console.warn('[App] Erro na autenticação:', err);
+          this.showAuthFeedback(err.message || 'Erro ao processar solicitação. Verifique seus dados.', 'error');
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+          }
+        }
+      },
+
+      async authSignOut() {
+        if (!confirm('Deseja realmente sair da sua conta? Seus dados locais serão preservados neste aparelho e o modo local continuará funcionando normalmente.')) {
+          return;
+        }
+        if (SyncManager && SyncManager.client) {
+          try {
+            await SyncManager.client.auth.signOut();
+            this.showToast('Você saiu da sua conta.', 'info');
+          } catch (e) {
+            console.warn('[App] Erro ao sair:', e);
+          }
+        }
+      },
+
+      async manualSync() {
+        if (!SyncManager || !SyncManager.user) {
+          this.openAuthModal('login');
+          return;
+        }
+        if (!navigator.onLine) {
+          this.showToast('Você está offline no momento. O app sincronizará assim que a conexão retornar.', 'info');
+          return;
+        }
+        this.showToast('Sincronizando com a nuvem...', 'info');
+        await SyncManager.syncUp();
+        if (SyncManager.syncStatus === 'synced') {
+          this.showToast('Sincronização concluída com sucesso! ☁️', 'success');
+        } else {
+          this.showToast('Não foi possível sincronizar agora. Tentaremos novamente automaticamente.', 'error');
+        }
+      },
+
+      openFirstSyncModal() {
+        const modal = document.getElementById('modalFirstSyncMerge');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.classList.add('open');
+        }
+      },
+
+      closeFirstSyncModal() {
+        const modal = document.getElementById('modalFirstSyncMerge');
+        if (modal) {
+          modal.classList.remove('open');
+          modal.classList.add('hidden');
+        }
+      },
+
+      async resolveFirstSync(option) {
+        this.closeFirstSyncModal();
+        if (!SyncManager || !SyncManager.user) return;
+
+        const cloudData = SyncManager.pendingCloudData;
+        SyncManager.pendingCloudData = null;
+
+        if (option === 'upload') {
+          this.showToast('Enviando dados deste aparelho para a nuvem...', 'info');
+          await SyncManager.syncUp();
+          this.showToast('Dados salvos na nuvem!', 'success');
+        } else if (option === 'download') {
+          if (cloudData) {
+            this.showToast('Baixando dados da sua conta...', 'info');
+            await SyncManager.applyCloudPayload(cloudData, true);
+            this.showToast('Dados baixados com sucesso!', 'success');
+          }
+        } else if (option === 'merge') {
+          if (cloudData) {
+            this.showToast('Mesclando dados locais com a nuvem...', 'info');
+            const localPayload = await SyncManager.gatherPayload();
+            const merged = SyncManager.mergePayloads(localPayload, cloudData);
+            await SyncManager.applyCloudPayload(merged, true);
+            await SyncManager.syncUp();
+            this.showToast('Dados mesclados com sucesso!', 'success');
+          }
+        }
+      },
+
+      promptDeleteAccount() {
+        const modal = document.getElementById('modalDeleteAccountConfirm');
+        const input = document.getElementById('inputDeleteAccountPassword');
+        const box = document.getElementById('deleteAccountFeedbackBox');
+        if (input) input.value = '';
+        if (box) { box.style.display = 'none'; box.textContent = ''; }
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.classList.add('open');
+        }
+      },
+
+      closeDeleteAccountModal() {
+        const modal = document.getElementById('modalDeleteAccountConfirm');
+        if (modal) {
+          modal.classList.remove('open');
+          modal.classList.add('hidden');
+        }
+      },
+
+      async confirmDeleteAccount() {
+        const input = document.getElementById('inputDeleteAccountPassword');
+        const box = document.getElementById('deleteAccountFeedbackBox');
+        const btn = document.getElementById('btnConfirmDeleteAccount');
+        const password = input ? input.value : '';
+
+        if (!password) {
+          if (box) {
+            box.textContent = 'Por favor, digite sua senha para confirmar a exclusão.';
+            box.className = 'auth-feedback-box error';
+            box.style.display = 'block';
+          }
+          return;
+        }
+
+        if (!SyncManager || !SyncManager.user || !SyncManager.client) return;
+
+        if (btn) { btn.disabled = true; btn.textContent = 'Excluindo...'; }
+
+        try {
+          const { error: authErr } = await SyncManager.client.auth.signInWithPassword({
+            email: SyncManager.user.email,
+            password: password
+          });
+          if (authErr) {
+            throw new Error('Senha incorreta. Não foi possível confirmar a exclusão.');
+          }
+
+          const { error: delErr } = await SyncManager.client
+            .from('user_data')
+            .delete()
+            .eq('user_id', SyncManager.user.id);
+
+          if (delErr) throw delErr;
+
+          await SyncManager.client.auth.signOut();
+          this.closeDeleteAccountModal();
+          this.showToast('Sua conta e dados em nuvem foram excluídos com sucesso.', 'info');
+        } catch (err) {
+          if (box) {
+            box.textContent = err.message || 'Erro ao excluir conta.';
+            box.className = 'auth-feedback-box error';
+            box.style.display = 'block';
+          }
+        } finally {
+          if (btn) { btn.disabled = false; btn.textContent = 'Sim, Excluir Minha Conta'; }
+        }
+      },
+
       closeModals() {
         document.querySelectorAll('.modal-overlay').forEach(m => {
           m.classList.remove('open');
@@ -7890,6 +9202,7 @@
         this.closeScheduleMoreMenu();
         this.closeSubjectMoreMenu();
         this.closeTopicActionsSheet();
+        this.clearAuthFeedback();
       },
 
       /* ========================================================================

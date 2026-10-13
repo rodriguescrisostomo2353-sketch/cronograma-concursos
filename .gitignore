@@ -27,6 +27,7 @@ apk/
 build/
 */build/
 android/app/build/
+android/app/src/main/assets/public/
 android/.gradle/
 .gradle/
 www/
@@ -42,7 +43,6 @@ update_android_icons.ps1
 check_sdk_and_build.ps1
 abrir_android_studio.bat
 html2pdf.bundle.min.js
-android/
 
 # ==============================================================================
 # LOGS & ARQUIVOS DE SISTEMA / IDE
