@@ -1,0 +1,66 @@
+name: Build e Publicação do APK Android
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Compilar APK Android
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Clonar repositório
+        uses: actions/checkout@v4
+
+      - name: ☕ Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🌐 Sincronizar arquivos Web para o Android
+        run: |
+          mkdir -p www
+          cp index.html www/
+          cp manifest.json www/
+          cp sw.js www/
+          cp version.json www/
+          if [ -f "html2pdf.bundle.min.js" ]; then cp html2pdf.bundle.min.js www/; fi
+          if [ -d "icons" ]; then cp -r icons www/; fi
+          mkdir -p android/app/src/main/assets/public
+          cp -r www/* android/app/src/main/assets/public/
+
+      - name: 🔧 Permissão de execução no gradlew
+        run: chmod +x android/gradlew
+
+      - name: 🔨 Compilar APK com Gradle
+        run: |
+          cd android
+          ./gradlew assembleDebug
+
+      - name: 📦 Preparar arquivo do APK
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk app-cronograma.apk
+
+      - name: ⬆️ Salvar APK como Artefato do GitHub Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-cronograma
+          path: app-cronograma.apk
+
+      - name: 🚀 Publicar / Atualizar Release no GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "Versão Atualizada (APK)"
+          body: "Compilação automática do aplicativo via GitHub Actions."
+          files: app-cronograma.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
