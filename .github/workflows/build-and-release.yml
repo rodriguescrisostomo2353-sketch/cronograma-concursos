@@ -18,6 +18,15 @@ jobs:
       - name: 📥 Clonar repositório
         uses: actions/checkout@v4
 
+      - name: 🟢 Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Instalar dependências (Capacitor)
+        run: npm install
+
       - name: ☕ Configurar Java 17
         uses: actions/setup-java@v4
         with:
@@ -35,6 +44,7 @@ jobs:
           if [ -d "icons" ]; then cp -r icons www/; fi
           mkdir -p android/app/src/main/assets/public
           cp -r www/* android/app/src/main/assets/public/
+          npx cap sync android
 
       - name: 🔧 Permissão de execução no gradlew
         run: chmod +x android/gradlew
