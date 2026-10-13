@@ -107,7 +107,7 @@ if ([string]::IsNullOrWhiteSpace($branch)) {
 }
 
 Write-Host "`nEnviando alteracoes para o GitHub (git push origin $branch)..." -ForegroundColor Cyan
-$pushOutput = & git push -u origin $branch 2>&1
+& git push -u origin $branch
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "`n==========================================================" -ForegroundColor Green
@@ -115,14 +115,14 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host "==========================================================" -ForegroundColor Green
     Write-Host "Suas alteracoes ja estao sincronizadas no repositorio remoto.`n" -ForegroundColor Green
 } else {
-    Write-Host "`nOcorreu um problema ao enviar (git push):" -ForegroundColor Red
-    Write-Host ($pushOutput | Out-String) -ForegroundColor Yellow
-    Write-Host ""
+    Write-Host "`nOcorreu um problema ao enviar (git push)." -ForegroundColor Red
     $gcm = "C:\Program Files\Git\mingw64\bin\git-credential-manager.exe"
     if (Test-Path $gcm) {
-        Write-Host "Tentando abrir autenticacao no navegador..." -ForegroundColor Cyan
+        Write-Host "Iniciando autenticacao com GitHub via navegador..." -ForegroundColor Cyan
         & $gcm github login --web
-        Write-Host "Tentando enviar novamente..." -ForegroundColor Cyan
-        & git push -u origin $branch
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "`nAutenticado com sucesso! Tentando enviar novamente..." -ForegroundColor Green
+            & git push -u origin $branch
+        }
     }
 }
