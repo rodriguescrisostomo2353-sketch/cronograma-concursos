@@ -1,25 +1,39 @@
 {
-  "version": "1.2.0",
+  "version": "1.3.0",
   "date": "2026-10-13",
   "notes": [
-    "Criação manual de múltiplos cronogramas personalizados com alternador rápido",
-    "Geração automática configurável: escolha de dias disponíveis, disciplinas e horas uniformes ou específicas por dia",
-    "Definição de frequência semanal por disciplina com diagnóstico de horas em tempo real",
-    "Algoritmo inteligente de intercalação para balancear sessões e evitar matérias repetidas consecutivas",
-    "Presets rápidos de carga horária: Intensivo, Equilibrado e Leve",
-    "Priorização de matérias (Alta, Média, Baixa) com peso na distribuição semanal",
-    "Configuração de intervalo/pausa entre sessões de estudo (5 a 15 min)",
-    "Dia dedicado para revisão geral e simulados com geração de blocos de revisão",
-    "Contagem regressiva inteligente para a data da prova com horas restantes de estudo",
-    "Barra de progresso e porcentagem de cumprimento semanal do plano",
-    "Sistema de revisões espaçadas automáticas (D+1, D+7, D+30)",
-    "Fixação de horários (Lock 🔒) que são preservados ao regerar o cronograma",
-    "Cronômetro Pomodoro integrado com som e contagem de ciclos concluídos",
-    "Exportação do cronograma em imagem PNG de alta resolução e compartilhamento direto",
-    "Arrastar e soltar (Drag and Drop) no computador e modal simplificado no celular"
+    "Novo layout limpo e minimalista da aba Cronograma com foco total na grade de estudos",
+    "Cabeçalho unificado com seletor de cronograma, chips rápidos para prova/revisões e botão de alternância do painel",
+    "Menu discreto de 3 pontinhos (⋮) agrupando todas as ações secundárias (PDF, PNG, Pomodoro, compartilhar, duplicar, excluir)",
+    "Cards de estudo super leves exibindo apenas horário, matéria e checkbox rápido de conclusão em 1 toque",
+    "Janela de detalhes da sessão (Bottom Sheet nativa no celular e modal no computador) ao tocar no card, com tópicos, anotações, fixação 🔒 e edição",
+    "Barra de progresso semanal compacta em 1 linha fina e elegante",
+    "Navegação mobile por abas com destaque visual para o dia atual (Hoje) e botão flutuante inteligente (FAB)",
+    "Painel de configuração da geração automática recolhível em acordeão para evitar poluição visual"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/CronogramaDeEstudos.apk",
   "history": [
+    {
+      "version": "1.2.0",
+      "date": "2026-10-13",
+      "notes": [
+        "Criação manual de múltiplos cronogramas personalizados com alternador rápido",
+        "Geração automática configurável: escolha de dias disponíveis, disciplinas e horas uniformes ou específicas por dia",
+        "Definição de frequência semanal por disciplina com diagnóstico de horas em tempo real",
+        "Algoritmo inteligente de intercalação para balancear sessões e evitar matérias repetidas consecutivas",
+        "Presets rápidos de carga horária: Intensivo, Equilibrado e Leve",
+        "Priorização de matérias (Alta, Média, Baixa) com peso na distribuição semanal",
+        "Configuração de intervalo/pausa entre sessões de estudo (5 a 15 min)",
+        "Dia dedicado para revisão geral e simulados com geração de blocos de revisão",
+        "Contagem regressiva inteligente para a data da prova com horas restantes de estudo",
+        "Barra de progresso e porcentagem de cumprimento semanal do plano",
+        "Sistema de revisões espaçadas automáticas (D+1, D+7, D+30)",
+        "Fixação de horários (Lock 🔒) que são preservados ao regerar o cronograma",
+        "Cronômetro Pomodoro integrado com som e contagem de ciclos concluídos",
+        "Exportação do cronograma em imagem PNG de alta resolução e compartilhamento direto",
+        "Arrastar e soltar (Drag and Drop) no computador e modal simplificado no celular"
+      ]
+    },
     {
       "version": "1.1.0",
       "date": "2026-10-09",
