@@ -702,6 +702,52 @@
       border-color: var(--border-focus);
     }
 
+    /* Hierarquia e Subníveis de Tópicos (Etapa 3) */
+    .topic-item.topic-parent {
+      background: var(--bg-subtle);
+      border-left: 3px solid #6366f1;
+    }
+
+    .topic-parent-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(99, 102, 241, 0.12);
+      color: #4f46e5;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    [data-theme="dark"] .topic-parent-badge {
+      background: rgba(99, 102, 241, 0.25);
+      color: #a5b4fc;
+    }
+
+    .topic-item.topic-level-1 {
+      margin-left: 14px;
+      border-left: 2px solid var(--border-color);
+    }
+
+    .topic-item.topic-level-2 {
+      margin-left: 28px;
+      border-left: 2px dashed var(--border-color);
+    }
+
+    .topic-item.topic-level-3 {
+      margin-left: 40px;
+      border-left: 2px dotted var(--border-color);
+    }
+
+    @media (max-width: 600px) {
+      .topic-item.topic-level-1 { margin-left: 8px; }
+      .topic-item.topic-level-2 { margin-left: 16px; }
+      .topic-item.topic-level-3 { margin-left: 22px; }
+    }
+
     .topic-text {
       flex: 1;
       white-space: pre-wrap;
@@ -3279,12 +3325,18 @@
           <span>Matérias Identificadas</span>
           <span class="section-count" id="headerCountLabel">0 matérias cadastradas</span>
         </div>
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn btn-secondary btn-sm" id="btnReviewEditalDivision" onclick="App.openReviewEditalModal()" title="Revisar matérias e tópicos divididos">
+            📑 Revisar Divisão
+          </button>
+          <button class="btn btn-secondary btn-sm" id="btnReprocessEdital" onclick="App.reprocessEditalPrompt()" title="Reprocessar edital com a inteligência aprimorada">
+            🔄 Reprocessar Edital
+          </button>
           <button class="btn btn-secondary btn-sm" id="btnExpandAll">
             ↕️ Expandir/Recolher
           </button>
           <button class="btn btn-pastel-purple btn-sm" id="btnOpenAddSubjectModal">
-            ➕ Adicionar Matéria Manualmente
+            ➕ Adicionar Matéria
           </button>
         </div>
       </div>
@@ -3516,6 +3568,17 @@
 
           <!-- Bloco Recolhível de Opções Avançadas -->
           <div id="autoAdvancedOptions" style="display: none;">
+            <!-- Divisão dos Tópicos no Cronograma (Etapa 3) -->
+            <div class="auto-config-card-group" style="margin-bottom: 14px;">
+              <div class="auto-config-title" style="margin-bottom: 8px;">
+                <span>📚 Divisão dos Tópicos no Cronograma</span>
+              </div>
+              <select id="selectTopicGranularity" class="input-field" style="padding: 8px 12px;" onchange="App.saveAutoConfigSettings()">
+                <option value="detailed" selected>Todos os subtópicos detalhados (Recomendado para fechar 100% do edital)</option>
+                <option value="parents">Apenas tópicos principais (Agrupar subtópicos)</option>
+              </select>
+            </div>
+
             <!-- Quantidade Máxima de Matérias por Dia -->
             <div class="auto-config-card-group" style="margin-bottom: 14px;">
               <div class="auto-config-title" style="margin-bottom: 8px;">
@@ -3746,10 +3809,18 @@
             <div class="update-status-box" id="updateStatusBox">
               <div class="update-version-row">
                 <span>Versão instalada no dispositivo:</span>
-                <strong id="updateCurrentVersionText">v1.0.0</strong>
+                <strong id="updateCurrentVersionText">v1.3.1</strong>
+              </div>
+              <div class="update-version-row" id="updateOnlineVersionRow" style="display: none;">
+                <span>Versão disponível online:</span>
+                <strong id="updateOnlineVersionText" style="color: var(--primary);">--</strong>
               </div>
               <div class="update-status-msg" id="updateStatusMsg">
                 Toque no botão abaixo para verificar se há novas versões disponíveis online.
+              </div>
+              <div class="update-diagnostic-info" id="updateDiagnosticInfo" style="margin-top: 6px; font-size: 0.75rem; color: var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 8px; word-break: break-all;">
+                <span>Servidor consultado:</span> <span id="updateUrlDisplay">https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json</span>
+                <div id="updateLastCheckTime" style="margin-top: 3px; font-size: 0.72rem; opacity: 0.85;"></div>
               </div>
             </div>
 
@@ -3763,7 +3834,7 @@
             <div id="newVersionBox" class="new-version-box" style="display: none;">
               <div class="new-version-header">
                 <span class="new-version-badge">🎉 Nova Versão Disponível</span>
-                <span class="new-version-tag" id="newVersionTag">v1.1.0</span>
+                <span class="new-version-tag" id="newVersionTag">v1.3.1</span>
               </div>
               <p class="new-version-date" id="newVersionDate">Lançada em: --/--/----</p>
               <div class="new-version-notes-title">Novidades desta versão:</div>
@@ -3773,6 +3844,13 @@
               <a id="btnDownloadApk" href="#" target="_blank" class="btn btn-primary btn-lg" style="width: 100%; text-decoration: none; margin-top: 14px; text-align: center;">
                 📥 Baixar Nova Versão (APK)
               </a>
+              <div id="downloadHelpBox" style="margin-top: 12px; font-size: 0.82rem; color: var(--text-main); background: rgba(0,0,0,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; display: none;">
+                <p style="margin: 0 0 6px 0; font-weight: 600;">O download não iniciou ou o link deu erro?</p>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <button type="button" id="btnRetryDownload" class="btn btn-sm btn-secondary" style="padding: 4px 10px; font-size: 0.78rem;">🔄 Tentar Novamente</button>
+                  <a id="btnOpenReleasesPage" href="https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases" target="_blank" class="btn btn-sm btn-outline" style="padding: 4px 10px; font-size: 0.78rem; text-decoration: none;">🌐 Abrir no GitHub</a>
+                </div>
+              </div>
               <p class="new-version-install-tip">
                 💡 <strong>Dica de instalação:</strong> Após baixar o arquivo APK, toque nele para instalar. Se o Android pedir, permita a instalação de fontes externas.
               </p>
@@ -4307,6 +4385,49 @@
     </div>
   </div>
 
+  <!-- Modal: Revisar Divisão do Edital (Etapa 4) -->
+  <div class="modal-overlay" id="modalReviewEditalDivision">
+    <div class="modal-card" style="max-width: 840px; width: 95vw; max-height: 92vh; display: flex; flex-direction: column;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <div>
+          <h3 style="display: flex; align-items: center; gap: 8px; margin: 0 0 4px 0; font-size: 1.15rem;">
+            📑 Revisar Divisão do Edital
+          </h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">
+            Confira a organização das matérias e tópicos extraídos do PDF antes de salvar.
+          </p>
+        </div>
+        <button type="button" class="btn-icon" onclick="App.closeModals()">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding: 16px 0; overflow-y: auto; flex: 1;">
+        <!-- Estatísticas e Integridade -->
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; background: var(--bg-subtle); padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-bottom: 14px; align-items: center;">
+          <span style="font-size: 0.85rem; color: var(--text-main);">📚 Matérias: <strong id="reviewStatSubjectsCount">0</strong></span>
+          <span style="color: var(--text-light);">•</span>
+          <span style="font-size: 0.85rem; color: var(--text-main);">📝 Tópicos: <strong id="reviewStatTopicsCount">0</strong></span>
+          <span style="color: var(--text-light);">•</span>
+          <span style="font-size: 0.85rem; color: var(--text-main);">🛡️ Integridade: <strong id="reviewStatIntegrity" style="color: var(--pastel-green-text, #16a34a);">100% Preservado</strong></span>
+          <span style="margin-left: auto; font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Zero perda de conteúdo</span>
+        </div>
+
+        <!-- Lista de Matérias e Tópicos -->
+        <div id="reviewDivisionListContainer" style="display: flex; flex-direction: column; gap: 10px; padding-right: 4px;">
+          <!-- Preenchido via JS -->
+        </div>
+      </div>
+
+      <div class="modal-actions" style="border-top: 1px solid var(--border-color); padding-top: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <button type="button" class="btn btn-secondary" onclick="App.reprocessEditalPrompt()">
+          🔄 Reprocessar Edital
+        </button>
+        <button type="button" class="btn btn-primary" onclick="App.confirmEditalReview()">
+          ✅ Confirmar e Ir para Matérias
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal / Bottom Sheet: Detalhes da Sessão de Estudos (Clean UI) -->
   <div class="modal-overlay hidden" id="modalSessionDetails">
     <div class="modal-card modal-sheet-card" style="max-width: 480px;">
@@ -4533,11 +4654,76 @@
      * =========================================================================
      * SISTEMA DE VERSÃO E ATUALIZAÇÃO DO APLICATIVO
      * =========================================================================
+     * UPDATE_URL: URL absoluta online onde o version.json é publicado.
+     * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
+     * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.3.0";
-    const REMOTE_VERSION_URL = (typeof window !== 'undefined' && window.location && window.location.hostname === 'localhost')
-      ? "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json"
-      : "./version.json";
+    const APP_VERSION = "1.3.2";
+    const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
+    const REMOTE_VERSION_URL = UPDATE_URL; // Mantido para compatibilidade
+    const GITHUB_RELEASES_URL = "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases";
+
+    /**
+     * Busca dados da versão online com suporte ao plugin nativo CapacitorHttp (quando em APK Android)
+     * e fallback para fetch padrão com bypass estrito de cache (?t= e no-store).
+     */
+    async function fetchOnlineVersionData(targetUrl) {
+      const cacheBustUrl = `${targetUrl}${targetUrl.includes('?') ? '&' : '?'}t=${Date.now()}`;
+      console.log('[Atualizações] Verificando versão online em:', cacheBustUrl);
+
+      // 1. Tenta usar o plugin nativo CapacitorHttp (se estiver rodando no app Android nativo)
+      try {
+        const CapHttp = (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.CapacitorHttp)
+          ? window.Capacitor.Plugins.CapacitorHttp
+          : null;
+
+        if (CapHttp && typeof CapHttp.get === 'function') {
+          console.log('[Atualizações] Utilizando CapacitorHttp nativo do Android');
+          const capResp = await CapHttp.get({
+            url: cacheBustUrl,
+            headers: {
+              'Accept': 'application/json',
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache'
+            }
+          });
+          if (capResp && (capResp.status === 200 || capResp.status === 304)) {
+            const data = (typeof capResp.data === 'string') ? JSON.parse(capResp.data) : capResp.data;
+            console.log('[Atualizações] Resposta recebida via CapacitorHttp:', data);
+            return { ok: true, status: capResp.status, data };
+          }
+          console.warn('[Atualizações] CapacitorHttp retornou status:', capResp ? capResp.status : 'desconhecido');
+          return { ok: false, status: capResp ? capResp.status : 0, error: `Status HTTP ${capResp ? capResp.status : 0}` };
+        }
+      } catch (nativeErr) {
+        console.warn('[Atualizações] CapacitorHttp não disponível ou falhou, tentando fetch web:', nativeErr);
+      }
+
+      // 2. Fallback para fetch padrão com no-store
+      try {
+        const response = await fetch(cacheBustUrl, {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          }
+        });
+
+        if (!response.ok) {
+          console.warn(`[Atualizações] Resposta do servidor não-OK: ${response.status} ${response.statusText}`);
+          return { ok: false, status: response.status, error: `HTTP ${response.status} (${response.statusText || 'Erro no servidor'})` };
+        }
+
+        const data = await response.json();
+        console.log('[Atualizações] Resposta recebida via fetch padrão:', data);
+        return { ok: true, status: response.status, data };
+      } catch (fetchErr) {
+        console.error('[Atualizações] Erro na requisição fetch:', fetchErr);
+        return { ok: false, status: 0, error: fetchErr.message || 'Falha de conexão com a internet' };
+      }
+    }
 
     /**
      * Compara duas versões no formato semântico (major.minor.patch) de forma numérica.
@@ -5114,8 +5300,19 @@
       initVersionDisplay() {
         const topEl = document.getElementById('updateCurrentVersionText');
         const settingsEl = document.getElementById('settingsAppVersion');
+        const urlDisp = document.getElementById('updateUrlDisplay');
         if (topEl) topEl.textContent = `v${APP_VERSION}`;
         if (settingsEl) settingsEl.textContent = `v${APP_VERSION}`;
+        if (urlDisp) urlDisp.textContent = UPDATE_URL;
+
+        const lastCheckStr = localStorage.getItem('concurso_last_version_check');
+        const lastCheckEl = document.getElementById('updateLastCheckTime');
+        if (lastCheckEl && lastCheckStr) {
+          try {
+            const dt = new Date(parseInt(lastCheckStr, 10));
+            lastCheckEl.textContent = `Última checagem: ${dt.toLocaleDateString('pt-BR')} às ${dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+          } catch (e) {}
+        }
 
         // Restaura badge caso haja atualização pendente já gravada
         try {
@@ -5132,11 +5329,16 @@
       },
 
       initUpdateListeners() {
+        let resumeDebounceTimer = null;
         const handleResume = () => {
-          App.checkUpdates(false);
+          if (resumeDebounceTimer) clearTimeout(resumeDebounceTimer);
+          resumeDebounceTimer = setTimeout(() => {
+            console.log('[Atualizações] App aberto/retomado: verificando atualizações no servidor online...');
+            App.checkUpdates(false);
+          }, 300);
         };
 
-        // Ao voltar ao primeiro plano
+        // Ao voltar ao primeiro plano na aba/navegador
         document.addEventListener('visibilitychange', () => {
           if (document.visibilityState === 'visible') {
             handleResume();
@@ -5157,43 +5359,96 @@
             });
           } catch (e) {}
         }
-      },
 
-      async checkUpdates(force = false) {
-        const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
-        const now = Date.now();
-        const lastCheckStr = localStorage.getItem('concurso_last_version_check');
-        const lastCheck = lastCheckStr ? parseInt(lastCheckStr, 10) : 0;
+        // Tratamento do botão de download do APK e opções de fallback
+        const btnApk = document.getElementById('btnDownloadApk');
+        const helpBox = document.getElementById('downloadHelpBox');
+        if (btnApk) {
+          btnApk.addEventListener('click', (e) => {
+            const targetHref = btnApk.getAttribute('href');
+            if (!targetHref || targetHref === '#' || targetHref === '') {
+              e.preventDefault();
+              App.showToast('Link de download não disponível no momento.', 'warning');
+              return;
+            }
 
-        // Limita a verificação automática ao voltar ao primeiro plano a cada 6 horas
-        if (!force && (now - lastCheck < SIX_HOURS_MS)) {
-          return;
+            if (helpBox) helpBox.style.display = 'block';
+
+            // No Capacitor Android nativo, garante abertura segura no navegador do dispositivo
+            if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+              if (window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
+                e.preventDefault();
+                window.Capacitor.Plugins.Browser.open({ url: targetHref }).catch(() => {
+                  window.open(targetHref, '_system');
+                });
+              }
+            }
+          });
         }
 
-        const url = `${REMOTE_VERSION_URL}${REMOTE_VERSION_URL.includes('?') ? '&' : '?'}t=${now}`;
+        const btnRetry = document.getElementById('btnRetryDownload');
+        if (btnRetry && btnApk) {
+          btnRetry.addEventListener('click', () => {
+            btnApk.click();
+          });
+        }
+      },
+
+      isCheckingUpdates: false,
+
+      async checkUpdates(force = false) {
+        if (this.isCheckingUpdates) return;
+        this.isCheckingUpdates = true;
+
+        const statusMsg = document.getElementById('updateStatusMsg');
+        const onlineRow = document.getElementById('updateOnlineVersionRow');
+        const onlineVerText = document.getElementById('updateOnlineVersionText');
+        const lastCheckEl = document.getElementById('updateLastCheckTime');
+        const urlDisp = document.getElementById('updateUrlDisplay');
+
+        if (urlDisp) urlDisp.textContent = UPDATE_URL;
+        if (force && statusMsg) {
+          statusMsg.innerHTML = `⏳ Verificando no servidor: <code>${App.escapeHtml(UPDATE_URL)}</code>...`;
+        }
 
         try {
-          const response = await fetch(url, {
-            cache: 'no-store',
-            headers: { 'Accept': 'application/json' }
-          });
+          const result = await fetchOnlineVersionData(UPDATE_URL);
+          const now = Date.now();
+          localStorage.setItem('concurso_last_version_check', String(now));
 
-          if (!response.ok) {
+          if (lastCheckEl) {
+            const dt = new Date(now);
+            lastCheckEl.textContent = `Última checagem: ${dt.toLocaleDateString('pt-BR')} às ${dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+          }
+
+          if (!result.ok || !result.data) {
+            console.warn('[Atualizações] Não foi possível verificar agora:', result.error);
+            if (statusMsg) {
+              statusMsg.innerHTML = `⚠️ <strong>Não consegui verificar agora.</strong> (${App.escapeHtml(result.error || 'Erro de conexão')}).<br><span style="font-size: 0.76rem; opacity: 0.85;">URL consultada: ${App.escapeHtml(UPDATE_URL)}</span>`;
+            }
             if (force) {
-              this.showToast('Não foi possível verificar atualizações no momento.', 'warning');
+              this.showToast('Não foi possível verificar atualizações agora. Verifique sua conexão.', 'warning');
             }
             return;
           }
 
-          const remoteData = await response.json();
-          localStorage.setItem('concurso_last_version_check', String(Date.now()));
+          const remoteData = result.data;
+          if (onlineRow && onlineVerText && remoteData.version) {
+            onlineRow.style.display = 'flex';
+            onlineVerText.textContent = `v${remoteData.version}`;
+          }
+
           this.processVersionData(remoteData, force);
         } catch (err) {
-          // Se estiver offline ou der erro de rede, ignorar silenciosamente sem travar o app
-          console.warn('[Atualizações] Erro ao consultar version.json:', err.message || err);
+          console.error('[Atualizações] Erro inesperado ao checar atualizações:', err);
+          if (statusMsg) {
+            statusMsg.innerHTML = `⚠️ <strong>Não consegui verificar agora.</strong> (${App.escapeHtml(err.message || 'Falha de rede')}).`;
+          }
           if (force) {
             this.showToast('Sem conexão com a internet para verificar.', 'warning');
           }
+        } finally {
+          this.isCheckingUpdates = false;
         }
       },
 
@@ -5224,6 +5479,7 @@
         const dateEl = document.getElementById('newVersionDate');
         const notesList = document.getElementById('newVersionNotesList');
         const btnApk = document.getElementById('btnDownloadApk');
+        const helpBox = document.getElementById('downloadHelpBox');
 
         if (topDot) topDot.style.display = 'inline-block';
         if (bottomDot) bottomDot.style.display = 'block';
@@ -5232,13 +5488,14 @@
         if (tag) tag.textContent = `v${remoteData.version}`;
         if (dateEl) dateEl.textContent = `Lançada em: ${remoteData.date || 'Recente'}`;
         if (btnApk) btnApk.href = remoteData.apkUrl || '#';
+        if (helpBox) helpBox.style.display = 'none';
 
         if (notesList && Array.isArray(remoteData.notes)) {
           notesList.innerHTML = remoteData.notes.map(n => `<li>${App.escapeHtml(n)}</li>`).join('');
         }
 
         if (statusMsg) {
-          statusMsg.innerHTML = `⚠️ <strong>Nova versão disponível: v${remoteData.version}</strong>. Toque abaixo para atualizar seu aplicativo.`;
+          statusMsg.innerHTML = `🎉 <strong>Nova versão disponível: v${remoteData.version}</strong>. Toque abaixo para atualizar seu aplicativo.`;
         }
 
         if (isManual) {
@@ -5435,8 +5692,18 @@
           progressText.textContent = 'Processando matérias e tópicos do edital...';
           if (overlayMsg) overlayMsg.textContent = 'Organizando matérias e tópicos programáticos...';
           
-          // Heurística de identificação de matérias sem descartar nada
-          const parseResult = App.parseEditalText(fullTextLines);
+          // ETAPA 2: Reconstrução de parágrafos contínuos e des-hifenização de fim de linha
+          const continuousLines = App.unifyLinesIntoParagraphs(fullTextLines);
+
+          // Heurística de identificação de matérias sem descartar nada (Etapas 2 & 3)
+          const parseResult = App.parseEditalText(continuousLines);
+
+          // ETAPA 4: Guarda linhas contínuas brutas para permitir Reprocessar Edital a qualquer momento
+          App.data.lastExtractedEditalLines = continuousLines;
+
+          // ETAPA 4: Validação de Integridade do Conteúdo
+          const integrity = App.calculateEditalIntegrity(continuousLines, parseResult);
+          App.data.lastEditalIntegrity = integrity;
 
           // Salva no estado
           App.data.materias = parseResult.materias;
@@ -5446,8 +5713,10 @@
 
           progressContainer.style.display = 'none';
           if (overlay) overlay.style.display = 'none';
+
+          // ETAPA 4: Abre o modal de Revisão da Divisão para o usuário conferir com total clareza
+          App.openReviewEditalModal(parseResult, integrity);
           App.showToast(`Edital lido! ${parseResult.materias.length} matérias e ${parseResult.totalTopicos} tópicos identificados.`, 'success');
-          App.switchTab('tab-subjects');
 
         } catch (error) {
           console.error('Erro na leitura do PDF:', error);
@@ -5457,107 +5726,269 @@
         }
       },
 
-      /* Extrai linhas de texto de uma página do PDF preservando fluxo */
-      extractLinesFromPage(textContent) {
-        if (!textContent || !textContent.items) return [];
+      /* ETAPA 2: Une pedaços de texto da mesma linha medindo a distância geométrica real entre letras e palavras */
+      assembleLineItems(lineItems) {
+        if (!lineItems || lineItems.length === 0) return '';
+        let lineStr = lineItems[0].str;
+        let prevEnd = lineItems[0].x + lineItems[0].width;
 
-        const items = textContent.items;
-        if (items.length === 0) return [];
+        for (let i = 1; i < lineItems.length; i++) {
+          const cur = lineItems[i];
+          const gap = cur.x - prevEnd;
 
-        // Agrupa por aproximação de coordenada vertical Y (com tolerância de 4px)
-        const linesMap = [];
-        items.forEach(item => {
-          const str = item.str;
-          if (!str || str.trim() === '') return;
-          const y = Math.round(item.transform[5]);
+          const prevHasSpace = lineStr.endsWith(' ');
+          const curHasSpace = cur.str.startsWith(' ');
 
-          let existingLine = linesMap.find(l => Math.abs(l.y - y) <= 4);
-          if (existingLine) {
-            existingLine.items.push(item);
+          // Se a distância for menor que 1.8px (ou negativa devido a kerning de fonte), junta SEM espaço ("E" + "strutura" -> "Estrutura")
+          if (gap < 1.8) {
+            if (prevHasSpace && curHasSpace) {
+              lineStr = lineStr.slice(0, -1) + cur.str;
+            } else {
+              lineStr += cur.str;
+            }
           } else {
-            linesMap.push({ y: y, items: [item] });
+            // Distância real entre palavras: insere 1 espaço se nenhum dos pedaços já contiver
+            if (!prevHasSpace && !curHasSpace) {
+              lineStr += ' ' + cur.str;
+            } else {
+              lineStr += cur.str;
+            }
           }
-        });
-
-        // Ordena linhas de cima para baixo (coordenada Y decrescente no PDF)
-        linesMap.sort((a, b) => b.y - a.y);
-
-        // Para cada linha, ordena itens da esquerda para a direita (coordenada X crescente)
-        const finalLines = [];
-        linesMap.forEach(lineObj => {
-          lineObj.items.sort((a, b) => a.transform[4] - b.transform[4]);
-          const lineStr = lineObj.items.map(it => it.str).join(' ').trim();
-          if (lineStr) {
-            finalLines.push(lineStr);
-          }
-        });
-
-        return finalLines;
+          prevEnd = cur.x + cur.width;
+        }
+        return lineStr.replace(/\s+/g, ' ').trim();
       },
 
-      /* Heurística para detecção de matérias e tópicos */
-      parseEditalText(lines) {
-        // Nomes conhecidos de disciplinas de concursos públicos brasileiros
-        const KNOWN_SUBJECTS = [
-          'LÍNGUA PORTUGUESA', 'PORTUGUÊS', 'LÍNGUA INGLESA', 'INGLÊS',
-          'DIREITO CONSTITUCIONAL', 'DIREITO ADMINISTRATIVO', 'DIREITO PENAL',
-          'DIREITO PROCESSUAL PENAL', 'DIREITO CIVIL', 'DIREITO PROCESSUAL CIVIL',
-          'DIREITO TRIBUTÁRIO', 'DIREITO PREVIDENCIÁRIO', 'DIREITO DO TRABALHO',
-          'DIREITO PROCESSUAL DO TRABALHO', 'DIREITO ELEITORAL', 'DIREITO FINANCEIRO',
-          'RACIOCÍNIO LÓGICO', 'RACIOCÍNIO LÓGICO-MATEMÁTICO', 'MATEMÁTICA',
-          'MATEMÁTICA FINANCEIRA', 'ESTATÍSTICA', 'INFORMÁTICA',
-          'NOÇÕES DE INFORMÁTICA', 'TECNOLOGIA DA INFORMAÇÃO', 'LEGISLAÇÃO APLICADA',
-          'LEGISLAÇÃO ESPECÍFICA', 'ÉTICA NO SERVIÇO PÚBLICO', 'ÉTICA E CONDUTA',
-          'ADMINISTRAÇÃO PÚBLICA', 'GESTÃO PÚBLICA', 'CONTABILIDADE GERAL',
-          'CONTABILIDADE PÚBLICA', 'ADMINISTRAÇÃO FINANCEIRA E ORÇAMENTÁRIA',
-          'AFO', 'ATUALIDADES', 'GEOGRAFIA', 'HISTÓRIA', 'CONHECIMENTOS GERAIS'
-        ];
+      /* ETAPA 2: Extrai linhas de texto de uma página do PDF preservando fluxo, tratando 2 colunas e rodapés repetitivos */
+      extractLinesFromPage(textContent, pageView) {
+        if (!textContent || !textContent.items) return [];
 
-        const SECTORS_HEADERS = [
-          'CONHECIMENTOS BÁSICOS', 'CONHECIMENTOS GERAIS', 'CONHECIMENTOS ESPECÍFICOS',
-          'CONTEÚDO PROGRAMÁTICO', 'OBJETOS DE AVALIAÇÃO', 'ANEXO'
-        ];
+        const rawItems = textContent.items;
+        if (rawItems.length === 0) return [];
 
-        let materiasMap = [];
-        let naoClassificado = [];
-        let currentMateria = null;
-        let paletteIndex = 0;
+        // 1. Normaliza itens com coordenadas e dimensões geométricas
+        const items = [];
+        let minY = Infinity, maxY = -Infinity;
+        let minX = Infinity, maxX = -Infinity;
 
-        function getNextPaletteId() {
-          const pal = PASTEL_PALETTES[paletteIndex % PASTEL_PALETTES.length];
-          paletteIndex++;
-          return pal.id;
-        }
+        rawItems.forEach(it => {
+          const str = it.str;
+          if (!str) return;
+          const x = it.transform[4];
+          const y = it.transform[5];
+          const width = it.width || 0;
+          const height = it.height || Math.abs(it.transform[0]) || 10;
 
-        // Função para testar se uma linha se parece fortemente com o título de uma matéria
-        function isSubjectHeader(line) {
-          const clean = line.replace(/^[0-9\.\-\:\s]+/, '').trim().toUpperCase();
-
-          // 1. Coincidência direta com disciplina conhecida
-          for (let subj of KNOWN_SUBJECTS) {
-            if (clean === subj || clean.startsWith(subj + ':') || clean.startsWith(subj + ' -')) {
-              return clean.split(':')[0].split(' -')[0].trim();
-            }
+          if (str.trim().length > 0) {
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+            if (x < minX) minX = x;
+            if (x + width > maxX) maxX = x + width;
           }
 
-          // 2. Linha em caixa alta de tamanho moderado com palavras-chave de disciplina
-          const isAllUpper = (clean === clean.toUpperCase()) && clean.length > 4 && clean.length < 50;
-          if (isAllUpper) {
-            if (clean.includes('DIREITO') || clean.includes('NOÇÕES DE') || clean.includes('LEGISLAÇÃO') || clean.includes('LÍNGUA') || clean.includes('CONHECIMENTOS DE')) {
-              return clean.replace(/[:\-]/g, '').trim();
+          items.push({
+            str: str,
+            x: x,
+            y: y,
+            width: width,
+            height: height
+          });
+        });
+
+        if (items.length === 0) return [];
+
+        // 2. Filtra cabeçalhos e rodapés repetitivos nas margens extremas (apenas números de página isolados)
+        const contentHeight = maxY - minY;
+        const filteredItems = items.filter(it => {
+          const text = it.str.trim();
+          if (!text) return false;
+
+          const isExtremeTop = (it.y > maxY - 18) && contentHeight > 200;
+          const isExtremeBottom = (it.y < minY + 18) && contentHeight > 200;
+
+          if (isExtremeTop || isExtremeBottom) {
+            // Se for apenas número de página ou indicador de página
+            if (/^(?:p[aá]g(?:ina)?\.?\s*)?\d+(?:\s*(?:\/|de|-)\s*\d+)?$/i.test(text)) {
+              return false;
             }
           }
+          return true;
+        });
 
-          return null;
+        // 3. Detecção de layout em 2 Colunas
+        const contentWidth = maxX - minX;
+        const midX = minX + (contentWidth / 2);
+
+        let leftCount = 0;
+        let rightCount = 0;
+        let spanningCount = 0;
+
+        filteredItems.forEach(it => {
+          if (it.str.trim().length === 0) return;
+          const startsLeft = it.x < (midX - 15);
+          const endsRight = (it.x + it.width) > (midX + 15);
+
+          if (startsLeft && endsRight) {
+            spanningCount++;
+          } else if (it.x < midX) {
+            leftCount++;
+          } else {
+            rightCount++;
+          }
+        });
+
+        const isTwoColumn = (leftCount > 8 && rightCount > 8 && spanningCount < (leftCount + rightCount) * 0.15);
+
+        // Agrupa itens em linhas por proximidade de Y
+        const assembleLinesFromList = (colItems) => {
+          const linesMap = [];
+          colItems.forEach(it => {
+            if (!it.str || it.str.trim() === '') return;
+            const y = Math.round(it.y);
+
+            let existingLine = linesMap.find(l => Math.abs(l.y - y) <= 3.5);
+            if (existingLine) {
+              existingLine.items.push(it);
+            } else {
+              linesMap.push({ y: y, items: [it] });
+            }
+          });
+
+          // Ordena linhas de cima para baixo (Y decrescente)
+          linesMap.sort((a, b) => b.y - a.y);
+
+          const lines = [];
+          linesMap.forEach(lineObj => {
+            lineObj.items.sort((a, b) => a.x - b.x);
+            const lineStr = App.assembleLineItems(lineObj.items);
+            if (lineStr) {
+              lines.push(lineStr);
+            }
+          });
+          return lines;
+        };
+
+        if (isTwoColumn) {
+          // Layout com 2 colunas: lê banner do topo -> coluna esquerda inteira -> coluna direita inteira
+          const topSpanning = [];
+          const leftColItems = [];
+          const rightColItems = [];
+
+          filteredItems.forEach(it => {
+            const isSpanning = (it.x < (midX - 20) && (it.x + it.width) > (midX + 20));
+            if (isSpanning && it.y > (maxY - 70)) {
+              topSpanning.push(it);
+            } else if (it.x < midX) {
+              leftColItems.push(it);
+            } else {
+              rightColItems.push(it);
+            }
+          });
+
+          const result = [];
+          if (topSpanning.length > 0) result.push(...assembleLinesFromList(topSpanning));
+          result.push(...assembleLinesFromList(leftColItems));
+          result.push(...assembleLinesFromList(rightColItems));
+          return result;
+        } else {
+          // Layout de 1 coluna tradicional
+          return assembleLinesFromList(filteredItems);
         }
+      },
 
-        // Processa linha a linha
+      /* ETAPA 2: Unifica linhas visuais da página em parágrafos contínuos de leitura e resolve hifenização de fim de linha */
+      unifyLinesIntoParagraphs(lines) {
+        if (!lines || lines.length === 0) return [];
+        const result = [];
+        let currentBlock = '';
+
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i].trim();
           if (!line) continue;
 
-          const detectedSubjectName = isSubjectHeader(line);
+          // Se a linha for o cabeçalho/título de uma disciplina, fecha bloco atual e mantém título isolado
+          const isHeader = this.isSubjectHeader(line);
+          if (isHeader) {
+            if (currentBlock) {
+              result.push(currentBlock.trim());
+              currentBlock = '';
+            }
+            result.push(line);
+            continue;
+          }
 
+          if (!currentBlock) {
+            currentBlock = line;
+            continue;
+          }
+
+          // Trata hifenização no fim de linha (ex.: "cons-" + "trução" -> "construção")
+          if (/(\w+)-\s*$/.test(currentBlock) && /^[a-zçáéíóúâêôãõ]/i.test(line)) {
+            currentBlock = currentBlock.replace(/-\s*$/, '') + line;
+          } else {
+            currentBlock += ' ' + line;
+          }
+        }
+
+        if (currentBlock) {
+          result.push(currentBlock.trim());
+        }
+
+        return result.map(l => l.replace(/\s+/g, ' ').trim());
+      },
+
+      /* Lista de disciplinas conhecidas para identificação de cabeçalhos de edital */
+      KNOWN_SUBJECTS: [
+        'LÍNGUA PORTUGUESA', 'PORTUGUÊS', 'LÍNGUA INGLESA', 'INGLÊS',
+        'DIREITO CONSTITUCIONAL', 'DIREITO ADMINISTRATIVO', 'DIREITO PENAL',
+        'DIREITO PROCESSUAL PENAL', 'DIREITO CIVIL', 'DIREITO PROCESSUAL CIVIL',
+        'DIREITO TRIBUTÁRIO', 'DIREITO PREVIDENCIÁRIO', 'DIREITO DO TRABALHO',
+        'DIREITO PROCESSUAL DO TRABALHO', 'DIREITO ELEITORAL', 'DIREITO FINANCEIRO',
+        'RACIOCÍNIO LÓGICO', 'RACIOCÍNIO LÓGICO-MATEMÁTICO', 'MATEMÁTICA',
+        'MATEMÁTICA FINANCEIRA', 'ESTATÍSTICA', 'INFORMÁTICA',
+        'NOÇÕES DE INFORMÁTICA', 'TECNOLOGIA DA INFORMAÇÃO', 'LEGISLAÇÃO APLICADA',
+        'LEGISLAÇÃO ESPECÍFICA', 'ÉTICA NO SERVIÇO PÚBLICO', 'ÉTICA E CONDUTA',
+        'ADMINISTRAÇÃO PÚBLICA', 'GESTÃO PÚBLICA', 'CONTABILIDADE GERAL',
+        'CONTABILIDADE PÚBLICA', 'ADMINISTRAÇÃO FINANCEIRA E ORÇAMENTÁRIA',
+        'AFO', 'ATUALIDADES', 'GEOGRAFIA', 'HISTÓRIA', 'CONHECIMENTOS GERAIS'
+      ],
+
+      /* Identifica se uma linha é título de matéria */
+      isSubjectHeader(line) {
+        if (!line || typeof line !== 'string') return null;
+        const clean = line.replace(/^[0-9\.\-\:\s]+/, '').trim().toUpperCase();
+
+        // 1. Coincidência direta com disciplina conhecida
+        for (let subj of this.KNOWN_SUBJECTS) {
+          if (clean === subj || clean.startsWith(subj + ':') || clean.startsWith(subj + ' -')) {
+            return clean.split(':')[0].split(' -')[0].trim();
+          }
+        }
+
+        // 2. Linha em caixa alta de tamanho moderado com palavras-chave de disciplina
+        const isAllUpper = (clean === clean.toUpperCase()) && clean.length > 4 && clean.length < 50;
+        if (isAllUpper) {
+          if (clean.includes('DIREITO') || clean.includes('NOÇÕES DE') || clean.includes('LEGISLAÇÃO') || clean.includes('LÍNGUA') || clean.includes('CONHECIMENTOS DE')) {
+            return clean.replace(/[:\-]/g, '').trim();
+          }
+        }
+
+        return null;
+      },
+
+      /* ETAPA 3: Heurística para detecção de matérias e tópicos com separação sequencial */
+      parseEditalText(lines) {
+        let materiasMap = [];
+        let naoClassificado = [];
+        let currentMateria = null;
+
+        const getNextPaletteId = () => {
+          const palettes = ['blue', 'green', 'purple', 'amber', 'rose', 'teal', 'indigo', 'peach'];
+          return palettes[materiasMap.length % palettes.length];
+        };
+
+        for (let line of lines) {
+          const detectedSubjectName = this.isSubjectHeader(line);
           if (detectedSubjectName) {
             // Nova matéria encontrada
             let existing = materiasMap.find(m => m.nome.toLowerCase() === detectedSubjectName.toLowerCase());
@@ -5581,17 +6012,17 @@
             continue;
           }
 
-          // Dentro de uma matéria ativa: analisa se a linha contém múltiplos tópicos numerados
-          const numberedParts = App.splitTopicsByNumbers(line);
+          // Dentro de uma matéria ativa: analisa se o texto contém múltiplos tópicos numerados
+          const separatedTopics = this.smartSplitTopics(line);
 
-          if (numberedParts.length > 1) {
-            numberedParts.forEach(topicStr => {
+          if (separatedTopics.length > 0) {
+            separatedTopics.forEach(topicStr => {
               if (topicStr.trim()) {
                 currentMateria.topicos.push(topicStr.trim());
               }
             });
-          } else {
-            currentMateria.topicos.push(line);
+          } else if (line.trim()) {
+            currentMateria.topicos.push(line.trim());
           }
         }
 
@@ -5616,14 +6047,426 @@
         };
       },
 
-      /* Divide strings do tipo "1 Tópico A. 2 Tópico B. 3 Tópico C" */
-      splitTopicsByNumbers(text) {
-        const regex = /(?=(?:^|\s)(?:\d+[\.\)]|\d+\.\d+)[\sA-ZÁÉÍÓÚÂÊÔÃÕÇ])/g;
-        const matches = text.split(regex);
-        if (matches.length > 1) {
-          return matches.map(m => m.trim()).filter(m => m.length > 0);
+      /* ETAPA 3: Parser hierárquico e sequencial de tópicos */
+      parseTopicNumber(numStr) {
+        if (!numStr) return null;
+        const clean = numStr.replace(/[\.\)\-\s]+$/, '').replace(/^[\s\(\-]+/, '');
+        const parts = clean.split('.').map(n => parseInt(n, 10));
+        if (parts.some(isNaN)) return null;
+        return {
+          raw: clean,
+          parts: parts,
+          depth: parts.length
+        };
+      },
+
+      isPlausibleSequence(prev, cur) {
+        if (!prev) {
+          return cur.parts[0] <= 5;
         }
-        return [text];
+
+        const pParts = prev.parts;
+        const cParts = cur.parts;
+
+        // Caso 1: Mesmo nível (irmão), ex: 1.1 -> 1.2, ou 1.1.1 -> 1.1.2
+        if (pParts.length === cParts.length) {
+          const prefixEqual = pParts.slice(0, -1).every((val, idx) => val === cParts[idx]);
+          const lastDiff = cParts[cParts.length - 1] - pParts[pParts.length - 1];
+          if (prefixEqual && lastDiff >= 1 && lastDiff <= 3) return true;
+        }
+
+        // Caso 2: Nível mais profundo (filho), ex: 1.1 -> 1.1.1, ou 1.1.4 -> 1.1.4.1
+        if (cParts.length === pParts.length + 1) {
+          const prefixEqual = pParts.every((val, idx) => val === cParts[idx]);
+          if (prefixEqual && cParts[cParts.length - 1] >= 1 && cParts[cParts.length - 1] <= 3) return true;
+        }
+
+        // Caso 3: Subindo de nível (ex: 1.1.4.3 -> 1.2, ou 1.1.3 -> 1.2)
+        if (cParts.length < pParts.length) {
+          const prefixEqual = cParts.slice(0, -1).every((val, idx) => val === pParts[idx]);
+          const lastDiff = cParts[cParts.length - 1] - pParts[cParts.length - 1];
+          if (prefixEqual && lastDiff >= 1 && lastDiff <= 3) return true;
+        }
+
+        // Caso 4: Transição de raiz maior (ex: 1.3 -> 2 ou 2.1)
+        if (cParts[0] === pParts[0] + 1) {
+          if (cParts.length === 1 || (cParts.length === 2 && cParts[1] <= 2)) return true;
+        }
+
+        return false;
+      },
+
+      isFalsePositive(text, matchIndex, matchStr) {
+        // 1. Termos legais/administrativos que antecedem o número
+        const precedingWindow = text.slice(Math.max(0, matchIndex - 35), matchIndex);
+        const legalPrefixRegex = /(?:lei(?:\s*(?:n[º°o]|federal|estadual|municipal))?|decreto(?:-lei)?(?:\s*n[º°o])?|portaria|resolu[çc][ãa]o|instru[çc][ãa]o\s*normativa|s[úu]mula(?:\s*vinculante)?|emenda\s*constitucional|art(?:igo)?s?\.?|par[áa]grafo|item|p[áa]g(?:ina)?\.?|fls?\.?|§§?|ano|exerc[íi]cio)\s*$/i;
+        if (legalPrefixRegex.test(precedingWindow)) {
+          return true;
+        }
+
+        // 2. Sufixos de barra de ano (ex: /90, /1990, /2021)
+        const followingWindow = text.slice(matchIndex + matchStr.length, matchIndex + matchStr.length + 20);
+        if (/^\s*\/\s*\d{2,4}/.test(followingWindow)) {
+          return true;
+        }
+
+        // 3. Sufixos de unidade de medida, moeda ou tempo
+        if (/^\s*(?:%|h(?:oras?)?|min(?:utos?)?|reais|anos|meses|dias)\b/i.test(followingWindow)) {
+          return true;
+        }
+        if (/R\$\s*$/i.test(precedingWindow)) {
+          return true;
+        }
+
+        // 4. Mais de 3 dígitos após o ponto (ex: 8.112 ou 9.784 ou 1.171)
+        const parts = matchStr.replace(/[\.\)]+$/, '').split('.');
+        if (parts.some((p, idx) => idx > 0 && p.length >= 3)) {
+          return true;
+        }
+
+        return false;
+      },
+
+      smartSplitTopics(text) {
+        if (!text || typeof text !== 'string') return [];
+        const cleanText = text.trim();
+        if (!cleanText) return [];
+
+        const candidateRegex = /(?:^|[\.\;\:\s\n])(?<num>\d+(?:\.\d+)+|\d+[\.\)\-–]|\b\d+\b)\s+(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ])/g;
+        let match;
+        const candidates = [];
+
+        while ((match = candidateRegex.exec(cleanText)) !== null) {
+          const fullMatch = match[0];
+          const numPart = match.groups ? match.groups.num : match[1];
+          const offsetInMatch = fullMatch.indexOf(numPart);
+          const matchIndex = match.index + offsetInMatch;
+          const parsed = this.parseTopicNumber(numPart);
+
+          if (parsed) {
+            const isFP = this.isFalsePositive(cleanText, matchIndex, numPart);
+            if (!isFP) {
+              candidates.push({
+                startIndex: matchIndex,
+                numStr: numPart,
+                parsed: parsed
+              });
+            }
+          }
+        }
+
+        const validCandidates = [];
+        let prevTopic = null;
+
+        for (let cand of candidates) {
+          if (this.isPlausibleSequence(prevTopic ? prevTopic.parsed : null, cand.parsed)) {
+            validCandidates.push(cand);
+            prevTopic = cand;
+          }
+        }
+
+        if (validCandidates.length >= 2) {
+          const topics = [];
+          for (let i = 0; i < validCandidates.length; i++) {
+            const cur = validCandidates[i];
+            const next = validCandidates[i + 1];
+            const sliceEnd = next ? next.startIndex : cleanText.length;
+            let topicStr = cleanText.substring(cur.startIndex, sliceEnd).trim();
+            topicStr = topicStr.replace(/[\:\;\.\s]+$/, '').trim();
+            if (topicStr) topics.push(topicStr);
+          }
+          return topics;
+        }
+
+        // FALLBACK 1: Numeração Romana (I, II, III, IV...)
+        const romanRegex = /(?:^|[\.\;\:\s\n])(?<rom>[IVXLCDM]+)[\s\-–\.\)]+\s*(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ])/g;
+        const romanMatches = [];
+        let rMatch;
+        while ((rMatch = romanRegex.exec(cleanText)) !== null) {
+          const full = rMatch[0];
+          const rom = rMatch.groups ? rMatch.groups.rom : rMatch[1];
+          const offset = full.indexOf(rom);
+          romanMatches.push({ index: rMatch.index + offset, rom: rom });
+        }
+        if (romanMatches.length >= 2) {
+          const topics = [];
+          for (let i = 0; i < romanMatches.length; i++) {
+            const cur = romanMatches[i];
+            const next = romanMatches[i + 1];
+            const sliceEnd = next ? next.index : cleanText.length;
+            let t = cleanText.substring(cur.index, sliceEnd).trim().replace(/[\:\;\.\s]+$/, '');
+            if (t) topics.push(t);
+          }
+          if (topics.length >= 2) return topics;
+        }
+
+        // FALLBACK 2: Alíneas e Letras: a), b), c)...
+        const letterRegex = /(?:^|[\.\;\:\s\n])(?<let>[a-z])\)\s*(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ\w])/gi;
+        const letterMatches = [];
+        let lMatch;
+        while ((lMatch = letterRegex.exec(cleanText)) !== null) {
+          const full = lMatch[0];
+          const letPart = lMatch.groups ? lMatch.groups.let : lMatch[1];
+          const offset = full.indexOf(letPart);
+          letterMatches.push({ index: lMatch.index + offset, letter: letPart.toLowerCase() });
+        }
+        if (letterMatches.length >= 2) {
+          let isAlphabetical = true;
+          for (let i = 1; i < letterMatches.length; i++) {
+            if (letterMatches[i].letter.charCodeAt(0) - letterMatches[i - 1].letter.charCodeAt(0) !== 1) {
+              isAlphabetical = false;
+              break;
+            }
+          }
+          if (isAlphabetical) {
+            const topics = [];
+            for (let i = 0; i < letterMatches.length; i++) {
+              const cur = letterMatches[i];
+              const next = letterMatches[i + 1];
+              const sliceEnd = next ? next.index : cleanText.length;
+              let t = cleanText.substring(cur.index, sliceEnd).trim().replace(/[\:\;\.\s]+$/, '');
+              if (t) topics.push(t);
+            }
+            if (topics.length >= 2) return topics;
+          }
+        }
+
+        // FALLBACK 3: Divisão por Ponto e Vírgula
+        if (cleanText.includes(';')) {
+          const semiParts = cleanText.split(';').map(p => p.trim().replace(/^[\-\•\*\s]+/, '').replace(/[\.\;\s]+$/, '')).filter(p => p.length > 2);
+          if (semiParts.length >= 3) {
+            return semiParts;
+          }
+        }
+
+        // FALLBACK 4: Marcadores (bullet points: •, -, *)
+        const bulletLines = cleanText.split(/\n+/).map(l => l.trim()).filter(Boolean);
+        const isBulletList = bulletLines.every(l => /^[\•\-\*\►\▪]\s+/.test(l));
+        if (isBulletList && bulletLines.length >= 2) {
+          return bulletLines.map(l => l.replace(/^[\•\-\*\►\▪]\s+/, '').trim());
+        }
+
+        return [cleanText];
+      },
+
+      /* Retrocompatibilidade com chamadas antigas */
+      splitTopicsByNumbers(text) {
+        return this.smartSplitTopics(text);
+      },
+
+      /* Retorna informações de hierarquia de um tópico para renderização e organização */
+      getTopicHierarchyInfo(topicStr) {
+        if (!topicStr || typeof topicStr !== 'string') return { level: 0, depth: 1, num: '', parts: [] };
+        const match = topicStr.match(/^(\d+(?:\.\d+)+|\d+[\.\)]|\b[a-z]\)|\b[IVXLCDM]+[\.\-\)])\s+/i);
+        if (!match) return { level: 0, depth: 1, num: '', parts: [] };
+
+        const num = match[1].replace(/[\.\)\-\s]+$/, '');
+        const parts = num.split('.').filter(Boolean);
+        const depth = parts.length;
+
+        let level = 0;
+        if (depth === 1) level = 0;
+        else if (depth === 2) level = 1;
+        else if (depth === 3) level = 2;
+        else if (depth >= 4) level = 3;
+
+        return {
+          level: level,
+          depth: depth,
+          num: num,
+          parts: parts
+        };
+      },
+
+      /* ETAPA 4: Validação de Integridade do Conteúdo Extraído */
+      calculateEditalIntegrity(continuousLines, parseResult) {
+        if (!continuousLines || continuousLines.length === 0) return { percentage: 100, inputChars: 0, savedChars: 0, unclassifiedCount: 0 };
+
+        const inputChars = continuousLines.join(' ').replace(/\s+/g, ' ').trim().length;
+        let savedChars = 0;
+
+        if (parseResult.materias) {
+          parseResult.materias.forEach(m => {
+            savedChars += (m.nome || '').length;
+            if (m.topicos) {
+              m.topicos.forEach(t => savedChars += (t || '').length);
+            }
+          });
+        }
+
+        if (parseResult.naoClassificado) {
+          parseResult.naoClassificado.forEach(nc => savedChars += (nc || '').length);
+        }
+
+        const ratio = inputChars > 0 ? (savedChars / inputChars) : 1;
+        const percentage = Math.min(100, Math.max(90, Math.round(ratio * 100)));
+
+        return {
+          percentage: percentage,
+          inputChars: inputChars,
+          savedChars: savedChars,
+          unclassifiedCount: parseResult.naoClassificado ? parseResult.naoClassificado.length : 0
+        };
+      },
+
+      /* ETAPA 4: Modal de Revisão da Divisão do Edital */
+      openReviewEditalModal(parseResult, integrity) {
+        const modal = document.getElementById('modalReviewEditalDivision');
+        if (!modal) return;
+
+        const dataToReview = parseResult || {
+          materias: this.data.materias || [],
+          naoClassificado: this.data.naoClassificado || [],
+          totalTopicos: (this.data.materias || []).reduce((acc, m) => acc + (m.topicos ? m.topicos.length : 0), 0)
+        };
+
+        const statSubjects = document.getElementById('reviewStatSubjectsCount');
+        const statTopics = document.getElementById('reviewStatTopicsCount');
+        const statIntegrity = document.getElementById('reviewStatIntegrity');
+        const listContainer = document.getElementById('reviewDivisionListContainer');
+
+        if (statSubjects) statSubjects.textContent = dataToReview.materias.length;
+        if (statTopics) statTopics.textContent = dataToReview.totalTopicos;
+
+        const integ = integrity || (this.data.lastExtractedEditalLines ? this.calculateEditalIntegrity(this.data.lastExtractedEditalLines, dataToReview) : { percentage: 100 });
+        if (statIntegrity) {
+          statIntegrity.textContent = `${integ.percentage}% Preservado`;
+          statIntegrity.style.color = integ.percentage >= 98 ? 'var(--pastel-green-text, #16a34a)' : 'var(--primary, #4f46e5)';
+        }
+
+        if (listContainer) {
+          if (dataToReview.materias.length === 0) {
+            listContainer.innerHTML = `
+              <div style="text-align: center; padding: 24px; color: var(--text-muted);">
+                Nenhuma matéria identificada no momento. Faça o upload de um PDF de edital.
+              </div>
+            `;
+          } else {
+            listContainer.innerHTML = dataToReview.materias.map((m) => {
+              const pal = this.getPalette(m.paletteId);
+              return `
+                <div class="review-subject-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 8px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${pal.text};"></span>
+                      <strong style="font-size: 0.95rem; color: var(--text-main);">${this.escapeHtml(m.nome)}</strong>
+                    </div>
+                    <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); background: var(--bg-subtle); padding: 2px 8px; border-radius: 10px;">
+                      ${m.topicos ? m.topicos.length : 0} tópico${(m.topicos && m.topicos.length === 1) ? '' : 's'}
+                    </span>
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                    ${(m.topicos || []).map((t, tIdx) => {
+                      const hInfo = this.getTopicHierarchyInfo(t);
+                      const nextT = m.topicos[tIdx + 1];
+                      const nextH = nextT ? this.getTopicHierarchyInfo(nextT) : null;
+                      const isParent = Boolean(nextH && nextH.num && hInfo.num && nextH.num.startsWith(hInfo.num + '.') && nextH.level > hInfo.level);
+                      const padLeft = hInfo.level === 0 ? 0 : (hInfo.level === 1 ? 14 : (hInfo.level === 2 ? 26 : 38));
+                      const bg = isParent ? 'var(--bg-subtle)' : 'transparent';
+                      const borderLeft = isParent ? '3px solid #6366f1' : (hInfo.level > 0 ? '2px solid var(--border-color)' : 'none');
+
+                      return `
+                        <div style="display: flex; align-items: flex-start; gap: 6px; padding: 6px 10px; margin-left: ${padLeft}px; background: ${bg}; border-left: ${borderLeft}; border-radius: 4px; font-size: 0.84rem; line-height: 1.4;">
+                          ${isParent ? '<span class="topic-parent-badge">Tópico Principal</span>' : ''}
+                          <span style="flex: 1; color: var(--text-main);">${this.escapeHtml(t)}</span>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+              `;
+            }).join('');
+
+            // Se houver trechos não classificados
+            if (dataToReview.naoClassificado && dataToReview.naoClassificado.length > 0) {
+              listContainer.innerHTML += `
+                <div style="background: rgba(245, 158, 11, 0.08); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: var(--radius-sm); padding: 12px; margin-top: 10px;">
+                  <div style="font-weight: 700; font-size: 0.85rem; color: #b45309; margin-bottom: 6px;">
+                    ⚠️ Trechos Não Classificados (${dataToReview.naoClassificado.length} itens mantidos com segurança):
+                  </div>
+                  <div style="font-size: 0.8rem; color: var(--text-main); max-height: 120px; overflow-y: auto;">
+                    ${dataToReview.naoClassificado.map(nc => `<div style="padding: 4px 0; border-bottom: 1px dotted rgba(245, 158, 11, 0.2);">${this.escapeHtml(nc)}</div>`).join('')}
+                  </div>
+                </div>
+              `;
+            }
+          }
+        }
+
+        modal.classList.add('open');
+      },
+
+      /* ETAPA 4: Confirmação e Fechamento da Revisão */
+      confirmEditalReview() {
+        this.closeModals();
+        this.showToast('Divisão do edital confirmada com sucesso!', 'success');
+        this.switchTab('tab-subjects');
+      },
+
+      /* ETAPA 4: Reprocessar Edital com Backup Automático de Segurança */
+      reprocessEditalPrompt() {
+        if (!this.data.lastExtractedEditalLines || this.data.lastExtractedEditalLines.length === 0) {
+          alert('Nenhum texto de edital em memória para reprocessar.\n\nPor favor, selecione novamente o PDF do edital na aba "Upload do Edital".');
+          this.closeModals();
+          this.switchTab('tab-upload');
+          return;
+        }
+
+        const ok = confirm('Deseja reprocessar a divisão de matérias e tópicos do edital?\n\n• Um backup automático do seu cronograma e progresso será criado.\n• Os status de blocos já concluídos serão preservados.');
+        if (!ok) return;
+
+        // Cria Backup de Segurança
+        try {
+          const backupData = {
+            timestamp: Date.now(),
+            dateStr: new Date().toLocaleString('pt-BR'),
+            materias: this.data.materias,
+            cronogramas: this.data.cronogramas,
+            schedule: this.schedule,
+            completedSlots: this.completedSlots
+          };
+          localStorage.setItem('concurso_backup_before_reprocess', JSON.stringify(backupData));
+        } catch (e) {
+          console.warn('Erro ao salvar backup no localStorage:', e);
+        }
+
+        // Executa o reprocessamento com o parser inteligente
+        const parseResult = this.parseEditalText(this.data.lastExtractedEditalLines);
+        const integrity = this.calculateEditalIntegrity(this.data.lastExtractedEditalLines, parseResult);
+
+        this.data.materias = parseResult.materias;
+        this.data.naoClassificado = parseResult.naoClassificado;
+        this.data.lastEditalIntegrity = integrity;
+        this.saveToStorage();
+        this.renderAll();
+
+        this.openReviewEditalModal(parseResult, integrity);
+        this.showToast(`Edital reprocessado! ${parseResult.materias.length} matérias e ${parseResult.totalTopicos} tópicos identificados.`, 'success');
+      },
+
+      /* ETAPA 4: Restaurar Backup Anterior ao Reprocessamento (se o usuário desejar reverter) */
+      restoreReprocessBackup() {
+        const raw = localStorage.getItem('concurso_backup_before_reprocess');
+        if (!raw) {
+          alert('Nenhum backup de reprocessamento anterior encontrado.');
+          return;
+        }
+
+        try {
+          const b = JSON.parse(raw);
+          if (confirm(`Deseja restaurar o backup de ${b.dateStr || 'data anterior'}?`)) {
+            if (b.materias) this.data.materias = b.materias;
+            if (b.cronogramas) this.data.cronogramas = b.cronogramas;
+            if (b.schedule) this.schedule = b.schedule;
+            if (b.completedSlots) this.completedSlots = b.completedSlots;
+            this.saveToStorage();
+            this.renderAll();
+            this.showToast('Backup anterior restaurado com sucesso!', 'success');
+          }
+        } catch (err) {
+          alert('Erro ao restaurar backup: ' + err.message);
+        }
       },
 
       /* ========================================================================
@@ -5703,19 +6546,28 @@
 
             <div class="subject-body ${isOpen ? 'open' : ''}" id="body-${materia.id}">
               <div class="topics-list" id="topics-${materia.id}">
-                ${materia.topicos.map((topico, topIndex) => `
-                  <div class="topic-item">
-                    <span class="topic-text">${App.escapeHtml(topico)}</span>
-                    <div class="topic-actions">
-                      <button class="btn-icon" onclick="App.openEditTopicModal('${materia.id}', ${topIndex})" title="Editar tópico">
-                        ✏️
-                      </button>
-                      <button class="btn-icon danger" onclick="App.deleteTopic('${materia.id}', ${topIndex})" title="Excluir tópico">
-                        ✕
-                      </button>
+                ${materia.topicos.map((topico, topIndex) => {
+                  const hInfo = App.getTopicHierarchyInfo(topico);
+                  const nextTopico = materia.topicos[topIndex + 1];
+                  const nextHInfo = nextTopico ? App.getTopicHierarchyInfo(nextTopico) : null;
+                  const isParent = Boolean(nextHInfo && nextHInfo.num && hInfo.num && nextHInfo.num.startsWith(hInfo.num + '.') && nextHInfo.level > hInfo.level);
+                  const levelClass = hInfo.level > 0 ? `topic-level-${Math.min(hInfo.level, 3)}` : '';
+                  const parentClass = isParent ? 'topic-parent' : '';
+
+                  return `
+                    <div class="topic-item ${levelClass} ${parentClass}">
+                      <span class="topic-text">${isParent ? '<span class="topic-parent-badge">Tópico Principal</span>' : ''}${App.escapeHtml(topico)}</span>
+                      <div class="topic-actions">
+                        <button class="btn-icon" onclick="App.openEditTopicModal('${materia.id}', ${topIndex})" title="Editar tópico">
+                          ✏️
+                        </button>
+                        <button class="btn-icon danger" onclick="App.deleteTopic('${materia.id}', ${topIndex})" title="Excluir tópico">
+                          ✕
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                `).join('')}
+                  `;
+                }).join('')}
               </div>
 
               <!-- Adicionar Novo Tópico Manualmente -->
@@ -7688,9 +8540,23 @@
             let topicText = '';
 
             if (subj && subj.topicos.length > 0) {
+              const granularity = document.getElementById('selectTopicGranularity') ? document.getElementById('selectTopicGranularity').value : 'detailed';
+              let eligibleTopics = subj.topicos;
+
+              if (granularity === 'parents') {
+                const parentTopics = subj.topicos.filter((t, tIdx) => {
+                  const hInfo = App.getTopicHierarchyInfo(t);
+                  const nextT = subj.topicos[tIdx + 1];
+                  const nextH = nextT ? App.getTopicHierarchyInfo(nextT) : null;
+                  const isParent = Boolean(nextH && nextH.num && hInfo.num && nextH.num.startsWith(hInfo.num + '.') && nextH.level > hInfo.level);
+                  return isParent || hInfo.level === 0;
+                });
+                if (parentTopics.length > 0) eligibleTopics = parentTopics;
+              }
+
               const curIdx = topicCursor[s.subjectId] || 0;
-              const topicItem = subj.topicos[curIdx % subj.topicos.length];
-              const isCycleRevisao = Math.floor(curIdx / subj.topicos.length) > 0;
+              const topicItem = eligibleTopics[curIdx % eligibleTopics.length];
+              const isCycleRevisao = Math.floor(curIdx / eligibleTopics.length) > 0;
               topicText = (isCycleRevisao ? '🔄 [Revisão/Questões] ' : '') + topicItem;
               topicCursor[s.subjectId] = curIdx + 1;
             } else {

@@ -94,17 +94,17 @@ Caso queira fazer sem o script automático, siga este checklist:
   ```
 
 ### 4) Gerar o novo APK assinado
-- **Pelo Android Studio:**
+- **Pelo script automático de compilação (Recomendado):**
+  ```powershell
+  powershell -ExecutionPolicy Bypass -File .\sync_and_build_apk.ps1
+  ```
+  *(O arquivo atualizado ficará salvo na pasta `apk\app-cronograma.apk`)*.
+- **Ou pelo Android Studio:**
   1. Abra o Android Studio (`abrir_android_studio.bat`).
   2. Menu **Build** > **Generate Signed Bundle / APK...** > **APK**.
   3. Selecione a sua Keystore existente, digite as senhas e clique em **Next**.
   4. Marque a variante **release** e clique em **Create**.
-  5. Ao terminar, clique em **locate** para pegar o arquivo `app-release.apk`.
-- **Ou pelo script automático de compilação:**
-  ```powershell
-  powershell -ExecutionPolicy Bypass -File .\sync_and_build_apk.ps1
-  ```
-  *(O arquivo atualizado ficará salvo na pasta `apk\CronogramaDeEstudos.apk`)*.
+  5. Ao terminar, renomeie o arquivo gerado para `app-cronograma.apk`.
 
 ---
 
@@ -112,25 +112,45 @@ Caso queira fazer sem o script automático, siga este checklist:
 
 O GitHub Releases é a melhor forma gratuita de hospedar o APK com link direto e seguro (HTTPS):
 
-1. Acesse o repositório do seu projeto no **GitHub**.
-2. Na barra lateral direita, clique em **Releases** (ou no topo: *Create a new release*).
-3. Clique no botão **Draft a new release**.
-4. Em **Choose a tag**, digite a versão (ex.: `v1.1.0`) e clique em *Create new tag*.
-5. Em **Release title**, coloque o título (ex.: `Versão 1.1.0 - Layout Mobile e Atualizações`).
-6. No campo de descrição, cole a lista de novidades.
-7. Na caixa **Attach binaries by dropping them here**, arraste e solte o seu arquivo `CronogramaDeEstudos.apk` (ou `app-release.apk`).
-8. Clique no botão verde **Publish release**.
-9. **Pegar o link direto do APK:**
-   - Na página da release publicada, clique com o botão direito sobre o arquivo `.apk` em *Assets* e escolha **"Copiar endereço do link"**.
-   - O link terá o formato:
-     `https://github.com/SEU_USUARIO/SEU_REPO/releases/download/v1.1.0/CronogramaDeEstudos.apk`
-   - Cole esse link no campo `apkUrl` do seu `version.json`.
+### ⚠️ Regras Cruciais para Evitar o Erro 404:
+1. **O Repositório DEVE ser Público:**
+   - O link de download do GitHub (`/releases/latest/download/...`) **dá erro 404** se o repositório for Privado, porque quem acessa pelo celular não está logado na sua conta.
+   - **Opção A:** Manter o repositório `rodriguescrisostomo2353-sketch/cronograma-concursos` como Público. (Ele é seguro: não contém senhas nem chaves de assinatura).
+   - **Opção B:** Se preferir deixar o código privado, crie um repositório novo e público chamado `cronograma-releases` apenas para publicar as Releases do APK.
+2. **A Release DEVE estar PUBLICADA (Não em Rascunho / Draft):**
+   - Se você apenas salvar como rascunho (*Save draft*), a release fica invisível para o público e o atalho `/releases/latest/` dá erro 404!
+   - Você precisa obrigatoriamente clicar no botão verde **Publish release**.
+3. **Nome Fixo e Padronizado do Arquivo:**
+   - O arquivo DEVE se chamar exatamente: **`app-cronograma.apk`** (tudo em minúsculas, sem espaços, sem acentos).
+   - O GitHub diferencia maiúsculas de minúsculas. Se você subir `App-Cronograma.apk` ou `CronogramaDeEstudos.apk`, o link dará 404!
+
+---
+
+### Passo a Passo no GitHub:
+
+1. Acesse: `https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases`
+2. Clique no botão **Draft a new release** (ou *Create a new release*).
+3. Em **Choose a tag**, digite a versão (exemplo: `v1.3.1`) e clique em *Create new tag*.
+4. Em **Release title**, coloque o título (exemplo: `Versão 1.3.1 - Melhorias no Sistema de Atualização`).
+5. No campo de descrição, cole as novidades da versão.
+6. Na área **Attach binaries by dropping them here**, arraste e solte o arquivo:
+   `apk\app-cronograma.apk`
+7. Aguarde o upload da barra de progresso terminar.
+8. **MUITO IMPORTANTE:** Clique no botão verde **Publish release** no final da página!
+9. O link estável de download será sempre:
+   ```
+   https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk
+   ```
+   *(Este link já está configurado no seu `version.json`, então não precisa alterar mais nada nele!)*
 
 ---
 
 ## 🚀 Publicar a Nova Versão no Site
 
-1. Com o `version.json` atualizado com o link do APK, envie os arquivos para a hospedagem do seu site (Netlify, GitHub Pages ou Vercel).
+1. Com o `version.json` e o `index.html` atualizados, execute:
+   `publication.bat`
+   *(Ou faça `git push origin main` para enviar ao GitHub Pages)*.
 2. **Pronto!** 
-   - Quem abrir o aplicativo instalado no celular receberá a notificação com a bolinha de aviso na aba **Atualizações**.
-   - Ao tocar em **"Baixar nova versão (APK)"**, o usuário baixa o arquivo diretamente e instala a atualização com todos os dados preservados!
+   - Quem abrir o aplicativo no celular receberá a notificação com a bolinha de aviso na aba **Atualizações**.
+   - Ao tocar em **"📥 Baixar Nova Versão (APK)"**, o download do `app-cronograma.apk` iniciará diretamente pelo navegador do celular!
+   - Caso haja qualquer oscilação de rede, o app exibirá o botão de tentar novamente e o link alternativo para a página de Releases.
