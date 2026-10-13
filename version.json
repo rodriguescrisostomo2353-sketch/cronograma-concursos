@@ -1,17 +1,38 @@
 {
-  "version": "1.1.0",
-  "date": "2026-10-09",
+  "version": "1.2.0",
+  "date": "2026-10-13",
   "notes": [
-    "Novo layout mobile reorganizado com barra de navegação inferior fixa",
-    "Visualização do cronograma em 1 dia por vez no celular com abas dos dias e gestos de deslize (swipe)",
-    "Matérias organizadas em cards compactos e expansíveis (accordion)",
-    "Nova aba de Atualizações com verificação automática de novas versões do APK",
-    "Nova aba de Ajustes com alternância de tema claro/escuro e gerenciamento de dados",
-    "Tela de carregamento animada durante a leitura de editais em PDF",
-    "Exportação do cronograma em arquivo PDF de alta resolução"
+    "Criação manual de múltiplos cronogramas personalizados com alternador rápido",
+    "Geração automática configurável: escolha de dias disponíveis, disciplinas e horas uniformes ou específicas por dia",
+    "Definição de frequência semanal por disciplina com diagnóstico de horas em tempo real",
+    "Algoritmo inteligente de intercalação para balancear sessões e evitar matérias repetidas consecutivas",
+    "Presets rápidos de carga horária: Intensivo, Equilibrado e Leve",
+    "Priorização de matérias (Alta, Média, Baixa) com peso na distribuição semanal",
+    "Configuração de intervalo/pausa entre sessões de estudo (5 a 15 min)",
+    "Dia dedicado para revisão geral e simulados com geração de blocos de revisão",
+    "Contagem regressiva inteligente para a data da prova com horas restantes de estudo",
+    "Barra de progresso e porcentagem de cumprimento semanal do plano",
+    "Sistema de revisões espaçadas automáticas (D+1, D+7, D+30)",
+    "Fixação de horários (Lock 🔒) que são preservados ao regerar o cronograma",
+    "Cronômetro Pomodoro integrado com som e contagem de ciclos concluídos",
+    "Exportação do cronograma em imagem PNG de alta resolução e compartilhamento direto",
+    "Arrastar e soltar (Drag and Drop) no computador e modal simplificado no celular"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/CronogramaDeEstudos.apk",
   "history": [
+    {
+      "version": "1.1.0",
+      "date": "2026-10-09",
+      "notes": [
+        "Novo layout mobile reorganizado com barra de navegação inferior fixa",
+        "Visualização do cronograma em 1 dia por vez no celular com abas dos dias e gestos de deslize (swipe)",
+        "Matérias organizadas em cards compactos e expansíveis (accordion)",
+        "Nova aba de Atualizações com verificação automática de novas versões do APK",
+        "Nova aba de Ajustes com alternância de tema claro/escuro e gerenciamento de dados",
+        "Tela de carregamento animada durante a leitura de editais em PDF",
+        "Exportação do cronograma em arquivo PDF de alta resolução"
+      ]
+    },
     {
       "version": "1.0.0",
       "date": "2026-10-01",
