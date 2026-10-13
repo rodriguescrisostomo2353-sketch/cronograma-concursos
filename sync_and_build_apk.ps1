@@ -24,8 +24,10 @@ if (Test-Path $apkPath) {
     if (-not (Test-Path $destFolder)) {
         New-Item -ItemType Directory -Path $destFolder | Out-Null
     }
-    $finalApk = Join-Path $destFolder "CronogramaDeEstudos.apk"
+    $finalApk = Join-Path $destFolder "app-cronograma.apk"
     Copy-Item $apkPath -Destination $finalApk -Force
+    # Mantém também cópia com nome legado para compatibilidade local
+    Copy-Item $apkPath -Destination (Join-Path $destFolder "CronogramaDeEstudos.apk") -Force
     Write-Host "APK atualizado com sucesso em: $finalApk" -ForegroundColor Green
 } else {
     Write-Error "O arquivo APK não foi encontrado no caminho esperado!"

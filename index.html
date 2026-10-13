@@ -3746,10 +3746,18 @@
             <div class="update-status-box" id="updateStatusBox">
               <div class="update-version-row">
                 <span>Versão instalada no dispositivo:</span>
-                <strong id="updateCurrentVersionText">v1.0.0</strong>
+                <strong id="updateCurrentVersionText">v1.3.1</strong>
+              </div>
+              <div class="update-version-row" id="updateOnlineVersionRow" style="display: none;">
+                <span>Versão disponível online:</span>
+                <strong id="updateOnlineVersionText" style="color: var(--primary);">--</strong>
               </div>
               <div class="update-status-msg" id="updateStatusMsg">
                 Toque no botão abaixo para verificar se há novas versões disponíveis online.
+              </div>
+              <div class="update-diagnostic-info" id="updateDiagnosticInfo" style="margin-top: 6px; font-size: 0.75rem; color: var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 8px; word-break: break-all;">
+                <span>Servidor consultado:</span> <span id="updateUrlDisplay">https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json</span>
+                <div id="updateLastCheckTime" style="margin-top: 3px; font-size: 0.72rem; opacity: 0.85;"></div>
               </div>
             </div>
 
@@ -3763,7 +3771,7 @@
             <div id="newVersionBox" class="new-version-box" style="display: none;">
               <div class="new-version-header">
                 <span class="new-version-badge">🎉 Nova Versão Disponível</span>
-                <span class="new-version-tag" id="newVersionTag">v1.1.0</span>
+                <span class="new-version-tag" id="newVersionTag">v1.3.1</span>
               </div>
               <p class="new-version-date" id="newVersionDate">Lançada em: --/--/----</p>
               <div class="new-version-notes-title">Novidades desta versão:</div>
@@ -3773,6 +3781,13 @@
               <a id="btnDownloadApk" href="#" target="_blank" class="btn btn-primary btn-lg" style="width: 100%; text-decoration: none; margin-top: 14px; text-align: center;">
                 📥 Baixar Nova Versão (APK)
               </a>
+              <div id="downloadHelpBox" style="margin-top: 12px; font-size: 0.82rem; color: var(--text-main); background: rgba(0,0,0,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; display: none;">
+                <p style="margin: 0 0 6px 0; font-weight: 600;">O download não iniciou ou o link deu erro?</p>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <button type="button" id="btnRetryDownload" class="btn btn-sm btn-secondary" style="padding: 4px 10px; font-size: 0.78rem;">🔄 Tentar Novamente</button>
+                  <a id="btnOpenReleasesPage" href="https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases" target="_blank" class="btn btn-sm btn-outline" style="padding: 4px 10px; font-size: 0.78rem; text-decoration: none;">🌐 Abrir no GitHub</a>
+                </div>
+              </div>
               <p class="new-version-install-tip">
                 💡 <strong>Dica de instalação:</strong> Após baixar o arquivo APK, toque nele para instalar. Se o Android pedir, permita a instalação de fontes externas.
               </p>
@@ -4533,11 +4548,76 @@
      * =========================================================================
      * SISTEMA DE VERSÃO E ATUALIZAÇÃO DO APLICATIVO
      * =========================================================================
+     * UPDATE_URL: URL absoluta online onde o version.json é publicado.
+     * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
+     * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.3.0";
-    const REMOTE_VERSION_URL = (typeof window !== 'undefined' && window.location && window.location.hostname === 'localhost')
-      ? "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json"
-      : "./version.json";
+    const APP_VERSION = "1.3.1";
+    const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
+    const REMOTE_VERSION_URL = UPDATE_URL; // Mantido para compatibilidade
+    const GITHUB_RELEASES_URL = "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases";
+
+    /**
+     * Busca dados da versão online com suporte ao plugin nativo CapacitorHttp (quando em APK Android)
+     * e fallback para fetch padrão com bypass estrito de cache (?t= e no-store).
+     */
+    async function fetchOnlineVersionData(targetUrl) {
+      const cacheBustUrl = `${targetUrl}${targetUrl.includes('?') ? '&' : '?'}t=${Date.now()}`;
+      console.log('[Atualizações] Verificando versão online em:', cacheBustUrl);
+
+      // 1. Tenta usar o plugin nativo CapacitorHttp (se estiver rodando no app Android nativo)
+      try {
+        const CapHttp = (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.CapacitorHttp)
+          ? window.Capacitor.Plugins.CapacitorHttp
+          : null;
+
+        if (CapHttp && typeof CapHttp.get === 'function') {
+          console.log('[Atualizações] Utilizando CapacitorHttp nativo do Android');
+          const capResp = await CapHttp.get({
+            url: cacheBustUrl,
+            headers: {
+              'Accept': 'application/json',
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache'
+            }
+          });
+          if (capResp && (capResp.status === 200 || capResp.status === 304)) {
+            const data = (typeof capResp.data === 'string') ? JSON.parse(capResp.data) : capResp.data;
+            console.log('[Atualizações] Resposta recebida via CapacitorHttp:', data);
+            return { ok: true, status: capResp.status, data };
+          }
+          console.warn('[Atualizações] CapacitorHttp retornou status:', capResp ? capResp.status : 'desconhecido');
+          return { ok: false, status: capResp ? capResp.status : 0, error: `Status HTTP ${capResp ? capResp.status : 0}` };
+        }
+      } catch (nativeErr) {
+        console.warn('[Atualizações] CapacitorHttp não disponível ou falhou, tentando fetch web:', nativeErr);
+      }
+
+      // 2. Fallback para fetch padrão com no-store
+      try {
+        const response = await fetch(cacheBustUrl, {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          }
+        });
+
+        if (!response.ok) {
+          console.warn(`[Atualizações] Resposta do servidor não-OK: ${response.status} ${response.statusText}`);
+          return { ok: false, status: response.status, error: `HTTP ${response.status} (${response.statusText || 'Erro no servidor'})` };
+        }
+
+        const data = await response.json();
+        console.log('[Atualizações] Resposta recebida via fetch padrão:', data);
+        return { ok: true, status: response.status, data };
+      } catch (fetchErr) {
+        console.error('[Atualizações] Erro na requisição fetch:', fetchErr);
+        return { ok: false, status: 0, error: fetchErr.message || 'Falha de conexão com a internet' };
+      }
+    }
 
     /**
      * Compara duas versões no formato semântico (major.minor.patch) de forma numérica.
@@ -5114,8 +5194,19 @@
       initVersionDisplay() {
         const topEl = document.getElementById('updateCurrentVersionText');
         const settingsEl = document.getElementById('settingsAppVersion');
+        const urlDisp = document.getElementById('updateUrlDisplay');
         if (topEl) topEl.textContent = `v${APP_VERSION}`;
         if (settingsEl) settingsEl.textContent = `v${APP_VERSION}`;
+        if (urlDisp) urlDisp.textContent = UPDATE_URL;
+
+        const lastCheckStr = localStorage.getItem('concurso_last_version_check');
+        const lastCheckEl = document.getElementById('updateLastCheckTime');
+        if (lastCheckEl && lastCheckStr) {
+          try {
+            const dt = new Date(parseInt(lastCheckStr, 10));
+            lastCheckEl.textContent = `Última checagem: ${dt.toLocaleDateString('pt-BR')} às ${dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+          } catch (e) {}
+        }
 
         // Restaura badge caso haja atualização pendente já gravada
         try {
@@ -5132,11 +5223,16 @@
       },
 
       initUpdateListeners() {
+        let resumeDebounceTimer = null;
         const handleResume = () => {
-          App.checkUpdates(false);
+          if (resumeDebounceTimer) clearTimeout(resumeDebounceTimer);
+          resumeDebounceTimer = setTimeout(() => {
+            console.log('[Atualizações] App aberto/retomado: verificando atualizações no servidor online...');
+            App.checkUpdates(false);
+          }, 300);
         };
 
-        // Ao voltar ao primeiro plano
+        // Ao voltar ao primeiro plano na aba/navegador
         document.addEventListener('visibilitychange', () => {
           if (document.visibilityState === 'visible') {
             handleResume();
@@ -5157,43 +5253,96 @@
             });
           } catch (e) {}
         }
-      },
 
-      async checkUpdates(force = false) {
-        const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
-        const now = Date.now();
-        const lastCheckStr = localStorage.getItem('concurso_last_version_check');
-        const lastCheck = lastCheckStr ? parseInt(lastCheckStr, 10) : 0;
+        // Tratamento do botão de download do APK e opções de fallback
+        const btnApk = document.getElementById('btnDownloadApk');
+        const helpBox = document.getElementById('downloadHelpBox');
+        if (btnApk) {
+          btnApk.addEventListener('click', (e) => {
+            const targetHref = btnApk.getAttribute('href');
+            if (!targetHref || targetHref === '#' || targetHref === '') {
+              e.preventDefault();
+              App.showToast('Link de download não disponível no momento.', 'warning');
+              return;
+            }
 
-        // Limita a verificação automática ao voltar ao primeiro plano a cada 6 horas
-        if (!force && (now - lastCheck < SIX_HOURS_MS)) {
-          return;
+            if (helpBox) helpBox.style.display = 'block';
+
+            // No Capacitor Android nativo, garante abertura segura no navegador do dispositivo
+            if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+              if (window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
+                e.preventDefault();
+                window.Capacitor.Plugins.Browser.open({ url: targetHref }).catch(() => {
+                  window.open(targetHref, '_system');
+                });
+              }
+            }
+          });
         }
 
-        const url = `${REMOTE_VERSION_URL}${REMOTE_VERSION_URL.includes('?') ? '&' : '?'}t=${now}`;
+        const btnRetry = document.getElementById('btnRetryDownload');
+        if (btnRetry && btnApk) {
+          btnRetry.addEventListener('click', () => {
+            btnApk.click();
+          });
+        }
+      },
+
+      isCheckingUpdates: false,
+
+      async checkUpdates(force = false) {
+        if (this.isCheckingUpdates) return;
+        this.isCheckingUpdates = true;
+
+        const statusMsg = document.getElementById('updateStatusMsg');
+        const onlineRow = document.getElementById('updateOnlineVersionRow');
+        const onlineVerText = document.getElementById('updateOnlineVersionText');
+        const lastCheckEl = document.getElementById('updateLastCheckTime');
+        const urlDisp = document.getElementById('updateUrlDisplay');
+
+        if (urlDisp) urlDisp.textContent = UPDATE_URL;
+        if (force && statusMsg) {
+          statusMsg.innerHTML = `⏳ Verificando no servidor: <code>${App.escapeHtml(UPDATE_URL)}</code>...`;
+        }
 
         try {
-          const response = await fetch(url, {
-            cache: 'no-store',
-            headers: { 'Accept': 'application/json' }
-          });
+          const result = await fetchOnlineVersionData(UPDATE_URL);
+          const now = Date.now();
+          localStorage.setItem('concurso_last_version_check', String(now));
 
-          if (!response.ok) {
+          if (lastCheckEl) {
+            const dt = new Date(now);
+            lastCheckEl.textContent = `Última checagem: ${dt.toLocaleDateString('pt-BR')} às ${dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+          }
+
+          if (!result.ok || !result.data) {
+            console.warn('[Atualizações] Não foi possível verificar agora:', result.error);
+            if (statusMsg) {
+              statusMsg.innerHTML = `⚠️ <strong>Não consegui verificar agora.</strong> (${App.escapeHtml(result.error || 'Erro de conexão')}).<br><span style="font-size: 0.76rem; opacity: 0.85;">URL consultada: ${App.escapeHtml(UPDATE_URL)}</span>`;
+            }
             if (force) {
-              this.showToast('Não foi possível verificar atualizações no momento.', 'warning');
+              this.showToast('Não foi possível verificar atualizações agora. Verifique sua conexão.', 'warning');
             }
             return;
           }
 
-          const remoteData = await response.json();
-          localStorage.setItem('concurso_last_version_check', String(Date.now()));
+          const remoteData = result.data;
+          if (onlineRow && onlineVerText && remoteData.version) {
+            onlineRow.style.display = 'flex';
+            onlineVerText.textContent = `v${remoteData.version}`;
+          }
+
           this.processVersionData(remoteData, force);
         } catch (err) {
-          // Se estiver offline ou der erro de rede, ignorar silenciosamente sem travar o app
-          console.warn('[Atualizações] Erro ao consultar version.json:', err.message || err);
+          console.error('[Atualizações] Erro inesperado ao checar atualizações:', err);
+          if (statusMsg) {
+            statusMsg.innerHTML = `⚠️ <strong>Não consegui verificar agora.</strong> (${App.escapeHtml(err.message || 'Falha de rede')}).`;
+          }
           if (force) {
             this.showToast('Sem conexão com a internet para verificar.', 'warning');
           }
+        } finally {
+          this.isCheckingUpdates = false;
         }
       },
 
@@ -5224,6 +5373,7 @@
         const dateEl = document.getElementById('newVersionDate');
         const notesList = document.getElementById('newVersionNotesList');
         const btnApk = document.getElementById('btnDownloadApk');
+        const helpBox = document.getElementById('downloadHelpBox');
 
         if (topDot) topDot.style.display = 'inline-block';
         if (bottomDot) bottomDot.style.display = 'block';
@@ -5232,13 +5382,14 @@
         if (tag) tag.textContent = `v${remoteData.version}`;
         if (dateEl) dateEl.textContent = `Lançada em: ${remoteData.date || 'Recente'}`;
         if (btnApk) btnApk.href = remoteData.apkUrl || '#';
+        if (helpBox) helpBox.style.display = 'none';
 
         if (notesList && Array.isArray(remoteData.notes)) {
           notesList.innerHTML = remoteData.notes.map(n => `<li>${App.escapeHtml(n)}</li>`).join('');
         }
 
         if (statusMsg) {
-          statusMsg.innerHTML = `⚠️ <strong>Nova versão disponível: v${remoteData.version}</strong>. Toque abaixo para atualizar seu aplicativo.`;
+          statusMsg.innerHTML = `🎉 <strong>Nova versão disponível: v${remoteData.version}</strong>. Toque abaixo para atualizar seu aplicativo.`;
         }
 
         if (isManual) {

@@ -132,7 +132,19 @@ if (Test-Path $gradlePath) {
     [System.IO.File]::WriteAllText($gradlePath, $gradleContent, [System.Text.UTF8Encoding]::new($false))
 }
 
-# E. Sincronizar arquivos para o Android Studio
+# E. Testar resposta do link do APK na internet
+Write-Host "`nVerificando disponibilidade online do link do APK..." -ForegroundColor Cyan
+Write-Host "URL: $novoApkUrl" -ForegroundColor Gray
+try {
+    $testResp = Invoke-WebRequest -Uri $novoApkUrl -Method Head -TimeoutSec 5 -UseBasicParsing -ErrorAction Stop
+    Write-Host "  [OK] Link do APK esta ativo e respondendo! (Status: $($testResp.StatusCode))" -ForegroundColor Green
+} catch {
+    Write-Host "  [ATENCAO] O link do APK ainda nao respondeu online: $($_.Exception.Message)" -ForegroundColor Yellow
+    Write-Host "  -> Isto e normal caso a Release ainda nao tenha sido criada no GitHub." -ForegroundColor Gray
+    Write-Host "  -> Certifique-se de anexar o arquivo com o nome exato 'app-cronograma.apk' e clicar no botao verde 'Publish release' (nao deixe em rascunho/draft)." -ForegroundColor Yellow
+}
+
+# F. Sincronizar arquivos para o Android Studio
 Write-Host "`nSincronizando arquivos para www e Android Studio..." -ForegroundColor Cyan
 & powershell -ExecutionPolicy Bypass -File (Join-Path $root "prepare_android.ps1")
 
@@ -143,7 +155,11 @@ Write-Host ""
 Write-Host "Próximos passos para finalizar o lançamento:" -ForegroundColor Yellow
 Write-Host "1. Gere o novo APK rodando:" -ForegroundColor White
 Write-Host "   powershell -ExecutionPolicy Bypass -File .\sync_and_build_apk.ps1" -ForegroundColor Cyan
-Write-Host "   (Ou gere no Android Studio usando 'abrir_android_studio.bat')" -ForegroundColor Gray
-Write-Host "2. Suba o APK gerado no GitHub Releases ou seu servidor." -ForegroundColor White
-Write-Host "3. Publique o site (Netlify/GitHub Pages) para atualizar o version.json online." -ForegroundColor White
+Write-Host "   (O arquivo sera salvo em: apk\app-cronograma.apk)" -ForegroundColor Gray
+Write-Host "2. No GitHub (github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases):" -ForegroundColor White
+Write-Host "   - Crie uma nova Release (Draft a new release)." -ForegroundColor Gray
+Write-Host "   - Tag: v$novaVersao" -ForegroundColor Gray
+Write-Host "   - Anexe o arquivo: apk\app-cronograma.apk" -ForegroundColor Gray
+Write-Host "   - Clique em 'Publish release' (obrigatorio para que o download funcione)." -ForegroundColor Yellow
+Write-Host "3. Publique o site executando 'publication.bat' ou enviando para o GitHub Pages." -ForegroundColor White
 Write-Host ""

@@ -1,18 +1,28 @@
 {
-  "version": "1.3.0",
+  "version": "1.3.1",
   "date": "2026-10-13",
   "notes": [
-    "Novo layout limpo e minimalista da aba Cronograma com foco total na grade de estudos",
-    "Cabeçalho unificado com seletor de cronograma, chips rápidos para prova/revisões e botão de alternância do painel",
-    "Menu discreto de 3 pontinhos (⋮) agrupando todas as ações secundárias (PDF, PNG, Pomodoro, compartilhar, duplicar, excluir)",
-    "Cards de estudo super leves exibindo apenas horário, matéria e checkbox rápido de conclusão em 1 toque",
-    "Janela de detalhes da sessão (Bottom Sheet nativa no celular e modal no computador) ao tocar no card, com tópicos, anotações, fixação 🔒 e edição",
-    "Barra de progresso semanal compacta em 1 linha fina e elegante",
-    "Navegação mobile por abas com destaque visual para o dia atual (Hoje) e botão flutuante inteligente (FAB)",
-    "Painel de configuração da geração automática recolhível em acordeão para evitar poluição visual"
+    "Correção no sistema de verificação de atualizações online (busca contínua com URL HTTPS absoluta)",
+    "Link direto padronizado para o download do APK no GitHub Releases (app-cronograma.apk)",
+    "Painel de diagnóstico na aba Atualizações mostrando versão instalada, versão online e servidor consultado",
+    "Tratamento amigável e opção de tentar novamente caso a conexão oscile ao baixar o APK"
   ],
-  "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/CronogramaDeEstudos.apk",
+  "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.3.0",
+      "date": "2026-10-13",
+      "notes": [
+        "Novo layout limpo e minimalista da aba Cronograma com foco total na grade de estudos",
+        "Cabeçalho unificado com seletor de cronograma, chips rápidos para prova/revisões e botão de alternância do painel",
+        "Menu discreto de 3 pontinhos (⋮) agrupando todas as ações secundárias (PDF, PNG, Pomodoro, compartilhar, duplicar, excluir)",
+        "Cards de estudo super leves exibindo apenas horário, matéria e checkbox rápido de conclusão em 1 toque",
+        "Janela de detalhes da sessão (Bottom Sheet nativa no celular e modal no computador) ao tocar no card, com tópicos, anotações, fixação 🔒 e edição",
+        "Barra de progresso semanal compacta em 1 linha fina e elegante",
+        "Navegação mobile por abas com destaque visual para o dia atual (Hoje) e botão flutuante inteligente (FAB)",
+        "Painel de configuração da geração automática recolhível em acordeão para evitar poluição visual"
+      ]
+    },
     {
       "version": "1.2.0",
       "date": "2026-10-13",
