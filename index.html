@@ -5367,8 +5367,14 @@
                 <button type="button" class="btn btn-primary btn-sm" id="btnSyncNowDiag" onclick="App.manualSync()">
                   🔄 Sincronizar Agora
                 </button>
+                <button type="button" class="btn btn-secondary btn-sm" id="btnForceDownloadCloud" onclick="App.forceDownloadCloud()">
+                  📥 Baixar da Nuvem
+                </button>
                 <button type="button" class="btn btn-secondary btn-sm" id="btnCopySyncDiagnostics" onclick="App.copySyncDiagnostics()">
                   📋 Copiar Diagnóstico
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" id="btnClearSyncError" onclick="App.clearSyncError()">
+                  🧹 Limpar Erro
                 </button>
               </div>
 
@@ -5452,7 +5458,7 @@
             </div>
             <div class="settings-info-row">
               <span class="info-label">Data/Hora do Build</span>
-              <span class="info-value" id="settingsAppBuildTime">14/10/2026 10:35:00</span>
+              <span class="info-value" id="settingsAppBuildTime">14/10/2026 11:55:00</span>
             </div>
             <div class="settings-info-row">
               <span class="info-label">Modo Offline</span>
@@ -7741,7 +7747,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
     const APP_VERSION = "1.6.5";
-    const APP_BUILD_TIME = "14/10/2026 10:35:00";
+    const APP_BUILD_TIME = "14/10/2026 11:55:00";
     window.APP_VERSION = APP_VERSION;
     window.APP_BUILD_TIME = APP_BUILD_TIME;
     const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
@@ -10975,6 +10981,41 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           this.showToast('Diagnóstico copiado para a área de transferência!', 'success');
         } catch (e) {
           prompt('Copie o diagnóstico abaixo:', reportText);
+        }
+      },
+
+      async forceDownloadCloud() {
+        if (!SyncManager || !SyncManager.user || !SyncManager.client) {
+          this.showToast('Faça login para baixar seus dados da nuvem.', 'warning');
+          this.openAuthModal('login');
+          return;
+        }
+        if (!confirm('Deseja baixar os dados mais recentes salvos na nuvem e atualizar este aparelho? (Um backup de segurança será mantido).')) return;
+        try {
+          this.showToast('Baixando dados da sua conta na nuvem...', 'info');
+          const cloudData = await SyncManager.downloadFromCloud();
+          if (!cloudData) {
+            this.showToast('Nenhum dado encontrado na nuvem para este usuário.', 'warning');
+            return;
+          }
+          await SyncManager.applyCloudPayload(cloudData, true);
+          SyncManager.lastError = null;
+          try { localStorage.removeItem('concurso_sync_last_error'); } catch (e) {}
+          SyncManager.updateDiagnosticsUI();
+          this.showToast('Dados da nuvem baixados e aplicados com sucesso!', 'success');
+        } catch (err) {
+          this.showToast('Erro ao baixar da nuvem: ' + (err.message || err), 'warning');
+        }
+      },
+
+      clearSyncError() {
+        if (SyncManager) {
+          SyncManager.lastError = null;
+          try { localStorage.removeItem('concurso_sync_last_error'); } catch (e) {}
+          SyncManager.updateDiagnosticsUI();
+          const box = document.getElementById('testConnectionResultBox');
+          if (box) box.style.display = 'none';
+          this.showToast('Registro de erro limpo com sucesso!', 'info');
         }
       },
 

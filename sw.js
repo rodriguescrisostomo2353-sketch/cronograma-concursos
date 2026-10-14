@@ -1,5 +1,5 @@
 // Service Worker para o PWA Cronograma de Estudos para Concursos
-const CACHE_NAME = 'cronograma-concursos-v16';
+const CACHE_NAME = 'cronograma-concursos-v17';
 
 // Recursos essenciais para funcionamento offline (caminhos relativos e CDNs)
 const PRECACHE_ASSETS = [
@@ -63,6 +63,22 @@ self.addEventListener('fetch', (event) => {
 
   // Nunca intercepta chamadas de autenticação ou banco do Supabase (sempre tempo real)
   if (event.request.url.includes('supabase.co')) return;
+
+  // Para navegação HTML (páginas), sempre tenta a rede primeiro para carregar versões recentes, com fallback offline
+  if (event.request.mode === 'navigate' || (event.request.headers && event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html'))) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const copy = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
