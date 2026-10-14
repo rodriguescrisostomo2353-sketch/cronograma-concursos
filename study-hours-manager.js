@@ -1,4 +1,4 @@
-    const StudyHoursManager = {
+    var StudyHoursManager = window.StudyHoursManager || {
       defaultMinutes: 30,
       autoQuickMark: false,
       period: 'semana', // 'dia' | 'semana' | 'mes' | 'total'

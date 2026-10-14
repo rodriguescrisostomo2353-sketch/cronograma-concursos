@@ -14,6 +14,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Cronograma">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+  <link rel="shortcut icon" type="image/png" href="icons/icon-192.png">
   
   <!-- Script imediato: previne flash branco (FOUC) aplicando o tema antes de renderizar -->
   <script>
@@ -7322,10 +7325,6 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
     </div>
   </div>
 
-  <!-- ==========================================================================
-       MÓDULO DE HORAS DE ESTUDO
-       ========================================================================== -->
-  <script src="study-hours-manager.js"></script>
 
   <!-- ==========================================================================
        JAVASCRIPT DA APLICAÇÃO
@@ -8570,8 +8569,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.7.0";
-    const APP_BUILD_TIME = "14/10/2026 15:30:00";
+    const APP_VERSION = "1.7.1";
+    const APP_BUILD_TIME = "14/10/2026 15:58:00";
     window.APP_VERSION = APP_VERSION;
     window.APP_BUILD_TIME = APP_BUILD_TIME;
     const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
@@ -8735,7 +8734,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
     /* =========================================================================
      * MÓDULO HORAS DE ESTUDO (StudyHoursManager - v1.7.0)
      * ========================================================================= */
-    const StudyHoursManager = {
+    var StudyHoursManager = window.StudyHoursManager || {
       defaultMinutes: 30,
       autoQuickMark: false,
       period: 'semana', // 'dia' | 'semana' | 'mes' | 'total'

@@ -1,18 +1,27 @@
 {
-  "version": "1.7.0",
+  "version": "1.7.1",
   "date": "2026-10-14",
   "notes": [
-    "Nova Aba 'Horas de Estudo': registro e controle preciso do tempo estudado por matéria e tópico com métricas de dedicação em tempo real",
-    "Filtros de Período dinâmicos: navegação prática por Dia, Semana (segunda a domingo), Mês e Total, com seletor de data (calendário) e botão 'Hoje'",
-    "Rateio Dinâmico e Automático de Sessões: ao marcar uma sessão do cronograma como concluída, o tempo total é distribuído proporcionalmente entre os tópicos estudados",
-    "Registro Rápido em Tópicos Avulsos: janela com chips rápidos (15, 30, 45, 60, 90 min) ou tempo livre, com tempo padrão configurável e opção de registro em 1 toque",
-    "Histórico de Estudo por Tópico: histórico completo das sessões com edição de minutos, data e exclusão com segurança",
-    "Gráfico Interativo de Estudos e Linha do Tempo: visualização gráfica de horas por dia ou por disciplina sem dependências externas pesadas e com suporte aos temas claro e escuro",
-    "Integração com Sincronização em Nuvem (Supabase): logs de estudo incluídos no sync com reconciliação por updatedAt e sem duplicações",
-    "Segurança total dos dados: backup preventivo no localStorage antes de migrações e preservação de horas mesmo em tópicos excluídos ou reorganizados"
+    "Correção crítica: resolução do conflito de declaração de scripts e restauração total da inicialização do app",
+    "Ícone na aba do navegador (favicon) adicionado nas resoluções padrão e retina (192px e 512px)",
+    "Nova Aba 'Horas de Estudo': registro e controle preciso do tempo estudado por matéria e tópico com métricas em tempo real",
+    "Filtros de Período dinâmicos: navegação por Dia, Semana (segunda a domingo), Mês e Total",
+    "Rateio Dinâmico e Automático de Sessões do cronograma e registro rápido avulso",
+    "Histórico de Estudo por Tópico com edição e exclusão segura",
+    "Gráfico interativo e linha do tempo de estudos nos temas claro e escuro",
+    "Atualização do Service Worker para o cache cronograma-concursos-v19"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.7.0",
+      "date": "2026-10-14",
+      "notes": [
+        "Nova Aba 'Horas de Estudo': registro e controle preciso do tempo estudado por matéria e tópico",
+        "Filtros de Período dinâmicos (Dia, Semana, Mês e Total) e seletor nativo de data",
+        "Rateio Dinâmico e Automático de Sessões do cronograma"
+      ]
+    },
     {
       "version": "1.6.5",
       "date": "2026-10-14",
