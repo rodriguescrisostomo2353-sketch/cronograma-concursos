@@ -7133,10 +7133,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
           if (error) throw error;
 
+          this.lastError = null;
+          try { localStorage.removeItem('concurso_sync_last_error'); } catch (e) {}
           this.hasPendingSync = false;
           this.lastSyncTime = new Date();
           this.setSyncStatus('synced', 'Sincronizado');
           this.renderLastSyncTime();
+          this.updateDiagnosticsUI();
         } catch (err) {
           console.warn('[SyncManager] Erro no syncUp:', err);
           this.hasPendingSync = true;
@@ -7404,13 +7407,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         // Teste 3: Leitura e Gravação no banco
         try {
           const testStamp = new Date().toISOString();
+          const payload = await this.gatherPayload();
+          payload.user_id = this.user.id;
+          payload.updated_at = testStamp;
+
           const { error: writeErr } = await this.client
             .from('user_data')
-            .upsert({
-              user_id: this.user.id,
-              last_test_ping: testStamp,
-              updated_at: testStamp
-            }, { onConflict: 'user_id' });
+            .upsert(payload, { onConflict: 'user_id' });
 
           if (writeErr) {
             report.writeStatus = 'error';
@@ -7424,10 +7427,14 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             return report;
           }
           report.writeStatus = 'success';
+          this.hasPendingSync = false;
+          this.lastSyncTime = new Date();
+          this.setSyncStatus('synced', 'Sincronizado');
+          this.renderLastSyncTime();
 
           const { data: readData, error: readErr } = await this.client
             .from('user_data')
-            .select('user_id, last_test_ping, updated_at')
+            .select('user_id, updated_at')
             .eq('user_id', this.user.id)
             .maybeSingle();
 
@@ -7444,7 +7451,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           }
 
           report.readStatus = 'success';
-          report.details = `✅ Teste de Conexão Bem-Sucedido!\nServidor: Supabase (Status ${report.pingStatus})\nUsuário: ${this.user.email} (UID: ${this.user.id})\nGravação e Leitura: OK (Ping verificado em ${testStamp})\nSincronização 100% operacional.`;
+          report.details = `✅ Teste de Conexão Bem-Sucedido!\nServidor: Supabase (Status ${report.pingStatus})\nUsuário: ${this.user.email} (UID: ${this.user.id})\nGravação e Leitura: OK (Verificado em ${testStamp})\nSincronização 100% operacional.`;
           this.lastError = null;
           try { localStorage.removeItem('concurso_sync_last_error'); } catch (e) {}
           this.updateDiagnosticsUI();
