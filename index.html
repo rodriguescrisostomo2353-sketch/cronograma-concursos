@@ -3477,6 +3477,61 @@
       font-weight: 700;
     }
 
+    /* ==========================================================================
+       SISTEMA DE BACKUP & RESTAURAÇÃO
+       ========================================================================== */
+    .backup-dropzone {
+      margin-top: 10px;
+      padding: 14px 16px;
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      background: var(--bg-subtle);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .backup-dropzone:hover, .backup-dropzone.drag-over {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.06);
+    }
+    .backup-dropzone-icon {
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+    .backup-dropzone-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .backup-dropzone-text strong {
+      font-size: 0.88rem;
+      color: var(--text-main);
+    }
+    .backup-dropzone-text span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .backup-preview-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+    .backup-snapshot-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      gap: 8px;
+    }
+
     /* Atualizações */
     .update-status-box {
       background: var(--bg-subtle);
@@ -6066,6 +6121,69 @@
           </div>
         </div>
 
+        <!-- Card: Sistema de Backup & Restauração Completa -->
+        <div class="settings-card" id="settingsBackupCard">
+          <div class="settings-card-header">
+            <span class="settings-card-icon" style="background: var(--pastel-green-bg); border-color: var(--pastel-green-border); color: var(--pastel-green-text);">💾</span>
+            <div>
+              <h3>Backup & Restauração de Dados</h3>
+              <p>Salve uma cópia de segurança completa no seu aparelho e restaure quando quiser</p>
+            </div>
+          </div>
+          <div class="settings-card-body">
+            <!-- Informação do Último Backup e Status -->
+            <div class="auth-meta-row" style="margin-bottom: 4px;">
+              <span style="color: var(--text-muted); font-size: 0.85rem;">Último Backup Baixado:</span>
+              <strong id="settingsLastBackupTime" style="font-size: 0.85rem; color: var(--text-main);">Nenhum backup baixado ainda</strong>
+            </div>
+
+            <!-- Área de Ações Principais -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 4px;">
+              <!-- Botão Salvar Backup -->
+              <button type="button" class="btn btn-primary btn-sm" id="btnDownloadBackupFile" onclick="BackupManager.downloadBackup()" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; font-weight: 600;">
+                <span style="font-size: 1.15rem;">💾</span>
+                <span>Salvar Backup (.json)</span>
+              </button>
+
+              <!-- Botão Upload / Restaurar Backup -->
+              <button type="button" class="btn btn-secondary btn-sm" id="btnUploadBackupFile" onclick="BackupManager.promptUploadFile()" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; font-weight: 600;">
+                <span style="font-size: 1.15rem;">📂</span>
+                <span>Restaurar Backup</span>
+              </button>
+            </div>
+
+            <!-- Input File Oculto -->
+            <input type="file" id="inputBackupUploadFile" accept=".json,application/json" style="display: none;" onchange="BackupManager.onFileSelected(event)">
+
+            <!-- Zona de Arrastar e Soltar (Drag & Drop) -->
+            <div class="backup-dropzone" id="backupDropZone" onclick="BackupManager.promptUploadFile()" ondragover="BackupManager.onDragOver(event)" ondragleave="BackupManager.onDragLeave(event)" ondrop="BackupManager.onDrop(event)">
+              <span class="backup-dropzone-icon">📥</span>
+              <div class="backup-dropzone-text">
+                <strong>Clique ou arraste um arquivo de backup (.json) aqui</strong>
+                <span>Compatível com backups salvos pelo celular ou computador</span>
+              </div>
+            </div>
+
+            <!-- Histórico de Snapshots Locais e Desfazer -->
+            <div id="backupSnapshotsSection" style="margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--border-color);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">🛡️ Pontos de Restauração Locais</span>
+                <button type="button" class="btn btn-secondary btn-xs" onclick="BackupManager.createLocalSnapshotManual()" title="Criar ponto de restauração instantâneo na memória deste aparelho">
+                  + Criar Snapshot
+                </button>
+              </div>
+              <div id="backupSnapshotsList" style="display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto;">
+                <!-- Lista preenchida dinamicamente -->
+              </div>
+              <div id="backupUndoBanner" style="display: none; margin-top: 8px; padding: 8px 12px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: var(--radius-sm); font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                <span>⚠️ Restaurou por engano? Você pode desfazer e voltar.</span>
+                <button type="button" class="btn btn-secondary btn-xs" onclick="BackupManager.undoRestore()">Desfazer Restauração</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
         <!-- Card 2: Ações Rápidas de Dados -->
         <div class="settings-card">
           <div class="settings-card-header">
@@ -7063,6 +7181,10 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           <span style="font-size: 1.25rem; margin-right: 10px;">⚙️</span>
           <span>Ajustes & Aparência</span>
         </button>
+        <button type="button" class="sheet-menu-item" id="sheetBtnBackup" onclick="App.closeMoreMenuSheet(); App.openBackupModal();">
+          <span style="font-size: 1.25rem; margin-right: 10px;">💾</span>
+          <span>Backup & Restauração</span>
+        </button>
         <div class="dropdown-divider" style="margin: 4px 0;"></div>
         <button type="button" class="sheet-menu-item" id="sheetBtnDemo" onclick="App.closeMoreMenuSheet(); App.loadDemoData();">
           <span style="font-size: 1.25rem; margin-right: 10px;">✨</span>
@@ -7252,6 +7374,104 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         <button type="button" class="btn btn-secondary" onclick="App.closeDeleteAccountModal()">Cancelar</button>
         <button type="button" class="btn btn-danger" id="btnConfirmDeleteAccount" onclick="App.confirmDeleteAccount()">
           Sim, Excluir Minha Conta
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Pré-visualização e Confirmação de Restauração de Backup -->
+  <div class="modal-overlay hidden" id="modalRestoreBackup">
+    <div class="modal-card modal-wizard-card" style="max-width: 520px;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.5rem;">💾</span>
+          <div>
+            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--text-main);">
+              Restaurar Cópia de Segurança
+            </h3>
+            <p style="margin: 0; font-size: 0.78rem; color: var(--text-muted);">
+              Verifique os dados contidos no arquivo antes de restaurar
+            </p>
+          </div>
+        </div>
+        <button type="button" class="btn-icon" onclick="BackupManager.closeRestoreModal()" aria-label="Fechar">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding: 16px 20px;">
+        <!-- Card de Resumo do Arquivo -->
+        <div class="backup-preview-card" id="backupPreviewCard">
+          <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-main); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+            <span id="backupPreviewFileName" style="word-break: break-all;">backup.json</span>
+            <span class="badge-sync" id="backupPreviewBadge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; font-weight: 600;">
+              Arquivo Válido
+            </span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.82rem;">
+            <div>
+              <span style="color: var(--text-muted);">Data do Backup:</span><br>
+              <strong id="backupPreviewDate" style="color: var(--text-main);">-</strong>
+            </div>
+            <div>
+              <span style="color: var(--text-muted);">Versão / Origem:</span><br>
+              <strong id="backupPreviewOrigin" style="color: var(--text-main);">-</strong>
+            </div>
+            <div>
+              <span style="color: var(--text-muted);">Matérias & Tópicos:</span><br>
+              <strong id="backupPreviewSubjects" style="color: var(--text-main);">-</strong>
+            </div>
+            <div>
+              <span style="color: var(--text-muted);">Cronogramas:</span><br>
+              <strong id="backupPreviewSchedules" style="color: var(--text-main);">-</strong>
+            </div>
+            <div>
+              <span style="color: var(--text-muted);">Horas de Estudo:</span><br>
+              <strong id="backupPreviewStudyHours" style="color: var(--text-main);">-</strong>
+            </div>
+            <div>
+              <span style="color: var(--text-muted);">Concurso Alvo:</span><br>
+              <strong id="backupPreviewExamTarget" style="color: var(--text-main);">-</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seletor do Modo de Restauração -->
+        <label class="config-label" style="margin-bottom: 8px;">Escolha como deseja restaurar:</label>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px;">
+          <!-- Opção 1: Substituir (Recomendado) -->
+          <div class="merge-option-card active" id="restoreCardOptionReplace" onclick="BackupManager.selectRestoreOption('replace')">
+            <input type="radio" name="radioRestoreMode" value="replace" checked style="display: none;">
+            <div class="merge-option-header">
+              <span>🔄</span> <strong>Substituir Todos os Dados (Recomendado)</strong>
+            </div>
+            <p class="merge-option-desc">
+              Substitui os dados atuais pelo conteúdo do backup. Um snapshot de segurança do estado atual será salvo antes, para você poder desfazer se quiser.
+            </p>
+          </div>
+
+          <!-- Opção 2: Mesclar -->
+          <div class="merge-option-card" id="restoreCardOptionMerge" onclick="BackupManager.selectRestoreOption('merge')">
+            <input type="radio" name="radioRestoreMode" value="merge" style="display: none;">
+            <div class="merge-option-header">
+              <span>➕</span> <strong>Mesclar com os Dados Atuais</strong>
+            </div>
+            <p class="merge-option-desc">
+              Une matérias, cronogramas e horas de estudo do arquivo com o que você já possui hoje, sem apagar nenhum dado.
+            </p>
+          </div>
+        </div>
+
+        <div style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+          <span>🛡️</span>
+          <span>Um backup automático de emergência do estado atual será criado antes da restauração.</span>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="border-top: 1px solid var(--border-color); padding: 12px 20px; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn btn-secondary" onclick="BackupManager.closeRestoreModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="btnConfirmRestoreBackup" onclick="BackupManager.executeRestore()">
+          🚀 Confirmar Restauração
         </button>
       </div>
     </div>
@@ -8575,6 +8795,823 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
     window.SUPABASE_CONFIG = SUPABASE_CONFIG;
 
     /**
+     * =========================================================================
+     * SISTEMA DE BACKUP COMPLETO & RESTAURAÇÃO SEGURA (BackupManager - v1.7.3)
+     * Salva todos os dados locais em arquivo .json e realiza upload/restauração
+     * com snapshot pré-restauração para garantia de Zero Perda de Dados.
+     * =========================================================================
+     */
+    const BackupManager = {
+      selectedRestoreMode: 'replace',
+      pendingRestoreData: null,
+      pendingRestoreFileName: '',
+
+      init() {
+        this.renderBackupCard();
+      },
+
+      /**
+       * Agrega todas as chaves de dados do sistema em um payload unificado e estruturado
+       */
+      async createBackupPayload() {
+        const localData = (typeof App !== 'undefined' && App.data) ? App.data : { materias: [], naoClassificado: [] };
+        const materias = Array.isArray(localData.materias) ? localData.materias : [];
+        const naoClassificado = Array.isArray(localData.naoClassificado) ? localData.naoClassificado : [];
+        const schedules = (typeof App !== 'undefined' && Array.isArray(App.schedules)) ? App.schedules : [];
+        const activeScheduleId = (typeof App !== 'undefined' && App.activeScheduleId) ? App.activeScheduleId : (schedules[0] ? schedules[0].id : '');
+        const completedSlots = (typeof App !== 'undefined' && App.completedSlots) ? App.completedSlots : {};
+        const priorities = (typeof App !== 'undefined' && App.priorities) ? App.priorities : {};
+        const examDate = (typeof App !== 'undefined' && App.examDate) ? App.examDate : null;
+        const examTitle = (typeof App !== 'undefined' && App.examTitle) ? App.examTitle : '';
+        const spacedReviews = (typeof App !== 'undefined' && Array.isArray(App.spacedReviews)) ? App.spacedReviews : [];
+        const sessionBreakMin = (typeof App !== 'undefined' && App.sessionBreakMin) ? App.sessionBreakMin : 5;
+        const weeklyReview = (typeof App !== 'undefined' && App.weeklyReview) ? App.weeklyReview : { enabled: false, day: 'Domingo' };
+        const studyLog = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.getStudyLog)
+          ? StudyHoursManager.getStudyLog()
+          : ((typeof App !== 'undefined' && Array.isArray(App.studyLog)) ? App.studyLog : []);
+
+        let autoConfig = null;
+        try {
+          const rawAuto = localStorage.getItem('concurso_auto_config_last');
+          if (rawAuto) autoConfig = JSON.parse(rawAuto);
+        } catch (_) {}
+
+        const theme = document.documentElement.getAttribute('data-theme') || 'light';
+        const studyDefaultMin = (typeof StudyHoursManager !== 'undefined') ? StudyHoursManager.defaultMinutes : 30;
+        const studyAutoQuickMark = (typeof StudyHoursManager !== 'undefined') ? StudyHoursManager.autoQuickMark : false;
+
+        // PDF anotações e favoritos via IndexedDB
+        let pdfAnnotations = [];
+        let pdfBookmarks = [];
+        if (typeof PdfStorage !== 'undefined' && PdfStorage.exportAllAnnotationsAndBookmarks) {
+          try {
+            const pdfExport = await PdfStorage.exportAllAnnotationsAndBookmarks();
+            pdfAnnotations = pdfExport.annotations || [];
+            pdfBookmarks = pdfExport.bookmarks || [];
+          } catch (e) {
+            console.warn('[BackupManager] Erro ao exportar anotações de PDF:', e);
+          }
+        }
+
+        let totalTopicos = 0;
+        materias.forEach(m => {
+          if (m && Array.isArray(m.topicos)) totalTopicos += m.topicos.length;
+        });
+
+        const totalStudyMinutes = studyLog.reduce((acc, l) => acc + (Number(l.minutos) || 0), 0);
+        const completedCount = Object.keys(completedSlots).filter(k => !!completedSlots[k]).length;
+
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        const h = String(now.getHours()).padStart(2, '0');
+        const min = String(now.getMinutes()).padStart(2, '0');
+
+        return {
+          app: 'Cronograma de Estudos para Concursos',
+          version: typeof APP_VERSION !== 'undefined' ? APP_VERSION : '1.7.3',
+          buildTime: typeof APP_BUILD_TIME !== 'undefined' ? APP_BUILD_TIME : '',
+          exportDate: now.toISOString(),
+          exportDateFormatted: `${d}/${m}/${y} às ${h}:${min}`,
+          platform: (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'Android APK' : 'Web Browser',
+          summary: {
+            materiasCount: materias.length,
+            topicosCount: totalTopicos,
+            schedulesCount: schedules.length,
+            completedSlotsCount: completedCount,
+            studyHoursTotalMin: totalStudyMinutes,
+            studyLogsCount: studyLog.length,
+            examTarget: examTitle || (examDate ? `Prova em ${examDate}` : 'Não definido'),
+            hasPdfData: (pdfAnnotations.length > 0 || pdfBookmarks.length > 0)
+          },
+          data: {
+            materias,
+            naoClassificado,
+            schedules,
+            activeScheduleId,
+            completedSlots,
+            priorities,
+            examDate,
+            examTitle,
+            spacedReviews,
+            sessionBreakMin,
+            weeklyReview,
+            studyLog,
+            autoConfig,
+            theme,
+            studyDefaultMin,
+            studyAutoQuickMark,
+            pdfAnnotations,
+            pdfBookmarks
+          }
+        };
+      },
+
+      /**
+       * Gera o arquivo de backup e dispara o download local (.json)
+       */
+      async downloadBackup() {
+        const btn = document.getElementById('btnDownloadBackupFile');
+        const origHtml = btn ? btn.innerHTML : '';
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = `<span>⏳</span><span>Gerando backup...</span>`;
+        }
+
+        try {
+          const payload = await this.createBackupPayload();
+          const jsonStr = JSON.stringify(payload, null, 2);
+          const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+
+          const now = new Date();
+          const y = now.getFullYear();
+          const m = String(now.getMonth() + 1).padStart(2, '0');
+          const d = String(now.getDate()).padStart(2, '0');
+          const h = String(now.getHours()).padStart(2, '0');
+          const min = String(now.getMinutes()).padStart(2, '0');
+          const fileName = `backup-cronograma-concursos-${y}-${m}-${d}_${h}-${min}.json`;
+
+          // Cria link para download
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          }, 300);
+
+          // Registra snapshot e data do último backup
+          const timeFormatted = `${d}/${m}/${y} às ${h}:${min}`;
+          try {
+            localStorage.setItem('concurso_last_backup_download_time', timeFormatted);
+          } catch (_) {}
+
+          this.addLocalSnapshot(`Backup Baixado (${d}/${m} ${h}:${min})`, payload.data);
+          this.renderBackupCard();
+
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast(`Backup salvo com sucesso! Arquivo: ${fileName}`, 'success');
+          }
+        } catch (err) {
+          console.error('[BackupManager] Erro ao gerar backup:', err);
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast('Erro ao gerar o arquivo de backup.', 'warning');
+          }
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = origHtml;
+          }
+        }
+      },
+
+      /**
+       * Abre o seletor de arquivo de backup (.json)
+       */
+      promptUploadFile() {
+        const input = document.getElementById('inputBackupUploadFile');
+        if (input) {
+          input.value = '';
+          input.click();
+        }
+      },
+
+      onFileSelected(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        this.readBackupFile(file);
+      },
+
+      onDragOver(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const dropZone = document.getElementById('backupDropZone');
+        if (dropZone) dropZone.classList.add('dragover');
+      },
+
+      onDragLeave(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const dropZone = document.getElementById('backupDropZone');
+        if (dropZone) dropZone.classList.remove('dragover');
+      },
+
+      onDrop(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const dropZone = document.getElementById('backupDropZone');
+        if (dropZone) dropZone.classList.remove('dragover');
+
+        const files = event.dataTransfer ? event.dataTransfer.files : null;
+        if (files && files[0]) {
+          this.readBackupFile(files[0]);
+        }
+      },
+
+      /**
+       * Lê o arquivo de backup selecionado e valida o formato
+       */
+      readBackupFile(file) {
+        if (!file.name.toLowerCase().endsWith('.json') && file.type && !file.type.includes('json')) {
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast('Por favor, selecione um arquivo de backup válido no formato .json.', 'warning');
+          }
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const content = e.target.result;
+          this.processBackupText(content, file.name);
+        };
+        reader.onerror = () => {
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast('Erro ao ler o arquivo selecionado.', 'warning');
+          }
+        };
+        reader.readAsText(file, 'utf-8');
+      },
+
+      /**
+       * Processa o texto JSON, aceita formato estruturado ou dados diretos
+       */
+      processBackupText(jsonStr, fileName = 'backup.json') {
+        let parsed;
+        try {
+          parsed = JSON.parse(jsonStr);
+        } catch (err) {
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast('O arquivo selecionado não é um JSON válido.', 'warning');
+          }
+          return;
+        }
+
+        if (!parsed || typeof parsed !== 'object') {
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast('Conteúdo do arquivo inválido para backup.', 'warning');
+          }
+          return;
+        }
+
+        // Reconhece estrutura oficial ou estrutura simplificada/cloud
+        let dataObj = parsed.data || parsed;
+        if (!dataObj.materias && !dataObj.schedules && !dataObj.studyLog && !dataObj.study_log) {
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast('O arquivo não contém matérias, cronogramas ou horas de estudo reconhecidas.', 'warning');
+          }
+          return;
+        }
+
+        this.pendingRestoreData = dataObj;
+        this.pendingRestoreFileName = fileName;
+
+        // Extrai métricas para pré-visualização
+        const materias = Array.isArray(dataObj.materias) ? dataObj.materias : [];
+        let topicosCount = 0;
+        materias.forEach(m => {
+          if (m && Array.isArray(m.topicos)) topicosCount += m.topicos.length;
+        });
+
+        const schedules = Array.isArray(dataObj.schedules) ? dataObj.schedules : [];
+        const logs = Array.isArray(dataObj.studyLog) ? dataObj.studyLog : (Array.isArray(dataObj.study_log) ? dataObj.study_log : []);
+        const totalMinutes = logs.reduce((acc, l) => acc + (Number(l.minutos) || 0), 0);
+
+        const examTarget = dataObj.examTitle || (dataObj.examDate ? `Data: ${dataObj.examDate}` : (dataObj.exam_title || 'Não definido'));
+        const dateDisplay = parsed.exportDateFormatted || (parsed.exportDate ? new Date(parsed.exportDate).toLocaleString('pt-BR') : 'Arquivo de dados');
+        const originDisplay = parsed.version ? `v${parsed.version} (${parsed.platform || 'Backup'})` : 'Arquivo de Backup';
+
+        // Preenche o modal de confirmação
+        const fileNameEl = document.getElementById('backupPreviewFileName');
+        const dateEl = document.getElementById('backupPreviewDate');
+        const originEl = document.getElementById('backupPreviewOrigin');
+        const subjsEl = document.getElementById('backupPreviewSubjects');
+        const schedsEl = document.getElementById('backupPreviewSchedules');
+        const hoursEl = document.getElementById('backupPreviewStudyHours');
+        const examEl = document.getElementById('backupPreviewExamTarget');
+
+        if (fileNameEl) fileNameEl.textContent = fileName;
+        if (dateEl) dateEl.textContent = dateDisplay;
+        if (originEl) originEl.textContent = originDisplay;
+        if (subjsEl) subjsEl.textContent = `${materias.length} matéria${materias.length === 1 ? '' : 's'} (${topicosCount} tópicos)`;
+        if (schedsEl) schedsEl.textContent = `${schedules.length} cronograma${schedules.length === 1 ? '' : 's'}`;
+        if (hoursEl) {
+          const hoursFormatted = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.formatMinutes)
+            ? StudyHoursManager.formatMinutes(totalMinutes)
+            : `${Math.round(totalMinutes / 60)}h ${totalMinutes % 60}m`;
+          hoursEl.textContent = `${hoursFormatted} (${logs.length} registros)`;
+        }
+        if (examEl) examEl.textContent = examTarget;
+
+        this.selectRestoreOption('replace');
+
+        // Exibe o modal
+        const modal = document.getElementById('modalRestoreBackup');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.classList.add('open');
+        }
+      },
+
+      /**
+       * Alterna entre o modo 'replace' (substituir) e 'merge' (mesclar)
+       */
+      selectRestoreOption(mode) {
+        this.selectedRestoreMode = mode;
+        const cardReplace = document.getElementById('restoreCardOptionReplace');
+        const cardMerge = document.getElementById('restoreCardOptionMerge');
+        if (cardReplace) cardReplace.classList.toggle('active', mode === 'replace');
+        if (cardMerge) cardMerge.classList.toggle('active', mode === 'merge');
+
+        const radioReplace = cardReplace ? cardReplace.querySelector('input[type="radio"]') : null;
+        const radioMerge = cardMerge ? cardMerge.querySelector('input[type="radio"]') : null;
+        if (radioReplace) radioReplace.checked = (mode === 'replace');
+        if (radioMerge) radioMerge.checked = (mode === 'merge');
+      },
+
+      closeRestoreModal() {
+        const modal = document.getElementById('modalRestoreBackup');
+        if (modal) {
+          modal.classList.remove('open');
+          modal.classList.add('hidden');
+        }
+        this.pendingRestoreData = null;
+        this.pendingRestoreFileName = '';
+      },
+
+      /**
+       * Salva snapshot de emergência do estado atual antes da restauração
+       */
+      async createEmergencySnapshot() {
+        try {
+          const snapshotPayload = await this.createBackupPayload();
+          localStorage.setItem('concurso_backup_emergency_pre_restore', JSON.stringify(snapshotPayload));
+          this.addLocalSnapshot(`Pré-Restauração (${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })})`, snapshotPayload.data);
+          return true;
+        } catch (e) {
+          console.warn('[BackupManager] Erro ao criar snapshot de emergência:', e);
+          return false;
+        }
+      },
+
+      /**
+       * Executa a restauração com substituição ou mesclagem
+       */
+      async executeRestore() {
+        if (!this.pendingRestoreData) {
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast('Nenhum dado selecionado para restauração.', 'warning');
+          }
+          return;
+        }
+
+        const btn = document.getElementById('btnConfirmRestoreBackup');
+        const origText = btn ? btn.innerHTML : '';
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = `<span>⏳</span> Restaurando dados...`;
+        }
+
+        try {
+          // 1. Snapshot automático de segurança ANTES de restaurar
+          await this.createEmergencySnapshot();
+
+          const incoming = this.pendingRestoreData;
+          const isMerge = this.selectedRestoreMode === 'merge';
+
+          if (isMerge) {
+            this.applyMergedData(incoming);
+          } else {
+            this.applyReplacedData(incoming);
+          }
+
+          // Salva no storage local
+          if (typeof App !== 'undefined' && App.saveToStorage) {
+            App.saveToStorage();
+          }
+
+          // Restaura preferências adicionais se presentes
+          if (incoming.studyDefaultMin && typeof StudyHoursManager !== 'undefined') {
+            StudyHoursManager.setDefaultMinutes(incoming.studyDefaultMin);
+          }
+          if (typeof incoming.studyAutoQuickMark === 'boolean' && typeof StudyHoursManager !== 'undefined') {
+            StudyHoursManager.setAutoQuickMark(incoming.studyAutoQuickMark);
+          }
+          if (incoming.theme && typeof App !== 'undefined' && App.setTheme) {
+            App.setTheme(incoming.theme, true);
+          }
+
+          // Importa anotações e favoritos do PDF se houverem
+          if (typeof PdfStorage !== 'undefined' && PdfStorage.importAllAnnotationsAndBookmarks) {
+            const pdfAnnot = incoming.pdfAnnotations || incoming.pdf_annotations || [];
+            const pdfBook = incoming.pdfBookmarks || incoming.pdf_bookmarks || [];
+            if (pdfAnnot.length > 0 || pdfBook.length > 0) {
+              await PdfStorage.importAllAnnotationsAndBookmarks({ annotations: pdfAnnot, bookmarks: pdfBook });
+            }
+          }
+
+          // Atualiza todas as telas e painéis da interface
+          if (typeof App !== 'undefined') {
+            if (App.renderAll) App.renderAll();
+            if (App.renderAutoConfigPanel) App.renderAutoConfigPanel();
+            if (App.updateHoursBadge) App.updateHoursBadge();
+            if (App.renderExamCountdown) App.renderExamCountdown();
+            if (App.renderSpacedReviews) App.renderSpacedReviews();
+            if (App.renderScheduleProgress) App.renderScheduleProgress();
+          }
+
+          if (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.renderTab) {
+            StudyHoursManager.renderTab();
+          }
+
+          // Dispara sincronização em nuvem se estiver logado
+          if (typeof SyncManager !== 'undefined' && SyncManager.debouncedSync) {
+            SyncManager.debouncedSync();
+          }
+
+          this.closeRestoreModal();
+          this.renderBackupCard();
+
+          // Exibe banner de desfazer
+          const undoBanner = document.getElementById('backupUndoBanner');
+          if (undoBanner) undoBanner.style.display = 'flex';
+
+          const msg = isMerge
+            ? 'Dados do backup mesclados com sucesso!'
+            : 'Cópia de segurança restaurada com sucesso!';
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast(msg, 'success');
+          }
+
+        } catch (err) {
+          console.error('[BackupManager] Erro ao restaurar backup:', err);
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast('Erro ao restaurar backup. Seus dados anteriores foram preservados.', 'warning');
+          }
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = origText;
+          }
+        }
+      },
+
+      /**
+       * Substituição completa de dados
+       */
+      applyReplacedData(incoming) {
+        if (typeof App === 'undefined') return;
+        const rawMaterias = incoming.materias || [];
+        App.data = {
+          materias: (typeof normalizarMaterias === 'function') ? normalizarMaterias(rawMaterias) : rawMaterias,
+          naoClassificado: incoming.naoClassificado || incoming.nao_classificado || []
+        };
+
+        App.schedules = Array.isArray(incoming.schedules) ? incoming.schedules : [];
+        App.activeScheduleId = incoming.activeScheduleId || incoming.active_schedule_id || (App.schedules[0] ? App.schedules[0].id : null);
+        App.schedule = App.schedules.find(s => s.id === App.activeScheduleId) || App.schedules[0] || null;
+
+        App.completedSlots = Object.assign({}, incoming.completedSlots || incoming.completed_slots || {});
+        App.priorities = Object.assign({}, incoming.priorities || {});
+        App.examDate = incoming.examDate || incoming.exam_date || null;
+        App.examTitle = incoming.examTitle || incoming.exam_title || '';
+        App.spacedReviews = Array.isArray(incoming.spacedReviews || incoming.spaced_reviews) ? (incoming.spacedReviews || incoming.spaced_reviews) : [];
+        App.sessionBreakMin = incoming.sessionBreakMin || incoming.session_break_min || 5;
+        App.weeklyReview = incoming.weeklyReview || incoming.weekly_review || { enabled: false, day: 'Domingo' };
+
+        const studyLogs = incoming.studyLog || incoming.study_log || (incoming.autoConfig && incoming.autoConfig.study_log) || [];
+        App.studyLog = Array.isArray(studyLogs) ? studyLogs : [];
+
+        if (incoming.autoConfig || incoming.auto_config) {
+          try {
+            localStorage.setItem('concurso_auto_config_last', JSON.stringify(incoming.autoConfig || incoming.auto_config));
+          } catch (_) {}
+        }
+      },
+
+      /**
+       * Mesclagem não-destrutiva de dados
+       */
+      applyMergedData(incoming) {
+        if (typeof App === 'undefined') return;
+
+        // Matérias
+        const localMaterias = (App.data && App.data.materias) ? [...App.data.materias] : [];
+        const incomingMaterias = incoming.materias || [];
+
+        incomingMaterias.forEach(inMat => {
+          const inId = typeof idMateria === 'function' ? idMateria(inMat) : (inMat.id || '');
+          const inNome = (typeof nomeMateria === 'function' ? nomeMateria(inMat) : (inMat.nome || '')).trim().toLowerCase();
+
+          const existing = localMaterias.find(m => {
+            const mId = typeof idMateria === 'function' ? idMateria(m) : (m.id || '');
+            const mNome = (typeof nomeMateria === 'function' ? nomeMateria(m) : (m.nome || '')).trim().toLowerCase();
+            return (mId && inId && mId === inId) || (mNome && inNome && mNome === inNome);
+          });
+
+          if (!existing) {
+            localMaterias.push(inMat);
+          } else {
+            const existingTopicos = existing.topicos || [];
+            const inTopicos = inMat.topicos || [];
+            inTopicos.forEach(it => {
+              const itText = (typeof it === 'object' && it ? (it.texto || it.text || '') : String(it)).trim().toLowerCase();
+              const hasTopic = existingTopicos.find(et => {
+                const etText = (typeof et === 'object' && et ? (et.texto || et.text || '') : String(et)).trim().toLowerCase();
+                return (et.id && it.id && et.id === it.id) || (etText && itText && etText === itText);
+              });
+              if (!hasTopic) {
+                existingTopicos.push(it);
+              } else if (it && it.concluido) {
+                if (typeof hasTopic === 'object') hasTopic.concluido = true;
+              }
+            });
+            existing.topicos = existingTopicos;
+          }
+        });
+
+        App.data.materias = (typeof normalizarMaterias === 'function') ? normalizarMaterias(localMaterias) : localMaterias;
+        App.data.naoClassificado = [...(App.data.naoClassificado || []), ...(incoming.naoClassificado || incoming.nao_classificado || [])];
+
+        // Cronogramas
+        const localScheds = App.schedules || [];
+        const inScheds = incoming.schedules || [];
+        const mergedScheds = [...localScheds];
+        inScheds.forEach(is => {
+          const exists = mergedScheds.find(s => (s.id && is.id && s.id === is.id) || (s.name && is.name && s.name === is.name) || (s.nome && is.nome && s.nome === is.nome));
+          if (!exists) {
+            mergedScheds.push(is);
+          } else if (is.columns && is.columns.length > 0 && (!exists.columns || exists.columns.length === 0)) {
+            exists.columns = is.columns;
+          }
+        });
+        App.schedules = mergedScheds;
+        if (!App.activeScheduleId && App.schedules.length > 0) {
+          App.activeScheduleId = App.schedules[0].id;
+          App.schedule = App.schedules[0];
+        }
+
+        // Sessões concluídas e Prioridades (União)
+        App.completedSlots = Object.assign({}, incoming.completedSlots || incoming.completed_slots || {}, App.completedSlots || {});
+        App.priorities = Object.assign({}, incoming.priorities || {}, App.priorities || {});
+
+        // Revisões espaçadas
+        const localRev = App.spacedReviews || [];
+        const inRev = incoming.spacedReviews || incoming.spaced_reviews || [];
+        const mergedRev = [...localRev];
+        inRev.forEach(ir => {
+          if (!mergedRev.find(lr => lr.id === ir.id)) {
+            mergedRev.push(ir);
+          }
+        });
+        App.spacedReviews = mergedRev;
+
+        // Horas de estudo (studyLog) com desduplicação por ID e timestamp mais recente
+        const localLogs = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.getStudyLog)
+          ? StudyHoursManager.getStudyLog()
+          : (Array.isArray(App.studyLog) ? App.studyLog : []);
+        const inLogs = incoming.studyLog || incoming.study_log || (incoming.autoConfig && incoming.autoConfig.study_log) || [];
+
+        const logMap = new Map();
+        localLogs.forEach(l => { if (l && l.id) logMap.set(l.id, l); });
+        inLogs.forEach(il => {
+          if (!il || !il.id) return;
+          if (!logMap.has(il.id)) {
+            logMap.set(il.id, il);
+          } else {
+            const existing = logMap.get(il.id);
+            const ilTime = il.updatedAt ? new Date(il.updatedAt).getTime() : 0;
+            const exTime = existing.updatedAt ? new Date(existing.updatedAt).getTime() : 0;
+            if (ilTime > exTime) {
+              logMap.set(il.id, il);
+            }
+          }
+        });
+        App.studyLog = Array.from(logMap.values());
+
+        // Concurso alvo (mantém local ou assume do backup se não definido)
+        if (!App.examDate && (incoming.examDate || incoming.exam_date)) {
+          App.examDate = incoming.examDate || incoming.exam_date;
+        }
+        if (!App.examTitle && (incoming.examTitle || incoming.exam_title)) {
+          App.examTitle = incoming.examTitle || incoming.exam_title;
+        }
+      },
+
+      /**
+       * Desfaz a última restauração retornando ao snapshot de emergência
+       */
+      undoRestore() {
+        try {
+          const raw = localStorage.getItem('concurso_backup_emergency_pre_restore');
+          if (!raw) {
+            if (typeof App !== 'undefined' && App.showToast) {
+              App.showToast('Nenhum ponto de restauração anterior disponível.', 'info');
+            }
+            return;
+          }
+
+          const snapshot = JSON.parse(raw);
+          if (!snapshot || !snapshot.data) {
+            if (typeof App !== 'undefined' && App.showToast) {
+              App.showToast('Ponto de restauração inválido.', 'warning');
+            }
+            return;
+          }
+
+          this.applyReplacedData(snapshot.data);
+          if (typeof App !== 'undefined' && App.saveToStorage) {
+            App.saveToStorage();
+          }
+
+          if (typeof App !== 'undefined') {
+            if (App.renderAll) App.renderAll();
+            if (App.renderAutoConfigPanel) App.renderAutoConfigPanel();
+            if (App.updateHoursBadge) App.updateHoursBadge();
+            if (App.renderExamCountdown) App.renderExamCountdown();
+            if (App.renderSpacedReviews) App.renderSpacedReviews();
+            if (App.renderScheduleProgress) App.renderScheduleProgress();
+          }
+
+          if (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.renderTab) {
+            StudyHoursManager.renderTab();
+          }
+
+          const undoBanner = document.getElementById('backupUndoBanner');
+          if (undoBanner) undoBanner.style.display = 'none';
+
+          localStorage.removeItem('concurso_backup_emergency_pre_restore');
+          this.renderBackupCard();
+
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast('Restauração desfeita! Seus dados anteriores foram restaurados com sucesso.', 'info');
+          }
+        } catch (e) {
+          console.error('[BackupManager] Erro ao desfazer restauração:', e);
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast('Erro ao desfazer restauração.', 'warning');
+          }
+        }
+      },
+
+      // =========================================================================
+      // GESTÃO DE SNAPSHOTS LOCAIS (NA MEMÓRIA DO APARELHO)
+      // =========================================================================
+      getLocalSnapshots() {
+        try {
+          const raw = localStorage.getItem('concurso_backup_local_snapshots');
+          return raw ? JSON.parse(raw) : [];
+        } catch (_) {
+          return [];
+        }
+      },
+
+      saveLocalSnapshots(list) {
+        try {
+          localStorage.setItem('concurso_backup_local_snapshots', JSON.stringify(list || []));
+        } catch (_) {}
+      },
+
+      addLocalSnapshot(label, customData = null) {
+        try {
+          const list = this.getLocalSnapshots();
+          const materias = customData ? (customData.materias || []) : ((typeof App !== 'undefined' && App.data) ? App.data.materias : []);
+          const schedules = customData ? (customData.schedules || []) : ((typeof App !== 'undefined') ? App.schedules : []);
+          const studyLog = customData ? (customData.studyLog || customData.study_log || []) : ((typeof App !== 'undefined') ? App.studyLog : []);
+
+          const now = new Date();
+          const newSnap = {
+            id: 'snap_' + Date.now(),
+            timestamp: now.toISOString(),
+            dateFormatted: now.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
+            label: label || 'Snapshot Local',
+            stats: {
+              materias: Array.isArray(materias) ? materias.length : 0,
+              schedules: Array.isArray(schedules) ? schedules.length : 0,
+              logs: Array.isArray(studyLog) ? studyLog.length : 0
+            },
+            data: customData ? customData : (typeof App !== 'undefined' ? JSON.parse(JSON.stringify({
+              materias: App.data ? App.data.materias : [],
+              naoClassificado: App.data ? App.data.naoClassificado : [],
+              schedules: App.schedules || [],
+              activeScheduleId: App.activeScheduleId || null,
+              completedSlots: App.completedSlots || {},
+              priorities: App.priorities || {},
+              examDate: App.examDate || null,
+              examTitle: App.examTitle || '',
+              spacedReviews: App.spacedReviews || [],
+              sessionBreakMin: App.sessionBreakMin || 5,
+              weeklyReview: App.weeklyReview || { enabled: false, day: 'Domingo' },
+              studyLog: App.studyLog || []
+            })) : null)
+          };
+
+          // Mantém no máximo 5 snapshots locais para não sobrecarregar o localStorage
+          list.unshift(newSnap);
+          if (list.length > 5) list.pop();
+          this.saveLocalSnapshots(list);
+          this.renderBackupCard();
+        } catch (e) {
+          console.warn('[BackupManager] Erro ao gravar snapshot local:', e);
+        }
+      },
+
+      createLocalSnapshotManual() {
+        this.addLocalSnapshot(`Manual (${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })})`);
+        if (typeof App !== 'undefined' && App.showToast) {
+          App.showToast('Ponto de restauração local criado com sucesso!', 'success');
+        }
+      },
+
+      restoreLocalSnapshot(id) {
+        const list = this.getLocalSnapshots();
+        const snap = list.find(s => s.id === id);
+        if (!snap || !snap.data) {
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast('Snapshot não encontrado.', 'warning');
+          }
+          return;
+        }
+
+        if (!confirm(`Deseja restaurar os dados do ponto "${snap.label}" (${snap.dateFormatted})? O estado atual será salvo como backup antes.`)) {
+          return;
+        }
+
+        this.pendingRestoreData = snap.data;
+        this.pendingRestoreFileName = `Snapshot: ${snap.label}`;
+        this.selectedRestoreMode = 'replace';
+        this.executeRestore();
+      },
+
+      deleteLocalSnapshot(id) {
+        let list = this.getLocalSnapshots();
+        list = list.filter(s => s.id !== id);
+        this.saveLocalSnapshots(list);
+        this.renderBackupCard();
+        if (typeof App !== 'undefined' && App.showToast) {
+          App.showToast('Snapshot removido.', 'info');
+        }
+      },
+
+      /**
+       * Renderiza o card de Backup na aba de Ajustes
+       */
+      renderBackupCard() {
+        const lastEl = document.getElementById('settingsLastBackupTime');
+        const listEl = document.getElementById('backupSnapshotsList');
+        const undoBanner = document.getElementById('backupUndoBanner');
+
+        const lastTime = localStorage.getItem('concurso_last_backup_download_time');
+        if (lastEl) {
+          lastEl.textContent = lastTime ? `${lastTime}` : 'Nenhum backup baixado ainda';
+        }
+
+        // Verifica se há snapshot de emergência pendente
+        const hasEmergency = !!localStorage.getItem('concurso_backup_emergency_pre_restore');
+        if (undoBanner) {
+          undoBanner.style.display = hasEmergency ? 'flex' : 'none';
+        }
+
+        // Renderiza lista de snapshots locais
+        if (listEl) {
+          const list = this.getLocalSnapshots();
+          if (list.length === 0) {
+            listEl.innerHTML = `
+              <div style="font-size: 0.78rem; color: var(--text-muted); text-align: center; padding: 10px; background: var(--bg-hover); border-radius: var(--radius-sm);">
+                Nenhum ponto local gravado ainda. Crie um acima ou baixe um backup.
+              </div>
+            `;
+          } else {
+            const esc = (typeof App !== 'undefined' && App.escapeHtml) ? App.escapeHtml : (s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;'));
+            listEl.innerHTML = list.map(snap => `
+              <div class="backup-snapshot-item">
+                <div class="backup-snapshot-info">
+                  <div class="backup-snapshot-title">${esc(snap.label)}</div>
+                  <div class="backup-snapshot-meta">
+                    📅 ${snap.dateFormatted} • 📚 ${snap.stats ? snap.stats.materias : 0} mat. • 🗓️ ${snap.stats ? snap.stats.schedules : 0} cron.
+                  </div>
+                </div>
+                <div class="backup-snapshot-actions">
+                  <button type="button" class="btn btn-secondary btn-xs" onclick="BackupManager.restoreLocalSnapshot('${snap.id}')" title="Restaurar este ponto">
+                    Restaurar
+                  </button>
+                  <button type="button" class="btn-icon danger" onclick="BackupManager.deleteLocalSnapshot('${snap.id}')" title="Excluir snapshot" style="padding: 2px 4px; font-size: 0.85rem;">
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+      }
+    };
+
+    window.BackupManager = BackupManager;
+
+    /**
      * PALETAS EM TONS PASTEL
      * Usam variáveis CSS para refletir a alternância entre tema claro e escuro automaticamente.
      */
@@ -8669,8 +9706,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.7.2";
-    const APP_BUILD_TIME = "14/10/2026 16:30:00";
+    const APP_VERSION = "1.7.3";
+    const APP_BUILD_TIME = "14/10/2026 17:35:00";
     window.APP_VERSION = APP_VERSION;
     window.APP_BUILD_TIME = APP_BUILD_TIME;
     const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
@@ -10448,6 +11485,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           }
         });
 
+        // Inicialização do sistema de backup (v1.7.3)
+        safeRun('Sistema de Backup', () => {
+          if (typeof BackupManager !== 'undefined' && BackupManager.init) {
+            BackupManager.init();
+          }
+        });
+
         // Se houver matérias gravadas, inicia em Matérias; se vazio, inicia em Upload
         const initialTab = (this.data.materias && this.data.materias.length > 0) ? 'tab-subjects' : 'tab-upload';
         this.switchTab(initialTab);
@@ -11309,6 +12353,9 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           }
           if (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.updateSettingsCard) {
             StudyHoursManager.updateSettingsCard();
+          }
+          if (typeof BackupManager !== 'undefined' && BackupManager.renderBackupCard) {
+            BackupManager.renderBackupCard();
           }
         }
 
@@ -18589,6 +19636,30 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
         } else {
           this.openMoreMenuSheet();
         }
+      },
+
+      /* Delegadores do Sistema de Backup (v1.7.3) */
+      downloadBackup() {
+        if (typeof BackupManager !== 'undefined') BackupManager.downloadBackup();
+      },
+      uploadBackup() {
+        if (typeof BackupManager !== 'undefined') BackupManager.promptUploadFile();
+      },
+      openBackupModal() {
+        this.switchTab('tab-settings');
+        setTimeout(() => {
+          const card = document.getElementById('settingsBackupCard');
+          if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            card.style.transition = 'box-shadow 0.4s ease, border-color 0.4s ease';
+            card.style.borderColor = 'var(--primary)';
+            card.style.boxShadow = '0 0 0 4px rgba(99, 102, 241, 0.25)';
+            setTimeout(() => {
+              card.style.borderColor = '';
+              card.style.boxShadow = '';
+            }, 1800);
+          }
+        }, 150);
       }
     };
 

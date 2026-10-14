@@ -1,15 +1,28 @@
 {
-  "version": "1.7.2",
+  "version": "1.7.3",
   "date": "2026-10-14",
   "notes": [
-    "Sincronização em Nuvem: resolução automática e transparente do erro de schema cache PostgREST (PGRST204) na tabela user_data",
-    "Persistência garantida dos logs de estudo (Horas de Estudo) mesmo em bases Supabase sem a coluna study_log, via fallback em auto_config.study_log",
-    "Compatibilidade bidirecional: detecção em tempo real e suporte nativo caso a coluna study_log seja adicionada via SQL Editor no Supabase",
-    "Painel de Diagnóstico atualizado com indicação de Modo de Sincronização (Nativo ou Transparente) e limpeza de pendências locais",
-    "Atualização do Service Worker para o cache cronograma-concursos-v20"
+    "Sistema completo de Backup & Restauração de dados: salvar e fazer upload de arquivos .json com todos os seus dados de estudos",
+    "Exportação estruturada com resumo visual: matérias, tópicos, cronogramas, sessões concluídas, prioridades, meta de concurso, horas de estudo e anotações",
+    "Restauração inteligente e segura: opção de Substituição Completa ou Mesclagem Não-Destrutiva sem perder nenhum dado já registrado",
+    "Garantia Zero Perda de Dados: criação de snapshot automático de emergência antes de qualquer restauração com botão 'Desfazer Restauração'",
+    "Pontos de Restauração Locais (Snapshots): crie cópias instantâneas na memória do dispositivo com restauração em 1 clique",
+    "Suporte completo a Drag & Drop (arrastar e soltar arquivo .json) e integração no menu 'Mais Opções' do mobile",
+    "Atualização do Service Worker para o cache cronograma-concursos-v21"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.7.2",
+      "date": "2026-10-14",
+      "notes": [
+        "Sincronização em Nuvem: resolução automática e transparente do erro de schema cache PostgREST (PGRST204) na tabela user_data",
+        "Persistência garantida dos logs de estudo (Horas de Estudo) mesmo em bases Supabase sem a coluna study_log, via fallback em auto_config.study_log",
+        "Compatibilidade bidirecional: detecção em tempo real e suporte nativo caso a coluna study_log seja adicionada via SQL Editor no Supabase",
+        "Painel de Diagnóstico atualizado com indicação de Modo de Sincronização (Nativo ou Transparente) e limpeza de pendências locais",
+        "Atualização do Service Worker para o cache cronograma-concursos-v20"
+      ]
+    },
     {
       "version": "1.7.1",
       "date": "2026-10-14",
