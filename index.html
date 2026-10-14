@@ -2706,6 +2706,150 @@
       transform: scale(1.15);
     }
 
+    
+    /* ==========================================================================
+       ASSISTENTE DE CRIAÇÃO MANUAL EM PASSOS (MOBILE & DESKTOP WIZARD)
+       ========================================================================== */
+    .modal-wizard-card {
+      max-width: 680px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      padding: 0 !important;
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+    }
+    .wizard-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-card);
+      flex-shrink: 0;
+    }
+    .wizard-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .wizard-step-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .wizard-title-group h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 2px 0 0 0;
+    }
+    .wizard-progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-subtle);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .wizard-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #4f46e5, #06b6d4);
+      transition: width 0.25s ease;
+    }
+    .wizard-body {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      padding: 20px;
+      -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
+      min-height: 0;
+    }
+    .wizard-footer {
+      padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 0px)) 20px;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-card);
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .wizard-type-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .wizard-type-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border-color);
+      background: var(--bg-card);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+    }
+    .wizard-type-card.active {
+      border-color: var(--accent-primary);
+      background: rgba(79, 70, 229, 0.08);
+    }
+    .wizard-type-icon {
+      font-size: 1.35rem;
+    }
+    .wizard-type-info strong {
+      display: block;
+      font-size: 0.88rem;
+      color: var(--text-main);
+    }
+    .wizard-type-info span {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+    .wizard-session-form {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .wizard-session-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+    .wizard-day-group-header {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      margin: 14px 0 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    @media (max-width: 640px) {
+      #modalCreateSchedule .modal-card {
+        max-width: 100vw !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+      }
+      .wizard-type-selector {
+        grid-template-columns: 1fr;
+      }
+    }
+
     /* Toast Notification */
     .toast-container {
       position: fixed;
@@ -2817,10 +2961,18 @@
       transition: var(--transition);
       padding: 4px 2px;
       user-select: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .bottom-nav-item:active {
-      transform: scale(0.94);
+      transform: scale(0.92);
+      background: var(--bg-hover);
+      border-radius: 8px;
+    }
+
+    .bottom-nav-item > * {
+      pointer-events: none;
     }
 
     .bottom-nav-icon-wrapper {
@@ -2891,6 +3043,58 @@
       border-radius: 50%;
       margin-left: 4px;
       vertical-align: middle;
+    }
+
+    /* Bottom Sheet de Mais Opções (Mobile) */
+    #modalMoreSheet {
+      z-index: 2500 !important;
+    }
+    #modalMoreSheet .modal-sheet-card {
+      border-radius: 20px 20px 0 0;
+      max-width: 100%;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      border-bottom: none;
+      padding: 12px 18px calc(24px + env(safe-area-inset-bottom, 0px)) 18px;
+      animation: slideUpSheet 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.25);
+      background: var(--bg-card);
+    }
+    .sheet-menu-item {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: 50px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-main);
+      text-align: left;
+      touch-action: manipulation;
+      transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .sheet-menu-item:hover {
+      background: var(--bg-hover);
+    }
+    .sheet-menu-item:active {
+      transform: scale(0.98);
+      background: var(--bg-hover);
+    }
+    .sheet-menu-item.active-menu-option {
+      border-color: #6366f1;
+      background: rgba(99, 102, 241, 0.10);
+      color: #4f46e5;
+    }
+    [data-theme="dark"] .sheet-menu-item.active-menu-option {
+      background: rgba(99, 102, 241, 0.22);
+      color: #a5b4fc;
     }
 
     /* ==========================================================================
@@ -5190,6 +5394,33 @@
             </div>
           </div>
         </div>
+
+        <!-- Card 4: Diagnóstico do Sistema (Suporte & Logs de Erros) -->
+        <div class="settings-card" id="settingsDiagnosticCard">
+          <div class="settings-card-header">
+            <span class="settings-card-icon">🩺</span>
+            <div>
+              <h3>Diagnóstico do Sistema</h3>
+              <p>Registro de erros do navegador para suporte e correções técnicas</p>
+            </div>
+          </div>
+          <div class="settings-card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+              <span style="font-size: 0.82rem; color: var(--text-muted);" id="diagnosticCountText">0 erros registrados</span>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnCopyDiagnostics" onclick="App.copyDiagnosticsLog()">
+                  📋 Copiar Diagnóstico
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="App.clearDiagnosticsLog()">
+                  🗑️ Limpar
+                </button>
+              </div>
+            </div>
+            <div id="diagnosticLogBox" style="max-height: 180px; overflow-y: auto; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; font-family: monospace; font-size: 0.75rem; white-space: pre-wrap; word-break: break-all; color: var(--text-main);">
+Nenhum erro registrado. O aplicativo está operando normalmente!
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -5240,95 +5471,244 @@
     </div>
   </div>
 
-  <!-- Modal: Criar Novo Cronograma (Manual ou Automático) -->
+  <!-- Modal: Criar Novo Cronograma (Assistente em 3 Passos: Manual ou Automático) -->
   <div class="modal-overlay" id="modalCreateSchedule">
-    <div class="modal-card" style="max-width: 580px;">
-      <div class="modal-header">
-        <h3 id="modalCreateScheduleTitle">➕ Novo Cronograma de Estudos</h3>
-        <button class="btn-icon" onclick="App.closeModals()">✕</button>
+    <div class="modal-card modal-wizard-card">
+      <!-- Topo Fixo do Wizard com Passos e Barra de Progresso -->
+      <div class="wizard-header">
+        <div class="wizard-header-top">
+          <div class="wizard-title-group">
+            <span class="wizard-step-badge" id="wizardStepBadge">Passo 1 de 3</span>
+            <h3 id="wizardStepTitle">Nome do Cronograma</h3>
+          </div>
+          <button type="button" class="btn-icon" onclick="App.closeCreateScheduleWizard()" aria-label="Fechar assistente">✕</button>
+        </div>
+        <div class="wizard-progress-bar-container">
+          <div class="wizard-progress-bar" id="wizardProgressBar" style="width: 33.33%;"></div>
+        </div>
       </div>
-      <div class="modal-body">
-        <!-- Tipo de Cronograma -->
-        <div class="config-group">
-          <label class="config-label">Tipo de Criação</label>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <label class="subject-checkbox-item" style="justify-content: center; cursor: pointer;">
-              <input type="radio" name="radioCreateSchedType" value="manual" checked id="radioCreateManual">
-              <span>✏️ Manual</span>
-            </label>
-            <label class="subject-checkbox-item" style="justify-content: center; cursor: pointer;">
-              <input type="radio" name="radioCreateSchedType" value="auto" id="radioCreateAuto">
-              <span>⚡ Automático</span>
-            </label>
+
+      <!-- Corpo com Rolagem e Teclado Seguro -->
+      <div class="wizard-body" id="wizardBody">
+        <!-- PASSO 1: Nome e Modalidade -->
+        <div class="wizard-step-pane" id="wizardStep1" style="display: block;">
+          <div class="config-group" style="margin-bottom: 16px;">
+            <label class="config-label" for="inputScheduleName">Nome do Cronograma</label>
+            <input type="text" id="inputScheduleName" class="input-field" placeholder="Ex: Reta Final TRT, Ciclo Básico, 60 Dias" style="font-size: 0.95rem; padding: 10px 12px;">
+            <span class="config-hint">Dê um nome para identificar este cronograma na sua lista</span>
+          </div>
+
+          <!-- Modalidade -->
+          <div class="config-group" style="margin-bottom: 16px;">
+            <label class="config-label">Modalidade de Planejamento</label>
+            <div class="wizard-type-selector">
+              <label class="wizard-type-card active" id="wizardCardManual">
+                <input type="radio" name="radioCreateSchedType" value="manual" checked id="radioCreateManual" onchange="App.onWizardTypeChange('manual')">
+                <span class="wizard-type-icon">✏️</span>
+                <div class="wizard-type-info">
+                  <strong>Montagem Manual</strong>
+                  <span>Você define cada sessão, dia e horário passo a passo</span>
+                </div>
+              </label>
+              <label class="wizard-type-card" id="wizardCardAuto">
+                <input type="radio" name="radioCreateSchedType" value="auto" id="radioCreateAuto" onchange="App.onWizardTypeChange('auto')">
+                <span class="wizard-type-icon">⚡</span>
+                <div class="wizard-type-info">
+                  <strong>Geração Automática</strong>
+                  <span>Distribuição inteligente e equilibrada das matérias</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Dias da Semana Iniciais -->
+          <div class="config-group">
+            <label class="config-label">Dias da Semana de Estudo</label>
+            <div class="days-picker" id="createScheduleDaysPicker">
+              <label class="day-chip"><input type="checkbox" value="Segunda" checked><span class="day-chip-label">Seg</span></label>
+              <label class="day-chip"><input type="checkbox" value="Terça" checked><span class="day-chip-label">Ter</span></label>
+              <label class="day-chip"><input type="checkbox" value="Quarta" checked><span class="day-chip-label">Qua</span></label>
+              <label class="day-chip"><input type="checkbox" value="Quinta" checked><span class="day-chip-label">Qui</span></label>
+              <label class="day-chip"><input type="checkbox" value="Sexta" checked><span class="day-chip-label">Sex</span></label>
+              <label class="day-chip"><input type="checkbox" value="Sábado"><span class="day-chip-label">Sáb</span></label>
+              <label class="day-chip"><input type="checkbox" value="Domingo"><span class="day-chip-label">Dom</span></label>
+            </div>
+            <span class="config-hint">Marque os dias em que você terá tempo reservado para estudar</span>
           </div>
         </div>
 
-        <!-- Nome do Cronograma -->
-        <div class="config-group">
-          <label class="config-label" for="inputScheduleName">Nome do Cronograma</label>
-          <input type="text" id="inputScheduleName" class="input-field" placeholder="Ex: Semana TRT, Reta Final, Ciclo Básico">
-        </div>
-
-        <!-- Matérias Participantes -->
-        <div class="config-group">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <label class="config-label">Matérias Participantes</label>
-            <div style="display: flex; gap: 6px;">
-              <button type="button" class="btn btn-secondary btn-sm" style="padding: 2px 8px; font-size: 0.75rem;" onclick="App.toggleSelectAllScheduleSubjects(true)">
-                ☑️ Todas
+        <!-- PASSO 2: Escolher as Matérias -->
+        <div class="wizard-step-pane" id="wizardStep2" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <label class="config-label" style="margin-bottom: 2px;">Disciplinas Participantes</label>
+              <span class="config-hint" style="margin: 0;">Marque as matérias que entrarão neste cronograma:</span>
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.toggleSelectAllScheduleSubjects(true)">
+                ☑️ Selecionar todas
               </button>
-              <button type="button" class="btn btn-secondary btn-sm" style="padding: 2px 8px; font-size: 0.75rem;" onclick="App.toggleSelectAllScheduleSubjects(false)">
-                ☐ Nenhuma
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.toggleSelectAllScheduleSubjects(false)">
+                ☐ Limpar
               </button>
-              <button type="button" class="btn btn-pastel-purple btn-sm" style="padding: 2px 8px; font-size: 0.75rem;" onclick="App.openAddExtraSubjectModal()">
-                ➕ Matéria Avulsa
+              <button type="button" class="btn btn-pastel-purple btn-sm" onclick="App.openAddExtraSubjectModal()">
+                ➕ Cadastrar matéria
               </button>
             </div>
           </div>
-          <div class="subject-checkbox-grid" id="createScheduleSubjectsList">
-            <!-- Checkboxes das matérias inseridos dinamicamente -->
+
+          <div class="subject-checkbox-grid" id="createScheduleSubjectsList" style="max-height: 380px; overflow-y: auto; padding-right: 4px;">
+            <!-- Povoado dinamicamente via JS com nomeMateria() e dados limpos -->
           </div>
-          <span class="config-hint">Marque quais disciplinas entrarão na sua grade deste cronograma</span>
         </div>
 
-        <!-- Dias da Semana do Cronograma -->
-        <div class="config-group">
-          <label class="config-label">Dias da Semana de Estudo</label>
-          <div class="days-picker" id="createScheduleDaysPicker">
-            <label class="day-chip">
-              <input type="checkbox" value="Segunda" checked>
-              <span class="day-chip-label">Seg</span>
-            </label>
-            <label class="day-chip">
-              <input type="checkbox" value="Terça" checked>
-              <span class="day-chip-label">Ter</span>
-            </label>
-            <label class="day-chip">
-              <input type="checkbox" value="Quarta" checked>
-              <span class="day-chip-label">Qua</span>
-            </label>
-            <label class="day-chip">
-              <input type="checkbox" value="Quinta" checked>
-              <span class="day-chip-label">Qui</span>
-            </label>
-            <label class="day-chip">
-              <input type="checkbox" value="Sexta" checked>
-              <span class="day-chip-label">Sex</span>
-            </label>
-            <label class="day-chip">
-              <input type="checkbox" value="Sábado" checked>
-              <span class="day-chip-label">Sáb</span>
-            </label>
-            <label class="day-chip">
-              <input type="checkbox" value="Domingo">
-              <span class="day-chip-label">Dom</span>
-            </label>
+        <!-- PASSO 3: Adicionar Sessões de Estudo -->
+        <div class="wizard-step-pane" id="wizardStep3" style="display: none;">
+          <!-- Formulário de Criação/Edição de Sessão no Wizard -->
+          <div class="wizard-session-form" id="wizardSessionForm">
+            <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-main); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+              <span id="wizardSessionFormTitle">➕ Adicionar Sessão de Estudo</span>
+              <span id="wizardEditingBadge" style="display: none; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; background: rgba(79, 70, 229, 0.12); color: var(--accent-primary); font-weight: 600;">Editando sessão</span>
+            </div>
+
+            <!-- Dias da Semana com Múltipla Escolha -->
+            <div class="config-group" style="margin-bottom: 12px;">
+              <label class="config-label">Dias da Semana (toque para marcar um ou mais):</label>
+              <div class="days-picker" id="wizardSessionDaysPicker">
+                <label class="day-chip"><input type="checkbox" value="Segunda" checked><span class="day-chip-label">Seg</span></label>
+                <label class="day-chip"><input type="checkbox" value="Terça"><span class="day-chip-label">Ter</span></label>
+                <label class="day-chip"><input type="checkbox" value="Quarta"><span class="day-chip-label">Qua</span></label>
+                <label class="day-chip"><input type="checkbox" value="Quinta"><span class="day-chip-label">Qui</span></label>
+                <label class="day-chip"><input type="checkbox" value="Sexta"><span class="day-chip-label">Sex</span></label>
+                <label class="day-chip"><input type="checkbox" value="Sábado"><span class="day-chip-label">Sáb</span></label>
+                <label class="day-chip"><input type="checkbox" value="Domingo"><span class="day-chip-label">Dom</span></label>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+              <!-- Disciplina -->
+              <div class="config-group" style="margin: 0;">
+                <label class="config-label" for="wizardSessionSubjectSelect">Disciplina</label>
+                <select id="wizardSessionSubjectSelect" class="input-field" style="padding: 10px;" onchange="App.onWizardSubjectChange(this.value)">
+                  <!-- Preenchido via nomeMateria() -->
+                </select>
+              </div>
+
+              <!-- Horário de Início -->
+              <div class="config-group" style="margin: 0;">
+                <label class="config-label" for="wizardSessionStartTime">Horário de Início</label>
+                <input type="time" id="wizardSessionStartTime" class="input-field" style="padding: 8px 10px;" onchange="App.checkWizardSessionConflict()">
+              </div>
+            </div>
+
+            <!-- Duração com Chips -->
+            <div class="config-group" style="margin-bottom: 12px;">
+              <label class="config-label">Duração da Sessão</label>
+              <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <button type="button" class="btn-preset" data-dur="30" onclick="App.setWizardDuration(30)">30 min</button>
+                <button type="button" class="btn-preset" data-dur="45" onclick="App.setWizardDuration(45)">45 min</button>
+                <button type="button" class="btn-preset active" data-dur="60" onclick="App.setWizardDuration(60)">60 min</button>
+                <button type="button" class="btn-preset" data-dur="90" onclick="App.setWizardDuration(90)">90 min</button>
+                <div style="display: flex; align-items: gap: 4px; margin-left: auto;">
+                  <input type="number" id="wizardSessionDurationCustom" class="input-field" value="60" min="15" max="360" step="5" style="width: 68px; padding: 6px; text-align: center;" onchange="App.setWizardDuration(this.value)">
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">min</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tópico e Notas -->
+            <div class="config-group" style="margin-bottom: 12px;">
+              <label class="config-label" for="wizardSessionTopic">Tópico ou Assunto (Opcional)</label>
+              <input type="text" id="wizardSessionTopic" class="input-field" list="wizardTopicsDatalist" placeholder="Ex: Teoria, Resolução de Questões, Revisão" style="padding: 9px 12px;">
+              <datalist id="wizardTopicsDatalist"></datalist>
+            </div>
+
+            <div class="config-group" style="margin-bottom: 12px;">
+              <label class="config-label" for="wizardSessionNotes">Observações (Opcional)</label>
+              <input type="text" id="wizardSessionNotes" class="input-field" placeholder="Ex: Caderno de erros, ler pdf pág 10-30" style="padding: 9px 12px;">
+            </div>
+
+            <!-- Alerta de Conflito Não-Bloqueante -->
+            <div id="wizardConflictAlert" style="display: none; padding: 8px 12px; margin-bottom: 12px; background: rgba(245, 158, 11, 0.12); border-left: 3px solid #f59e0b; border-radius: 4px; font-size: 0.8rem; color: #b45309;">
+            </div>
+
+            <!-- Botões de Ação do Formulário de Sessão -->
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn btn-primary" id="btnWizardAddSession" onclick="App.addSessionFromWizard()" style="flex: 1;">
+                ➕ Adicionar Sessão
+              </button>
+              <button type="button" class="btn btn-secondary" id="btnWizardCancelEditSession" onclick="App.cancelWizardEditSession()" style="display: none;">
+                Cancelar Edição
+              </button>
+            </div>
+          </div>
+
+          <!-- Sessões Já Programadas Agrupadas por Dia -->
+          <div class="wizard-sessions-list-container" style="margin-top: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+              <span style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">
+                📅 Sessões Programadas (<span id="wizardTotalSessionsCount">0</span>)
+              </span>
+              <span style="font-size: 0.8rem; color: var(--text-muted);" id="wizardTotalHoursCount">0h de estudo</span>
+            </div>
+            <div id="wizardCreatedSessionsList">
+              <!-- Inserido dinamicamente via JS -->
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Rodapé Fixo do Wizard -->
+      <div class="modal-footer wizard-footer">
+        <button type="button" class="btn btn-secondary" id="btnWizardBack" onclick="App.wizardPrevStep()">
+          ← Voltar
+        </button>
+        <div style="display: flex; gap: 8px; margin-left: auto;">
+          <button type="button" class="btn btn-secondary" id="btnWizardDiscardDraft" onclick="App.discardWizardDraft()" style="font-size: 0.8rem; display: none;">
+            Descartar Rascunho
+          </button>
+          <button type="button" class="btn btn-primary" id="btnWizardNext" onclick="App.wizardNextStep()">
+            Próximo →
+          </button>
+          <button type="button" class="btn btn-primary" id="btnWizardSave" onclick="App.wizardSaveSchedule()" style="display: none; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);">
+            💾 Salvar Cronograma
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Rápido: Mudar Dia/Horário da Sessão (Sem Drag & Drop no Mobile) -->
+  <div class="modal-overlay" id="modalMoveSession">
+    <div class="modal-card" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3>🔄 Mudar Dia / Horário da Sessão</h3>
+        <button type="button" class="btn-icon" onclick="App.closeMoveSessionModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size: 0.88rem; margin-bottom: 12px; color: var(--text-main);" id="moveSessionInfoText">
+          <!-- Disciplina e horário atual -->
+        </div>
+        <div class="config-group">
+          <label class="config-label" for="selectMoveSessionDay">Novo Dia da Semana</label>
+          <select id="selectMoveSessionDay" class="input-field" style="padding: 10px;">
+            <option value="Segunda">Segunda-feira</option>
+            <option value="Terça">Terça-feira</option>
+            <option value="Quarta">Quarta-feira</option>
+            <option value="Quinta">Quinta-feira</option>
+            <option value="Sexta">Sexta-feira</option>
+            <option value="Sábado">Sábado</option>
+            <option value="Domingo">Domingo</option>
+          </select>
+        </div>
+        <div class="config-group">
+          <label class="config-label" for="inputMoveSessionStartTime">Novo Horário de Início (Opcional)</label>
+          <input type="time" id="inputMoveSessionStartTime" class="input-field" style="padding: 10px;">
+        </div>
+      </div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="App.closeModals()">Cancelar</button>
-        <button class="btn btn-primary" id="btnConfirmCreateSchedule">Criar Cronograma 🚀</button>
+        <button type="button" class="btn btn-secondary" onclick="App.closeMoveSessionModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="App.confirmMoveSession()">Mover Sessão</button>
       </div>
     </div>
   </div>
@@ -5796,33 +6176,38 @@
   </div>
 
   <!-- Modal / Bottom Sheet: Menu Mais Opções (Mobile) -->
-  <div class="modal-overlay hidden" id="modalMoreSheet">
-    <div class="modal-card modal-sheet-card" style="max-width: 440px;">
+  <div class="modal-overlay hidden" id="modalMoreSheet" onclick="if (event.target === this) { event.stopPropagation(); event.preventDefault(); App.closeMoreMenuSheet(event); }">
+    <div class="modal-card modal-sheet-card" style="max-width: 440px;" onclick="event.stopPropagation()">
+      <div class="bottom-sheet-handle"></div>
       <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
         <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-main);">
           ⋯ Mais Opções
         </h3>
-        <button type="button" class="btn-icon" onclick="App.closeMoreMenuSheet()">✕</button>
+        <button type="button" class="btn-icon" onclick="App.closeMoreMenuSheet(event)" aria-label="Fechar menu">✕</button>
       </div>
-      <div class="modal-body" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
-        <button type="button" class="btn btn-secondary" onclick="App.openAuthOrSyncModal(); App.closeMoreMenuSheet();" style="justify-content: flex-start; min-height: 48px; font-weight: 600;">
-          <span style="font-size: 1.2rem; margin-right: 8px;">☁️</span>
+      <div class="modal-body" style="padding: 16px 0 6px 0; display: flex; flex-direction: column; gap: 10px;">
+        <button type="button" class="sheet-menu-item" id="sheetBtnAuth" onclick="App.closeMoreMenuSheet(); App.openAuthOrSyncModal();">
+          <span style="font-size: 1.25rem; margin-right: 10px;">☁️</span>
           <span id="sheetAuthBtnText">Conta & Sincronização em Nuvem</span>
           <span class="sync-dot mode-local" id="sheetAuthDot" style="margin-left: auto;"></span>
         </button>
-        <button type="button" class="btn btn-secondary" onclick="App.switchTab('tab-updates'); App.closeMoreMenuSheet();" style="justify-content: flex-start; min-height: 48px; font-weight: 600;">
-          <span style="font-size: 1.2rem; margin-right: 8px;">🔄</span> Atualizações do Aplicativo
+        <button type="button" class="sheet-menu-item" id="sheetBtnUpdates" onclick="App.closeMoreMenuSheet(); App.switchTab('tab-updates');">
+          <span style="font-size: 1.25rem; margin-right: 10px;">🔄</span>
+          <span>Atualizações do Aplicativo</span>
           <span class="tab-badge-dot" id="sheetUpdatesBadgeDot" style="display: none; margin-left: auto;"></span>
         </button>
-        <button type="button" class="btn btn-secondary" onclick="App.switchTab('tab-settings'); App.closeMoreMenuSheet();" style="justify-content: flex-start; min-height: 48px; font-weight: 600;">
-          <span style="font-size: 1.2rem; margin-right: 8px;">⚙️</span> Ajustes & Aparência
+        <button type="button" class="sheet-menu-item" id="sheetBtnSettings" onclick="App.closeMoreMenuSheet(); App.switchTab('tab-settings');">
+          <span style="font-size: 1.25rem; margin-right: 10px;">⚙️</span>
+          <span>Ajustes & Aparência</span>
         </button>
         <div class="dropdown-divider" style="margin: 4px 0;"></div>
-        <button type="button" class="btn btn-secondary" onclick="App.loadDemoData(); App.closeMoreMenuSheet();" style="justify-content: flex-start; min-height: 46px;">
-          <span style="font-size: 1.1rem; margin-right: 8px;">✨</span> Carregar Exemplo de Estudo
+        <button type="button" class="sheet-menu-item" id="sheetBtnDemo" onclick="App.closeMoreMenuSheet(); App.loadDemoData();">
+          <span style="font-size: 1.25rem; margin-right: 10px;">✨</span>
+          <span>Carregar Exemplo de Estudo</span>
         </button>
-        <button type="button" class="btn btn-danger-soft" onclick="App.clearAllData(); App.closeMoreMenuSheet();" style="justify-content: flex-start; min-height: 46px;">
-          <span style="font-size: 1.1rem; margin-right: 8px;">🗑️</span> Limpar Todos os Dados Salvos
+        <button type="button" class="sheet-menu-item" id="sheetBtnClear" onclick="App.closeMoreMenuSheet(); App.clearAllData();" style="color: #dc2626;">
+          <span style="font-size: 1.25rem; margin-right: 10px;">🗑️</span>
+          <span>Limpar Todos os Dados Salvos</span>
         </button>
       </div>
     </div>
@@ -6039,7 +6424,7 @@
       </div>
       <span class="bottom-nav-label">Edital</span>
     </button>
-    <button class="bottom-nav-item" data-tab="tab-more" id="bottomNavMoreBtn" onclick="App.openMoreMenuSheet()">
+    <button class="bottom-nav-item" data-tab="tab-more" id="bottomNavMoreBtn" aria-label="Mais opções">
       <div class="bottom-nav-icon-wrapper">
         <span class="bottom-nav-icon">⋯</span>
         <span class="bottom-nav-dot" id="updatesBadgeDot" style="display: none;"></span>
@@ -6071,6 +6456,74 @@
        JAVASCRIPT DA APLICAÇÃO
        ========================================================================== -->
   <script>
+    /**
+     * CAPTURA GLOBAL DE ERROS E DIAGNÓSTICO (Últimos 30 erros)
+     * Monitora exceções e rejeições de promises em segundo plano para suporte imediato.
+     */
+    window.__APP_ERROR_LOGS__ = [];
+    try {
+      const savedLogs = localStorage.getItem('concurso_diagnostic_errors');
+      if (savedLogs) window.__APP_ERROR_LOGS__ = JSON.parse(savedLogs);
+    } catch (e) {}
+
+    function logGlobalDiagnosticError(type, message, source, lineno, colno, stack) {
+      try {
+        const entry = {
+          date: new Date().toLocaleString('pt-BR'),
+          type: type || 'error',
+          message: String(message || 'Erro desconhecido'),
+          source: String(source || (window.location && window.location.href) || ''),
+          line: lineno || 0,
+          col: colno || 0,
+          stack: stack ? String(stack) : ''
+        };
+        window.__APP_ERROR_LOGS__.unshift(entry);
+        if (window.__APP_ERROR_LOGS__.length > 30) {
+          window.__APP_ERROR_LOGS__ = window.__APP_ERROR_LOGS__.slice(0, 30);
+        }
+        localStorage.setItem('concurso_diagnostic_errors', JSON.stringify(window.__APP_ERROR_LOGS__));
+        if (window.App && typeof window.App.renderDiagnosticsLog === 'function') {
+          window.App.renderDiagnosticsLog();
+        }
+      } catch (e) {}
+    }
+
+    window.addEventListener('error', function(event) {
+      logGlobalDiagnosticError('error', event.message, event.filename, event.lineno, event.colno, event.error && event.error.stack);
+    });
+
+    window.addEventListener('unhandledrejection', function(event) {
+      const reason = event.reason;
+      const msg = reason ? (reason.message || String(reason)) : 'Promise rejection';
+      const stack = reason && reason.stack ? reason.stack : '';
+      logGlobalDiagnosticError('unhandledrejection', msg, '', 0, 0, stack);
+    });
+
+    /**
+     * CAMADA ÚNICA DE DADOS DE MATÉRIAS (ETAPA 2)
+     * Padroniza a manipulação de matérias no app inteiro, garantindo que objetos
+     * nunca sejam interpolados em strings ou inputs.
+     */
+    function nomeMateria(m) {
+      if (m == null) return '';
+      if (typeof m === 'string') return m;
+      return String(m.nome ?? m.name ?? m.titulo ?? m.title ?? '');
+    }
+    function idMateria(m) {
+      if (m == null) return '';
+      if (typeof m === 'string') return m;
+      return String(m.id ?? m.nome ?? m.name ?? '');
+    }
+    function normalizarMaterias(lista) {
+      return (Array.isArray(lista) ? lista : []).map((m, i) =>
+        typeof m === 'string'
+          ? { id: 'mat_' + i + '_' + m.toLowerCase().replace(/\s+/g, '-'), nome: m, cor: null, paletteId: 'blue', topicos: [] }
+          : { ...m, id: idMateria(m) || ('mat_' + i), nome: nomeMateria(m) });
+    }
+    window.nomeMateria = nomeMateria;
+    window.idMateria = idMateria;
+    window.normalizarMaterias = normalizarMaterias;
+
     /**
      * GERENCIADOR DE ARMAZENAMENTO OFFLINE DO LEITOR DE PDF (INDEXEDDB)
      * Salva o PDF ativo, anotações (marca-texto e caneta em coordenadas relativas) e favoritos.
@@ -6804,7 +7257,7 @@
      * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.6.2";
+    const APP_VERSION = "1.6.4";
     const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
     const REMOTE_VERSION_URL = UPDATE_URL; // Mantido para compatibilidade
     const GITHUB_RELEASES_URL = "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases";
@@ -7052,41 +7505,57 @@
       normalizarTexto: normalizarTexto,
 
       init() {
-        this.initTheme();
-        this.loadFromStorage();
+        // Inicialização protegida: cada módulo roda isolado para que uma falha nunca impeça os botões
+        const safeRun = (name, fn) => {
+          try {
+            fn.call(this);
+          } catch (err) {
+            console.error('[App.init] Erro ao inicializar ' + name + ':', err);
+            if (typeof logGlobalDiagnosticError === 'function') {
+              logGlobalDiagnosticError('init_error', 'Falha ao inicializar ' + name + ': ' + (err.message || err), '', 0, 0, err.stack);
+            }
+          }
+        };
+
+        safeRun('Tema', () => this.initTheme());
+        safeRun('Armazenamento', () => this.loadFromStorage());
 
         // Migração automática v1.6.2: divide tópicos salvos com divisor-topicos.js UMA vez (com backup)
-        const migratedV162 = localStorage.getItem('concurso_v162_divisor_migrated');
-        if (!migratedV162) {
-          try {
+        safeRun('Migração de Tópicos', () => {
+          const migratedV162 = localStorage.getItem('concurso_v162_divisor_migrated');
+          if (!migratedV162) {
             if (this.data.materias && this.data.materias.length > 0) {
               this.dividirMateriasSalvasPorNumeracao(true);
             }
             localStorage.setItem('concurso_v162_divisor_migrated', 'true');
-          } catch (errMig) {
-            console.warn('Aviso ao executar migração automática v1.6.2:', errMig);
           }
-        }
+        });
 
-        this.loadAutoConfig();
-        this.bindEvents();
-        this.initSwipeListeners();
-        this.initVersionDisplay();
-        this.initUpdateListeners();
-        this.initPdfReader();
-        this.renderAll();
-        this.renderAutoConfigPanel();
-        this.updateHoursBadge();
-        this.updateAutoConfigDiagnosis();
-        this.renderExamCountdown();
-        this.renderSpacedReviews();
-        this.renderScheduleProgress();
-        this.checkUpdates(false);
+        safeRun('Configuração Automática', () => this.loadAutoConfig());
+        safeRun('Eventos', () => this.bindEvents());
+        safeRun('Swipe Mobile', () => this.initSwipeListeners());
+        safeRun('Exibição de Versão', () => this.initVersionDisplay());
+        safeRun('Ouvintes de Atualização', () => this.initUpdateListeners());
+        safeRun('Leitor de PDF', () => this.initPdfReader());
+        safeRun('Renderização de Telas', () => {
+          this.renderAll();
+          this.renderAutoConfigPanel();
+          this.updateHoursBadge();
+          this.updateAutoConfigDiagnosis();
+          this.renderExamCountdown();
+          this.renderSpacedReviews();
+          this.renderScheduleProgress();
+          this.renderDiagnosticsLog();
+        });
+
+        safeRun('Checagem de Atualizações em Segundo Plano', () => this.checkUpdates(false));
 
         // Inicialização da sincronização em nuvem (Parte C)
-        if (typeof SyncManager !== 'undefined' && SyncManager.init) {
-          SyncManager.init();
-        }
+        safeRun('Sincronização em Nuvem', () => {
+          if (typeof SyncManager !== 'undefined' && SyncManager.init) {
+            SyncManager.init();
+          }
+        });
 
         // Se houver matérias gravadas, inicia em Matérias; se vazio, inicia em Upload
         const initialTab = (this.data.materias && this.data.materias.length > 0) ? 'tab-subjects' : 'tab-upload';
@@ -7100,13 +7569,25 @@
         const theme = saved || (prefersDark ? 'dark' : 'light');
         this.setTheme(theme, false);
 
-        // Ouve preferências do sistema caso o usuário não tenha definido manualmente
+        // Ouve preferências do sistema com fallback seguro para navegadores antigos e WebViews
         if (window.matchMedia) {
-          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            if (!localStorage.getItem('concurso_theme_preference')) {
-              App.setTheme(e.matches ? 'dark' : 'light', false);
+          try {
+            const mq = window.matchMedia('(prefers-color-scheme: dark)');
+            if (mq) {
+              const handler = (e) => {
+                if (!localStorage.getItem('concurso_theme_preference')) {
+                  this.setTheme(e.matches ? 'dark' : 'light', false);
+                }
+              };
+              if (typeof mq.addEventListener === 'function') {
+                mq.addEventListener('change', handler);
+              } else if (typeof mq.addListener === 'function') {
+                mq.addListener(handler);
+              }
             }
-          });
+          } catch (errMq) {
+            console.warn('[initTheme] Aviso ao monitorar tema do sistema:', errMq);
+          }
         }
       },
 
@@ -7187,10 +7668,23 @@
         try {
           const raw = localStorage.getItem('concurso_app_data');
           if (raw) {
+            // Backup automático de segurança antes de qualquer migração ou normalização
+            if (!localStorage.getItem('concurso_app_data_backup_v164')) {
+              try {
+                localStorage.setItem('concurso_app_data_backup_v164', raw);
+              } catch (eBackup) {}
+            }
             this.data = JSON.parse(raw);
           } else {
             // Inicializa limpo
             this.data = { materias: [], naoClassificado: [] };
+          }
+
+          // Normaliza matérias (aceita formato antigo e novo sem perda de dados)
+          if (this.data && Array.isArray(this.data.materias)) {
+            this.data.materias = normalizarMaterias(this.data.materias);
+          } else if (this.data) {
+            this.data.materias = [];
           }
 
           const rawSchedulesList = localStorage.getItem('concurso_schedules_list');
@@ -7202,6 +7696,32 @@
               this.schedules = JSON.parse(rawSchedulesList) || [];
             } catch (err) {
               this.schedules = [];
+            }
+
+            // Normaliza nomes e IDs nas sessões dos cronogramas existentes (corrige [object Object])
+            if (this.schedules && Array.isArray(this.schedules)) {
+              this.schedules.forEach(s => {
+                if (s.columns && Array.isArray(s.columns)) {
+                  s.columns.forEach(col => {
+                    if (col.slots && Array.isArray(col.slots)) {
+                      col.slots.forEach(slot => {
+                        let sName = nomeMateria(slot.subjectName || slot.subject || slot.materia || '');
+                        let sId = idMateria(slot.subjectId || slot.subject || slot.materia || '');
+                        if (!sName || sName === '[object Object]' || sName === 'object') {
+                          const found = (this.data.materias || []).find(m => idMateria(m) === sId);
+                          sName = found ? nomeMateria(found) : 'Disciplina';
+                        }
+                        if (!sId && sName) {
+                          const found = (this.data.materias || []).find(m => nomeMateria(m).toLowerCase() === sName.toLowerCase());
+                          if (found) sId = idMateria(found);
+                        }
+                        slot.subjectName = sName;
+                        slot.subjectId = sId;
+                      });
+                    }
+                  });
+                }
+              });
             }
 
             if (this.schedules.length > 0) {
@@ -7225,7 +7745,7 @@
                   dias: legacyObj.dias || ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'],
                   hoursPerDay: legacyObj.hoursPerDay || 3,
                   blockDuration: legacyObj.blockDuration || 60,
-                  materiasIds: (this.data.materias || []).map(m => m.id),
+                  materiasIds: (this.data.materias || []).map(m => idMateria(m)),
                   columns: legacyObj.columns || [],
                   generatedAt: legacyObj.generatedAt || new Date().toLocaleDateString('pt-BR')
                 };
@@ -7347,9 +7867,10 @@
         // Navegação na barra inferior (Mobile)
         document.querySelectorAll('.bottom-nav-item').forEach(btn => {
           btn.addEventListener('click', (e) => {
-            const targetTab = e.currentTarget.getAttribute('data-tab');
+            e.preventDefault();
+            const targetTab = btn.getAttribute('data-tab');
             if (targetTab === 'tab-more') {
-              App.openMoreMenuSheet();
+              App.toggleMoreMenuSheet();
               return;
             }
             App.switchTab(targetTab);
@@ -7637,8 +8158,33 @@
                 handleResume();
               }
             });
+
+            // Tratador do botão Voltar do Android no Capacitor
+            window.Capacitor.Plugins.App.addListener('backButton', () => {
+              const moreSheet = document.getElementById('modalMoreSheet');
+              if (moreSheet && moreSheet.classList.contains('open')) {
+                App.closeMoreMenuSheet();
+                return;
+              }
+              const openModal = document.querySelector('.modal-overlay.open');
+              if (openModal) {
+                App.closeModals();
+                return;
+              }
+            });
           } catch (e) {}
         }
+
+        // Fechamento de modais e sheet com tecla Escape
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            const moreSheet = document.getElementById('modalMoreSheet');
+            if (moreSheet && moreSheet.classList.contains('open')) {
+              App.closeMoreMenuSheet();
+              return;
+            }
+          }
+        });
 
         // Tratamento do botão de download do APK e opções de fallback
         const btnApk = document.getElementById('btnDownloadApk');
@@ -10335,79 +10881,664 @@
         }
       },
 
-      /* 2. Criação, Duplicação, Renomeação e Exclusão de Cronogramas */
+            /* 2. Criação, Duplicação, Renomeação e Exclusão de Cronogramas (Assistente em Passos) */
+      nomeMateria: nomeMateria,
+      idMateria: idMateria,
+      normalizarMaterias: normalizarMaterias,
+
+      wizard: {
+        step: 1,
+        type: 'manual',
+        name: '',
+        days: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'],
+        subjectIds: [],
+        sessions: [],
+        editingTempId: null,
+        duration: 60
+      },
+
+      /* Abre o assistente de criação de cronograma (Passo 1 de 3) */
       openCreateScheduleModal(preferredType = 'manual') {
+        const num = (this.schedules ? this.schedules.length : 0) + 1;
+        const defaultName = preferredType === 'manual' ? `Cronograma Manual ${num}` : `Cronograma ${num}`;
+
+        // Verifica rascunho salvo
+        const draft = this.loadWizardDraft();
+        if (draft && draft.name && confirm('Existe um rascunho de cronograma não finalizado. Deseja continuar de onde parou?')) {
+          this.wizard = draft;
+        } else {
+          this.wizard = {
+            step: 1,
+            type: preferredType,
+            name: defaultName,
+            days: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'],
+            subjectIds: (this.data.materias || []).map(m => idMateria(m)),
+            sessions: [],
+            editingTempId: null,
+            duration: 60
+          };
+        }
+
         const inputName = document.getElementById('inputScheduleName');
-        const radioManual = document.getElementById('radioCreateManual');
-        const radioAuto = document.getElementById('radioCreateAuto');
-        const list = document.getElementById('createScheduleSubjectsList');
+        if (inputName) inputName.value = this.wizard.name;
 
-        if (inputName) {
-          const num = (this.schedules ? this.schedules.length : 0) + 1;
-          inputName.value = preferredType === 'manual' ? `Cronograma Manual ${num}` : `Cronograma ${num}`;
-        }
+        this.onWizardTypeChange(this.wizard.type, false);
+        this.goToWizardStep(this.wizard.step || 1);
 
-        if (preferredType === 'manual' && radioManual) {
-          radioManual.checked = true;
-        } else if (radioAuto) {
-          radioAuto.checked = true;
-        }
+        const modal = document.getElementById('modalCreateSchedule');
+        if (modal) modal.classList.add('open');
 
-        // Renderiza lista de matérias com checkboxes
-        if (list) {
-          list.innerHTML = '';
-          if (!this.data.materias || this.data.materias.length === 0) {
-            list.innerHTML = `
-              <div style="grid-column: 1 / -1; padding: 14px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
-                Nenhuma matéria cadastrada ainda. Adicione uma disciplina pelo botão acima <strong>"+ Matéria Avulsa"</strong>.
-              </div>
-            `;
-          } else {
-            this.data.materias.forEach(m => {
-              const pal = this.getPalette(m.paletteId);
-              const item = document.createElement('label');
-              item.className = 'subject-checkbox-item';
-              item.innerHTML = `
-                <input type="checkbox" value="${m.id}" checked>
-                <span class="subject-color-dot" style="background: ${pal.border}; border: 1.5px solid ${pal.text};"></span>
-                <span>${App.escapeHtml(m.nome)}</span>
-              `;
-              list.appendChild(item);
-            });
+        // Scroll automático suave ao focar campos no mobile (evita teclado cobrindo campo)
+        setTimeout(() => {
+          if (inputName) {
+            inputName.focus();
+            if (typeof inputName.scrollIntoView === 'function') {
+              inputName.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }
+        }, 200);
+      },
+
+      closeCreateScheduleWizard() {
+        if (this.wizard.sessions && this.wizard.sessions.length > 0) {
+          if (!confirm('Deseja fechar o assistente? Seu rascunho continuará salvo automaticamente.')) {
+            return;
           }
         }
+        this.closeModals();
+      },
 
-        document.getElementById('modalCreateSchedule').classList.add('open');
+      onWizardTypeChange(type, saveDraft = true) {
+        this.wizard.type = type;
+        const cardMan = document.getElementById('wizardCardManual');
+        const cardAuto = document.getElementById('wizardCardAuto');
+        const radioMan = document.getElementById('radioCreateManual');
+        const radioAuto = document.getElementById('radioCreateAuto');
+
+        if (cardMan) cardMan.classList.toggle('active', type === 'manual');
+        if (cardAuto) cardAuto.classList.toggle('active', type === 'auto');
+        if (radioMan) radioMan.checked = (type === 'manual');
+        if (radioAuto) radioAuto.checked = (type === 'auto');
+
+        const btnNext = document.getElementById('btnWizardNext');
+        if (btnNext && this.wizard.step === 1) {
+          btnNext.textContent = type === 'manual' ? 'Próximo: Matérias →' : 'Criar e Configurar →';
+        }
+        if (saveDraft) this.saveWizardDraft();
+      },
+
+      goToWizardStep(step) {
+        this.wizard.step = step;
+        const badge = document.getElementById('wizardStepBadge');
+        const title = document.getElementById('wizardStepTitle');
+        const pBar = document.getElementById('wizardProgressBar');
+        const pane1 = document.getElementById('wizardStep1');
+        const pane2 = document.getElementById('wizardStep2');
+        const pane3 = document.getElementById('wizardStep3');
+        const btnBack = document.getElementById('btnWizardBack');
+        const btnNext = document.getElementById('btnWizardNext');
+        const btnSave = document.getElementById('btnWizardSave');
+        const btnDiscard = document.getElementById('btnWizardDiscardDraft');
+
+        if (pane1) pane1.style.display = (step === 1 ? 'block' : 'none');
+        if (pane2) pane2.style.display = (step === 2 ? 'block' : 'none');
+        if (pane3) pane3.style.display = (step === 3 ? 'block' : 'none');
+
+        if (step === 1) {
+          if (badge) badge.textContent = 'Passo 1 de 3';
+          if (title) title.textContent = 'Nome e Modalidade do Cronograma';
+          if (pBar) pBar.style.width = '33.33%';
+          if (btnBack) btnBack.textContent = 'Cancelar';
+          if (btnNext) {
+            btnNext.style.display = 'inline-flex';
+            btnNext.textContent = this.wizard.type === 'manual' ? 'Próximo: Matérias →' : 'Criar e Configurar →';
+          }
+          if (btnSave) btnSave.style.display = 'none';
+
+          // Sincroniza dias marcados
+          document.querySelectorAll('#createScheduleDaysPicker input').forEach(chk => {
+            chk.checked = (this.wizard.days || []).includes(chk.value);
+          });
+        } else if (step === 2) {
+          if (badge) badge.textContent = 'Passo 2 de 3';
+          if (title) title.textContent = 'Escolher Matérias Participantes';
+          if (pBar) pBar.style.width = '66.66%';
+          if (btnBack) btnBack.textContent = '← Voltar';
+          if (btnNext) {
+            btnNext.style.display = 'inline-flex';
+            btnNext.textContent = 'Próximo: Sessões →';
+          }
+          if (btnSave) btnSave.style.display = 'none';
+          this.renderWizardStep2Subjects();
+        } else if (step === 3) {
+          if (badge) badge.textContent = 'Passo 3 de 3';
+          if (title) title.textContent = 'Adicionar Sessões de Estudo';
+          if (pBar) pBar.style.width = '100%';
+          if (btnBack) btnBack.textContent = '← Voltar';
+          if (btnNext) btnNext.style.display = 'none';
+          if (btnSave) btnSave.style.display = 'inline-flex';
+          this.populateWizardStep3SubjectSelect();
+          this.renderWizardSessionsList();
+        }
+
+        const draft = this.loadWizardDraft();
+        if (btnDiscard) {
+          btnDiscard.style.display = (draft && (draft.sessions?.length > 0 || step > 1)) ? 'inline-flex' : 'none';
+        }
+
+        const body = document.getElementById('wizardBody');
+        if (body) body.scrollTop = 0;
+        this.saveWizardDraft();
+      },
+
+      wizardNextStep() {
+        if (this.wizard.step === 1) {
+          const inputName = document.getElementById('inputScheduleName');
+          const name = inputName ? inputName.value.trim() : '';
+          if (!name) {
+            alert('Por favor, informe um nome para o cronograma.');
+            if (inputName) inputName.focus();
+            return;
+          }
+          this.wizard.name = name;
+
+          // Dias selecionados
+          const checkedDays = Array.from(document.querySelectorAll('#createScheduleDaysPicker input:checked')).map(i => i.value);
+          this.wizard.days = checkedDays.length > 0 ? checkedDays : ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+
+          // Se escolheu automático, salva e vai direto para a tela de geração automática
+          if (this.wizard.type === 'auto') {
+            this.confirmCreateScheduleAutoQuick();
+            return;
+          }
+
+          this.goToWizardStep(2);
+        } else if (this.wizard.step === 2) {
+          const checkedSubjs = Array.from(document.querySelectorAll('#createScheduleSubjectsList input:checked')).map(i => i.value);
+          if (this.data.materias && this.data.materias.length > 0 && checkedSubjs.length === 0) {
+            alert('Selecione ao menos 1 disciplina para continuar ou cadastre uma matéria.');
+            return;
+          }
+          this.wizard.subjectIds = checkedSubjs;
+          this.goToWizardStep(3);
+        }
+      },
+
+      wizardPrevStep() {
+        if (this.wizard.step === 1) {
+          this.closeCreateScheduleWizard();
+        } else {
+          this.goToWizardStep(this.wizard.step - 1);
+        }
+      },
+
+      /* Renderiza matérias no Passo 2 do Wizard com nomeMateria() e contadores */
+      renderWizardStep2Subjects() {
+        const list = document.getElementById('createScheduleSubjectsList');
+        if (!list) return;
+        list.innerHTML = '';
+
+        if (!this.data.materias || this.data.materias.length === 0) {
+          list.innerHTML = `
+            <div style="grid-column: 1 / -1; padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.9rem; background: var(--bg-card); border-radius: var(--radius-sm); border: 1.5px dashed var(--border-color);">
+              <div style="font-size: 1.8rem; margin-bottom: 6px;">📚</div>
+              <strong style="color: var(--text-main);">Nenhuma matéria cadastrada</strong>
+              <p style="margin: 4px 0 12px 0;">Você pode adicionar uma disciplina avulsa agora ou importar um edital em PDF.</p>
+              <button type="button" class="btn btn-primary btn-sm" onclick="App.openAddExtraSubjectModal()">
+                ➕ Cadastrar Primeira Matéria
+              </button>
+            </div>
+          `;
+          return;
+        }
+
+        this.data.materias.forEach(m => {
+          const sName = nomeMateria(m);
+          const sId = idMateria(m);
+          const pal = this.getPalette(m.paletteId);
+          const isChecked = (this.wizard.subjectIds || []).includes(sId) || (this.wizard.subjectIds.length === 0);
+          const topicsCount = (m.topicos && Array.isArray(m.topicos)) ? m.topicos.length : 0;
+
+          const item = document.createElement('label');
+          item.className = 'subject-checkbox-item';
+          item.style.cursor = 'pointer';
+          item.innerHTML = `
+            <input type="checkbox" value="${sId}" ${isChecked ? 'checked' : ''} onchange="App.onWizardSubjectCheckboxChange()">
+            <span class="subject-color-dot" style="background: ${pal.border}; border: 1.5px solid ${pal.text};"></span>
+            <div style="min-width: 0; flex: 1;">
+              <span style="font-weight: 600; color: var(--text-main); display: block; word-break: break-word;">${App.escapeHtml(sName)}</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted);">${topicsCount} tópico${topicsCount === 1 ? '' : 's'}</span>
+            </div>
+          `;
+          list.appendChild(item);
+        });
+      },
+
+      onWizardSubjectCheckboxChange() {
+        this.wizard.subjectIds = Array.from(document.querySelectorAll('#createScheduleSubjectsList input:checked')).map(i => i.value);
+        this.saveWizardDraft();
       },
 
       toggleSelectAllScheduleSubjects(selectAll) {
         document.querySelectorAll('#createScheduleSubjectsList input[type="checkbox"]').forEach(chk => {
           chk.checked = !!selectAll;
         });
+        this.onWizardSubjectCheckboxChange();
       },
 
-      confirmCreateSchedule() {
-        const inputName = document.getElementById('inputScheduleName');
-        const name = (inputName && inputName.value.trim()) ? inputName.value.trim() : 'Meu Cronograma';
+      /* Popula o select de matérias no Passo 3 do Wizard */
+      populateWizardStep3SubjectSelect() {
+        const select = document.getElementById('wizardSessionSubjectSelect');
+        if (!select) return;
+        select.innerHTML = '';
 
-        const typeRadio = document.querySelector('input[name="radioCreateSchedType"]:checked');
-        const type = typeRadio ? typeRadio.value : 'manual';
+        const activeSubjIds = this.wizard.subjectIds && this.wizard.subjectIds.length > 0
+          ? this.wizard.subjectIds
+          : (this.data.materias || []).map(m => idMateria(m));
 
-        const checkedSubjects = Array.from(document.querySelectorAll('#createScheduleSubjectsList input:checked')).map(i => i.value);
+        const materiasDisponiveis = (this.data.materias || []).filter(m => activeSubjIds.includes(idMateria(m)));
 
-        const checkedDays = Array.from(document.querySelectorAll('#createScheduleDaysPicker input:checked')).map(i => i.value);
-        const days = checkedDays.length > 0 ? checkedDays : ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+        if (materiasDisponiveis.length === 0) {
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = '(Nenhuma matéria selecionada no Passo 2)';
+          select.appendChild(opt);
+          return;
+        }
 
-        const columns = days.map(dia => ({ dia: dia, slots: [] }));
+        materiasDisponiveis.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = idMateria(m);
+          opt.textContent = nomeMateria(m);
+          select.appendChild(opt);
+        });
+
+        if (select.value) {
+          this.onWizardSubjectChange(select.value);
+        }
+      },
+
+      onWizardSubjectChange(subjectId) {
+        const datalist = document.getElementById('wizardTopicsDatalist');
+        if (!datalist) return;
+        datalist.innerHTML = '';
+        if (!subjectId) return;
+
+        const subj = (this.data.materias || []).find(m => idMateria(m) === subjectId);
+        if (subj && subj.topicos && Array.isArray(subj.topicos)) {
+          subj.topicos.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = typeof t === 'string' ? t : (t.texto || '');
+            datalist.appendChild(opt);
+          });
+        }
+      },
+
+      setWizardDuration(dur) {
+        dur = parseInt(dur, 10) || 60;
+        this.wizard.duration = dur;
+        const customIn = document.getElementById('wizardSessionDurationCustom');
+        if (customIn) customIn.value = dur;
+
+        document.querySelectorAll('#wizardSessionForm .btn-preset').forEach(btn => {
+          const bDur = parseInt(btn.getAttribute('data-dur'), 10);
+          btn.classList.toggle('active', bDur === dur);
+        });
+        this.checkWizardSessionConflict();
+      },
+
+      checkWizardSessionConflict() {
+        const alertEl = document.getElementById('wizardConflictAlert');
+        const timeIn = document.getElementById('wizardSessionStartTime');
+        if (!alertEl || !timeIn) return;
+
+        const startTime = timeIn.value;
+        const duration = this.wizard.duration || 60;
+        if (!startTime) {
+          alertEl.style.display = 'none';
+          return;
+        }
+
+        const checkedDays = Array.from(document.querySelectorAll('#wizardSessionDaysPicker input:checked')).map(i => i.value);
+        const startMins = this.timeToMinutes(startTime);
+        if (startMins === null) {
+          alertEl.style.display = 'none';
+          return;
+        }
+        const endMins = startMins + duration;
+        const endTime = this.minutesToTime(endMins);
+
+        let conflictFound = null;
+        for (const dia of checkedDays) {
+          const daySessions = (this.wizard.sessions || []).filter(s => s.dia === dia);
+          for (const s of daySessions) {
+            if (this.wizard.editingTempId && s.tempId === this.wizard.editingTempId) continue;
+            if (!s.startTime) continue;
+            const sStart = this.timeToMinutes(s.startTime);
+            const sEnd = sStart + (parseInt(s.duration, 10) || 60);
+            if (startMins < sEnd && endMins > sStart) {
+              conflictFound = { dia, session: s, start: s.startTime, end: this.minutesToTime(sEnd) };
+              break;
+            }
+          }
+          if (conflictFound) break;
+        }
+
+        if (conflictFound) {
+          alertEl.style.display = 'block';
+          alertEl.innerHTML = `⚠️ <strong>Aviso de Conflito de Horário:</strong> Em <strong>${conflictFound.dia}</strong>, o horário (${startTime} - ${endTime}) sobrepõe a sessão de <strong>${App.escapeHtml(conflictFound.session.subjectName)}</strong> (${conflictFound.start} - ${conflictFound.end}). Você pode salvar mesmo assim.`;
+        } else {
+          alertEl.style.display = 'none';
+        }
+      },
+
+      /* Adiciona sessão no Passo 3 para todos os dias selecionados */
+      addSessionFromWizard() {
+        const subjSelect = document.getElementById('wizardSessionSubjectSelect');
+        const subjectId = subjSelect ? subjSelect.value : '';
+        if (!subjectId) {
+          alert('Por favor, selecione uma disciplina para esta sessão.');
+          return;
+        }
+
+        const subject = (this.data.materias || []).find(m => idMateria(m) === subjectId);
+        const subjectName = subject ? nomeMateria(subject) : 'Disciplina';
+        const paletteId = subject ? subject.paletteId : 'blue';
+
+        const checkedDays = Array.from(document.querySelectorAll('#wizardSessionDaysPicker input:checked')).map(i => i.value);
+        if (checkedDays.length === 0) {
+          alert('Selecione ao menos 1 dia da semana para agendar a sessão.');
+          return;
+        }
+
+        const startTime = document.getElementById('wizardSessionStartTime')?.value || '';
+        const duration = this.wizard.duration || 60;
+        const endTime = this.calculateEndTime(startTime, duration);
+        const topic = document.getElementById('wizardSessionTopic')?.value.trim() || 'Estudo e resolução de questões';
+        const notes = document.getElementById('wizardSessionNotes')?.value.trim() || '';
+
+        if (this.wizard.editingTempId) {
+          // Edição de sessão única existente
+          const idx = this.wizard.sessions.findIndex(s => s.tempId === this.wizard.editingTempId);
+          if (idx !== -1) {
+            this.wizard.sessions[idx].dia = checkedDays[0];
+            this.wizard.sessions[idx].subjectId = subjectId;
+            this.wizard.sessions[idx].subjectName = subjectName;
+            this.wizard.sessions[idx].paletteId = paletteId;
+            this.wizard.sessions[idx].startTime = startTime;
+            this.wizard.sessions[idx].duration = duration;
+            this.wizard.sessions[idx].endTime = endTime;
+            this.wizard.sessions[idx].topic = topic;
+            this.wizard.sessions[idx].notes = notes;
+          }
+          this.wizard.editingTempId = null;
+          const badge = document.getElementById('wizardEditingBadge');
+          const title = document.getElementById('wizardSessionFormTitle');
+          const cancelBtn = document.getElementById('btnWizardCancelEditSession');
+          const addBtn = document.getElementById('btnWizardAddSession');
+          if (badge) badge.style.display = 'none';
+          if (title) title.textContent = '➕ Adicionar Sessão de Estudo';
+          if (cancelBtn) cancelBtn.style.display = 'none';
+          if (addBtn) addBtn.textContent = '➕ Adicionar Sessão';
+        } else {
+          // Cria uma sessão para cada dia selecionado
+          checkedDays.forEach(dia => {
+            const sessionObj = {
+              tempId: 'wiz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+              dia: dia,
+              subjectId: subjectId,
+              subjectName: subjectName,
+              paletteId: paletteId,
+              startTime: startTime,
+              duration: duration,
+              endTime: endTime,
+              topic: topic,
+              notes: notes
+            };
+            this.wizard.sessions.push(sessionObj);
+          });
+        }
+
+        // Limpa campos opcionais mantendo matéria e horário para facilitar inserção contínua
+        const inTopic = document.getElementById('wizardSessionTopic');
+        const inNotes = document.getElementById('wizardSessionNotes');
+        if (inTopic) inTopic.value = '';
+        if (inNotes) inNotes.value = '';
+        const alertEl = document.getElementById('wizardConflictAlert');
+        if (alertEl) alertEl.style.display = 'none';
+
+        this.renderWizardSessionsList();
+        this.saveWizardDraft();
+        this.showToast('Sessão adicionada com sucesso!', 'info');
+      },
+
+      editWizardSession(tempId) {
+        const s = (this.wizard.sessions || []).find(item => item.tempId === tempId);
+        if (!s) return;
+
+        this.wizard.editingTempId = tempId;
+        const badge = document.getElementById('wizardEditingBadge');
+        const title = document.getElementById('wizardSessionFormTitle');
+        const cancelBtn = document.getElementById('btnWizardCancelEditSession');
+        const addBtn = document.getElementById('btnWizardAddSession');
+        if (badge) badge.style.display = 'inline-block';
+        if (title) title.textContent = '✏️ Editando Sessão';
+        if (cancelBtn) cancelBtn.style.display = 'inline-block';
+        if (addBtn) addBtn.textContent = '💾 Salvar Alteração';
+
+        // Marca dia único
+        document.querySelectorAll('#wizardSessionDaysPicker input').forEach(chk => {
+          chk.checked = (chk.value === s.dia);
+        });
+
+        const subjSelect = document.getElementById('wizardSessionSubjectSelect');
+        if (subjSelect) {
+          subjSelect.value = s.subjectId;
+          this.onWizardSubjectChange(s.subjectId);
+        }
+
+        const inStart = document.getElementById('wizardSessionStartTime');
+        if (inStart) inStart.value = s.startTime || '';
+
+        this.setWizardDuration(s.duration || 60);
+
+        const inTopic = document.getElementById('wizardSessionTopic');
+        if (inTopic) inTopic.value = s.topic || '';
+
+        const inNotes = document.getElementById('wizardSessionNotes');
+        if (inNotes) inNotes.value = s.notes || '';
+
+        const form = document.getElementById('wizardSessionForm');
+        if (form && typeof form.scrollIntoView === 'function') {
+          form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      },
+
+      cancelWizardEditSession() {
+        this.wizard.editingTempId = null;
+        const badge = document.getElementById('wizardEditingBadge');
+        const title = document.getElementById('wizardSessionFormTitle');
+        const cancelBtn = document.getElementById('btnWizardCancelEditSession');
+        const addBtn = document.getElementById('btnWizardAddSession');
+        if (badge) badge.style.display = 'none';
+        if (title) title.textContent = '➕ Adicionar Sessão de Estudo';
+        if (cancelBtn) cancelBtn.style.display = 'none';
+        if (addBtn) addBtn.textContent = '➕ Adicionar Sessão';
+
+        const inTopic = document.getElementById('wizardSessionTopic');
+        const inNotes = document.getElementById('wizardSessionNotes');
+        if (inTopic) inTopic.value = '';
+        if (inNotes) inNotes.value = '';
+        const alertEl = document.getElementById('wizardConflictAlert');
+        if (alertEl) alertEl.style.display = 'none';
+      },
+
+      deleteWizardSession(tempId) {
+        if (!confirm('Deseja excluir esta sessão programada?')) return;
+        this.wizard.sessions = (this.wizard.sessions || []).filter(s => s.tempId !== tempId);
+        if (this.wizard.editingTempId === tempId) {
+          this.cancelWizardEditSession();
+        }
+        this.renderWizardSessionsList();
+        this.saveWizardDraft();
+      },
+
+      /* Renderiza as sessões agrupadas por dia no Passo 3 */
+      renderWizardSessionsList() {
+        const container = document.getElementById('wizardCreatedSessionsList');
+        const countEl = document.getElementById('wizardTotalSessionsCount');
+        const hoursEl = document.getElementById('wizardTotalHoursCount');
+        if (!container) return;
+
+        container.innerHTML = '';
+        const sessions = this.wizard.sessions || [];
+        if (countEl) countEl.textContent = sessions.length;
+
+        const totalMinutes = sessions.reduce((acc, s) => acc + (parseInt(s.duration, 10) || 60), 0);
+        const totalHours = (totalMinutes / 60).toFixed(1).replace('.0', '');
+        if (hoursEl) hoursEl.textContent = `~${totalHours}h de estudo semanal`;
+
+        if (sessions.length === 0) {
+          container.innerHTML = `
+            <div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 0.85rem; background: var(--bg-card); border-radius: var(--radius-sm); border: 1px dashed var(--border-color);">
+              🗓️ Nenhuma sessão agendada ainda. Use o formulário acima para adicionar suas matérias e horários.
+            </div>
+          `;
+          return;
+        }
+
+        const diasOrdem = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+        const diasUsados = diasOrdem.filter(d => sessions.some(s => s.dia === d));
+
+        diasUsados.forEach(dia => {
+          const diaHeader = document.createElement('div');
+          diaHeader.className = 'wizard-day-group-header';
+          diaHeader.innerHTML = `<span>📅 ${dia}-feira</span>`.replace('Sábado-feira', 'Sábado').replace('Domingo-feira', 'Domingo');
+          container.appendChild(diaHeader);
+
+          const daySessions = sessions.filter(s => s.dia === dia);
+          // Ordena por horário se houver
+          daySessions.sort((a, b) => (a.startTime || '99:99').localeCompare(b.startTime || '99:99'));
+
+          daySessions.forEach(s => {
+            const pal = this.getPalette(s.paletteId);
+            const card = document.createElement('div');
+            card.className = 'wizard-session-card';
+            const timeTxt = s.startTime ? `${s.startTime} - ${s.endTime || this.calculateEndTime(s.startTime, s.duration)}` : `${s.duration} min`;
+
+            card.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
+                <span class="subject-color-dot" style="background: ${pal.border}; border: 1.5px solid ${pal.text}; flex-shrink: 0;"></span>
+                <div style="min-width: 0; flex: 1;">
+                  <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${App.escapeHtml(nomeMateria(s.subjectName))}
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">
+                    ⏱️ ${timeTxt} • ${App.escapeHtml(s.topic || 'Estudo')}
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 4px; flex-shrink: 0;">
+                <button type="button" class="btn-icon" title="Mudar dia/horário" onclick="App.openMoveSessionModal('${s.dia}', '${s.tempId}', true)" style="font-size: 0.85rem; padding: 4px;">🔄</button>
+                <button type="button" class="btn-icon" title="Editar sessão" onclick="App.editWizardSession('${s.tempId}')" style="font-size: 0.85rem; padding: 4px;">✏️</button>
+                <button type="button" class="btn-icon danger" title="Excluir" onclick="App.deleteWizardSession('${s.tempId}')" style="font-size: 0.85rem; padding: 4px;">🗑️</button>
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        });
+      },
+
+      /* Gestão de Rascunho do Wizard */
+      saveWizardDraft() {
+        try {
+          localStorage.setItem('concurso_manual_wizard_draft', JSON.stringify(this.wizard));
+        } catch (e) {}
+      },
+
+      loadWizardDraft() {
+        try {
+          const raw = localStorage.getItem('concurso_manual_wizard_draft');
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) {
+          return null;
+        }
+      },
+
+      discardWizardDraft() {
+        if (!confirm('Deseja descartar as alterações deste rascunho?')) return;
+        localStorage.removeItem('concurso_manual_wizard_draft');
+        this.openCreateScheduleModal(this.wizard.type || 'manual');
+      },
+
+      /* Criação Rápida para Modalidade Automática */
+      confirmCreateScheduleAutoQuick() {
+        const num = (this.schedules ? this.schedules.length : 0) + 1;
+        const name = this.wizard.name || `Cronograma Automático ${num}`;
+        const days = this.wizard.days && this.wizard.days.length > 0 ? this.wizard.days : ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 
         const newSched = {
           id: 'sched-' + Date.now(),
           name: name,
-          type: type,
+          type: 'auto',
           dias: days,
-          materiasIds: checkedSubjects,
+          materiasIds: (this.data.materias || []).map(m => idMateria(m)),
           hoursPerDay: 3,
           blockDuration: 60,
+          columns: days.map(dia => ({ dia: dia, slots: [] })),
+          createdAt: new Date().toLocaleDateString('pt-BR')
+        };
+
+        if (!this.schedules) this.schedules = [];
+        this.schedules.push(newSched);
+        this.activeScheduleId = newSched.id;
+        this.schedule = newSched;
+        this.setScheduleMode('auto', false);
+
+        localStorage.removeItem('concurso_manual_wizard_draft');
+        this.saveToStorage();
+        this.closeModals();
+        this.switchTab('tab-schedule');
+        this.openAutoSchedulePreview();
+      },
+
+      /* Finaliza e Salva o Cronograma Manual */
+      wizardSaveSchedule() {
+        const name = this.wizard.name || 'Meu Cronograma Manual';
+        const days = this.wizard.days && this.wizard.days.length > 0 ? this.wizard.days : ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+
+        // Garante que todos os dias com sessões estejam em 'dias'
+        (this.wizard.sessions || []).forEach(s => {
+          if (!days.includes(s.dia)) days.push(s.dia);
+        });
+
+        const columns = days.map(dia => {
+          const daySessions = (this.wizard.sessions || []).filter(s => s.dia === dia);
+          daySessions.sort((a, b) => (a.startTime || '99:99').localeCompare(b.startTime || '99:99'));
+          const slots = daySessions.map((s, idx) => ({
+            slotId: 'slot-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+            slotKey: `${dia}-bloco-${Date.now()}-${idx}`,
+            slotNumber: idx + 1,
+            subjectId: idMateria(s.subjectId),
+            subjectName: nomeMateria(s.subjectName),
+            paletteId: s.paletteId || 'blue',
+            startTime: s.startTime || '',
+            duration: s.duration || 60,
+            endTime: s.endTime || (s.startTime ? this.calculateEndTime(s.startTime, s.duration || 60) : ''),
+            topic: s.topic || 'Estudo e resolução de questões',
+            notes: s.notes || ''
+          }));
+          return { dia: dia, slots: slots };
+        });
+
+        const newSched = {
+          id: 'sched-' + Date.now(),
+          name: name,
+          type: 'manual',
+          dias: days,
+          materiasIds: this.wizard.subjectIds || (this.data.materias || []).map(m => idMateria(m)),
+          hoursPerDay: 3,
+          blockDuration: this.wizard.duration || 60,
           columns: columns,
           createdAt: new Date().toLocaleDateString('pt-BR')
         };
@@ -10416,17 +11547,171 @@
         this.schedules.push(newSched);
         this.activeScheduleId = newSched.id;
         this.schedule = newSched;
-        this.setScheduleMode(type, false);
+        this.setScheduleMode('manual', false);
 
+        localStorage.removeItem('concurso_manual_wizard_draft');
         this.saveToStorage();
         this.closeModals();
+        this.switchTab('tab-schedule');
         this.renderSchedule();
+        this.renderScheduleProgress();
+        this.showToast(`Cronograma "${name}" montado com sucesso! Boas sessões de estudo.`, 'success');
+      },
 
-        if (type === 'manual') {
-          this.showToast(`Cronograma "${name}" criado! Adicione suas sessões de estudo.`, 'success');
+      /* Modal Rápido de Mover Sessão (Sem Drag-and-drop no Celular) */
+      openMoveSessionModal(dia, slotOrTempId, fromWizard = false) {
+        this.moveSessionMeta = { dia, slotOrTempId, fromWizard };
+        const modal = document.getElementById('modalMoveSession');
+        const selDay = document.getElementById('selectMoveSessionDay');
+        const inTime = document.getElementById('inputMoveSessionStartTime');
+        const infoEl = document.getElementById('moveSessionInfoText');
+
+        let sName = '';
+        let currTime = '';
+        if (fromWizard) {
+          const s = (this.wizard.sessions || []).find(item => item.tempId === slotOrTempId);
+          if (s) {
+            sName = nomeMateria(s.subjectName);
+            currTime = s.startTime || '';
+          }
         } else {
-          this.showToast(`Cronograma "${name}" criado! Ajuste os parâmetros e clique em Gerar.`, 'success');
+          const col = (this.schedule && this.schedule.columns) ? this.schedule.columns.find(c => c.dia === dia) : null;
+          const slot = col ? col.slots.find(s => s.slotId === slotOrTempId) : null;
+          if (slot) {
+            sName = nomeMateria(slot.subjectName);
+            currTime = slot.startTime || '';
+          }
         }
+
+        if (infoEl) {
+          infoEl.innerHTML = `Movendo sessão de <strong>${App.escapeHtml(sName)}</strong> (atualmente em ${dia}${currTime ? ' às ' + currTime : ''}).`;
+        }
+        if (selDay) selDay.value = dia;
+        if (inTime) inTime.value = currTime;
+
+        if (modal) modal.classList.add('open');
+      },
+
+      closeMoveSessionModal() {
+        const modal = document.getElementById('modalMoveSession');
+        if (modal) modal.classList.remove('open');
+        this.moveSessionMeta = null;
+      },
+
+      confirmMoveSession() {
+        if (!this.moveSessionMeta) return;
+        const { dia: oldDia, slotOrTempId, fromWizard } = this.moveSessionMeta;
+        const newDia = document.getElementById('selectMoveSessionDay')?.value || oldDia;
+        const newStartTime = document.getElementById('inputMoveSessionStartTime')?.value || '';
+
+        if (fromWizard) {
+          const s = (this.wizard.sessions || []).find(item => item.tempId === slotOrTempId);
+          if (s) {
+            s.dia = newDia;
+            if (newStartTime) {
+              s.startTime = newStartTime;
+              s.endTime = this.calculateEndTime(newStartTime, s.duration || 60);
+            }
+          }
+          this.renderWizardSessionsList();
+          this.saveWizardDraft();
+        } else {
+          if (!this.schedule || !this.schedule.columns) return;
+          const oldCol = this.schedule.columns.find(c => c.dia === oldDia);
+          if (!oldCol) return;
+          const slotIdx = oldCol.slots.findIndex(s => s.slotId === slotOrTempId);
+          if (slotIdx === -1) return;
+
+          const slot = oldCol.slots[slotIdx];
+          oldCol.slots.splice(slotIdx, 1);
+          this.reorderColumnSlots(oldCol);
+
+          let newCol = this.schedule.columns.find(c => c.dia === newDia);
+          if (!newCol) {
+            newCol = { dia: newDia, slots: [] };
+            this.schedule.columns.push(newCol);
+            if (!this.schedule.dias.includes(newDia)) this.schedule.dias.push(newDia);
+          }
+
+          if (newStartTime) {
+            slot.startTime = newStartTime;
+            slot.endTime = this.calculateEndTime(newStartTime, slot.duration || 60);
+          }
+          slot.slotKey = `${newDia}-bloco-${Date.now()}`;
+          newCol.slots.push(slot);
+          this.reorderColumnSlots(newCol);
+
+          this.saveToStorage();
+          this.renderSchedule();
+        }
+
+        this.closeMoveSessionModal();
+        this.showToast(`Sessão movida para ${newDia} com sucesso!`, 'success');
+      },
+
+      /* Métodos de Diagnóstico e Logs do Sistema */
+      renderDiagnosticsLog() {
+        const countEl = document.getElementById('diagnosticCountText');
+        const boxEl = document.getElementById('diagnosticLogBox');
+        if (!boxEl) return;
+
+        const logs = window.__APP_ERROR_LOGS__ || [];
+        if (countEl) {
+          countEl.textContent = `${logs.length} erro${logs.length === 1 ? '' : 's'} registrado${logs.length === 1 ? '' : 's'}`;
+        }
+
+        if (logs.length === 0) {
+          boxEl.textContent = 'Nenhum erro registrado. O aplicativo está operando normalmente!';
+          boxEl.style.color = 'var(--text-main)';
+          return;
+        }
+
+        boxEl.style.color = '#dc2626';
+        const formatted = logs.map((err, i) => {
+          return `[${i + 1}] ${err.date} • Tipo: ${err.type}
+Mensagem: ${err.message}
+Origem: ${err.source || 'inline'}${err.line ? ' (linha ' + err.line + ')' : ''}
+${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
+        }).join('\n------------------------------------\n');
+
+        boxEl.textContent = formatted;
+      },
+
+      async copyDiagnosticsLog() {
+        const logs = window.__APP_ERROR_LOGS__ || [];
+        const payload = JSON.stringify({
+          appVersion: APP_VERSION,
+          userAgent: navigator.userAgent,
+          screenWidth: window.innerWidth,
+          screenHeight: window.innerHeight,
+          totalErrors: logs.length,
+          errors: logs
+        }, null, 2);
+
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(payload);
+          } else {
+            const ta = document.createElement('textarea');
+            ta.value = payload;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          }
+          this.showToast('Diagnóstico copiado para a área de transferência!', 'success');
+        } catch (e) {
+          prompt('Copie o diagnóstico abaixo:', payload);
+        }
+      },
+
+      clearDiagnosticsLog() {
+        window.__APP_ERROR_LOGS__ = [];
+        try {
+          localStorage.removeItem('concurso_diagnostic_errors');
+        } catch (e) {}
+        this.renderDiagnosticsLog();
+        this.showToast('Histórico de diagnóstico limpo.', 'info');
       },
 
       openRenameScheduleModal() {
@@ -10732,8 +12017,8 @@
         } else {
           this.data.materias.forEach(m => {
             const opt = document.createElement('option');
-            opt.value = m.id;
-            opt.textContent = m.nome;
+            opt.value = idMateria(m);
+            opt.textContent = nomeMateria(m);
             subjSelect.appendChild(opt);
           });
         }
@@ -10806,7 +12091,7 @@
           return;
         }
 
-        const subject = this.data.materias.find(m => m.id === subjectId);
+        const subject = this.data.materias.find(m => idMateria(m) === subjectId);
         if (!subject) {
           alert('Matéria selecionada não encontrada.');
           return;
@@ -10834,8 +12119,8 @@
             const slotIdx = oldCol.slots.findIndex(s => s.slotId === slotId);
             if (slotIdx !== -1) {
               const existingSlot = oldCol.slots[slotIdx];
-              existingSlot.subjectId = subject.id;
-              existingSlot.subjectName = subject.nome;
+              existingSlot.subjectId = idMateria(subject);
+              existingSlot.subjectName = nomeMateria(subject);
               existingSlot.paletteId = subject.paletteId;
               existingSlot.startTime = startTime;
               existingSlot.duration = duration;
@@ -10859,8 +12144,8 @@
             slotId: slotId,
             slotKey: `${dia}-bloco-${Date.now()}`,
             slotNumber: col.slots.length + 1,
-            subjectId: subject.id,
-            subjectName: subject.nome,
+            subjectId: idMateria(subject),
+            subjectName: nomeMateria(subject),
             paletteId: subject.paletteId,
             startTime: startTime,
             duration: duration,
@@ -14246,14 +15531,39 @@
 
       openMoreMenuSheet() {
         const sheet = document.getElementById('modalMoreSheet');
-        if (sheet) sheet.classList.remove('hidden');
+        if (!sheet) return;
+        // Atualiza status e destaque das abas dentro do menu inferior
+        const sheetUpdatesBtn = document.getElementById('sheetBtnUpdates');
+        const sheetSettingsBtn = document.getElementById('sheetBtnSettings');
+        if (sheetUpdatesBtn) sheetUpdatesBtn.classList.toggle('active-menu-option', this.activeTab === 'tab-updates');
+        if (sheetSettingsBtn) sheetSettingsBtn.classList.toggle('active-menu-option', this.activeTab === 'tab-settings');
+
+        sheet.classList.remove('hidden');
+        sheet.classList.add('open');
       },
 
-      closeMoreMenuSheet() {
+      closeMoreMenuSheet(e) {
+        if (e && e.stopPropagation) {
+          e.stopPropagation();
+        }
         const sheet = document.getElementById('modalMoreSheet');
-        if (sheet) sheet.classList.add('hidden');
+        if (!sheet) return;
+        sheet.classList.remove('open');
+        sheet.classList.add('hidden');
+      },
+
+      toggleMoreMenuSheet() {
+        const sheet = document.getElementById('modalMoreSheet');
+        if (sheet && sheet.classList.contains('open')) {
+          this.closeMoreMenuSheet();
+        } else {
+          this.openMoreMenuSheet();
+        }
       }
     };
+
+    // Exportação explícita no window para garantir acesso global mesmo com WebViews e handlers
+    window.App = App;
 
     // Inicialização ao carregar o DOM
     document.addEventListener('DOMContentLoaded', () => {

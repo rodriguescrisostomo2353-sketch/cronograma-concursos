@@ -1,16 +1,40 @@
 {
-  "version": "1.6.2",
-  "date": "2026-10-13",
+  "version": "1.6.4",
+  "date": "2026-10-14",
   "notes": [
-    "Divisão inteligente de tópicos do edital por numeração hierárquica (divisor-topicos.js) com detecção exata de itens e subitens (7.1, 7.1.1, 1.1.4.1)",
-    "Filtro avançado contra falsos positivos: leis, decretos, súmulas, artigos e incisos preservados integralmente dentro de seus respectivos tópicos",
-    "Auto-migração de matérias já salvas ao abrir o app (com backup de segurança automático) sem necessidade de reenviar o PDF",
-    "Botões 'Reprocessar Edital' e 'Dividir por numeração' para reorganização instantânea sob demanda",
-    "Hierarquia visual refinada: tópicos principais (nível 2) com distintivo e subtópicos (níveis 3, 4 e 5) recuados e recolhíveis com setas dinâmicas",
-    "Preservação integral do progresso de estudo: status concluído, sessões e cronogramas mantidos intactos"
+    "Resolução definitiva do congelamento/falha de toques no mobile com isolamento de subsistemas no App.init e compatibilidade total com navegadores e WebViews Android antigos (fallback em MediaQueryList.addListener)",
+    "Correção total de matérias aparecendo como '[object Object]' ou 'object': implementação da Camada Única de Dados com nomeMateria(), idMateria() e normalizarMaterias() e auto-reparo de cronogramas existentes",
+    "Novo Assistente de Criação de Cronograma Manual em 3 Passos mobile-first: fluxo linear e intuitivo com rascunho persistente e sem necessidade de arrastar e soltar (drag-and-drop)",
+    "Menu 'Mais' (…) da barra inferior mobile 100% responsivo com abertura em bottom sheet por cima de todas as camadas, bloqueio de toque fantasma e fechamento pelo botão nativo de voltar do Android",
+    "Modal rápido para mover sessões entre dias e horários no mobile sem conflitos de toque",
+    "Novo painel de Diagnóstico do Sistema na aba Ajustes com captura dos últimos 30 erros em segundo plano e botão de cópia de diagnóstico para suporte imediato",
+    "Preservação integral e backup automático de segurança (localStorage) antes de qualquer normalização de dados"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.6.3",
+      "date": "2026-10-13",
+      "notes": [
+        "Menu 'Mais' (…) da navegação inferior mobile 100% corrigido: abertura de bottom sheet por cima de tudo com transição fluida",
+        "Opções completas no menu mobile: Conta em Nuvem, Atualizações, Ajustes & Aparência, Carregar Exemplo e Limpar Dados",
+        "Destaque automático da aba ativa (Atualizações e Ajustes) tanto no menu quanto no botão Mais da barra inferior",
+        "Múltiplas formas de fechar: toque fora no backdrop, botão ✕ de fechar, navegação direta e botão Voltar nativo do Android",
+        "Prevenção contra duplo disparo de toque e clique fantasma com área de toque mínima de 48px e feedback visual nos dois temas"
+      ]
+    },
+    {
+      "version": "1.6.2",
+      "date": "2026-10-13",
+      "notes": [
+        "Divisão inteligente de tópicos do edital por numeração hierárquica (divisor-topicos.js) com detecção exata de itens e subitens (7.1, 7.1.1, 1.1.4.1)",
+        "Filtro avançado contra falsos positivos: leis, decretos, súmulas, artigos e incisos preservados integralmente dentro de seus respectivos tópicos",
+        "Auto-migração de matérias já salvas ao abrir o app (com backup de segurança automático) sem necessidade de reenviar o PDF",
+        "Botões 'Reprocessar Edital' e 'Dividir por numeração' para reorganização instantânea sob demanda",
+        "Hierarquia visual refinada: tópicos principais (nível 2) com distintivo e subtópicos (níveis 3, 4 e 5) recuados e recolhíveis com setas dinâmicas",
+        "Preservação integral do progresso de estudo: status concluído, sessões e cronogramas mantidos intactos"
+      ]
+    },
     {
       "version": "1.6.1",
       "date": "2026-10-13",
