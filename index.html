@@ -7496,17 +7496,20 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         } catch (e) {}
 
         App.data = {
-          materias: Array.isArray(cloudData.materias) ? cloudData.materias : [],
+          materias: Array.isArray(cloudData.materias) ? (typeof normalizarMaterias === 'function' ? normalizarMaterias(cloudData.materias) : cloudData.materias) : [],
           naoClassificado: Array.isArray(cloudData.nao_classificado) ? cloudData.nao_classificado : []
         };
 
         App.schedules = Array.isArray(cloudData.schedules) ? cloudData.schedules : [];
-        App.activeScheduleId = cloudData.active_schedule_id || (App.schedules[0] ? App.schedules[0].id : null);
-        if (App.activeScheduleId && App.schedules.length > 0) {
-          const found = App.schedules.find(s => s.id === App.activeScheduleId);
-          App.schedule = found ? found.schedule : (App.schedules[0].schedule || null);
+        if (App.schedules.length > 0) {
+          const activeId = cloudData.active_schedule_id;
+          const found = activeId ? App.schedules.find(s => s.id === activeId) : null;
+          App.schedule = found || App.schedules[0];
+          App.activeScheduleId = App.schedule.id;
+          App.scheduleMode = App.schedule.type || 'auto';
         } else {
           App.schedule = null;
+          App.activeScheduleId = null;
         }
 
         App.completedSlots = cloudData.completed_slots || {};
@@ -7555,24 +7558,29 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         const mergedMaterias = [...localMaterias];
 
         cloudMaterias.forEach(cMat => {
-          const existing = mergedMaterias.find(m => 
-            (m.id && cMat.id && m.id === cMat.id) || 
-            (m.nome && cMat.nome && m.nome.trim().toLowerCase() === cMat.nome.trim().toLowerCase())
-          );
+          const cId = typeof idMateria === 'function' ? idMateria(cMat) : (cMat.id || '');
+          const cNome = (typeof nomeMateria === 'function' ? nomeMateria(cMat) : (cMat.nome || '')).trim().toLowerCase();
+
+          const existing = mergedMaterias.find(m => {
+            const mId = typeof idMateria === 'function' ? idMateria(m) : (m.id || '');
+            const mNome = (typeof nomeMateria === 'function' ? nomeMateria(m) : (m.nome || '')).trim().toLowerCase();
+            return (mId && cId && mId === cId) || (mNome && cNome && mNome === cNome);
+          });
           if (!existing) {
             mergedMaterias.push(cMat);
           } else {
             const existingTopicos = existing.topicos || [];
             const cloudTopicos = cMat.topicos || [];
             cloudTopicos.forEach(ct => {
-              const hasTopic = existingTopicos.find(et => 
-                (et.id && ct.id && et.id === ct.id) ||
-                (et.texto && ct.texto && et.texto.trim().toLowerCase() === ct.texto.trim().toLowerCase())
-              );
+              const ctText = (typeof ct === 'object' && ct ? (ct.texto || ct.text || '') : String(ct)).trim().toLowerCase();
+              const hasTopic = existingTopicos.find(et => {
+                const etText = (typeof et === 'object' && et ? (et.texto || et.text || '') : String(et)).trim().toLowerCase();
+                return (et.id && ct.id && et.id === ct.id) || (etText && ctText && etText === ctText);
+              });
               if (!hasTopic) {
                 existingTopicos.push(ct);
-              } else if (ct.concluido) {
-                hasTopic.concluido = true;
+              } else if (ct && ct.concluido) {
+                if (typeof hasTopic === 'object') hasTopic.concluido = true;
               }
             });
             existing.topicos = existingTopicos;
@@ -7584,10 +7592,11 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         const cloudSchedules = cloudData.schedules || [];
         const mergedSchedules = [...localSchedules];
         cloudSchedules.forEach(cs => {
-          const exists = mergedSchedules.find(s => s.id === cs.id || s.nome === cs.nome);
+          const exists = mergedSchedules.find(s => (s.id && cs.id && s.id === cs.id) || (s.name && cs.name && s.name === cs.name) || (s.nome && cs.nome && s.nome === cs.nome));
           if (!exists) {
             mergedSchedules.push(cs);
-          }
+          } else if (cs.columns && cs.columns.length > 0 && (!exists.columns || exists.columns.length === 0)) {
+            exists.columns = cs.columns;
         });
 
         // União dos slots concluídos
