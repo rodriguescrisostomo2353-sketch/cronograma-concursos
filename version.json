@@ -1,17 +1,30 @@
 {
-  "version": "1.6.4",
+  "version": "1.6.5",
   "date": "2026-10-14",
   "notes": [
-    "Resolução definitiva do congelamento/falha de toques no mobile com isolamento de subsistemas no App.init e compatibilidade total com navegadores e WebViews Android antigos (fallback em MediaQueryList.addListener)",
-    "Correção total de matérias aparecendo como '[object Object]' ou 'object': implementação da Camada Única de Dados com nomeMateria(), idMateria() e normalizarMaterias() e auto-reparo de cronogramas existentes",
-    "Novo Assistente de Criação de Cronograma Manual em 3 Passos mobile-first: fluxo linear e intuitivo com rascunho persistente e sem necessidade de arrastar e soltar (drag-and-drop)",
-    "Menu 'Mais' (…) da barra inferior mobile 100% responsivo com abertura em bottom sheet por cima de todas as camadas, bloqueio de toque fantasma e fechamento pelo botão nativo de voltar do Android",
-    "Modal rápido para mover sessões entre dias e horários no mobile sem conflitos de toque",
-    "Novo painel de Diagnóstico do Sistema na aba Ajustes com captura dos últimos 30 erros em segundo plano e botão de cópia de diagnóstico para suporte imediato",
-    "Preservação integral e backup automático de segurança (localStorage) antes de qualquer normalização de dados"
+    "Correção total de '[object Object]' na lista de tópicos e matérias no mobile e datalists: Camada de Dados universal com nomeMateria(), idMateria() e textoSeguro()",
+    "Prevenção contra coerção de objetos em inputs com datalist (wizardTopicsDatalist e datalistSubjectTopics)",
+    "Novo Painel de Diagnóstico da Sincronização em Nuvem (Ajustes > Conta): status de configuração, usuário logado com UID, última sincronização, itens pendentes e último erro detalhado",
+    "Ferramentas ativas de teste: botão 'Testar Conexão' com leitura e gravação em tempo real na nuvem, 'Sincronizar Agora' bidirecional e 'Copiar Diagnóstico'",
+    "Sincronização offline-first aprimorada: download e mesclagem automática ao abrir o app logado e suporte local offline ao Supabase JS SDK",
+    "Exibição da data/hora exata do Build em Ajustes para conferência de versão no dispositivo",
+    "Limpeza automática de caches antigos no Service Worker (cache cronograma-concursos-v16) e backup preventivo de segurança no localStorage (backup v165)"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.6.4",
+      "date": "2026-10-14",
+      "notes": [
+        "Resolução definitiva do congelamento/falha de toques no mobile com isolamento de subsistemas no App.init e compatibilidade total com navegadores e WebViews Android antigos (fallback em MediaQueryList.addListener)",
+        "Correção total de matérias aparecendo como '[object Object]' ou 'object': implementação da Camada Única de Dados com nomeMateria(), idMateria() e normalizarMaterias() e auto-reparo de cronogramas existentes",
+        "Novo Assistente de Criação de Cronograma Manual em 3 Passos mobile-first: fluxo linear e intuitivo com rascunho persistente e sem necessidade de arrastar e soltar (drag-and-drop)",
+        "Menu 'Mais' (…) da barra inferior mobile 100% responsivo com abertura em bottom sheet por cima de todas as camadas, bloqueio de toque fantasma e fechamento pelo botão nativo de voltar do Android",
+        "Modal rápido para mover sessões entre dias e horários no mobile sem conflitos de toque",
+        "Novo painel de Diagnóstico do Sistema na aba Ajustes com captura dos últimos 30 erros em segundo plano e botão de cópia de diagnóstico para suporte imediato",
+        "Preservação integral e backup automático de segurança (localStorage) antes de qualquer normalização de dados"
+      ]
+    },
     {
       "version": "1.6.3",
       "date": "2026-10-13",

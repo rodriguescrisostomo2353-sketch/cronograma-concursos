@@ -1,5 +1,5 @@
 // Service Worker para o PWA Cronograma de Estudos para Concursos
-const CACHE_NAME = 'cronograma-concursos-v15';
+const CACHE_NAME = 'cronograma-concursos-v16';
 
 // Recursos essenciais para funcionamento offline (caminhos relativos e CDNs)
 const PRECACHE_ASSETS = [
@@ -8,6 +8,7 @@ const PRECACHE_ASSETS = [
   './manifest.json',
   './divisor-topicos.js',
   './html2pdf.bundle.min.js',
+  './supabase.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-192-maskable.png',

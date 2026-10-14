@@ -19,6 +19,11 @@ if (Test-Path $libPdf) {
     Copy-Item -Path $libPdf -Destination $targetDir -Force
 }
 
+$libSupabase = Join-Path $PSScriptRoot "supabase.js"
+if (Test-Path $libSupabase) {
+    Copy-Item -Path $libSupabase -Destination $targetDir -Force
+}
+
 $iconsSource = Join-Path $PSScriptRoot "icons"
 $iconsTarget = Join-Path $targetDir "icons"
 if (-not (Test-Path $iconsTarget)) {

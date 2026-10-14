@@ -53,7 +53,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <!-- Supabase JS Client para Login e Sincronização em Nuvem (Parte C) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase JS Client para Login e Sincronização em Nuvem (Local com Fallback CDN) -->
+  <script src="supabase.js"></script>
+  <script>
+    if (typeof supabase === 'undefined') {
+      var _s = document.createElement('script');
+      _s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+      document.head.appendChild(_s);
+    }
+  </script>
 
   <style>
     /* ==========================================================================
@@ -5308,6 +5316,60 @@
                 </button>
               </div>
             </div>
+
+            <!-- Painel de Diagnóstico da Sincronização (Passo 1 do Bug 2) -->
+            <div class="sync-diagnostics-panel" id="syncDiagnosticsPanel" style="margin-top: 16px; padding: 14px; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+              <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                <span>🩺 Diagnóstico da Sincronização</span>
+                <span id="syncConfigStatusBadge" class="badge-sync" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; font-weight: 600;">
+                  ● Configurado
+                </span>
+              </div>
+
+              <div class="auth-meta-row" style="margin-bottom: 6px;">
+                <span style="color: var(--text-muted); font-size: 0.82rem;">Serviço de Nuvem:</span>
+                <strong id="diagCloudServiceStatus" style="font-size: 0.82rem; color: var(--text-main);">Supabase (URL & Chave ativas)</strong>
+              </div>
+
+              <div class="auth-meta-row" style="margin-bottom: 6px;">
+                <span style="color: var(--text-muted); font-size: 0.82rem;">Usuário Logado:</span>
+                <strong id="diagUserLoggedStatus" style="font-size: 0.82rem; color: var(--text-main);">Nenhum usuário logado</strong>
+              </div>
+
+              <div class="auth-meta-row" style="margin-bottom: 6px;">
+                <span style="color: var(--text-muted); font-size: 0.82rem;">UID do Usuário:</span>
+                <code id="diagUserUid" style="font-size: 0.74rem; background: var(--bg-card); padding: 2px 6px; border-radius: 4px; color: var(--text-muted);">-</code>
+              </div>
+
+              <div class="auth-meta-row" style="margin-bottom: 6px;">
+                <span style="color: var(--text-muted); font-size: 0.82rem;">Última Sincronização:</span>
+                <span id="diagLastSyncTime" style="font-size: 0.82rem; font-weight: 500;">Nunca</span>
+              </div>
+
+              <div class="auth-meta-row" style="margin-bottom: 6px;">
+                <span style="color: var(--text-muted); font-size: 0.82rem;">Itens Pendentes:</span>
+                <span id="diagPendingItemsCount" style="font-size: 0.82rem; font-weight: 600; color: var(--text-main);">0 itens para enviar</span>
+              </div>
+
+              <div class="auth-meta-row" style="margin-bottom: 12px;">
+                <span style="color: var(--text-muted); font-size: 0.82rem;">Último Erro:</span>
+                <span id="diagLastError" style="font-size: 0.82rem; color: #10b981; font-weight: 500;">Nenhum erro registrado</span>
+              </div>
+
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnTestCloudConnection" onclick="App.testCloudConnection()">
+                  ⚡ Testar Conexão
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" id="btnSyncNowDiag" onclick="App.manualSync()">
+                  🔄 Sincronizar Agora
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" id="btnCopySyncDiagnostics" onclick="App.copySyncDiagnostics()">
+                  📋 Copiar Diagnóstico
+                </button>
+              </div>
+
+              <div id="testConnectionResultBox" style="display: none; margin-top: 10px; padding: 10px; border-radius: var(--radius-sm); font-size: 0.78rem; font-family: monospace; white-space: pre-wrap; word-break: break-all;"></div>
+            </div>
           </div>
         </div>
 
@@ -5382,7 +5444,11 @@
             </div>
             <div class="settings-info-row">
               <span class="info-label">Versão Instalada</span>
-              <span class="info-value" id="settingsAppVersion">v1.0.0</span>
+              <span class="info-value" id="settingsAppVersion">v1.6.5</span>
+            </div>
+            <div class="settings-info-row">
+              <span class="info-label">Data/Hora do Build</span>
+              <span class="info-value" id="settingsAppBuildTime">14/10/2026 10:35:00</span>
             </div>
             <div class="settings-info-row">
               <span class="info-label">Modo Offline</span>
@@ -6350,6 +6416,16 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             Substitui os dados locais pelos dados salvos na sua conta em nuvem (um backup local de segurança será guardado automaticamente).
           </p>
         </div>
+
+        <!-- Opção 4: Começar do Zero -->
+        <div class="merge-option-card" onclick="App.resolveFirstSync('fresh')">
+          <div class="merge-option-header">
+            <span>✨</span> <span>Começar do Zero</span>
+          </div>
+          <p class="merge-option-desc">
+            Reinicia os dados e começa uma nova rotina de estudos limpa (um backup de segurança dos dados atuais será preservado no seu aparelho).
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -6506,22 +6582,100 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      */
     function nomeMateria(m) {
       if (m == null) return '';
-      if (typeof m === 'string') return m;
-      return String(m.nome ?? m.name ?? m.titulo ?? m.title ?? '');
+      if (typeof m === 'string') {
+        const trimmed = m.trim();
+        if (trimmed === '[object Object]' || trimmed === 'object') {
+          if (typeof logGlobalDiagnosticError === 'function') {
+            logGlobalDiagnosticError('materia_object_string', 'String literal [object Object] detectada em nomeMateria()');
+          }
+          return 'Matéria sem nome';
+        }
+        return trimmed;
+      }
+      if (typeof m !== 'object') return String(m);
+
+      // Chaves identificadas nos dados reais, editais, demos e importações
+      const val = m.nome ?? m.name ?? m.titulo ?? m.title ?? m.disciplina ?? m.materia ?? m.label ?? m.subject ?? m.subjectName ?? m.descricao ?? '';
+      if (val && typeof val === 'string') {
+        const clean = val.trim();
+        if (clean && clean !== '[object Object]' && clean !== 'object') {
+          return clean;
+        }
+      } else if (val && typeof val === 'object') {
+        return nomeMateria(val);
+      }
+
+      if (typeof logGlobalDiagnosticError === 'function') {
+        logGlobalDiagnosticError('materia_sem_nome', 'Matéria com formato de dados sem chave de nome identificada', JSON.stringify(m).slice(0, 150));
+      }
+      return 'Matéria sem nome';
     }
+
     function idMateria(m) {
       if (m == null) return '';
-      if (typeof m === 'string') return m;
-      return String(m.id ?? m.nome ?? m.name ?? '');
+      if (typeof m === 'string') return m.trim();
+      if (typeof m !== 'object') return String(m);
+      const val = m.id ?? m.idMateria ?? m.subjectId ?? m.code ?? m.nome ?? m.name ?? m.disciplina ?? m.materia ?? '';
+      if (val && typeof val === 'object') return idMateria(val);
+      return String(val).trim();
     }
+
+    function textoSeguro(x) {
+      if (x == null) return '';
+      if (typeof x === 'string') {
+        if (x === '[object Object]' || x === 'object') {
+          if (typeof logGlobalDiagnosticError === 'function') {
+            logGlobalDiagnosticError('texto_seguro_invalid_string', 'String literal [object Object] interceptada por textoSeguro');
+          }
+          return '';
+        }
+        return x;
+      }
+      if (typeof x === 'number' || typeof x === 'boolean') {
+        return String(x);
+      }
+      if (typeof x === 'object') {
+        // 1. Se for tópico de edital
+        if (x.texto && typeof x.texto === 'string') return x.texto.trim();
+        // 2. Se for matéria
+        const sName = nomeMateria(x);
+        if (sName && sName !== 'Matéria sem nome' && sName !== '[object Object]' && sName !== 'object') {
+          return sName;
+        }
+        // 3. Outras chaves de texto
+        if (x.titulo && typeof x.titulo === 'string') return x.titulo.trim();
+        if (x.name && typeof x.name === 'string') return x.name.trim();
+        if (x.label && typeof x.label === 'string') return x.label.trim();
+        if (x.descricao && typeof x.descricao === 'string') return x.descricao.trim();
+
+        if (typeof logGlobalDiagnosticError === 'function') {
+          logGlobalDiagnosticError('texto_seguro_unresolved_object', 'Objeto sem chave de texto legível interceptado por textoSeguro', JSON.stringify(x).slice(0, 120));
+        }
+        return '';
+      }
+      return String(x);
+    }
+
     function normalizarMaterias(lista) {
-      return (Array.isArray(lista) ? lista : []).map((m, i) =>
-        typeof m === 'string'
-          ? { id: 'mat_' + i + '_' + m.toLowerCase().replace(/\s+/g, '-'), nome: m, cor: null, paletteId: 'blue', topicos: [] }
-          : { ...m, id: idMateria(m) || ('mat_' + i), nome: nomeMateria(m) });
+      return (Array.isArray(lista) ? lista : []).map((m, i) => {
+        if (typeof m === 'string') {
+          return { id: 'mat_' + i + '_' + m.toLowerCase().replace(/\s+/g, '-'), nome: m, cor: null, paletteId: 'blue', topicos: [] };
+        }
+        const safeId = idMateria(m) || ('mat_' + i);
+        const safeNome = nomeMateria(m);
+        const safeTopicos = Array.isArray(m.topicos) ? m.topicos.map(t => typeof t === 'string' ? t : (t && t.texto ? t : { ...t, texto: textoSeguro(t) })) : [];
+        return {
+          ...m,
+          id: safeId,
+          nome: safeNome,
+          topicos: safeTopicos
+        };
+      });
     }
+
     window.nomeMateria = nomeMateria;
     window.idMateria = idMateria;
+    window.textoSeguro = textoSeguro;
     window.normalizarMaterias = normalizarMaterias;
 
     /**
@@ -6744,6 +6898,12 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       isSyncing: false,
       hasPendingSync: false,
       pendingCloudData: null,
+      lastError: (() => {
+        try {
+          const raw = localStorage.getItem('concurso_sync_last_error');
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) { return null; }
+      })(),
 
       async init() {
         try {
@@ -6766,11 +6926,16 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           if (!error && sessionData && sessionData.session) {
             this.user = sessionData.session.user;
             this.setSyncStatus('synced');
+            this.updateAuthUI();
+            this.updateDiagnosticsUI();
+            // Baixa dados mais recentes da nuvem e mescla automaticamente na inicialização
+            await this.syncDownAndMerge();
           } else {
             this.user = null;
             this.setSyncStatus('local');
+            this.updateAuthUI();
+            this.updateDiagnosticsUI();
           }
-          this.updateAuthUI();
 
           // Monitora eventos de autenticação
           this.client.auth.onAuthStateChange(async (event, session) => {
@@ -6971,6 +7136,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         } catch (err) {
           console.warn('[SyncManager] Erro no syncUp:', err);
           this.hasPendingSync = true;
+          this.recordSyncError(err);
           this.setSyncStatus('error', 'Erro ao salvar na nuvem');
         } finally {
           this.isSyncing = false;
@@ -6990,7 +7156,311 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           return data;
         } catch (err) {
           console.warn('[SyncManager] Erro no downloadFromCloud:', err);
+          this.recordSyncError(err);
           return null;
+        }
+      },
+
+      hasLocalData() {
+        const matCount = (App.data && App.data.materias) ? App.data.materias.length : 0;
+        const schedCount = (App.schedules) ? App.schedules.length : 0;
+        return matCount > 0 || schedCount > 0;
+      },
+
+      recordSyncError(err) {
+        if (!err) return;
+        const msg = (err && (err.message || err.error_description || String(err))) || 'Erro desconhecido';
+        const code = (err && (err.code || err.error_code || '')) || '';
+        this.lastError = {
+          message: msg,
+          code: code,
+          time: new Date().toLocaleTimeString('pt-BR')
+        };
+        try {
+          localStorage.setItem('concurso_sync_last_error', JSON.stringify(this.lastError));
+        } catch (e) {}
+        this.updateDiagnosticsUI();
+      },
+
+      updateDiagnosticsUI() {
+        const isConfigured = Boolean(
+          SUPABASE_CONFIG.url && 
+          !SUPABASE_CONFIG.url.includes('SUA_CHAVE') && 
+          SUPABASE_CONFIG.anonKey && 
+          !SUPABASE_CONFIG.anonKey.includes('SUA_CHAVE') && 
+          SUPABASE_CONFIG.anonKey.length > 20
+        );
+
+        const badge = document.getElementById('syncConfigStatusBadge');
+        if (badge) {
+          if (isConfigured) {
+            badge.style.background = 'rgba(16, 185, 129, 0.12)';
+            badge.style.color = '#10b981';
+            badge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+            badge.textContent = '● Configurado';
+          } else {
+            badge.style.background = 'rgba(239, 68, 68, 0.12)';
+            badge.style.color = '#ef4444';
+            badge.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+            badge.textContent = '⚠️ Não Configurado';
+          }
+        }
+
+        const cloudStatus = document.getElementById('diagCloudServiceStatus');
+        if (cloudStatus) {
+          cloudStatus.textContent = isConfigured 
+            ? 'Supabase (URL & Chave ativas)' 
+            : 'Configuração ausente ou incompleta';
+        }
+
+        const userStatus = document.getElementById('diagUserLoggedStatus');
+        if (userStatus) {
+          userStatus.textContent = this.user 
+            ? `${this.user.email} (Conectado)` 
+            : 'Nenhum usuário logado (Modo local)';
+        }
+
+        const userUid = document.getElementById('diagUserUid');
+        if (userUid) {
+          userUid.textContent = this.user ? this.user.id : '-';
+        }
+
+        const lastSync = document.getElementById('diagLastSyncTime');
+        if (lastSync) {
+          if (this.lastSyncTime) {
+            const d = new Date(this.lastSyncTime);
+            lastSync.textContent = d.toLocaleString('pt-BR');
+          } else {
+            lastSync.textContent = this.user ? 'Pendente' : 'Nunca (Modo local)';
+          }
+        }
+
+        const pendingItems = document.getElementById('diagPendingItemsCount');
+        if (pendingItems) {
+          if (this.hasPendingSync) {
+            pendingItems.textContent = '⚠️ Alterações pendentes de envio (offline)';
+            pendingItems.style.color = '#f59e0b';
+          } else {
+            pendingItems.textContent = '0 itens pendentes (Tudo sincronizado)';
+            pendingItems.style.color = '#10b981';
+          }
+        }
+
+        const lastErrEl = document.getElementById('diagLastError');
+        if (lastErrEl) {
+          if (this.lastError && this.lastError.message) {
+            lastErrEl.textContent = `${this.lastError.code ? '[' + this.lastError.code + '] ' : ''}${this.lastError.message} (${this.lastError.time})`;
+            lastErrEl.style.color = '#ef4444';
+          } else {
+            lastErrEl.textContent = 'Nenhum erro registrado';
+            lastErrEl.style.color = '#10b981';
+          }
+        }
+      },
+
+      async syncDownAndMerge() {
+        if (!this.user || !this.client) return;
+        try {
+          this.setSyncStatus('syncing', 'Baixando da nuvem...');
+          const cloudData = await this.downloadFromCloud();
+          if (!cloudData) {
+            if (this.hasLocalData()) {
+              await this.syncUp();
+            }
+            this.setSyncStatus('synced');
+            this.updateDiagnosticsUI();
+            return;
+          }
+
+          const localPayload = await this.gatherPayload();
+          const localHas = this.hasLocalData();
+
+          if (!localHas) {
+            await this.applyCloudPayload(cloudData, true);
+            this.lastSyncTime = new Date();
+            this.setSyncStatus('synced', 'Sincronizado');
+            this.renderLastSyncTime();
+            this.updateDiagnosticsUI();
+            return;
+          }
+
+          const merged = this.mergePayloads(localPayload, cloudData);
+          await this.applyCloudPayload(merged, true);
+          await this.syncUp();
+          this.lastSyncTime = new Date();
+          this.setSyncStatus('synced', 'Sincronizado');
+          this.renderLastSyncTime();
+          this.updateDiagnosticsUI();
+        } catch (err) {
+          console.warn('[SyncManager] Erro no syncDownAndMerge:', err);
+          this.recordSyncError(err);
+        }
+      },
+
+      async syncAll() {
+        if (!this.user || !this.client) {
+          App.showToast('Faça login para sincronizar com a nuvem.', 'warning');
+          App.openAuthModal('login');
+          return;
+        }
+        try {
+          App.showToast('Iniciando sincronização completa com a nuvem...', 'info');
+          await this.syncDownAndMerge();
+          App.showToast('Sincronização concluída com sucesso!', 'success');
+        } catch (err) {
+          App.showToast('Erro ao sincronizar: ' + (err.message || err), 'warning');
+        }
+      },
+
+      async testConnection() {
+        const resultBox = document.getElementById('testConnectionResultBox');
+        if (resultBox) {
+          resultBox.style.display = 'block';
+          resultBox.style.background = 'var(--bg-card)';
+          resultBox.style.border = '1px solid var(--border-color)';
+          resultBox.style.color = 'var(--text-main)';
+          resultBox.textContent = '⏳ Executando teste de conexão completo com a nuvem...';
+        }
+
+        const report = {
+          timestamp: new Date().toLocaleString('pt-BR'),
+          configured: false,
+          userLogged: !!this.user,
+          userEmail: this.user ? this.user.email : null,
+          userUid: this.user ? this.user.id : null,
+          pingStatus: null,
+          writeStatus: null,
+          readStatus: null,
+          error: null,
+          details: ''
+        };
+
+        const isConfigured = Boolean(
+          SUPABASE_CONFIG.url && 
+          !SUPABASE_CONFIG.url.includes('SUA_CHAVE') && 
+          SUPABASE_CONFIG.anonKey && 
+          !SUPABASE_CONFIG.anonKey.includes('SUA_CHAVE') && 
+          SUPABASE_CONFIG.anonKey.length > 20
+        );
+        report.configured = isConfigured;
+
+        if (!isConfigured) {
+          report.error = 'auth/configuration-not-found: URL ou chave anônima do Supabase ausentes ou inválidas.';
+          this.recordSyncError({ message: report.error, code: 'config_missing' });
+          if (resultBox) {
+            resultBox.style.background = 'rgba(239, 68, 68, 0.1)';
+            resultBox.style.borderColor = '#ef4444';
+            resultBox.textContent = `❌ ${report.error}`;
+          }
+          return report;
+        }
+
+        // Teste 1: Ping na API REST do Supabase
+        try {
+          const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/user_data?select=user_id&limit=1`, {
+            headers: {
+              'apikey': SUPABASE_CONFIG.anonKey,
+              'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+            }
+          });
+          report.pingStatus = res.status;
+          if (res.status === 404) {
+            report.error = 'table-not-found: Tabela "user_data" não encontrada no Supabase. Crie a tabela via SQL Editor.';
+            this.recordSyncError({ message: report.error, code: '404' });
+            if (resultBox) {
+              resultBox.style.background = 'rgba(239, 68, 68, 0.1)';
+              resultBox.style.borderColor = '#ef4444';
+              resultBox.textContent = `❌ ${report.error}`;
+            }
+            return report;
+          }
+        } catch (netErr) {
+          report.error = `network-request-failed: Falha ao alcançar ${SUPABASE_CONFIG.url} (${netErr.message}).`;
+          this.recordSyncError({ message: report.error, code: 'network_error' });
+          if (resultBox) {
+            resultBox.style.background = 'rgba(239, 68, 68, 0.1)';
+            resultBox.style.borderColor = '#ef4444';
+            resultBox.textContent = `❌ ${report.error}`;
+          }
+          return report;
+        }
+
+        // Teste 2: Usuário Autenticado
+        if (!this.user || !this.client) {
+          report.error = 'unauthenticated: Servidor Supabase respondeu OK (200), mas nenhum usuário está logado neste aparelho. Faça login para testar leitura e gravação dos seus dados.';
+          this.recordSyncError({ message: report.error, code: 'unauthenticated' });
+          if (resultBox) {
+            resultBox.style.background = 'rgba(245, 158, 11, 0.12)';
+            resultBox.style.borderColor = '#f59e0b';
+            resultBox.textContent = `⚠️ Conexão com o servidor OK (Status ${report.pingStatus}), mas você precisa ENTRAR NA SUA CONTA para sincronizar.`;
+          }
+          return report;
+        }
+
+        // Teste 3: Leitura e Gravação no banco
+        try {
+          const testStamp = new Date().toISOString();
+          const { error: writeErr } = await this.client
+            .from('user_data')
+            .upsert({
+              user_id: this.user.id,
+              last_test_ping: testStamp,
+              updated_at: testStamp
+            }, { onConflict: 'user_id' });
+
+          if (writeErr) {
+            report.writeStatus = 'error';
+            report.error = `permission-denied: Erro ao gravar dados (${writeErr.code || ''}: ${writeErr.message}). Verifique as políticas RLS no Supabase.`;
+            this.recordSyncError(writeErr);
+            if (resultBox) {
+              resultBox.style.background = 'rgba(239, 68, 68, 0.1)';
+              resultBox.style.borderColor = '#ef4444';
+              resultBox.textContent = `❌ ${report.error}`;
+            }
+            return report;
+          }
+          report.writeStatus = 'success';
+
+          const { data: readData, error: readErr } = await this.client
+            .from('user_data')
+            .select('user_id, last_test_ping, updated_at')
+            .eq('user_id', this.user.id)
+            .maybeSingle();
+
+          if (readErr) {
+            report.readStatus = 'error';
+            report.error = `read-error: Erro ao ler documento gravado (${readErr.code || ''}: ${readErr.message}).`;
+            this.recordSyncError(readErr);
+            if (resultBox) {
+              resultBox.style.background = 'rgba(239, 68, 68, 0.1)';
+              resultBox.style.borderColor = '#ef4444';
+              resultBox.textContent = `❌ ${report.error}`;
+            }
+            return report;
+          }
+
+          report.readStatus = 'success';
+          report.details = `✅ Teste de Conexão Bem-Sucedido!\nServidor: Supabase (Status ${report.pingStatus})\nUsuário: ${this.user.email} (UID: ${this.user.id})\nGravação e Leitura: OK (Ping verificado em ${testStamp})\nSincronização 100% operacional.`;
+          this.lastError = null;
+          try { localStorage.removeItem('concurso_sync_last_error'); } catch (e) {}
+          this.updateDiagnosticsUI();
+
+          if (resultBox) {
+            resultBox.style.background = 'rgba(16, 185, 129, 0.12)';
+            resultBox.style.borderColor = '#10b981';
+            resultBox.style.color = 'var(--text-main)';
+            resultBox.textContent = report.details;
+          }
+          return report;
+        } catch (ex) {
+          report.error = ex.message || String(ex);
+          this.recordSyncError(ex);
+          if (resultBox) {
+            resultBox.style.background = 'rgba(239, 68, 68, 0.1)';
+            resultBox.style.borderColor = '#ef4444';
+            resultBox.textContent = `❌ Erro no teste: ${report.error}`;
+          }
+          return report;
         }
       },
 
@@ -7161,6 +7631,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
       }
     };
+    window.SyncManager = SyncManager;
+    window.SUPABASE_CONFIG = SUPABASE_CONFIG;
 
     /**
      * PALETAS EM TONS PASTEL
@@ -7257,7 +7729,10 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.6.4";
+    const APP_VERSION = "1.6.5";
+    const APP_BUILD_TIME = "14/10/2026 10:35:00";
+    window.APP_VERSION = APP_VERSION;
+    window.APP_BUILD_TIME = APP_BUILD_TIME;
     const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
     const REMOTE_VERSION_URL = UPDATE_URL; // Mantido para compatibilidade
     const GITHUB_RELEASES_URL = "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases";
@@ -7497,7 +7972,12 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
       getTopicText(t) {
         if (!t) return '';
-        if (typeof t === 'object' && t !== null) return t.texto || '';
+        if (typeof t === 'string') {
+          return (t === '[object Object]' || t === 'object') ? '' : t;
+        }
+        if (typeof t === 'object' && t !== null) {
+          return t.texto || t.titulo || t.nome || t.name || t.label || '';
+        }
         return String(t);
       },
 
@@ -7669,9 +8149,9 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           const raw = localStorage.getItem('concurso_app_data');
           if (raw) {
             // Backup automático de segurança antes de qualquer migração ou normalização
-            if (!localStorage.getItem('concurso_app_data_backup_v164')) {
+            if (!localStorage.getItem('concurso_app_data_backup_v165')) {
               try {
-                localStorage.setItem('concurso_app_data_backup_v164', raw);
+                localStorage.setItem('concurso_app_data_backup_v165', raw);
               } catch (eBackup) {}
             }
             this.data = JSON.parse(raw);
@@ -8104,6 +8584,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         const urlDisp = document.getElementById('updateUrlDisplay');
         if (topEl) topEl.textContent = `v${APP_VERSION}`;
         if (settingsEl) settingsEl.textContent = `v${APP_VERSION}`;
+        const buildEl = document.getElementById('settingsAppBuildTime');
+        if (buildEl) buildEl.textContent = APP_BUILD_TIME;
         if (urlDisp) urlDisp.textContent = UPDATE_URL;
 
         const lastCheckStr = localStorage.getItem('concurso_last_version_check');
@@ -8390,6 +8872,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
         this.activeTab = tabId;
         this.updateFab(tabId);
+
+        if (tabId === 'tab-settings') {
+          this.renderDiagnosticsLog();
+          if (typeof SyncManager !== 'undefined' && SyncManager.updateDiagnosticsUI) {
+            SyncManager.updateDiagnosticsUI();
+          }
+        }
 
         // Se abriu a aba do leitor e já temos um documento, ajusta se necessário
         if (tabId === 'tab-pdf-reader' && this.pdfReader && this.pdfReader.doc) {
@@ -9348,7 +9837,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
                   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; flex-wrap: wrap; gap: 6px;">
                     <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
                       <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${pal.text}; flex-shrink: 0;"></span>
-                      <strong style="font-size: 0.95rem; color: var(--text-main);">${this.escapeHtml(m.nome)}</strong>
+                      <strong style="font-size: 0.95rem; color: var(--text-main);">${this.escapeHtml(nomeMateria(m))}</strong>
                       <button type="button" class="btn btn-xs btn-outline" onclick="App.renameSubjectInReview('${m.id}')" title="Renomear esta matéria" style="padding: 1px 6px; font-size: 0.72rem;">
                         ✏️
                       </button>
@@ -9371,7 +9860,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
                           <span style="flex: 1; min-width: 0; color: var(--text-main); word-break: break-word;">${this.escapeHtml(topicText)}</span>
                           <select class="input-field" style="width: auto; padding: 2px 4px; font-size: 0.7rem; height: 24px; border-radius: 4px; flex-shrink: 0;" onchange="App.moveTopicInReview('${m.id}', ${tIdx}, this.value)">
                             <option value="" disabled selected>Mover para... ▾</option>
-                            ${otherSubjects.map(os => `<option value="${os.id}">📁 ${this.escapeHtml(os.nome)}</option>`).join('')}
+                            ${otherSubjects.map(os => `<option value="${idMateria(os)}">📁 ${this.escapeHtml(nomeMateria(os))}</option>`).join('')}
                             <option value="__NEW__">➕ Nova Matéria...</option>
                             <option value="__UNCLASSIFIED__">⚠️ Não Classificado</option>
                           </select>
@@ -9397,7 +9886,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
                         <span style="flex: 1; word-break: break-word;">${this.escapeHtml(nc)}</span>
                         <select class="input-field" style="width: auto; padding: 2px 4px; font-size: 0.7rem; height: 24px; border-radius: 4px; flex-shrink: 0;" onchange="App.moveUnclassifiedInReview(${ncIdx}, this.value)">
                           <option value="" disabled selected>Mover para... ▾</option>
-                          ${allSubjects.map(sub => `<option value="${sub.id}">📁 ${this.escapeHtml(sub.nome)}</option>`).join('')}
+                          ${allSubjects.map(sub => `<option value="${idMateria(sub)}">📁 ${this.escapeHtml(nomeMateria(sub))}</option>`).join('')}
                           <option value="__NEW__">➕ Nova Matéria...</option>
                         </select>
                       </div>
@@ -9752,7 +10241,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           const pal = this.getPalette(materia.paletteId);
           const card = document.createElement('div');
           card.className = 'subject-card';
-          card.setAttribute('data-id', materia.id);
+          card.setAttribute('data-id', idMateria(materia));
 
           const totalTopicos = materia.topicos.length;
           const isOpen = this.openSubjectIds.has(materia.id);
@@ -9761,7 +10250,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             <div class="subject-header-row ${isOpen ? 'open' : ''}" onclick="App.toggleSubjectBody('${materia.id}')">
               <div class="subject-title-area">
                 <span class="subject-pill" style="background: ${pal.text};"></span>
-                <span class="subject-name">${App.escapeHtml(materia.nome)}</span>
+                <span class="subject-name">${App.escapeHtml(nomeMateria(materia))}</span>
                 <span class="subject-topics-count">• ${totalTopicos} tópico${totalTopicos === 1 ? '' : 's'}</span>
               </div>
               <div class="subject-actions" onclick="event.stopPropagation()">
@@ -9953,7 +10442,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           item.className = 'unclassified-item';
 
           const materiaOptions = this.data.materias.map(m => `
-            <option value="${m.id}">${App.escapeHtml(m.nome)}</option>
+            <option value="${idMateria(m)}">${App.escapeHtml(nomeMateria(m))}</option>
           `).join('');
 
           item.innerHTML = `
@@ -10432,19 +10921,49 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
       async manualSync() {
         if (!SyncManager || !SyncManager.user) {
+          this.showToast('Conecte sua conta para sincronizar com a nuvem.', 'warning');
           this.openAuthModal('login');
           return;
         }
-        if (!navigator.onLine) {
-          this.showToast('Você está offline no momento. O app sincronizará assim que a conexão retornar.', 'info');
-          return;
+        await SyncManager.syncAll();
+      },
+
+      async testCloudConnection() {
+        if (SyncManager && SyncManager.testConnection) {
+          await SyncManager.testConnection();
         }
-        this.showToast('Sincronizando com a nuvem...', 'info');
-        await SyncManager.syncUp();
-        if (SyncManager.syncStatus === 'synced') {
-          this.showToast('Sincronização concluída com sucesso! ☁️', 'success');
-        } else {
-          this.showToast('Não foi possível sincronizar agora. Tentaremos novamente automaticamente.', 'error');
+      },
+
+      async copySyncDiagnostics() {
+        const isConfigured = Boolean(
+          SUPABASE_CONFIG.url && 
+          !SUPABASE_CONFIG.url.includes('SUA_CHAVE') && 
+          SUPABASE_CONFIG.anonKey && 
+          !SUPABASE_CONFIG.anonKey.includes('SUA_CHAVE') && 
+          SUPABASE_CONFIG.anonKey.length > 20
+        );
+        const reportText = [
+          '=== DIAGNÓSTICO DE SINCRONIZAÇÃO EM NUVEM ===',
+          `Data/Hora: ${new Date().toLocaleString('pt-BR')}`,
+          `Versão do App: v${APP_VERSION} (Build: ${APP_BUILD_TIME})`,
+          `Serviço: Supabase (${SUPABASE_CONFIG.url})`,
+          `Configurado: ${isConfigured ? 'SIM' : 'NÃO'}`,
+          `Usuário Logado: ${SyncManager.user ? SyncManager.user.email : 'Nenhum (Modo Local)'}`,
+          `UID do Usuário: ${SyncManager.user ? SyncManager.user.id : 'N/A'}`,
+          `Status de Sincronização: ${SyncManager.syncStatus}`,
+          `Última Sincronização: ${SyncManager.lastSyncTime ? new Date(SyncManager.lastSyncTime).toLocaleString('pt-BR') : 'Nunca'}`,
+          `Pendências Locais: ${SyncManager.hasPendingSync ? 'SIM (offline ou pendente)' : 'NÃO (0 pendências)'}`,
+          `Último Erro: ${SyncManager.lastError ? JSON.stringify(SyncManager.lastError) : 'Nenhum erro registrado'}`,
+          `Matérias Locais: ${(this.data.materias || []).length}`,
+          `Cronogramas Locais: ${(this.schedules || []).length}`,
+          `Plataforma: ${window.Capacitor && window.Capacitor.isNativePlatform() ? 'Android (APK)' : 'Web Browser'}`
+        ].join('\n');
+
+        try {
+          await navigator.clipboard.writeText(reportText);
+          this.showToast('Diagnóstico copiado para a área de transferência!', 'success');
+        } catch (e) {
+          prompt('Copie o diagnóstico abaixo:', reportText);
         }
       },
 
@@ -10489,6 +11008,12 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             await SyncManager.applyCloudPayload(merged, true);
             await SyncManager.syncUp();
             this.showToast('Dados mesclados com sucesso!', 'success');
+          }
+        } else if (option === 'fresh') {
+          if (confirm('Tem certeza de que deseja começar do zero? Um backup de segurança dos dados atuais será preservado.')) {
+            this.clearAllData();
+            await SyncManager.syncUp();
+            this.showToast('Iniciado do zero com sucesso!', 'info');
           }
         }
       },
@@ -11162,13 +11687,18 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         const datalist = document.getElementById('wizardTopicsDatalist');
         if (!datalist) return;
         datalist.innerHTML = '';
+        if (!subjectId) {
+          const sel = document.getElementById('wizardSessionSubjectSelect');
+          subjectId = sel ? sel.value : null;
+        }
         if (!subjectId) return;
 
         const subj = (this.data.materias || []).find(m => idMateria(m) === subjectId);
         if (subj && subj.topicos && Array.isArray(subj.topicos)) {
           subj.topicos.forEach(t => {
             const opt = document.createElement('option');
-            opt.value = typeof t === 'string' ? t : (t.texto || '');
+            const topicText = typeof App.getTopicText === 'function' ? App.getTopicText(t) : (typeof t === 'string' ? t : (t.texto || t.titulo || t.nome || ''));
+            opt.value = textoSeguro(topicText);
             datalist.appendChild(opt);
           });
         }
@@ -11972,11 +12502,13 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
         const datalist = document.getElementById('datalistSubjectTopics');
         if (!datalist) return;
         datalist.innerHTML = '';
-        const subj = this.data.materias.find(m => m.id === subjectId);
-        if (subj && subj.topicos && subj.topicos.length > 0) {
+        if (!subjectId) return;
+        const subj = (this.data.materias || []).find(m => idMateria(m) === subjectId);
+        if (subj && subj.topicos && Array.isArray(subj.topicos)) {
           subj.topicos.forEach(t => {
             const opt = document.createElement('option');
-            opt.value = t;
+            const topicText = typeof App.getTopicText === 'function' ? App.getTopicText(t) : (typeof t === 'string' ? t : (t.texto || t.titulo || t.nome || ''));
+            opt.value = textoSeguro(topicText);
             datalist.appendChild(opt);
           });
         }
@@ -12060,11 +12592,11 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
 
         const subjSelect = document.getElementById('selectSessionSubject');
         subjSelect.innerHTML = '';
-        this.data.materias.forEach(m => {
+        (this.data.materias || []).forEach(m => {
           const opt = document.createElement('option');
-          opt.value = m.id;
-          opt.textContent = m.nome;
-          if (m.id === slot.subjectId) opt.selected = true;
+          opt.value = idMateria(m);
+          opt.textContent = nomeMateria(m);
+          if (idMateria(m) === slot.subjectId) opt.selected = true;
           subjSelect.appendChild(opt);
         });
 
@@ -12355,7 +12887,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
                 <input type="checkbox" id="chk-auto-sub-${m.id}" value="${m.id}" ${isIncluded ? 'checked' : ''} onchange="App.toggleAutoSubject('${m.id}', this.checked)">
                 <span class="subject-color-dot" style="background: ${pal.border}; border: 1.5px solid ${pal.text};"></span>
                 <div style="min-width: 0; flex: 1;">
-                  <div class="subject-freq-name" title="${App.escapeHtml(m.nome)}">${App.escapeHtml(m.nome)}</div>
+                  <div class="subject-freq-name" title="${App.escapeHtml(nomeMateria(m))}">${App.escapeHtml(nomeMateria(m))}</div>
                   <span style="font-size: 0.72rem; color: var(--text-muted);">${countTopics} tópico${countTopics === 1 ? '' : 's'}</span>
                 </div>
               </div>
@@ -13303,7 +13835,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
                 const isShortage = alloc < req;
                 const isZero = alloc === 0;
                 const cls = isZero ? 'preview-capacity-pill shortage' : (isShortage ? 'preview-capacity-pill shortage' : 'preview-capacity-pill');
-                return `<span class="${cls}">${this.escapeHtml(m.nome)}: <strong>${alloc}/${req}</strong></span>`;
+                return `<span class="${cls}">${this.escapeHtml(nomeMateria(m))}: <strong>${alloc}/${req}</strong></span>`;
               }).join('');
             }
           } else {
@@ -13929,7 +14461,12 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
       },
 
       escapeHtml(str) {
-        if (!str) return '';
+        if (str == null) return '';
+        if (typeof str !== 'string') {
+          str = typeof textoSeguro === 'function' ? textoSeguro(str) : String(str);
+        } else if (str === '[object Object]' || str === 'object') {
+          return '';
+        }
         return str
           .replace(/&/g, '&amp;')
           .replace(/</g, '&lt;')
@@ -14709,7 +15246,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
         let totalSessions = 0;
         this.schedule.columns.forEach(c => totalSessions += c.slots.length);
         const schedName = this.schedule.name || 'Meu Cronograma de Estudos';
-        const shareText = `📚 *${schedName}*\nTotal de Sessões Semanais: ${totalSessions}\nDisciplinas: ${this.data.materias.map(m => m.nome).join(', ')}\n\nOrganizado com sucesso pelo Concursos App! 🚀`;
+        const shareText = `📚 *${schedName}*\nTotal de Sessões Semanais: ${totalSessions}\nDisciplinas: ${this.data.materias.map(m => nomeMateria(m)).join(', ')}\n\nOrganizado com sucesso pelo Concursos App! 🚀`;
 
         if (navigator.share) {
           try {
