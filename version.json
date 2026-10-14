@@ -1,17 +1,31 @@
 {
-  "version": "1.6.5",
+  "version": "1.7.0",
   "date": "2026-10-14",
   "notes": [
-    "Correção total de '[object Object]' na lista de tópicos e matérias no mobile e datalists: Camada de Dados universal com nomeMateria(), idMateria() e textoSeguro()",
-    "Prevenção contra coerção de objetos em inputs com datalist (wizardTopicsDatalist e datalistSubjectTopics)",
-    "Novo Painel de Diagnóstico da Sincronização em Nuvem (Ajustes > Conta): status de configuração, usuário logado com UID, última sincronização, itens pendentes e último erro detalhado",
-    "Ferramentas ativas de teste: botão 'Testar Conexão' com leitura e gravação em tempo real na nuvem, 'Sincronizar Agora' bidirecional e 'Copiar Diagnóstico'",
-    "Sincronização offline-first aprimorada: download e mesclagem automática ao abrir o app logado e suporte local offline ao Supabase JS SDK",
-    "Exibição da data/hora exata do Build em Ajustes para conferência de versão no dispositivo",
-    "Limpeza automática de caches antigos no Service Worker (cache cronograma-concursos-v16) e backup preventivo de segurança no localStorage (backup v165)"
+    "Nova Aba 'Horas de Estudo': registro e controle preciso do tempo estudado por matéria e tópico com métricas de dedicação em tempo real",
+    "Filtros de Período dinâmicos: navegação prática por Dia, Semana (segunda a domingo), Mês e Total, com seletor de data (calendário) e botão 'Hoje'",
+    "Rateio Dinâmico e Automático de Sessões: ao marcar uma sessão do cronograma como concluída, o tempo total é distribuído proporcionalmente entre os tópicos estudados",
+    "Registro Rápido em Tópicos Avulsos: janela com chips rápidos (15, 30, 45, 60, 90 min) ou tempo livre, com tempo padrão configurável e opção de registro em 1 toque",
+    "Histórico de Estudo por Tópico: histórico completo das sessões com edição de minutos, data e exclusão com segurança",
+    "Gráfico Interativo de Estudos e Linha do Tempo: visualização gráfica de horas por dia ou por disciplina sem dependências externas pesadas e com suporte aos temas claro e escuro",
+    "Integração com Sincronização em Nuvem (Supabase): logs de estudo incluídos no sync com reconciliação por updatedAt e sem duplicações",
+    "Segurança total dos dados: backup preventivo no localStorage antes de migrações e preservação de horas mesmo em tópicos excluídos ou reorganizados"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.6.5",
+      "date": "2026-10-14",
+      "notes": [
+        "Correção total de '[object Object]' na lista de tópicos e matérias no mobile e datalists: Camada de Dados universal com nomeMateria(), idMateria() e textoSeguro()",
+        "Prevenção contra coerção de objetos em inputs com datalist (wizardTopicsDatalist e datalistSubjectTopics)",
+        "Novo Painel de Diagnóstico da Sincronização em Nuvem (Ajustes > Conta): status de configuração, usuário logado com UID, última sincronização, itens pendentes e último erro detalhado",
+        "Ferramentas ativas de teste: botão 'Testar Conexão' com leitura e gravação em tempo real na nuvem, 'Sincronizar Agora' bidirecional e 'Copiar Diagnóstico'",
+        "Sincronização offline-first aprimorada: download e mesclagem automática ao abrir o app logado e suporte local offline ao Supabase JS SDK",
+        "Exibição da data/hora exata do Build em Ajustes para conferência de versão no dispositivo",
+        "Limpeza automática de caches antigos no Service Worker (cache cronograma-concursos-v16) e backup preventivo de segurança no localStorage (backup v165)"
+      ]
+    },
     {
       "version": "1.6.4",
       "date": "2026-10-14",
@@ -64,123 +78,11 @@
       "version": "1.6.0",
       "date": "2026-10-13",
       "notes": [
-        "Autenticação e sincronização em nuvem em tempo real com Supabase (Web + APK Android)",
-        "Mesma conta e dados sincronizados no celular e no computador (matérias, tópicos, cronogramas e progresso)",
-        "Arquitetura Offline-First: funciona 100% sem internet e sincroniza automaticamente ao reconectar",
-        "Resolução de conflitos inteligente no primeiro login (Upload, Download com backup ou Mesclagem sem duplicações)",
-        "Indicadores visuais discretos de status de nuvem no cabeçalho e na tela de Ajustes",
-        "Sincronização de preferências, anotações/marcações do leitor de PDF e revisões programadas",
-        "Recuperação de senha por e-mail e opção de exclusão definitiva de conta e dados da nuvem"
-      ]
-    },
-    {
-      "version": "1.5.0",
-      "date": "2026-10-13",
-      "notes": [
-        "Nova aba dedicada: Leitor de PDF com marcações para estudo direto no app (100% offline)",
-        "Ferramentas completas de anotação: Marca-texto suave em várias cores e Caneta livre com controle de espessura",
-        "Notas e comentários fixados (pins 📌) com texto customizado e edição rápida na página",
-        "Marcador de favoritos com painel lateral (drawer) de navegação entre páginas marcadas",
-        "Modo de leitura noturna/escuro com alto contraste suave para estudar sem cansar a vista",
-        "Zoom dinâmico (+ / - / ajuste à largura da tela) e navegação direta por número de página",
-        "Armazenamento offline no aparelho via IndexedDB (PDFs, anotações e favoritos salvos localmente)",
-        "Exportação da página com anotações e comentários em imagem de alta resolução",
-        "Abertura de qualquer PDF do dispositivo ou do Edital já carregado com 1 clique"
-      ]
-    },
-    {
-      "version": "1.4.0",
-      "date": "2026-10-13",
-      "notes": [
-        "Layout mobile ultra limpo e organizado: cabeçalho enxuto e compacto com alternância rápida de tema claro/escuro",
-        "Menu discreto de 3 pontinhos (⋮) nas matérias com Revisar Divisão, Reprocessar Edital e Expandir/Recolher Tudo",
-        "Lista de tópicos despoluída no celular: remoção dos botões repetitivos e inclusão de janela inferior (Bottom Sheet) ao tocar no tópico",
-        "Área de toque aprimorada (≥ 44px) em todos os botões e campos no celular",
-        "Suporte refinado a barras seguras (safe-area) para entalhes/câmeras e navegação por gestos do Android",
-        "Layout do computador 100% preservado com todas as ações e ferramentas originais"
-      ]
-    },
-    {
-      "version": "1.3.2",
-      "date": "2026-10-13",
-      "notes": [
-        "Extração inteligente de PDF com junção geométrica de palavras quebradas e resolução de hifenização de fim de linha",
-        "Separação profunda por numeração hierárquica e sequencial de tópicos (1.1, 1.1.1, 1.1.4.3)",
-        "Filtro inteligente contra falsos positivos (leis, decretos, artigos, incisos, datas e valores mantidos íntegros)",
-        "Fallbacks inteligentes para editais sem numeração (números romanos, letras/alíneas, ponto e vírgula e marcadores)",
-        "Nova visualização hierárquica com recuo visual ordenado e badges de Tópico Principal",
-        "Modal de Revisão da Divisão do Edital com conferência de integridade de 100% do conteúdo",
-        "Botão Reprocessar Edital com backup de segurança automático e preservação do progresso de estudos"
-      ]
-    },
-    {
-      "version": "1.3.1",
-      "date": "2026-10-13",
-      "notes": [
-        "Correção no sistema de verificação de atualizações online (busca contínua com URL HTTPS absoluta)",
-        "Link direto padronizado para o download do APK no GitHub Releases (app-cronograma.apk)",
-        "Painel de diagnóstico na aba Atualizações mostrando versão instalada, versão online e servidor consultado",
-        "Tratamento amigável e opção de tentar novamente caso a conexão oscile ao baixar o APK"
-      ]
-    },
-    {
-      "version": "1.3.0",
-      "date": "2026-10-13",
-      "notes": [
-        "Novo layout limpo e minimalista da aba Cronograma com foco total na grade de estudos",
-        "Cabeçalho unificado com seletor de cronograma, chips rápidos para prova/revisões e botão de alternância do painel",
-        "Menu discreto de 3 pontinhos (⋮) agrupando todas as ações secundárias (PDF, PNG, Pomodoro, compartilhar, duplicar, excluir)",
-        "Cards de estudo super leves exibindo apenas horário, matéria e checkbox rápido de conclusão em 1 toque",
-        "Janela de detalhes da sessão (Bottom Sheet nativa no celular e modal no computador) ao tocar no card, com tópicos, anotações, fixação 🔒 e edição",
-        "Barra de progresso semanal compacta em 1 linha fina e elegante",
-        "Navegação mobile por abas com destaque visual para o dia atual (Hoje) e botão flutuante inteligente (FAB)",
-        "Painel de configuração da geração automática recolhível em acordeão para evitar poluição visual"
-      ]
-    },
-    {
-      "version": "1.2.0",
-      "date": "2026-10-13",
-      "notes": [
-        "Criação manual de múltiplos cronogramas personalizados com alternador rápido",
-        "Geração automática configurável: escolha de dias disponíveis, disciplinas e horas uniformes ou específicas por dia",
-        "Definição de frequência semanal por disciplina com diagnóstico de horas em tempo real",
-        "Algoritmo inteligente de intercalação para balancear sessões e evitar matérias repetidas consecutivas",
-        "Presets rápidos de carga horária: Intensivo, Equilibrado e Leve",
-        "Priorização de matérias (Alta, Média, Baixa) com peso na distribuição semanal",
-        "Configuração de intervalo/pausa entre sessões de estudo (5 a 15 min)",
-        "Dia dedicado para revisão geral e simulados com geração de blocos de revisão",
-        "Contagem regressiva inteligente para a data da prova com horas restantes de estudo",
-        "Barra de progresso e porcentagem de cumprimento semanal do plano",
-        "Sistema de revisões espaçadas automáticas (D+1, D+7, D+30)",
-        "Fixação de horários (Lock 🔒) que são preservados ao regerar o cronograma",
-        "Cronômetro Pomodoro integrado com som e contagem de ciclos concluídos",
-        "Exportação do cronograma em imagem PNG de alta resolução e compartilhamento direto",
-        "Arrastar e soltar (Drag and Drop) no computador e modal simplificado no celular"
-      ]
-    },
-    {
-      "version": "1.1.0",
-      "date": "2026-10-09",
-      "notes": [
-        "Novo layout mobile reorganizado com barra de navegação inferior fixa",
-        "Visualização do cronograma em 1 dia por vez no celular com abas dos dias e gestos de deslize (swipe)",
-        "Matérias organizadas em cards compactos e expansíveis (accordion)",
-        "Nova aba de Atualizações com verificação automática de novas versões do APK",
-        "Nova aba de Ajustes com alternância de tema claro/escuro e gerenciamento de dados",
-        "Tela de carregamento animada durante a leitura de editais em PDF",
-        "Exportação do cronograma em arquivo PDF de alta resolução"
-      ]
-    },
-    {
-      "version": "1.0.0",
-      "date": "2026-10-01",
-      "notes": [
-        "Lançamento inicial do aplicativo",
-        "Extração inteligente de matérias e tópicos de editais em PDF",
-        "Geração automática de cronograma de estudos semanal",
-        "Exportação do cronograma para PDF",
-        "Suporte a tema claro e escuro suave",
-        "Suporte a PWA instalável e aplicativo nativo Android (APK)"
+        "Tema Escuro (Dark Mode) de alto contraste e sem cansaço visual, com alternância em 1 toque na barra superior e nos Ajustes",
+        "Sincronização com a Nuvem (Supabase): acesse seus cronogramas e matérias no computador e no celular",
+        "Leitor de PDF integrado (PDF.js) com visualização contínua, zoom, busca de texto, anotações e marcadores",
+        "Exportação de cronograma em PDF e imagem PNG em alta resolução",
+        "Múltiplos cronogramas simultâneos com alternância rápida e geração automática configurável"
       ]
     }
   ]

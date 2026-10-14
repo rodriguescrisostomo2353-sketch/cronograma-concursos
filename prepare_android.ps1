@@ -24,6 +24,16 @@ if (Test-Path $libSupabase) {
     Copy-Item -Path $libSupabase -Destination $targetDir -Force
 }
 
+$studyCss = Join-Path $PSScriptRoot "study-hours.css"
+if (Test-Path $studyCss) {
+    Copy-Item -Path $studyCss -Destination $targetDir -Force
+}
+
+$studyJs = Join-Path $PSScriptRoot "study-hours-manager.js"
+if (Test-Path $studyJs) {
+    Copy-Item -Path $studyJs -Destination $targetDir -Force
+}
+
 $iconsSource = Join-Path $PSScriptRoot "icons"
 $iconsTarget = Join-Path $targetDir "icons"
 if (-not (Test-Path $iconsTarget)) {

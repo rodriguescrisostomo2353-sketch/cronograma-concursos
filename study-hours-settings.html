@@ -1,0 +1,50 @@
+        <!-- Card: Horas de Estudo (Configurações e Total) -->
+        <div class="settings-card" id="settingsStudyHoursCard">
+          <div class="settings-card-header">
+            <span class="settings-card-icon">⏱️</span>
+            <div>
+              <h3>Horas de Estudo</h3>
+              <p>Configurações de registro de tempo e resumo geral</p>
+            </div>
+          </div>
+          <div class="settings-card-body">
+            <div class="settings-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 8px;">
+              <div>
+                <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">Tempo Padrão por Tópico</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted);">Duração sugerida ao marcar um tópico manualmente</div>
+              </div>
+              <select id="selectStudyDefaultMinutes" class="select-field" style="width: 140px;" onchange="StudyHoursManager.setDefaultMinutes(this.value)">
+                <option value="15">15 min</option>
+                <option value="30">30 min</option>
+                <option value="45">45 min</option>
+                <option value="60">60 min (1h)</option>
+                <option value="90">90 min (1h30)</option>
+              </select>
+            </div>
+
+            <div class="settings-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 8px;">
+              <div>
+                <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">Registro Rápido em 1 Toque</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted);">Marcar tópicos com tempo padrão sem exibir a pergunta rápida</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="checkStudyAutoQuick" onchange="StudyHoursManager.setAutoQuickMark(this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="settings-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">Total Histórico de Estudo</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted);">Soma de todas as horas e sessões registradas</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <strong id="settingsTotalStudyHours" style="color: var(--primary); font-size: 1.1rem; font-weight: 800;">0 min</strong>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('tab-study-hours')">
+                  Ver Aba ⏱️
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+

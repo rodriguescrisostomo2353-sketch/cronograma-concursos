@@ -1,0 +1,121 @@
+    <section id="tab-study-hours" class="tab-content">
+      <div class="study-hours-wrapper">
+        
+        <!-- Cabeçalho e Barra de Filtros -->
+        <div class="study-header-card">
+          <div class="study-period-selector-row">
+            <div class="study-period-btn-group" role="group" aria-label="Seletor de Período">
+              <button type="button" class="study-period-btn" data-period="dia" onclick="StudyHoursManager.setPeriod('dia')">Dia</button>
+              <button type="button" class="study-period-btn active" data-period="semana" onclick="StudyHoursManager.setPeriod('semana')">Semana</button>
+              <button type="button" class="study-period-btn" data-period="mes" onclick="StudyHoursManager.setPeriod('mes')">Mês</button>
+              <button type="button" class="study-period-btn" data-period="total" onclick="StudyHoursManager.setPeriod('total')">Total</button>
+            </div>
+            
+            <div class="study-date-picker-wrap">
+              <input type="date" id="studyDatePicker" class="input-field study-date-input" title="Escolher data específica no calendário" onchange="StudyHoursManager.onDatePicked(this.value)">
+            </div>
+          </div>
+
+          <!-- Navegação com Setas e Texto Claro -->
+          <div class="study-period-nav-row">
+            <button type="button" class="btn-icon" onclick="StudyHoursManager.navigatePeriod(-1)" title="Período anterior" aria-label="Período anterior">◀</button>
+            <div class="study-period-title" id="studyPeriodLabel">Semana Atual</div>
+            <button type="button" class="btn-icon" onclick="StudyHoursManager.navigatePeriod(1)" title="Próximo período" aria-label="Próximo período">▶</button>
+            <button type="button" class="btn btn-secondary btn-xs study-btn-today" onclick="StudyHoursManager.setToday()">Hoje</button>
+          </div>
+
+          <!-- Filtro por Matéria e Opção Mostrar Sem Estudo -->
+          <div class="study-filter-controls-row">
+            <div style="flex: 1; min-width: 180px;">
+              <select id="studySubjectFilter" class="select-field" style="width: 100%;" onchange="StudyHoursManager.setSubjectFilter(this.value)">
+                <option value="">📁 Todas as matérias</option>
+              </select>
+            </div>
+            <label class="study-toggle-label" style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--text-muted); cursor: pointer; user-select: none;">
+              <input type="checkbox" id="checkShowUnstudiedTopics" onchange="StudyHoursManager.setShowUnstudied(this.checked)">
+              <span>Mostrar tópicos sem estudo</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 1. Resumo do Período (Cartões Compactos) -->
+        <div class="study-summary-grid">
+          <div class="study-summary-card">
+            <div class="study-summary-icon">⏱️</div>
+            <div class="study-summary-info">
+              <div class="study-summary-label">Total de Horas</div>
+              <div class="study-summary-value" id="studyMetricTotalHours">0 min</div>
+            </div>
+          </div>
+          <div class="study-summary-card">
+            <div class="study-summary-icon">📅</div>
+            <div class="study-summary-info">
+              <div class="study-summary-label">Dias com Estudo</div>
+              <div class="study-summary-value" id="studyMetricDaysCount">0</div>
+            </div>
+          </div>
+          <div class="study-summary-card">
+            <div class="study-summary-icon">📊</div>
+            <div class="study-summary-info">
+              <div class="study-summary-label">Média / Dia Estudado</div>
+              <div class="study-summary-value" id="studyMetricAvgPerDay">0 min</div>
+            </div>
+          </div>
+          <div class="study-summary-card">
+            <div class="study-summary-icon">🏆</div>
+            <div class="study-summary-info">
+              <div class="study-summary-label">Mais Estudada</div>
+              <div class="study-summary-value text-ellipsis" id="studyMetricTopSubject" title="Nenhuma">Nenhuma</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Gráfico Simples do Período (SVG Responsivo e Limpo nos 2 Temas) -->
+        <div class="study-chart-card">
+          <div class="study-chart-header">
+            <h4 id="studyChartTitle" style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">
+              📈 Distribuição no Período
+            </h4>
+            <span id="studyChartSubtitle" style="font-size: 0.78rem; color: var(--text-muted);"></span>
+          </div>
+          <div class="study-chart-body" id="studyChartContainer">
+            <!-- Gráfico SVG renderizado dinamicamente -->
+          </div>
+        </div>
+
+        <!-- 6. Linha do Tempo Cronológica do Dia (Apenas quando filtro for 'Dia') -->
+        <div class="study-timeline-card" id="studyDayTimelineCard" style="display: none;">
+          <div class="study-timeline-header">
+            <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">
+              🕒 O que você estudou neste dia
+            </h4>
+          </div>
+          <div class="study-timeline-list" id="studyDayTimelineList">
+            <!-- Renderizado dinamicamente -->
+          </div>
+        </div>
+
+        <!-- 3. Lista por Matéria (Cartões Expansíveis) -->
+        <div class="study-subjects-section">
+          <div class="study-subjects-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h4 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-main);">
+              📚 Matérias & Tópicos Estudados
+            </h4>
+            <span id="studySubjectsCountBadge" style="font-size: 0.78rem; color: var(--text-muted);"></span>
+          </div>
+          <div class="study-subjects-accordion-list" id="studySubjectsAccordionList">
+            <!-- Renderizado dinamicamente -->
+          </div>
+        </div>
+
+        <!-- Estado Vazio Amigável -->
+        <div class="study-empty-state" id="studyEmptyState" style="display: none;">
+          <div style="font-size: 2.5rem; margin-bottom: 8px;">⏳</div>
+          <h3 style="margin: 0 0 6px 0; font-size: 1.1rem; color: var(--text-main);">Nenhum estudo registrado neste período</h3>
+          <p style="margin: 0; font-size: 0.88rem; color: var(--text-muted); max-width: 380px;">
+            Marque sessões concluídas no Cronograma ou caixinhas de tópicos nas Matérias para ver o tempo acumulado aqui.
+          </p>
+        </div>
+
+      </div>
+    </section>

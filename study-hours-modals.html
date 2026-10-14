@@ -1,0 +1,122 @@
+  <!-- Modal: Quanto tempo você estudou? (Registro Rápido de Estudo) -->
+  <div class="modal-overlay hidden" id="modalQuickLogTime">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.3rem;">⏱️</span>
+          <h3 id="modalQuickLogTitle" style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text-main);">
+            Quanto tempo você estudou?
+          </h3>
+        </div>
+        <button type="button" class="btn-icon" onclick="StudyHoursManager.closeQuickLogModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <div style="margin-bottom: 12px;">
+          <span class="badge" id="quickLogSubjectBadge" style="display: inline-block; margin-bottom: 6px; font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 6px;"></span>
+          <div id="quickLogTopicText" style="font-weight: 600; font-size: 0.95rem; color: var(--text-main); line-height: 1.4;"></div>
+        </div>
+
+        <label class="config-label" style="margin-top: 10px; margin-bottom: 6px;">Escolha rápida de minutos:</label>
+        <div class="study-chips-row" style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;">
+          <button type="button" class="btn-chip" onclick="StudyHoursManager.setQuickLogMinutes(15)">15 min</button>
+          <button type="button" class="btn-chip" onclick="StudyHoursManager.setQuickLogMinutes(30)">30 min</button>
+          <button type="button" class="btn-chip" onclick="StudyHoursManager.setQuickLogMinutes(45)">45 min</button>
+          <button type="button" class="btn-chip" onclick="StudyHoursManager.setQuickLogMinutes(60)">60 min</button>
+          <button type="button" class="btn-chip" onclick="StudyHoursManager.setQuickLogMinutes(90)">90 min</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+          <div>
+            <label class="config-label" for="inputQuickLogMinutes">Tempo (minutos):</label>
+            <input type="number" id="inputQuickLogMinutes" class="input-field" min="1" max="1440" value="30">
+          </div>
+          <div>
+            <label class="config-label" for="inputQuickLogDate">Data do Estudo:</label>
+            <input type="date" id="inputQuickLogDate" class="input-field">
+          </div>
+        </div>
+
+        <label class="study-checkbox-row" style="display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); cursor: pointer;">
+          <input type="checkbox" id="checkQuickLogDoNotAskAgain">
+          <span>Não perguntar mais (usar sempre o tempo padrão)</span>
+        </label>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="StudyHoursManager.closeQuickLogModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btnConfirmQuickLog" onclick="StudyHoursManager.confirmQuickLog()">💾 Salvar Tempo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Histórico de Estudos do Tópico -->
+  <div class="modal-overlay hidden" id="modalTopicStudyHistory">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <div>
+          <span class="badge" id="topicHistorySubjectBadge" style="display: inline-block; margin-bottom: 4px; font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 6px;"></span>
+          <h3 id="topicHistoryTopicTitle" style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text-main); line-height: 1.35;">
+            Histórico do Tópico
+          </h3>
+        </div>
+        <button type="button" class="btn-icon" onclick="StudyHoursManager.closeTopicHistoryModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 16px; max-height: 60vh; overflow-y: auto;">
+        <div class="topic-history-summary-card" style="background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Total Estudado</div>
+            <div id="topicHistoryTotalTime" style="font-size: 1.25rem; font-weight: 800; color: var(--primary);">0 min</div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="StudyHoursManager.openAddMoreTimeToCurrentTopic()">
+            ➕ Registrar Tempo
+          </button>
+        </div>
+
+        <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-main); margin-bottom: 8px;">
+          Registros deste Tópico:
+        </div>
+        <div id="topicHistoryEntriesList" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Itens renderizados dinamicamente -->
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="StudyHoursManager.closeTopicHistoryModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Editar Registro de Tempo de Estudo -->
+  <div class="modal-overlay hidden" id="modalEditStudyLog">
+    <div class="modal-card" style="max-width: 400px;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text-main);">
+          ✏️ Editar Registro de Estudo
+        </h3>
+        <button type="button" class="btn-icon" onclick="StudyHoursManager.closeEditLogModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <input type="hidden" id="editLogId">
+        <div style="margin-bottom: 10px;">
+          <div id="editLogTopicName" style="font-weight: 600; font-size: 0.9rem; color: var(--text-main); margin-bottom: 4px;"></div>
+          <div id="editLogOriginBadge" style="font-size: 0.75rem; color: var(--text-muted);"></div>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <label class="config-label" for="inputEditLogMinutes">Minutos Estudados:</label>
+          <input type="number" id="inputEditLogMinutes" class="input-field" min="1" max="1440">
+        </div>
+        <div style="margin-bottom: 12px;">
+          <label class="config-label" for="inputEditLogDate">Data do Registro (Horário Local):</label>
+          <input type="date" id="inputEditLogDate" class="input-field">
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between;">
+        <button type="button" class="btn btn-danger-soft btn-sm" onclick="StudyHoursManager.deleteCurrentEditingLog()">
+          🗑️ Excluir
+        </button>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="StudyHoursManager.closeEditLogModal()">Cancelar</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="StudyHoursManager.saveEditLog()">💾 Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
