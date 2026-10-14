@@ -7696,6 +7696,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       isSyncing: false,
       hasPendingSync: false,
       pendingCloudData: null,
+      hasDedicatedStudyLogColumn: (() => {
+        try {
+          const v = localStorage.getItem('concurso_sync_has_study_log_col');
+          if (v === 'true') return true;
+          return false; // Default to false (fallback seguro) a menos que explicitamente verificado
+        } catch (e) { return false; }
+      })(),
       lastError: (() => {
         try {
           const raw = localStorage.getItem('concurso_sync_last_error');
@@ -7887,27 +7894,77 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
       async gatherPayload() {
         const pdfData = await PdfStorage.exportAllAnnotationsAndBookmarks();
-        return {
+        let autoConfigObj = {};
+        try {
+          const raw = localStorage.getItem('concurso_auto_config_last');
+          autoConfigObj = raw ? JSON.parse(raw) : {};
+        } catch (e) { autoConfigObj = {}; }
+        if (!autoConfigObj || typeof autoConfigObj !== 'object') autoConfigObj = {};
+
+        // Sempre salva study_log dentro de auto_config para garantir persistência 100%
+        // funcional na nuvem mesmo que a tabela user_data não possua a coluna 'study_log' (PGRST204)
+        autoConfigObj.study_log = App.studyLog || [];
+
+        const payload = {
           materias: App.data ? (App.data.materias || []) : [],
           nao_classificado: App.data ? (App.data.naoClassificado || []) : [],
           schedules: App.schedules || [],
           active_schedule_id: App.activeScheduleId || null,
           completed_slots: App.completedSlots || {},
           priorities: App.priorities || {},
-          auto_config: (() => {
-            try {
-              const raw = localStorage.getItem('concurso_auto_config_last');
-              return raw ? JSON.parse(raw) : {};
-            } catch (e) { return {}; }
-          })(),
+          auto_config: autoConfigObj,
           exam_date: App.examDate || null,
           exam_title: App.examTitle || null,
           spaced_reviews: App.spacedReviews || [],
-          study_log: App.studyLog || [],
           theme: App.theme || 'light',
           pdf_annotations: pdfData.annotations || [],
           pdf_bookmarks: pdfData.bookmarks || []
         };
+
+        // Envia também na raiz se a coluna dedicada já existir ou estiver confirmada
+        if (this.hasDedicatedStudyLogColumn === true) {
+          payload.study_log = App.studyLog || [];
+        }
+
+        return payload;
+      },
+
+      async upsertUserData(payload) {
+        if (!this.client || !this.user) {
+          throw new Error('Usuário não autenticado ou cliente Supabase indisponível.');
+        }
+
+        // Tenta gravar com o payload atual
+        let res = await this.client
+          .from('user_data')
+          .upsert(payload, { onConflict: 'user_id' });
+
+        // Se houver erro PGRST204 de coluna ausente (especificamente study_log)
+        if (res.error && (res.error.code === 'PGRST204' || (res.error.message && res.error.message.includes('study_log')))) {
+          console.warn('[SyncManager] Coluna "study_log" não encontrada no Supabase (PGRST204). Ativando fallback transparente em auto_config.study_log.');
+          this.hasDedicatedStudyLogColumn = false;
+          try { localStorage.setItem('concurso_sync_has_study_log_col', 'false'); } catch (e) {}
+
+          // Remove a coluna inexistente da raiz do payload
+          delete payload.study_log;
+
+          // Garante que os logs estão preservados dentro de auto_config.study_log
+          if (!payload.auto_config || typeof payload.auto_config !== 'object') {
+            payload.auto_config = {};
+          }
+          payload.auto_config.study_log = App.studyLog || [];
+
+          // Tenta novamente sem a coluna que causou o erro no schema cache
+          res = await this.client
+            .from('user_data')
+            .upsert(payload, { onConflict: 'user_id' });
+        } else if (!res.error && payload.study_log !== undefined && this.hasDedicatedStudyLogColumn !== true) {
+          // Gravou com sucesso com a coluna study_log na raiz
+          this.hasDedicatedStudyLogColumn = true;
+          try { localStorage.setItem('concurso_sync_has_study_log_col', 'true'); } catch (e) {}
+        }
+
+        return res;
       },
 
       async syncUp() {
@@ -7922,9 +7979,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           payload.user_id = this.user.id;
           payload.updated_at = new Date().toISOString();
 
-          const { error } = await this.client
-            .from('user_data')
-            .upsert(payload, { onConflict: 'user_id' });
+          const { error } = await this.upsertUserData(payload);
 
           if (error) throw error;
 
@@ -8199,6 +8254,23 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           return report;
         }
 
+        // Teste de compatibilidade: verifica se a coluna dedicada study_log existe no Supabase
+        try {
+          const colCheck = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/user_data?select=study_log&limit=1`, {
+            headers: {
+              'apikey': SUPABASE_CONFIG.anonKey,
+              'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+            }
+          });
+          if (colCheck.ok) {
+            this.hasDedicatedStudyLogColumn = true;
+            try { localStorage.setItem('concurso_sync_has_study_log_col', 'true'); } catch (e) {}
+          } else {
+            this.hasDedicatedStudyLogColumn = false;
+            try { localStorage.setItem('concurso_sync_has_study_log_col', 'false'); } catch (e) {}
+          }
+        } catch (e) {}
+
         // Teste 3: Leitura e Gravação no banco
         try {
           const testStamp = new Date().toISOString();
@@ -8206,9 +8278,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           payload.user_id = this.user.id;
           payload.updated_at = testStamp;
 
-          const { error: writeErr } = await this.client
-            .from('user_data')
-            .upsert(payload, { onConflict: 'user_id' });
+          const { error: writeErr } = await this.upsertUserData(payload);
 
           if (writeErr) {
             report.writeStatus = 'error';
@@ -8246,7 +8316,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           }
 
           report.readStatus = 'success';
-          report.details = `✅ Teste de Conexão Bem-Sucedido!\nServidor: Supabase (Status ${report.pingStatus})\nUsuário: ${this.user.email} (UID: ${this.user.id})\nGravação e Leitura: OK (Verificado em ${testStamp})\nSincronização 100% operacional.`;
+          report.details = `✅ Teste de Conexão Bem-Sucedido!\nServidor: Supabase (Status ${report.pingStatus})\nUsuário: ${this.user.email} (UID: ${this.user.id})\nGravação e Leitura: OK (Verificado em ${testStamp})\nModo de Sincronização: ${this.hasDedicatedStudyLogColumn ? 'Nativo (coluna study_log)' : 'Transparente (auto_config.study_log)'}\nSincronização 100% operacional.`;
           this.lastError = null;
           try { localStorage.removeItem('concurso_sync_last_error'); } catch (e) {}
           this.updateDiagnosticsUI();
@@ -8306,13 +8376,29 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         App.examDate = cloudData.exam_date || null;
         App.examTitle = cloudData.exam_title || '';
         App.spacedReviews = Array.isArray(cloudData.spaced_reviews) ? cloudData.spaced_reviews : [];
-        if (Array.isArray(cloudData.study_log)) {
-          App.studyLog = cloudData.study_log;
+        
+        // Extrai study_log tanto da raiz quanto do fallback seguro auto_config.study_log
+        const cloudStudyLogs = (Array.isArray(cloudData.study_log) && cloudData.study_log.length > 0)
+          ? cloudData.study_log
+          : ((cloudData.auto_config && Array.isArray(cloudData.auto_config.study_log)) ? cloudData.auto_config.study_log : (Array.isArray(cloudData.study_log) ? cloudData.study_log : []));
+
+        if (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.applyCloudLogs) {
+          StudyHoursManager.applyCloudLogs(cloudStudyLogs);
+        } else if (Array.isArray(cloudStudyLogs)) {
+          App.studyLog = cloudStudyLogs;
+          try {
+            localStorage.setItem('concurso_study_log', JSON.stringify(App.studyLog));
+          } catch (e) {}
         }
 
-        if (cloudData.auto_config && Object.keys(cloudData.auto_config).length > 0) {
-          localStorage.setItem('concurso_auto_config_last', JSON.stringify(cloudData.auto_config));
-          App.loadAutoConfig();
+        if (cloudData.auto_config && typeof cloudData.auto_config === 'object') {
+          // Limpa study_log temporário para não interferir nas configurações do gerador de cronograma
+          const cleanAutoConfig = Object.assign({}, cloudData.auto_config);
+          delete cleanAutoConfig.study_log;
+          if (Object.keys(cleanAutoConfig).length > 0) {
+            localStorage.setItem('concurso_auto_config_last', JSON.stringify(cleanAutoConfig));
+            App.loadAutoConfig();
+          }
         }
 
         if (cloudData.theme && (cloudData.theme === 'dark' || cloudData.theme === 'light')) {
@@ -8409,8 +8495,14 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         });
 
         // Mescla logs de estudo (studyLog) sem duplicar e respeitando updatedAt mais recente
-        const localLogs = localData.study_log || [];
-        const cloudLogs = cloudData.study_log || [];
+        const localLogs = (Array.isArray(localData.study_log) && localData.study_log.length > 0)
+          ? localData.study_log
+          : ((localData.auto_config && Array.isArray(localData.auto_config.study_log)) ? localData.auto_config.study_log : (Array.isArray(localData.study_log) ? localData.study_log : []));
+
+        const cloudLogs = (Array.isArray(cloudData.study_log) && cloudData.study_log.length > 0)
+          ? cloudData.study_log
+          : ((cloudData.auto_config && Array.isArray(cloudData.auto_config.study_log)) ? cloudData.auto_config.study_log : (Array.isArray(cloudData.study_log) ? cloudData.study_log : []));
+
         const logMap = new Map();
         localLogs.forEach(l => { if (l && l.id) logMap.set(l.id, l); });
         cloudLogs.forEach(cl => {
@@ -8428,22 +8520,30 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         });
         const mergedStudyLogs = Array.from(logMap.values());
 
-        return {
+        const mergedAutoConfig = Object.assign({}, cloudData.auto_config || {}, localData.auto_config || {});
+        mergedAutoConfig.study_log = mergedStudyLogs;
+
+        const mergedPayload = {
           materias: mergedMaterias,
           nao_classificado: [...(localData.nao_classificado || []), ...(cloudData.nao_classificado || [])],
           schedules: mergedSchedules,
           active_schedule_id: localData.active_schedule_id || cloudData.active_schedule_id,
           completed_slots: mergedCompleted,
           priorities: mergedPriorities,
-          auto_config: Object.assign({}, cloudData.auto_config || {}, localData.auto_config || {}),
+          auto_config: mergedAutoConfig,
           exam_date: localData.exam_date || cloudData.exam_date,
           exam_title: localData.exam_title || cloudData.exam_title,
           spaced_reviews: mergedReviews,
-          study_log: mergedStudyLogs,
           theme: localData.theme || cloudData.theme || 'light',
           pdf_annotations: (localData.pdf_annotations || []).concat(cloudData.pdf_annotations || []),
           pdf_bookmarks: (localData.pdf_bookmarks || []).concat(cloudData.pdf_bookmarks || [])
         };
+
+        if (this.hasDedicatedStudyLogColumn === true) {
+          mergedPayload.study_log = mergedStudyLogs;
+        }
+
+        return mergedPayload;
       },
 
       async handleInitialLoginSync() {
@@ -8569,8 +8669,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.7.1";
-    const APP_BUILD_TIME = "14/10/2026 15:58:00";
+    const APP_VERSION = "1.7.2";
+    const APP_BUILD_TIME = "14/10/2026 16:30:00";
     window.APP_VERSION = APP_VERSION;
     window.APP_BUILD_TIME = APP_BUILD_TIME;
     const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
@@ -13301,6 +13401,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           `Configurado: ${isConfigured ? 'SIM' : 'NÃO'}`,
           `Usuário Logado: ${SyncManager.user ? SyncManager.user.email : 'Nenhum (Modo Local)'}`,
           `UID do Usuário: ${SyncManager.user ? SyncManager.user.id : 'N/A'}`,
+          `Modo de Sincronização: ${SyncManager.hasDedicatedStudyLogColumn ? 'Nativo (coluna study_log)' : 'Transparente (auto_config.study_log)'}`,
           `Status de Sincronização: ${SyncManager.syncStatus}`,
           `Última Sincronização: ${SyncManager.lastSyncTime ? new Date(SyncManager.lastSyncTime).toLocaleString('pt-BR') : 'Nunca'}`,
           `Pendências Locais: ${SyncManager.hasPendingSync ? 'SIM (offline ou pendente)' : 'NÃO (0 pendências)'}`,

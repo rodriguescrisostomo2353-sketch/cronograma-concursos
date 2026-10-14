@@ -1,18 +1,28 @@
 {
-  "version": "1.7.1",
+  "version": "1.7.2",
   "date": "2026-10-14",
   "notes": [
-    "Correção crítica: resolução do conflito de declaração de scripts e restauração total da inicialização do app",
-    "Ícone na aba do navegador (favicon) adicionado nas resoluções padrão e retina (192px e 512px)",
-    "Nova Aba 'Horas de Estudo': registro e controle preciso do tempo estudado por matéria e tópico com métricas em tempo real",
-    "Filtros de Período dinâmicos: navegação por Dia, Semana (segunda a domingo), Mês e Total",
-    "Rateio Dinâmico e Automático de Sessões do cronograma e registro rápido avulso",
-    "Histórico de Estudo por Tópico com edição e exclusão segura",
-    "Gráfico interativo e linha do tempo de estudos nos temas claro e escuro",
-    "Atualização do Service Worker para o cache cronograma-concursos-v19"
+    "Sincronização em Nuvem: resolução automática e transparente do erro de schema cache PostgREST (PGRST204) na tabela user_data",
+    "Persistência garantida dos logs de estudo (Horas de Estudo) mesmo em bases Supabase sem a coluna study_log, via fallback em auto_config.study_log",
+    "Compatibilidade bidirecional: detecção em tempo real e suporte nativo caso a coluna study_log seja adicionada via SQL Editor no Supabase",
+    "Painel de Diagnóstico atualizado com indicação de Modo de Sincronização (Nativo ou Transparente) e limpeza de pendências locais",
+    "Atualização do Service Worker para o cache cronograma-concursos-v20"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.7.1",
+      "date": "2026-10-14",
+      "notes": [
+        "Correção crítica: resolução do conflito de declaração de scripts e restauração total da inicialização do app",
+        "Ícone na aba do navegador (favicon) adicionado nas resoluções padrão e retina (192px e 512px)",
+        "Nova Aba 'Horas de Estudo': registro e controle preciso do tempo estudado por matéria e tópico com métricas em tempo real",
+        "Filtros de Período dinâmicos: navegação por Dia, Semana (segunda a domingo), Mês e Total",
+        "Rateio Dinâmico e Automático de Sessões do cronograma e registro rápido avulso",
+        "Histórico de Estudo por Tópico com edição e exclusão segura",
+        "Gráfico interativo e linha do tempo de estudos nos temas claro e escuro"
+      ]
+    },
     {
       "version": "1.7.0",
       "date": "2026-10-14",
