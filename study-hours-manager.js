@@ -548,6 +548,14 @@
         const materia = (App.data.materias || []).find(m => idMateria(m) === materiaId);
         if (!materia || !materia.topicos || !materia.topicos[topicIndex]) return;
 
+        if (typeof materia.topicos[topicIndex] === 'string') {
+          materia.topicos[topicIndex] = {
+            id: 'top_' + materiaId + '_' + topicIndex,
+            texto: materia.topicos[topicIndex],
+            concluido: false
+          };
+        }
+
         const topic = materia.topicos[topicIndex];
         const isDone = !!topic.concluido;
         const topicId = this.ensureTopicId(materia, topic, topicIndex);

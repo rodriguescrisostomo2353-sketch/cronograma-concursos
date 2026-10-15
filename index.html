@@ -8791,7 +8791,22 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
         const safeId = idMateria(m) || ('mat_' + i);
         const safeNome = nomeMateria(m);
-        const safeTopicos = Array.isArray(m.topicos) ? m.topicos.map(t => typeof t === 'string' ? t : (t && t.texto ? t : { ...t, texto: textoSeguro(t) })) : [];
+        const safeTopicos = Array.isArray(m.topicos) ? m.topicos.map((t, tIdx) => {
+          if (typeof t === 'string') {
+            return {
+              id: 'top_' + safeId + '_' + tIdx,
+              texto: t,
+              concluido: false
+            };
+          }
+          const tText = t && t.texto ? t.texto : textoSeguro(t);
+          return {
+            ...t,
+            id: (t && t.id) ? t.id : ('top_' + safeId + '_' + tIdx),
+            texto: tText,
+            concluido: Boolean(t && (t.concluido || t.isDone))
+          };
+        }) : [];
         return {
           ...m,
           id: safeId,
@@ -12422,6 +12437,14 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       toggleTopic(materiaId, topicIndex) {
         const materia = (App.data.materias || []).find(m => idMateria(m) === materiaId);
         if (!materia || !materia.topicos || !materia.topicos[topicIndex]) return;
+
+        if (typeof materia.topicos[topicIndex] === 'string') {
+          materia.topicos[topicIndex] = {
+            id: 'top_' + materiaId + '_' + topicIndex,
+            texto: materia.topicos[topicIndex],
+            concluido: false
+          };
+        }
 
         const topic = materia.topicos[topicIndex];
         const isDone = !!topic.concluido;
