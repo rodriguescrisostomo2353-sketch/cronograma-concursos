@@ -34,6 +34,11 @@ if (Test-Path $studyJs) {
     Copy-Item -Path $studyJs -Destination $targetDir -Force
 }
 
+$srcFolder = Join-Path $PSScriptRoot "src"
+if (Test-Path $srcFolder) {
+    Copy-Item -Path $srcFolder -Destination $targetDir -Recurse -Force
+}
+
 $iconsSource = Join-Path $PSScriptRoot "icons"
 $iconsTarget = Join-Path $targetDir "icons"
 if (-not (Test-Path $iconsTarget)) {
