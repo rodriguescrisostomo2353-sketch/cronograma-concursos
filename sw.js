@@ -6,6 +6,7 @@ const PRECACHE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
+  './supabase.js',
   './divisor-topicos.js',
   './study-hours.css',
   './study-hours-manager.js',
