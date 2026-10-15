@@ -5214,6 +5214,374 @@
       margin-left: 8px;
       cursor: pointer;
     }
+  
+    /* ==========================================================================
+       NOVO: BIBLIOTECA VIRTUAL, MODO OFFLINE & INDICADOR DE SINCRONIZAÇÃO
+       ========================================================================== */
+    .sync-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-main);
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .sync-status-pill:hover {
+      background: var(--bg-subtle);
+    }
+    .sync-status-pill.status-synced {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #059669;
+    }
+    .sync-status-pill.status-offline {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.35);
+      color: #b45309;
+    }
+    .sync-status-pill.status-syncing {
+      background: rgba(79, 70, 229, 0.1);
+      border-color: rgba(79, 70, 229, 0.3);
+      color: #4f46e5;
+    }
+    [data-theme="dark"] .sync-status-pill.status-synced {
+      background: rgba(16, 185, 129, 0.18);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+    [data-theme="dark"] .sync-status-pill.status-offline {
+      background: rgba(245, 158, 11, 0.18);
+      border-color: rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+    }
+
+    /* Biblioteca Virtual */
+    .library-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 10px 0 30px 0;
+    }
+    .library-header-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .library-header-info h2 {
+      margin: 0 0 4px 0;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .library-header-info p {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+    .library-header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Toolbar de Busca e Filtros */
+    .library-toolbar {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 820px) {
+      .library-toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 520px) {
+      .library-toolbar {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Dropzone Compacto */
+    .library-dropzone {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      text-align: center;
+      background: var(--bg-card);
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .library-dropzone:hover, .library-dropzone.dragover {
+      border-color: var(--accent-primary);
+      background: var(--bg-subtle);
+    }
+    .library-dropzone-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .library-dropzone-icon {
+      font-size: 1.8rem;
+    }
+    .library-dropzone-text strong {
+      color: var(--text-main);
+      font-size: 0.92rem;
+    }
+    .library-dropzone-text p {
+      margin: 2px 0 0 0;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Barra de Estatísticas */
+    .library-stats-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .library-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* Grid de Arquivos */
+    .library-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 600px) {
+      .library-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .library-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      position: relative;
+    }
+    .library-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border-color: var(--border-focus);
+    }
+    .library-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .library-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--pastel-red-bg);
+      color: var(--pastel-red-text);
+      border: 1px solid var(--pastel-red-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .library-card-icon.category-edital {
+      background: var(--pastel-blue-bg);
+      color: var(--pastel-blue-text);
+      border-color: var(--pastel-blue-border);
+    }
+    .library-card-icon.category-resumo {
+      background: var(--pastel-green-bg);
+      color: var(--pastel-green-text);
+      border-color: var(--pastel-green-border);
+    }
+    .library-card-icon.category-questoes {
+      background: var(--pastel-purple-bg);
+      color: var(--pastel-purple-text);
+      border-color: var(--pastel-purple-border);
+    }
+    .library-card-icon.category-legislacao {
+      background: var(--pastel-orange-bg);
+      color: var(--pastel-orange-text);
+      border-color: var(--pastel-orange-border);
+    }
+
+    .library-card-title-area {
+      flex: 1;
+      min-width: 0;
+    }
+    .library-card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0 0 4px 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .library-card-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .library-badge-cat {
+      font-size: 0.7rem;
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+    }
+    .library-badge-subject {
+      font-size: 0.7rem;
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .library-card-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin: 8px 0 14px 0;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .library-card-notes {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: var(--bg-subtle);
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      border-left: 3px solid var(--accent-primary);
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .library-card-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-color);
+    }
+    .library-card-actions .btn {
+      flex: 1;
+      justify-content: center;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+    }
+    .library-card-actions .btn-icon {
+      flex: 0 0 32px;
+      height: 32px;
+    }
+
+    /* Estado Vazio */
+    .library-empty-state {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+    .library-empty-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+    .library-empty-state h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0 0 6px 0;
+    }
+    .library-empty-state p {
+      max-width: 440px;
+      margin: 0 auto 16px auto;
+      font-size: 0.88rem;
+    }
+
+    /* Switch Toggle */
+    .switch-toggle {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    .switch-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--border-color);
+      transition: .2s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: var(--accent-primary);
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
   </style>
 </head>
 <body>
@@ -5270,6 +5638,9 @@
       </button>
       <button class="nav-tab-btn" data-tab="tab-pdf-reader">
         📖 Leitor de PDF
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-library">
+        📁 Biblioteca <span class="tab-badge" id="badgeLibraryCount" style="display: none;">0</span>
       </button>
       <button class="nav-tab-btn" data-tab="tab-upload">
         📄 Upload do Edital
@@ -6008,6 +6379,92 @@
     </section>
 
     <!-- ========================================================================
+         ABA: BIBLIOTECA VIRTUAL DE ARQUIVOS (PDFs, APOSTILAS, RESUMOS)
+         ======================================================================== -->
+    <section id="tab-library" class="tab-content">
+      <div class="library-container">
+        
+        <!-- Cabeçalho da Biblioteca -->
+        <div class="library-header-card">
+          <div class="library-header-info">
+            <h2>📁 Biblioteca Virtual</h2>
+            <p>Guarde seus PDFs (editais, apostilas, resumos e leis), organize por matéria e leia ou exporte offline.</p>
+          </div>
+          <div class="library-header-actions">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="LibraryManager.openUploadModal()">
+              ➕ Adicionar Arquivo
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="LibraryManager.exportAllFiles()">
+              📤 Exportar Backup
+            </button>
+          </div>
+        </div>
+
+        <!-- Toolbar de Busca e Filtros -->
+        <div class="library-toolbar">
+          <input type="text" id="librarySearchInput" class="input-field" placeholder="🔍 Buscar por nome do arquivo ou anotação...">
+          <select id="librarySubjectFilter" class="input-field">
+            <option value="all">📚 Todas as Matérias</option>
+          </select>
+          <select id="libraryCategoryFilter" class="input-field">
+            <option value="all">📂 Todas as Categorias</option>
+            <option value="edital">📑 Edital</option>
+            <option value="apostila">📘 Apostila</option>
+            <option value="resumo">📝 Resumo</option>
+            <option value="questoes">❓ Questões</option>
+            <option value="legislacao">⚖️ Legislação</option>
+            <option value="outro">📁 Outro</option>
+          </select>
+          <select id="librarySortSelect" class="input-field">
+            <option value="date_desc">🕒 Mais Recentes</option>
+            <option value="date_asc">🕒 Mais Antigos</option>
+            <option value="name_asc">🔤 Nome (A-Z)</option>
+            <option value="size_desc">💾 Maior Tamanho</option>
+          </select>
+        </div>
+
+        <!-- Dropzone Rápido -->
+        <div class="library-dropzone" id="libraryDropZone">
+          <input type="file" id="libraryFileInput" accept="application/pdf" multiple style="display: none;">
+          <div class="library-dropzone-inner">
+            <span class="library-dropzone-icon">📥</span>
+            <div class="library-dropzone-text">
+              <strong>Arraste arquivos PDF aqui ou clique para selecionar</strong>
+              <p>Os arquivos são salvos com segurança de forma 100% offline no IndexedDB do seu navegador.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de Status de Armazenamento -->
+        <div class="library-stats-bar">
+          <div>
+            <span class="library-badge-pill" id="libraryCountPill">0 arquivos</span>
+            <span class="library-badge-pill" id="librarySizePill" style="margin-left: 6px;">0 MB</span>
+          </div>
+          <div>
+            <span style="font-size: 0.78rem;">Armazenamento 100% Offline (IndexedDB)</span>
+          </div>
+        </div>
+
+        <!-- Grid de Arquivos -->
+        <div class="library-grid" id="libraryFilesGrid">
+          <!-- Renderizado dinamicamente por LibraryManager.render() -->
+        </div>
+
+        <!-- Estado Vazio -->
+        <div class="library-empty-state" id="libraryEmptyState" style="display: none;">
+          <div class="library-empty-icon">📂</div>
+          <h3>Sua biblioteca está vazia</h3>
+          <p>Adicione editais, resumos ou apostilas em PDF para ter acesso rápido a qualquer hora, mesmo sem conexão à internet.</p>
+          <button type="button" class="btn btn-primary" onclick="LibraryManager.openUploadModal()">
+            ➕ Adicionar Primeiro Arquivo
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================================
          ABA 4: ATUALIZAÇÕES DO APLICATIVO
          ======================================================================== -->
     <section id="tab-updates" class="tab-content">
@@ -6285,6 +6742,29 @@
             </div>
 
             <!-- Painel de Diagnóstico da Sincronização (Passo 1 do Bug 2) -->
+            
+            <!-- Painel de Modo Offline & Fila de Sincronização -->
+            <div class="offline-mode-card" style="margin-top: 14px; padding: 12px 14px; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                <div>
+                  <strong style="color: var(--text-main); font-size: 0.9rem;">📴 Forçar Modo Offline</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 2px 0 0 0;">
+                    Use o app 100% desconectado. Todas as alterações serão salvas localmente e enfileiradas para sincronização posterior.
+                  </p>
+                </div>
+                <label class="switch-toggle" style="flex-shrink: 0;" title="Ativar ou desativar modo offline forçado">
+                  <input type="checkbox" id="checkForceOffline" onchange="SyncManager.toggleForceOffline(this.checked)">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div id="offlinePendingBanner" style="display: none; margin-top: 10px; padding: 8px 12px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: var(--radius-xs); font-size: 0.82rem; color: #b45309; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+                <span id="offlinePendingText">Você possui 0 alterações feitas offline prontas para enviar.</span>
+                <button type="button" class="btn btn-primary btn-sm" style="padding: 2px 10px; font-size: 0.75rem;" onclick="App.manualSync()">
+                  🔄 Sincronizar Agora
+                </button>
+              </div>
+            </div>
+
             <div class="sync-diagnostics-panel" id="syncDiagnosticsPanel" style="margin-top: 16px; padding: 14px; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
               <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
                 <span>🩺 Diagnóstico da Sincronização</span>
@@ -7670,6 +8150,11 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         <button type="button" class="btn-icon" onclick="App.closeMoreMenuSheet(event)" aria-label="Fechar menu">✕</button>
       </div>
       <div class="modal-body" style="padding: 16px 0 6px 0; display: flex; flex-direction: column; gap: 10px;">
+        <button type="button" class="sheet-menu-item" id="sheetBtnLibrary" onclick="App.closeMoreMenuSheet(); App.switchTab('tab-library');">
+          <span style="font-size: 1.25rem; margin-right: 10px;">📁</span>
+          <span>Biblioteca Virtual</span>
+          <span class="tab-badge" id="sheetBadgeLibrary" style="margin-left: auto; display: none;">0</span>
+        </button>
         <button type="button" class="sheet-menu-item" id="sheetBtnStudyHours" onclick="App.closeMoreMenuSheet(); App.switchTab('tab-study-hours');">
           <span style="font-size: 1.25rem; margin-right: 10px;">⏱️</span>
           <span>Horas de Estudo</span>
@@ -7984,6 +8469,124 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
     </div>
   </div>
 
+  
+  <!-- Modal: Upload de Arquivo para Biblioteca -->
+  <div class="modal-overlay hidden" id="modalLibraryUpload">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--text-main);">
+          ➕ Adicionar Arquivo à Biblioteca
+        </h3>
+        <button type="button" class="btn-icon" onclick="LibraryManager.closeUploadModal()">✕</button>
+      </div>
+      <form id="formLibraryUpload" onsubmit="LibraryManager.submitUploadModal(event)">
+        <div class="modal-body" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 12px;">
+          <div>
+            <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px; display: block;">
+              Arquivo PDF:
+            </label>
+            <input type="file" id="modalLibraryFileInput" accept="application/pdf" class="input-field" required style="width: 100%;">
+          </div>
+          <div>
+            <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px; display: block;">
+              Título / Nome de Exibição:
+            </label>
+            <input type="text" id="modalLibraryTitleInput" class="input-field" placeholder="Ex: Apostila de Direito Constitucional" style="width: 100%;">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px; display: block;">
+                Matéria Vinculada:
+              </label>
+              <select id="modalLibrarySubjectSelect" class="input-field" style="width: 100%;">
+                <option value="">Geral / Sem Matéria</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px; display: block;">
+                Categoria:
+              </label>
+              <select id="modalLibraryCategorySelect" class="input-field" style="width: 100%;">
+                <option value="edital">📑 Edital</option>
+                <option value="apostila" selected>📘 Apostila</option>
+                <option value="resumo">📝 Resumo</option>
+                <option value="questoes">❓ Questões</option>
+                <option value="legislacao">⚖️ Legislação</option>
+                <option value="outro">📁 Outro</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px; display: block;">
+              Observações / Anotações Rápidas:
+            </label>
+            <textarea id="modalLibraryNotesInput" class="input-field" rows="2" placeholder="Ex: Ler capítulos 1 a 4 para a prova" style="width: 100%; resize: vertical;"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 12px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-secondary" onclick="LibraryManager.closeUploadModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitLibraryUpload">Salvar na Biblioteca</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Editar Arquivo da Biblioteca -->
+  <div class="modal-overlay hidden" id="modalLibraryEdit">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--text-main);">
+          ✏️ Editar Arquivo
+        </h3>
+        <button type="button" class="btn-icon" onclick="LibraryManager.closeEditModal()">✕</button>
+      </div>
+      <form id="formLibraryEdit" onsubmit="LibraryManager.submitEditModal(event)">
+        <input type="hidden" id="modalLibraryEditId">
+        <div class="modal-body" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 12px;">
+          <div>
+            <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px; display: block;">
+              Título de Exibição:
+            </label>
+            <input type="text" id="modalLibraryEditTitle" class="input-field" required style="width: 100%;">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px; display: block;">
+                Matéria Vinculada:
+              </label>
+              <select id="modalLibraryEditSubject" class="input-field" style="width: 100%;">
+                <option value="">Geral / Sem Matéria</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px; display: block;">
+                Categoria:
+              </label>
+              <select id="modalLibraryEditCategory" class="input-field" style="width: 100%;">
+                <option value="edital">📑 Edital</option>
+                <option value="apostila">📘 Apostila</option>
+                <option value="resumo">📝 Resumo</option>
+                <option value="questoes">❓ Questões</option>
+                <option value="legislacao">⚖️ Legislação</option>
+                <option value="outro">📁 Outro</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px; display: block;">
+              Observações / Anotações Rápidas:
+            </label>
+            <textarea id="modalLibraryEditNotes" class="input-field" rows="2" style="width: 100%; resize: vertical;"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 12px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-secondary" onclick="LibraryManager.closeEditModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Container de Notificações Toast -->
   <div class="toast-container" id="toastContainer"></div>
 
@@ -8209,7 +8812,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      */
     const PdfStorage = {
       dbName: 'ConcursoPdfReaderDB',
-      dbVersion: 1,
+      dbVersion: 2,
       db: null,
 
       async getDb() {
@@ -8226,6 +8829,12 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             }
             if (!db.objectStoreNames.contains('bookmarks')) {
               db.createObjectStore('bookmarks', { keyPath: 'id' });
+            }
+            if (!db.objectStoreNames.contains('library_files')) {
+              db.createObjectStore('library_files', { keyPath: 'id' });
+            }
+            if (!db.objectStoreNames.contains('library_metadata')) {
+              db.createObjectStore('library_metadata', { keyPath: 'id' });
             }
           };
           request.onsuccess = (e) => {
@@ -8401,6 +9010,106 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         } catch (e) {
           console.warn('[PdfStorage] Erro ao importar anotações/favoritos:', e);
         }
+      },
+
+      /* =========================================================================
+         MÉTODOS DA BIBLIOTECA VIRTUAL (ARQUIVOS & METADADOS EM INDEXEDDB)
+         ========================================================================= */
+      async saveLibraryFile(id, buffer, meta) {
+        try {
+          const db = await this.getDb();
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction(['files', 'library_metadata'], 'readwrite');
+            tx.objectStore('files').put({ id, name: meta.name, data: buffer, updatedAt: Date.now() });
+            tx.objectStore('library_metadata').put({ ...meta, id, updatedAt: Date.now() });
+            tx.oncomplete = () => resolve(true);
+            tx.onerror = () => reject(tx.error);
+          });
+        } catch (err) {
+          console.warn('[PdfStorage] Erro ao salvar arquivo na biblioteca:', err);
+          return false;
+        }
+      },
+
+      async getAllLibraryMetadata() {
+        try {
+          const db = await this.getDb();
+          return new Promise((resolve) => {
+            if (!db.objectStoreNames.contains('library_metadata')) return resolve([]);
+            const tx = db.transaction('library_metadata', 'readonly');
+            const req = tx.objectStore('library_metadata').getAll();
+            req.onsuccess = () => resolve(req.result || []);
+            req.onerror = () => resolve([]);
+          });
+        } catch (err) {
+          return [];
+        }
+      },
+
+      async getLibraryFileWithBuffer(id) {
+        try {
+          const db = await this.getDb();
+          const metaPromise = new Promise((resolve) => {
+            if (!db.objectStoreNames.contains('library_metadata')) return resolve(null);
+            const tx = db.transaction('library_metadata', 'readonly');
+            const req = tx.objectStore('library_metadata').get(id);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => resolve(null);
+          });
+          const filePromise = this.getFile(id);
+          const [meta, file] = await Promise.all([metaPromise, filePromise]);
+          if (!file) return null;
+          return {
+            ...(meta || {}),
+            id,
+            name: (meta && meta.name) || file.name || 'Arquivo',
+            data: file.data
+          };
+        } catch (err) {
+          console.warn('[PdfStorage] Erro ao buscar arquivo com buffer:', err);
+          return null;
+        }
+      },
+
+      async deleteLibraryFile(id) {
+        try {
+          const db = await this.getDb();
+          return new Promise((resolve) => {
+            const stores = ['files'];
+            if (db.objectStoreNames.contains('library_metadata')) stores.push('library_metadata');
+            const tx = db.transaction(stores, 'readwrite');
+            tx.objectStore('files').delete(id);
+            if (db.objectStoreNames.contains('library_metadata')) {
+              tx.objectStore('library_metadata').delete(id);
+            }
+            tx.oncomplete = () => resolve(true);
+            tx.onerror = () => resolve(false);
+          });
+        } catch (err) {
+          return false;
+        }
+      },
+
+      async updateLibraryMetadata(id, updates) {
+        try {
+          const db = await this.getDb();
+          return new Promise((resolve) => {
+            if (!db.objectStoreNames.contains('library_metadata')) return resolve(false);
+            const tx = db.transaction('library_metadata', 'readwrite');
+            const store = tx.objectStore('library_metadata');
+            const req = store.get(id);
+            req.onsuccess = () => {
+              const item = req.result;
+              if (!item) return resolve(false);
+              const updated = { ...item, ...updates, updatedAt: Date.now() };
+              store.put(updated);
+              resolve(true);
+            };
+            req.onerror = () => resolve(false);
+          });
+        } catch (err) {
+          return false;
+        }
       }
     };
 
@@ -8409,6 +9118,533 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      * CARREGAMENTO SOB DEMANDA / LAZY LOADER & FALLBACKS (ETAPA 4)
      * =========================================================================
      */
+
+    /**
+     * =========================================================================
+     * GERENCIADOR DA BIBLIOTECA VIRTUAL DE ARQUIVOS (PDFs, APOSTILAS, RESUMOS)
+     * =========================================================================
+     */
+    const LibraryManager = {
+      files: [],
+      searchQuery: '',
+      filterSubject: 'all',
+      filterCategory: 'all',
+      sortBy: 'date_desc',
+
+      async init() {
+        this.bindEvents();
+        await this.refresh();
+      },
+
+      bindEvents() {
+        const searchInput = document.getElementById('librarySearchInput');
+        if (searchInput) {
+          searchInput.addEventListener('input', (e) => {
+            this.searchQuery = (e.target.value || '').trim().toLowerCase();
+            this.render();
+          });
+        }
+
+        const subFilter = document.getElementById('librarySubjectFilter');
+        if (subFilter) {
+          subFilter.addEventListener('change', (e) => {
+            this.filterSubject = e.target.value;
+            this.render();
+          });
+        }
+
+        const catFilter = document.getElementById('libraryCategoryFilter');
+        if (catFilter) {
+          catFilter.addEventListener('change', (e) => {
+            this.filterCategory = e.target.value;
+            this.render();
+          });
+        }
+
+        const sortSel = document.getElementById('librarySortSelect');
+        if (sortSel) {
+          sortSel.addEventListener('change', (e) => {
+            this.sortBy = e.target.value;
+            this.render();
+          });
+        }
+
+        const dropZone = document.getElementById('libraryDropZone');
+        const fileInput = document.getElementById('libraryFileInput');
+        if (dropZone && fileInput) {
+          dropZone.addEventListener('click', () => fileInput.click());
+          dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+          });
+          dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+          dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const dtFiles = e.dataTransfer && e.dataTransfer.files;
+            if (dtFiles && dtFiles.length > 0) {
+              this.handleBatchFiles(dtFiles);
+            }
+          });
+          fileInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+              this.handleBatchFiles(files);
+            }
+          });
+        }
+      },
+
+      populateSubjectFilter() {
+        const subFilter = document.getElementById('librarySubjectFilter');
+        const modalSubSelect = document.getElementById('modalLibrarySubjectSelect');
+        const modalEditSubSelect = document.getElementById('modalLibraryEditSubject');
+
+        const materias = (App.data && App.data.materias) || [];
+        const optionsHtml = ['<option value="all">📚 Todas as Matérias</option>', '<option value="general">Geral / Sem Matéria</option>']
+          .concat(materias.map(m => `<option value="${m.id}">${App.escapeHtml(nomeMateria(m))}</option>`))
+          .join('');
+
+        const modalOptions = ['<option value="">Geral / Sem Matéria</option>']
+          .concat(materias.map(m => `<option value="${m.id}">${App.escapeHtml(nomeMateria(m))}</option>`))
+          .join('');
+
+        if (subFilter) subFilter.innerHTML = optionsHtml;
+        if (modalSubSelect) modalSubSelect.innerHTML = modalOptions;
+        if (modalEditSubSelect) modalEditSubSelect.innerHTML = modalOptions;
+      },
+
+      async refresh() {
+        this.populateSubjectFilter();
+        this.files = await PdfStorage.getAllLibraryMetadata();
+
+        // Se ainda não temos o edital listado na biblioteca mas temos o edital salvo no IndexedDB, adiciona automaticamente
+        const hasEditalInLib = this.files.some(f => f.category === 'edital' || f.id === 'edital');
+        if (!hasEditalInLib) {
+          const editalFile = await PdfStorage.getFile('edital');
+          if (editalFile && editalFile.data) {
+            const meta = {
+              id: 'edital',
+              name: editalFile.name || 'Edital do Concurso',
+              originalName: editalFile.name || 'edital.pdf',
+              size: editalFile.data.byteLength || (editalFile.data.length || 0),
+              type: 'application/pdf',
+              subjectId: '',
+              subjectName: 'Edital Oficial',
+              category: 'edital',
+              notes: 'Edital processado automaticamente pelo sistema.',
+              totalPages: editalFile.totalPages || 0,
+              createdAt: Date.now(),
+              updatedAt: editalFile.updatedAt || Date.now()
+            };
+            await PdfStorage.saveLibraryFile('edital', editalFile.data, meta);
+            this.files.unshift(meta);
+          }
+        }
+
+        this.render();
+        this.updateStats();
+      },
+
+      updateStats() {
+        const count = this.files.length;
+        const totalBytes = this.files.reduce((acc, f) => acc + (Number(f.size) || 0), 0);
+        const countPill = document.getElementById('libraryCountPill');
+        const sizePill = document.getElementById('librarySizePill');
+        const badgeCount = document.getElementById('badgeLibraryCount');
+        const sheetBadge = document.getElementById('sheetBadgeLibrary');
+
+        if (countPill) countPill.textContent = `${count} arquivo${count === 1 ? '' : 's'}`;
+        if (sizePill) sizePill.textContent = this.formatBytes(totalBytes);
+        if (badgeCount) {
+          badgeCount.textContent = count;
+          badgeCount.style.display = count > 0 ? 'inline-block' : 'none';
+        }
+        if (sheetBadge) {
+          sheetBadge.textContent = count;
+          sheetBadge.style.display = count > 0 ? 'inline-block' : 'none';
+        }
+      },
+
+      render() {
+        const grid = document.getElementById('libraryFilesGrid');
+        const emptyState = document.getElementById('libraryEmptyState');
+        if (!grid) return;
+
+        let filtered = [...this.files];
+
+        // Filtro de Busca
+        if (this.searchQuery) {
+          filtered = filtered.filter(f => {
+            const name = (f.name || '').toLowerCase();
+            const notes = (f.notes || '').toLowerCase();
+            const sub = (f.subjectName || '').toLowerCase();
+            return name.includes(this.searchQuery) || notes.includes(this.searchQuery) || sub.includes(this.searchQuery);
+          });
+        }
+
+        // Filtro por Matéria
+        if (this.filterSubject !== 'all') {
+          if (this.filterSubject === 'general') {
+            filtered = filtered.filter(f => !f.subjectId);
+          } else {
+            filtered = filtered.filter(f => f.subjectId === this.filterSubject);
+          }
+        }
+
+        // Filtro por Categoria
+        if (this.filterCategory !== 'all') {
+          filtered = filtered.filter(f => f.category === this.filterCategory);
+        }
+
+        // Ordenação
+        if (this.sortBy === 'date_desc') {
+          filtered.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+        } else if (this.sortBy === 'date_asc') {
+          filtered.sort((a, b) => (a.updatedAt || 0) - (b.updatedAt || 0));
+        } else if (this.sortBy === 'name_asc') {
+          filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        } else if (this.sortBy === 'size_desc') {
+          filtered.sort((a, b) => (b.size || 0) - (a.size || 0));
+        }
+
+        if (filtered.length === 0) {
+          grid.innerHTML = '';
+          if (emptyState) emptyState.style.display = 'block';
+          return;
+        }
+
+        if (emptyState) emptyState.style.display = 'none';
+
+        const materias = (App.data && App.data.materias) || [];
+        const fragment = document.createDocumentFragment();
+
+        filtered.forEach(file => {
+          const card = document.createElement('div');
+          card.className = 'library-card';
+
+          const mat = materias.find(m => m.id === file.subjectId);
+          const pal = mat ? App.getPalette(mat.paletteId) : null;
+          const subjectPillStyle = pal 
+            ? `background: ${pal.bg}; color: ${pal.text}; border: 1px solid ${pal.border};`
+            : 'background: var(--bg-subtle); color: var(--text-muted); border: 1px solid var(--border-color);';
+
+          const catLabel = this.getCategoryLabel(file.category);
+          const catClass = this.getCategoryClass(file.category);
+
+          card.innerHTML = `
+            <div>
+              <div class="library-card-header">
+                <div class="library-card-icon ${catClass}">
+                  ${this.getCategoryIcon(file.category)}
+                </div>
+                <div class="library-card-title-area">
+                  <h4 class="library-card-title" title="${App.escapeHtml(file.name)}">${App.escapeHtml(file.name)}</h4>
+                  <div class="library-card-badges">
+                    <span class="library-badge-cat">${catLabel}</span>
+                    <span class="library-badge-subject" style="${subjectPillStyle}">
+                      ${App.escapeHtml(mat ? nomeMateria(mat) : (file.subjectName || 'Geral'))}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="library-card-meta">
+                <span>💾 ${this.formatBytes(file.size)}</span>
+                <span>📅 ${this.formatDate(file.updatedAt || file.createdAt)}</span>
+                ${file.totalPages ? `<span>📄 ${file.totalPages} pág${file.totalPages === 1 ? '' : 's'}</span>` : ''}
+              </div>
+
+              ${file.notes ? `<div class="library-card-notes">${App.escapeHtml(file.notes)}</div>` : ''}
+            </div>
+
+            <div class="library-card-actions">
+              <button type="button" class="btn btn-primary btn-sm" onclick="LibraryManager.openInReader('${file.id}')" title="Abrir e ler no Leitor de PDF do App">
+                📖 Ler no App
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="LibraryManager.exportFile('${file.id}')" title="Baixar / Exportar arquivo original">
+                ⬇️ Exportar
+              </button>
+              <button type="button" class="btn-icon" onclick="LibraryManager.openEditModal('${file.id}')" title="Editar informações">
+                ✏️
+              </button>
+              <button type="button" class="btn-icon danger" onclick="LibraryManager.deleteFile('${file.id}')" title="Excluir arquivo da biblioteca">
+                🗑️
+              </button>
+            </div>
+          `;
+
+          fragment.appendChild(card);
+        });
+
+        grid.innerHTML = '';
+        grid.appendChild(fragment);
+      },
+
+      async handleBatchFiles(files) {
+        let added = 0;
+        for (const file of Array.from(files)) {
+          if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+            const buffer = await file.arrayBuffer();
+            const id = 'lib_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+            const isEdital = file.name.toLowerCase().includes('edital');
+            const meta = {
+              id,
+              name: file.name.replace(/\.pdf$/i, ''),
+              originalName: file.name,
+              size: file.size,
+              type: file.type || 'application/pdf',
+              subjectId: '',
+              subjectName: isEdital ? 'Edital Oficial' : 'Geral',
+              category: isEdital ? 'edital' : 'apostila',
+              notes: '',
+              totalPages: 0,
+              createdAt: Date.now(),
+              updatedAt: Date.now()
+            };
+            await PdfStorage.saveLibraryFile(id, buffer, meta);
+            added++;
+          }
+        }
+        if (added > 0) {
+          await this.refresh();
+          App.showToast(`${added} arquivo${added === 1 ? '' : 's'} adicionado${added === 1 ? '' : 's'} à Biblioteca!`, 'success');
+        } else {
+          App.showToast('Por favor, selecione arquivos em formato PDF.', 'warning');
+        }
+      },
+
+      openUploadModal() {
+        this.populateSubjectFilter();
+        const modal = document.getElementById('modalLibraryUpload');
+        const form = document.getElementById('formLibraryUpload');
+        if (form) form.reset();
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.classList.add('open');
+        }
+      },
+
+      closeUploadModal() {
+        const modal = document.getElementById('modalLibraryUpload');
+        if (modal) {
+          modal.classList.remove('open');
+          modal.classList.add('hidden');
+        }
+      },
+
+      async submitUploadModal(e) {
+        e.preventDefault();
+        const fileInput = document.getElementById('modalLibraryFileInput');
+        const titleInput = document.getElementById('modalLibraryTitleInput');
+        const subSelect = document.getElementById('modalLibrarySubjectSelect');
+        const catSelect = document.getElementById('modalLibraryCategorySelect');
+        const notesInput = document.getElementById('modalLibraryNotesInput');
+
+        const file = fileInput && fileInput.files && fileInput.files[0];
+        if (!file) {
+          App.showToast('Por favor, selecione um arquivo PDF.', 'warning');
+          return;
+        }
+
+        const buffer = await file.arrayBuffer();
+        const id = 'lib_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+        const subId = subSelect ? subSelect.value : '';
+        const materias = (App.data && App.data.materias) || [];
+        const matchedMat = materias.find(m => m.id === subId);
+
+        const meta = {
+          id,
+          name: (titleInput && titleInput.value.trim()) || file.name.replace(/\.pdf$/i, ''),
+          originalName: file.name,
+          size: file.size,
+          type: file.type || 'application/pdf',
+          subjectId: subId,
+          subjectName: matchedMat ? nomeMateria(matchedMat) : 'Geral',
+          category: (catSelect && catSelect.value) || 'apostila',
+          notes: (notesInput && notesInput.value.trim()) || '',
+          totalPages: 0,
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        };
+
+        const saved = await PdfStorage.saveLibraryFile(id, buffer, meta);
+        if (saved) {
+          this.closeUploadModal();
+          await this.refresh();
+          App.showToast('Arquivo adicionado com sucesso à Biblioteca!', 'success');
+        } else {
+          App.showToast('Erro ao salvar arquivo no banco local.', 'warning');
+        }
+      },
+
+      openEditModal(id) {
+        const file = this.files.find(f => f.id === id);
+        if (!file) return;
+        this.populateSubjectFilter();
+
+        const modal = document.getElementById('modalLibraryEdit');
+        const idInput = document.getElementById('modalLibraryEditId');
+        const titleInput = document.getElementById('modalLibraryEditTitle');
+        const subSelect = document.getElementById('modalLibraryEditSubject');
+        const catSelect = document.getElementById('modalLibraryEditCategory');
+        const notesInput = document.getElementById('modalLibraryEditNotes');
+
+        if (idInput) idInput.value = file.id;
+        if (titleInput) titleInput.value = file.name || '';
+        if (subSelect) subSelect.value = file.subjectId || '';
+        if (catSelect) catSelect.value = file.category || 'apostila';
+        if (notesInput) notesInput.value = file.notes || '';
+
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.classList.add('open');
+        }
+      },
+
+      closeEditModal() {
+        const modal = document.getElementById('modalLibraryEdit');
+        if (modal) {
+          modal.classList.remove('open');
+          modal.classList.add('hidden');
+        }
+      },
+
+      async submitEditModal(e) {
+        e.preventDefault();
+        const idInput = document.getElementById('modalLibraryEditId');
+        const titleInput = document.getElementById('modalLibraryEditTitle');
+        const subSelect = document.getElementById('modalLibraryEditSubject');
+        const catSelect = document.getElementById('modalLibraryEditCategory');
+        const notesInput = document.getElementById('modalLibraryEditNotes');
+
+        const id = idInput ? idInput.value : null;
+        if (!id) return;
+
+        const subId = subSelect ? subSelect.value : '';
+        const materias = (App.data && App.data.materias) || [];
+        const matchedMat = materias.find(m => m.id === subId);
+
+        const updates = {
+          name: (titleInput && titleInput.value.trim()) || 'Arquivo',
+          subjectId: subId,
+          subjectName: matchedMat ? nomeMateria(matchedMat) : 'Geral',
+          category: (catSelect && catSelect.value) || 'apostila',
+          notes: (notesInput && notesInput.value.trim()) || ''
+        };
+
+        await PdfStorage.updateLibraryMetadata(id, updates);
+        this.closeEditModal();
+        await this.refresh();
+        App.showToast('Arquivo atualizado com sucesso!', 'success');
+      },
+
+      async openInReader(id) {
+        const fileObj = await PdfStorage.getLibraryFileWithBuffer(id);
+        if (!fileObj || !fileObj.data) {
+          App.showToast('Arquivo não encontrado no armazenamento local.', 'warning');
+          return;
+        }
+
+        // Salva cópia ativa no leitor e navega para a aba de leitura
+        await App.loadPdfFromBuffer(fileObj.data, fileObj.name || 'Documento', true, id);
+        App.switchTab('tab-pdf-reader');
+        App.showToast(`Lendo: ${fileObj.name}`, 'info');
+      },
+
+      async exportFile(id) {
+        const fileObj = await PdfStorage.getLibraryFileWithBuffer(id);
+        if (!fileObj || !fileObj.data) {
+          App.showToast('Arquivo não encontrado para download.', 'warning');
+          return;
+        }
+
+        const blob = new Blob([fileObj.data], { type: fileObj.type || 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const filename = (fileObj.name || 'documento').endsWith('.pdf') ? fileObj.name : `${fileObj.name}.pdf`;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 2500);
+        App.showToast(`Download de "${filename}" iniciado!`, 'success');
+      },
+
+      async exportAllFiles() {
+        if (this.files.length === 0) {
+          App.showToast('Nenhum arquivo na biblioteca para exportar.', 'info');
+          return;
+        }
+
+        App.showToast(`Exportando ${this.files.length} arquivo(s) da biblioteca...`, 'info');
+
+        // Exporta cada arquivo sequencialmente para não sobrecarregar memória
+        for (let i = 0; i < this.files.length; i++) {
+          const f = this.files[i];
+          await new Promise(r => setTimeout(r, 300));
+          await this.exportFile(f.id);
+        }
+      },
+
+      async deleteFile(id) {
+        const file = this.files.find(f => f.id === id);
+        const name = file ? file.name : 'este arquivo';
+        if (!confirm(`Deseja realmente excluir "${name}" da sua biblioteca?`)) return;
+
+        await PdfStorage.deleteLibraryFile(id);
+        await this.refresh();
+        App.showToast('Arquivo excluído da biblioteca.', 'info');
+      },
+
+      formatBytes(bytes) {
+        if (!bytes || bytes === 0) return '0 KB';
+        const k = 1024;
+        const dm = 1;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+      },
+
+      formatDate(ts) {
+        if (!ts) return 'Recente';
+        const d = new Date(ts);
+        if (isNaN(d.getTime())) return 'Recente';
+        return d.toLocaleDateString('pt-BR');
+      },
+
+      getCategoryLabel(cat) {
+        const labels = {
+          edital: '📑 Edital',
+          apostila: '📘 Apostila',
+          resumo: '📝 Resumo',
+          questoes: '❓ Questões',
+          legislacao: '⚖️ Legislação',
+          outro: '📁 Outro'
+        };
+        return labels[cat] || '📘 Apostila';
+      },
+
+      getCategoryClass(cat) {
+        return 'category-' + (cat || 'apostila');
+      },
+
+      getCategoryIcon(cat) {
+        const icons = {
+          edital: '📑',
+          apostila: '📘',
+          resumo: '📝',
+          questoes: '❓',
+          legislacao: '⚖️',
+          outro: '📁'
+        };
+        return icons[cat] || '📄';
+      }
+    };
+    window.LibraryManager = LibraryManager;
+
+
     const LazyLoader = {
       loadedScripts: new Set(),
       loadingPromises: {},
@@ -8512,6 +9748,79 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       isSyncing: false,
       hasPendingSync: false,
       pendingCloudData: null,
+      forceOffline: (function() {
+        try { return localStorage.getItem('concurso_force_offline') === 'true'; } catch(e) { return false; }
+      })(),
+      offlineQueue: (function() {
+        try { return JSON.parse(localStorage.getItem('concurso_offline_mutation_queue') || '[]'); } catch(e) { return []; }
+      })(),
+
+      isOffline() {
+        return this.forceOffline || (typeof navigator !== 'undefined' && !navigator.onLine);
+      },
+
+      toggleForceOffline(forced) {
+        this.forceOffline = !!forced;
+        try {
+          localStorage.setItem('concurso_force_offline', String(this.forceOffline));
+        } catch(e) {}
+        this.updateDiagnosticsUI();
+        if (this.forceOffline) {
+          this.setSyncStatus('offline', 'Modo Offline Forçado');
+          App.showToast('📴 Modo offline ativado. Todas as alterações serão salvas localmente.', 'info');
+        } else {
+          if (typeof navigator !== 'undefined' && navigator.onLine) {
+            this.setSyncStatus(this.user ? 'synced' : 'local', this.user ? 'Online (Sincronizado)' : 'Online (Local)');
+            App.showToast('🌐 Conexão online ativa!', 'success');
+            if (this.offlineQueue.length > 0) {
+              this.flushOfflineQueue();
+            }
+          } else {
+            this.setSyncStatus('offline', 'Offline (Sem Conexão)');
+          }
+        }
+      },
+
+      recordOfflineMutation(type, desc) {
+        const mutation = {
+          id: 'mut_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+          type: type || 'save_state',
+          desc: desc || 'Alteração salva offline',
+          timestamp: Date.now()
+        };
+        this.offlineQueue.push(mutation);
+        if (this.offlineQueue.length > 100) this.offlineQueue.shift();
+        try {
+          localStorage.setItem('concurso_offline_mutation_queue', JSON.stringify(this.offlineQueue));
+        } catch(e) {}
+        this.updateDiagnosticsUI();
+      },
+
+      async flushOfflineQueue() {
+        if (this.isOffline()) {
+          App.showToast('Você está no modo offline. Desative o modo offline nos Ajustes para sincronizar.', 'warning');
+          return;
+        }
+        if (!this.user || !this.client) {
+          this.offlineQueue = [];
+          try { localStorage.removeItem('concurso_offline_mutation_queue'); } catch(e) {}
+          this.updateDiagnosticsUI();
+          App.showToast('Dados locais preservados no navegador.', 'info');
+          return;
+        }
+        try {
+          const count = this.offlineQueue.length;
+          this.setSyncStatus('syncing', 'Sincronizando...');
+          await this.syncUp();
+          this.offlineQueue = [];
+          try { localStorage.removeItem('concurso_offline_mutation_queue'); } catch(e) {}
+          this.updateDiagnosticsUI();
+          App.showToast(`✅ Sincronização concluída: ${count > 0 ? count + ' alterações enviadas' : 'dados atualizados'}!`, 'success');
+        } catch(err) {
+          console.warn('[SyncManager] Erro ao descarregar fila offline:', err);
+          this.setSyncStatus('offline', 'Falha ao sincronizar');
+        }
+      },
       hasDedicatedStudyLogColumn: (() => {
         try {
           const v = localStorage.getItem('concurso_sync_has_study_log_col');
@@ -8700,20 +10009,22 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       },
 
       debouncedSync() {
-        if (!this.user || !this.client) return;
-
-        if (!navigator.onLine) {
+        if (this.isOffline()) {
           this.hasPendingSync = true;
-          this.setSyncStatus('local', 'Offline (pendente)');
+          this.recordOfflineMutation('save_state', 'Alteração salva offline');
+          const pending = (this.offlineQueue || []).length;
+          this.setSyncStatus('offline', `Offline (${pending} pendência${pending === 1 ? '' : 's'})`);
           return;
         }
+
+        if (!this.user || !this.client) return;
 
         this.setSyncStatus('syncing', 'Sincronizando...');
         if (this.debounceTimer) clearTimeout(this.debounceTimer);
 
         this.debounceTimer = setTimeout(() => {
           this.syncUp();
-        }, 1500);
+        }, 1200);
       },
 
       async gatherPayload() {
@@ -11103,8 +12414,12 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           }
 
           App.saveToStorage();
-          App.renderSubjects();
-          this.renderTab();
+          App.updateTopicDom(materiaId, topicIndex, false);
+          if (App.activeTab === 'tab-study-hours') {
+            this.renderTab();
+          } else {
+            this._dirty = true;
+          }
 
           if (removedLog) {
             if (removedLog.sessaoId) {
@@ -11147,8 +12462,12 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
               origem: 'manual'
             });
             App.saveToStorage();
-            App.renderSubjects();
-            this.renderTab();
+            App.updateTopicDom(materiaId, topicIndex, true);
+            if (App.activeTab === 'tab-study-hours') {
+              this.renderTab();
+            } else {
+              this._dirty = true;
+            }
             App.showToast(`Estudo registrado: ${this.formatMinutes(this.defaultMinutes)}!`, 'success');
           } else {
             // Abre janelinha rápida
@@ -11271,7 +12590,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       },
 
       // Renderização Completa da Aba "Horas de Estudo"
-      renderTab() {
+      renderTab(force = false) {
+        // ANTI-LAG: Se a aba Horas de Estudo não estiver visível, marca como dirty e não gasta CPU!
+        if (!force && typeof App !== 'undefined' && App.activeTab !== 'tab-study-hours') {
+          this._dirty = true;
+          return;
+        }
+        this._dirty = false;
         this.renderPeriodControls();
         const logs = this.getFilteredLogs();
         this.renderSummaryCards(logs);
@@ -12139,14 +13464,16 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
         if (profiler) profiler.mark('first_render_start');
         safeRun('Renderização de Telas', () => {
-          this.renderAll();
-          this.renderAutoConfigPanel();
+          // Renderiza apenas a tela ativa inicial para máxima velocidade e zero lag
+          this.renderSubjectList();
+          this.renderUnclassified();
+          this.updateHeaderCounters();
           this.updateHoursBadge();
-          this.updateAutoConfigDiagnosis();
-          this.renderExamCountdown();
-          this.renderSpacedReviews();
-          this.renderScheduleProgress();
-          this.renderDiagnosticsLog();
+
+          // Inicializa a Biblioteca Virtual em segundo plano
+          if (typeof LibraryManager !== 'undefined' && LibraryManager.init) {
+            LibraryManager.init().catch(() => {});
+          }
         });
         if (profiler) profiler.mark('first_render_end');
 
@@ -12312,12 +13639,49 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       },
 
       /* Persistência LocalStorage */
-      saveToStorage() {
+      _saveTimer: null,
+
+      updateTopicDom(materiaId, topicIndex, isDone) {
+        const body = document.getElementById(`body-${materiaId}`);
+        if (body) {
+          const list = body.querySelector('.topics-list');
+          if (list) {
+            const items = list.querySelectorAll('.topic-item');
+            if (items && items[topicIndex]) {
+              const item = items[topicIndex];
+              const checkbox = item.querySelector('input[type="checkbox"]');
+              if (checkbox) checkbox.checked = !!isDone;
+              if (isDone) item.classList.add('done');
+              else item.classList.remove('done');
+            }
+          }
+        }
+        this.updateHoursBadge();
+      },
+
+      saveToStorage(immediate = false) {
+        if (immediate) {
+          if (this._saveTimer) {
+            clearTimeout(this._saveTimer);
+            this._saveTimer = null;
+          }
+          this._doSaveToStorage();
+          return;
+        }
+
+        // ANTI-LAG: Debounce de 200ms para escrita em disco (evita 10 JSON.stringify a cada clique rápido)
+        if (this._saveTimer) clearTimeout(this._saveTimer);
+        this._saveTimer = setTimeout(() => {
+          this._saveTimer = null;
+          this._doSaveToStorage();
+        }, 200);
+      },
+
+      _doSaveToStorage() {
         try {
           localStorage.setItem('concurso_app_data', JSON.stringify(this.data));
           localStorage.setItem('concurso_schedules_list', JSON.stringify(this.schedules));
           localStorage.setItem('concurso_active_schedule_id', this.activeScheduleId || '');
-          // Mantém chave legada sincronizada com o cronograma ativo para compatibilidade
           localStorage.setItem('concurso_schedule_data', JSON.stringify(this.schedule));
           localStorage.setItem('concurso_completed_slots', JSON.stringify(this.completedSlots));
 
@@ -13084,7 +14448,20 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
         if (tabId === 'tab-study-hours') {
           if (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.renderTab) {
-            StudyHoursManager.renderTab();
+            StudyHoursManager.renderTab(true);
+          }
+        }
+
+        if (tabId === 'tab-library') {
+          if (typeof LibraryManager !== 'undefined' && LibraryManager.refresh) {
+            LibraryManager.refresh();
+          }
+        }
+
+        if (tabId === 'tab-schedule') {
+          if (!this._scheduleRendered) {
+            this._scheduleRendered = true;
+            this.renderSchedule();
           }
         }
 
@@ -13111,7 +14488,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           }, 100);
         }
 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // ANTI-LAG: Scroll instantâneo evita layout thrashing durante a troca de abas
+        window.scrollTo(0, 0);
       },
 
       updateFab(tabId) {

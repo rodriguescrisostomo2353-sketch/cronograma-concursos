@@ -566,8 +566,16 @@
           }
 
           App.saveToStorage();
-          App.renderSubjects();
-          this.renderTab();
+          if (typeof App.updateTopicDom === 'function') {
+            App.updateTopicDom(materiaId, topicIndex, false);
+          } else {
+            App.renderSubjects();
+          }
+          if (typeof App !== 'undefined' && App.activeTab === 'tab-study-hours') {
+            this.renderTab();
+          } else {
+            this._dirty = true;
+          }
 
           if (removedLog) {
             if (removedLog.sessaoId) {
@@ -610,8 +618,16 @@
               origem: 'manual'
             });
             App.saveToStorage();
-            App.renderSubjects();
-            this.renderTab();
+            if (typeof App.updateTopicDom === 'function') {
+              App.updateTopicDom(materiaId, topicIndex, true);
+            } else {
+              App.renderSubjects();
+            }
+            if (typeof App !== 'undefined' && App.activeTab === 'tab-study-hours') {
+              this.renderTab();
+            } else {
+              this._dirty = true;
+            }
             App.showToast(`Estudo registrado: ${this.formatMinutes(this.defaultMinutes)}!`, 'success');
           } else {
             // Abre janelinha rápida
@@ -734,7 +750,12 @@
       },
 
       // Renderização Completa da Aba "Horas de Estudo"
-      renderTab() {
+      renderTab(force = false) {
+        if (!force && typeof App !== 'undefined' && App.activeTab !== 'tab-study-hours') {
+          this._dirty = true;
+          return;
+        }
+        this._dirty = false;
         this.renderPeriodControls();
         const logs = this.getFilteredLogs();
         this.renderSummaryCards(logs);
