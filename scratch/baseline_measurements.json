@@ -1,0 +1,134 @@
+{
+  "baselineNormalWarm": {
+    "timings": {
+      "carregamento_scripts": 966.4206,
+      "leitura_dados": 0.0441,
+      "migracoes": 0.0067,
+      "primeira_renderizacao": 0.0087,
+      "login_sessao": 25.0065,
+      "primeira_sincronizacao": 40,
+      "backup_automatico": 0.0035,
+      "verificacao_atualizacao": 30,
+      "registro_service_worker": 12,
+      "tempo_total_abertura": 1073.4901
+    },
+    "domElementsCount": 1418,
+    "subjectsRendered": 0,
+    "topicsRendered": 0,
+    "storageBytes": 0,
+    "materiasCount": 0,
+    "topicosCount": 0,
+    "studyLogsCount": 0,
+    "sessaoCount": 0
+  },
+  "baselineNormalCold": {
+    "timings": {
+      "carregamento_scripts": 715.5808999999999,
+      "leitura_dados": 0.0332,
+      "migracoes": 0.0272,
+      "primeira_renderizacao": 0.0094,
+      "login_sessao": 120.0007,
+      "primeira_sincronizacao": 200,
+      "backup_automatico": 0.0046,
+      "verificacao_atualizacao": 100,
+      "registro_service_worker": 12,
+      "tempo_total_abertura": 1147.656
+    },
+    "domElementsCount": 1418,
+    "subjectsRendered": 0,
+    "topicsRendered": 0,
+    "storageBytes": 0,
+    "materiasCount": 0,
+    "topicosCount": 0,
+    "studyLogsCount": 0,
+    "sessaoCount": 0
+  },
+  "baselineMobileWarm": {
+    "timings": {
+      "carregamento_scripts": 1437.1784,
+      "leitura_dados": 0.1968,
+      "migracoes": 0.0116,
+      "primeira_renderizacao": 0.038,
+      "login_sessao": 80.0024,
+      "primeira_sincronizacao": 150,
+      "backup_automatico": 0.0104,
+      "verificacao_atualizacao": 120,
+      "registro_service_worker": 45,
+      "tempo_total_abertura": 1832.4376
+    },
+    "domElementsCount": 1418,
+    "subjectsRendered": 0,
+    "topicsRendered": 0,
+    "storageBytes": 0,
+    "materiasCount": 0,
+    "topicosCount": 0,
+    "studyLogsCount": 0,
+    "sessaoCount": 0
+  },
+  "baselineMobileCold": {
+    "timings": {
+      "carregamento_scripts": 2676.33,
+      "leitura_dados": 0.0848,
+      "migracoes": 0.0096,
+      "primeira_renderizacao": 0.0332,
+      "login_sessao": 400.0032,
+      "primeira_sincronizacao": 650,
+      "backup_automatico": 0.0104,
+      "verificacao_atualizacao": 300,
+      "registro_service_worker": 45,
+      "tempo_total_abertura": 4071.4712
+    },
+    "domElementsCount": 1418,
+    "subjectsRendered": 0,
+    "topicsRendered": 0,
+    "storageBytes": 0,
+    "materiasCount": 0,
+    "topicosCount": 0,
+    "studyLogsCount": 0,
+    "sessaoCount": 0
+  },
+  "heavyNormalWarm": {
+    "timings": {
+      "carregamento_scripts": 316.3154,
+      "leitura_dados": 4.4208,
+      "migracoes": 0.0274,
+      "primeira_renderizacao": 0.0141,
+      "login_sessao": 25.0008,
+      "primeira_sincronizacao": 40,
+      "backup_automatico": 0.0027,
+      "verificacao_atualizacao": 30,
+      "registro_service_worker": 12,
+      "tempo_total_abertura": 427.7812
+    },
+    "domElementsCount": 1418,
+    "subjectsRendered": 0,
+    "topicsRendered": 0,
+    "storageBytes": 1367126,
+    "materiasCount": 30,
+    "topicosCount": 1500,
+    "studyLogsCount": 3000,
+    "sessaoCount": 50
+  },
+  "heavyMobileCold": {
+    "timings": {
+      "carregamento_scripts": 2865.7756,
+      "leitura_dados": 22.0504,
+      "migracoes": 0.1096,
+      "primeira_renderizacao": 0.038,
+      "login_sessao": 400.004,
+      "primeira_sincronizacao": 650,
+      "backup_automatico": 0.0092,
+      "verificacao_atualizacao": 300,
+      "registro_service_worker": 45,
+      "tempo_total_abertura": 4282.9868
+    },
+    "domElementsCount": 1418,
+    "subjectsRendered": 0,
+    "topicsRendered": 0,
+    "storageBytes": 1367126,
+    "materiasCount": 30,
+    "topicosCount": 1500,
+    "studyLogsCount": 3000,
+    "sessaoCount": 50
+  }
+}
