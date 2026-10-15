@@ -119,25 +119,29 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// 8. Suporte a variável de ambiente PORT (Render, Railway, Cloud Run, etc.)
+var envPort = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(envPort))
+{
+    builder.WebHost.UseUrls($"http://*:{envPort}");
+}
+
 var app = builder.Build();
 
-// 7. Auto-migração e criação do banco de dados na inicialização
+// 9. Auto-migração e criação do banco de dados na inicialização
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 }
 
-// 8. Pipeline HTTP
-if (app.Environment.IsDevelopment())
+// 10. Pipeline HTTP e Swagger (Habilitado para fácil teste na nuvem)
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cronograma API v1");
-        c.RoutePrefix = "swagger";
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cronograma API v1");
+    c.RoutePrefix = "swagger";
+});
 
 app.UseCors("AllowAllAppOrigins");
 
@@ -146,14 +150,23 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Health Check Endpoint
+// Health Check Endpoints
 app.MapGet("/", () => Results.Ok(new
 {
     service = "Cronograma de Estudos - Backend C#",
     version = "1.8.0",
     framework = ".NET 9.0",
     status = "healthy",
+    swagger = "/swagger",
+    timestamp = DateTime.UtcNow
+}));
+
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "healthy",
+    service = "Cronograma API C#",
     timestamp = DateTime.UtcNow
 }));
 
 app.Run();
+
