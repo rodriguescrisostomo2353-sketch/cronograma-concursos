@@ -2,8 +2,8 @@
   "app": "Cronograma de Estudos para Concursos",
   "version": "1.8.0",
   "buildTime": "15/10/2026 14:50:00",
-  "exportDate": "2026-10-15T18:17:16.233Z",
-  "exportDateFormatted": "15/10/2026 às 15:17",
+  "exportDate": "2026-10-15T18:54:16.857Z",
+  "exportDateFormatted": "15/10/2026 às 15:54",
   "platform": "Web Browser",
   "summary": {
     "materiasCount": 5,
@@ -108,7 +108,7 @@
     ],
     "schedules": [
       {
-        "id": "sched-1792088236137",
+        "id": "sched-1792090456761",
         "name": "Cronograma Teste Smoke Manual",
         "type": "manual",
         "dias": [
@@ -130,8 +130,8 @@
             "dia": "Segunda",
             "slots": [
               {
-                "slotId": "slot-1792088236137-gvsxt",
-                "slotKey": "Segunda-bloco-1792088236137-0",
+                "slotId": "slot-1792090456761-u1ok0",
+                "slotKey": "Segunda-bloco-1792090456761-0",
                 "slotNumber": 1,
                 "subjectId": "mat-1",
                 "subjectName": "Língua Portuguesa",
@@ -156,7 +156,7 @@
         "createdAt": "15/10/2026"
       },
       {
-        "id": "sched-1792088236178",
+        "id": "sched-1792090456796",
         "name": "Cronograma Automático Smoke",
         "type": "auto",
         "dias": [
@@ -200,7 +200,7 @@
         "createdAt": "15/10/2026"
       }
     ],
-    "activeScheduleId": "sched-1792088236178",
+    "activeScheduleId": "sched-1792090456796",
     "completedSlots": {},
     "priorities": {},
     "examDate": null,
@@ -213,17 +213,17 @@
     },
     "studyLog": [
       {
-        "id": "log_1792088236197_8j4c1m",
+        "id": "log_1792090456817_pihq62",
         "topicoId": "top_lp_0",
         "topicoNome": "1 Compreensão e interpretação de textos de gêneros variados.",
         "materiaId": "mat-1",
         "materiaNome": "Língua Portuguesa",
         "minutos": 30,
         "data": "2026-10-15",
-        "criadoEm": "2026-10-15 15:17:16",
+        "criadoEm": "2026-10-15 15:54:16",
         "sessaoId": null,
         "origem": "manual",
-        "updatedAt": "2026-10-15T18:17:16.197Z"
+        "updatedAt": "2026-10-15T18:54:16.817Z"
       }
     ],
     "autoConfig": null,
