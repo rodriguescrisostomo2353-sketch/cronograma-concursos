@@ -1,12 +1,11 @@
 // Service Worker para o PWA Cronograma de Estudos para Concursos (v1.7.4 - Performance Update)
-const CACHE_NAME = 'cronograma-concursos-v22';
+const CACHE_NAME = 'cronograma-concursos-v23';
 
 // Recursos essenciais para abertura instantânea offline-first (leve e não-bloqueante)
 const PRECACHE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './supabase.js',
   './divisor-topicos.js',
   './study-hours.css',
   './study-hours-manager.js',
@@ -25,7 +24,7 @@ self.addEventListener('install', (event) => {
         try {
           await cache.add(asset);
         } catch (err) {
-          console.warn('[SW v22] Não foi possível fazer pré-cache de:', asset, err);
+          console.warn('[SW v23] Não foi possível fazer pré-cache de:', asset, err);
         }
       }
     }).then(() => self.skipWaiting())
@@ -39,7 +38,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((name) => {
           if (name !== CACHE_NAME) {
-            console.log('[SW v22] Removendo cache legado:', name);
+            console.log('[SW v23] Removendo cache legado:', name);
             return caches.delete(name);
           }
         })
@@ -60,23 +59,38 @@ self.addEventListener('fetch', (event) => {
   if (event.request.url.includes('supabase.co')) return;
 
   // Navegação HTML: Cache First com revalidação em background (Stale-While-Revalidate)
-  // Garante que o app abra em milissegundos (< 1,5s) mesmo com 4G lento ou offline, sem tela branca
+  // Entrega o HTML local imediatamente em 1ms sem esperar a rede
   if (event.request.mode === 'navigate' || (event.request.headers && event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html'))) {
     event.respondWith(
-      caches.match('./index.html').then((cached) => {
-        const networkFetch = fetch(event.request)
-          .then((networkResponse) => {
+      caches.match(event.request).then((cached) => {
+        if (cached) {
+          fetch(event.request).then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
+            }
+          }).catch(() => {});
+          return cached;
+        }
+
+        return caches.match('./index.html').then((indexCached) => {
+          if (indexCached) {
+            fetch(event.request).then((networkResponse) => {
+              if (networkResponse && networkResponse.status === 200) {
+                caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
+              }
+            }).catch(() => {});
+            return indexCached;
+          }
+
+          return fetch(event.request).then((networkResponse) => {
             if (networkResponse && networkResponse.status === 200) {
               const copy = networkResponse.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', copy));
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
             }
             return networkResponse;
-          })
-          .catch(() => cached);
-
-        // Se já possui cache, entrega imediatamente e atualiza em background; se não tiver, busca da rede
-        return cached || networkFetch;
-      })
+          });
+        });
+      }).catch(() => caches.match('./index.html'))
     );
     return;
   }

@@ -94,18 +94,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <!-- Scripts essenciais com defer: executam em segundo plano sem travar o primeiro frame da UI -->
-  <script defer src="supabase.js"></script>
-  <script defer src="html2pdf.bundle.min.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script>
-    window.addEventListener('load', function() {
-      if (window.pdfjsLib) {
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-      }
-    });
-  </script>
+
   
 
 
@@ -12181,6 +12170,15 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         // (b) FASE DE SEGUNDO PLANO (IDLE): Não bloqueia a primeira tela!
         // Tarefas pesadas, checagem de versão, sincronização em nuvem e backups
         const runDeferredTasks = () => {
+          // Carrega Supabase em segundo plano sem bloquear a tela
+          if (typeof LazyLoader !== 'undefined') {
+            LazyLoader.loadSupabase().then(() => {
+              if (typeof SyncManager !== 'undefined' && SyncManager.init) {
+                SyncManager.init();
+              }
+            }).catch(() => {});
+          }
+
           // Migração de dados de grande porte para IndexedDB se pendente
           safeRun('Migração IndexedDB', () => {
             if (typeof AppStorage !== 'undefined' && AppStorage.migrateFromLocalStorage) {
@@ -13198,6 +13196,12 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         if (!file || file.type !== 'application/pdf') {
           alert('Por favor, selecione um arquivo válido no formato PDF.');
           return;
+        }
+
+        if (!window.pdfjsLib && typeof LazyLoader !== 'undefined') {
+          try {
+            await LazyLoader.loadPdfJs();
+          } catch(e) {}
         }
 
         if (!window.pdfjsLib) {
@@ -19349,6 +19353,12 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
             jsPDF: { unit: 'mm', format: 'a4', orientation: this.schedule.columns.length > 4 ? 'landscape' : 'portrait' }
           };
 
+          if (!window.html2pdf && typeof LazyLoader !== 'undefined') {
+            try {
+              await LazyLoader.loadHtml2Pdf();
+            } catch(e) {}
+          }
+
           if (window.html2pdf) {
             await html2pdf().set(opt).from(pdfWrapper).save();
             this.showToast('Cronograma em PDF baixado com sucesso!', 'success');
@@ -20095,6 +20105,12 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
           cloneWrapper.innerHTML = headerHtml + colsHtml;
           document.body.appendChild(cloneWrapper);
 
+          if (!window.html2canvas && typeof LazyLoader !== 'undefined') {
+            try {
+              await LazyLoader.loadHtml2Canvas();
+            } catch(e) {}
+          }
+
           const canvas = await html2canvas(cloneWrapper, {
             scale: 2,
             useCORS: true,
@@ -20249,6 +20265,12 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
       },
 
       async loadPdfFromBuffer(arrayBuffer, docName = 'Documento.pdf', saveToDb = true, docId = 'active') {
+        if (!window.pdfjsLib && typeof LazyLoader !== 'undefined') {
+          try {
+            await LazyLoader.loadPdfJs();
+          } catch(e) {}
+        }
+
         if (!window.pdfjsLib) {
           this.showToast('Biblioteca PDF.js não disponível offline.', 'warning');
           return;
@@ -21012,10 +21034,19 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
     // Exportação explícita no window para garantir acesso global mesmo com WebViews e handlers
     window.App = App;
 
-    // Inicialização ao carregar o DOM
-    document.addEventListener('DOMContentLoaded', () => {
+    // Inicialização instantânea da interface (o HTML acima já foi 100% parseado)
+    if (!window.__appInitialized) {
+      window.__appInitialized = true;
       App.init();
-    });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        if (!window.__appInitialized) {
+          window.__appInitialized = true;
+          App.init();
+        }
+      });
+    }
 
     // Registro do Service Worker (PWA Offline & App Instalável)
     if ('serviceWorker' in navigator) {
