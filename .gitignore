@@ -31,6 +31,8 @@ android/app/src/main/assets/public/
 android/.gradle/
 .gradle/
 www/
+dist/
+
 
 # ==============================================================================
 # SCRIPTS LOCAIS ESPECÍFICOS & LIBS GRANDES LOCAIS
