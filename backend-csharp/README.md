@@ -4,9 +4,11 @@
 [![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-Web_API-blue)](https://docs.microsoft.com/aspnet/core)
 [![Entity Framework Core](https://img.shields.io/badge/Entity_Framework-Core_9-5C2D91)](https://docs.microsoft.com/ef/core/)
 [![Docker Ready](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![CI/CD](https://img.shields.io/badge/GitHub_Actions-Automated_Build-2088FF?logo=github-actions&logoColor=white)](https://github.com/features/actions)
+[![CI/CD Build](https://github.com/rodriguescrisostomo2353-sketch/BACK-END-ABA/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/rodriguescrisostomo2353-sketch/BACK-END-ABA/actions)
+[![GHCR Container](https://img.shields.io/badge/GHCR-Docker_Image-2496ED?logo=docker&logoColor=white)](https://github.com/rodriguescrisostomo2353-sketch/BACK-END-ABA/pkgs/container/back-end-aba)
 
 Backend robusto e de alta performance em **C# (.NET 9.0 / ASP.NET Core Web API)** para o aplicativo **Cronograma de Estudos para Concursos**. Fornece autenticação com JWT, persistência relacional com Entity Framework Core, sincronização em tempo real e biblioteca virtual de arquivos com conformidade LGPD.
+
 
 ---
 
