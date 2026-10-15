@@ -1,5 +1,5 @@
-// Service Worker para o PWA Cronograma de Estudos para Concursos (v1.7.5 - Performance & Library Update)
-const CACHE_NAME = 'cronograma-concursos-v24';
+// Service Worker para o PWA Cronograma de Estudos para Concursos (v1.8.0 - Architecture & Backend Cloud)
+const CACHE_NAME = 'cronograma-concursos-v25';
 
 // Recursos essenciais para abertura instantânea offline-first (leve e não-bloqueante)
 const PRECACHE_ASSETS = [
@@ -9,6 +9,8 @@ const PRECACHE_ASSETS = [
   './divisor-topicos.js',
   './study-hours.css',
   './study-hours-manager.js',
+  './src/styles/tokens.css',
+  './src/main.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-192-maskable.png',
@@ -24,7 +26,7 @@ self.addEventListener('install', (event) => {
         try {
           await cache.add(asset);
         } catch (err) {
-          console.warn('[SW v23] Não foi possível fazer pré-cache de:', asset, err);
+          console.warn(`[SW ${CACHE_NAME}] Não foi possível fazer pré-cache de:`, asset, err);
         }
       }
     }).then(() => self.skipWaiting())
@@ -38,7 +40,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((name) => {
           if (name !== CACHE_NAME) {
-            console.log('[SW v23] Removendo cache legado:', name);
+            console.log(`[SW ${CACHE_NAME}] Removendo cache legado:`, name);
             return caches.delete(name);
           }
         })
