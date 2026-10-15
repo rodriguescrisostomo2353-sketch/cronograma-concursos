@@ -13726,6 +13726,10 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
       _doSaveToStorage(triggerCloud = true) {
         try {
+          localStorage.setItem('concurso_data_version', '1');
+          if (this.data && typeof this.data === 'object') {
+            this.data.dataVersion = 1;
+          }
           localStorage.setItem('concurso_app_data', JSON.stringify(this.data));
           localStorage.setItem('concurso_schedules_list', JSON.stringify(this.schedules));
           localStorage.setItem('concurso_active_schedule_id', this.activeScheduleId || '');
@@ -13755,6 +13759,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
       loadFromStorage() {
         try {
+          const rawVersion = localStorage.getItem('concurso_data_version');
+          let currentVersion = rawVersion ? parseInt(rawVersion, 10) : 0;
           const raw = localStorage.getItem('concurso_app_data');
           if (raw) {
             // Backup automático de segurança antes de qualquer migração ou normalização
@@ -13766,7 +13772,17 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             this.data = JSON.parse(raw);
           } else {
             // Inicializa limpo
-            this.data = { materias: [], naoClassificado: [] };
+            this.data = { materias: [], naoClassificado: [], dataVersion: 1 };
+          }
+
+          if (currentVersion < 1) {
+            if (this.data && Array.isArray(this.data.materias)) {
+              this.data.materias = normalizarMaterias(this.data.materias);
+            }
+            currentVersion = 1;
+            try {
+              localStorage.setItem('concurso_data_version', '1');
+            } catch (eV) {}
           }
 
           // Normaliza matérias (aceita formato antigo e novo sem perda de dados)
