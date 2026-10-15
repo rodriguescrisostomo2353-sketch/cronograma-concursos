@@ -4,6 +4,7 @@
   "description": "Aplicativo de Cronograma de Estudos para Concursos",
   "scripts": {
     "test:smoke": "node test_smoke_suite.js",
+    "test:rules": "node scratch/test_backend_rules.js",
     "lint": "npx eslint src/",
     "format": "npx prettier --check src/",
     "prepare-android": "powershell -ExecutionPolicy Bypass -File ./prepare_android.ps1"
