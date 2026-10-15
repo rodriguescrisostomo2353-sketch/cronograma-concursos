@@ -13677,6 +13677,14 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         this.showToast(next === 'dark' ? 'Tema escuro ativado 🌙' : 'Tema claro ativado ☀️', 'info');
       },
 
+      getLocalDateString(d = new Date()) {
+        const dateObj = (d instanceof Date) ? d : new Date(d);
+        const y = dateObj.getFullYear();
+        const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      },
+
       /* Persistência LocalStorage */
       _saveTimer: null,
 
@@ -20934,7 +20942,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
         if (titleIn) titleIn.value = this.examTitle || '';
         if (dateIn) {
           dateIn.value = this.examDate || '';
-          const today = new Date().toISOString().split('T')[0];
+          const today = this.getLocalDateString();
           dateIn.min = today;
         }
         this.previewExamCountdown();
@@ -21060,7 +21068,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
               paletteId: slot.paletteId || 'blue',
               code: intv.code,
               label: intv.label,
-              dueDate: dueDate.toISOString().split('T')[0],
+              dueDate: this.getLocalDateString(dueDate),
               completed: false,
               completedAt: null
             });
@@ -21142,8 +21150,8 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
           return;
         }
 
-        const todayStr = new Date().toISOString().split('T')[0];
-        const next7Days = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        const todayStr = this.getLocalDateString();
+        const next7Days = this.getLocalDateString(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
 
         const pending = this.spacedReviews.filter(r => !r.completed);
         const completed = this.spacedReviews.filter(r => r.completed);
