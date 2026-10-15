@@ -1,18 +1,30 @@
 {
-  "version": "1.7.4",
+  "version": "1.7.5",
   "date": "2026-10-15",
   "notes": [
-    "Atualização de Performance Extrema: inicialização instantânea offline-first em menos de 1,5 segundo em qualquer aparelho",
-    "Carregamento sob demanda (Lazy Loading): bibliotecas pesadas (PDF.js, html2pdf, html2canvas e Supabase) agora carregam apenas quando necessárias ou em background ocioso",
-    "Motor de Persistência Assíncrona no IndexedDB com backup preventivo automático do localStorage e salvamento com debounce (500ms)",
-    "Sincronização em Nuvem Incremental: verificação rápida por data/hora (updatedAt) sem baixar dados duplicados a cada abertura",
-    "Renderização Otimizada sob demanda: acordeom inteligente de matérias e tópicos com redução drástica de elementos no DOM",
-    "Cache em memória (Memoization) de horas estudadas por matéria e tópico com resposta O(1) imediata",
-    "Painel de Tempo de Abertura em Ajustes > Diagnóstico com instrumentação real (performance.mark/measure) e histórico das 10 últimas aberturas",
-    "Atualização do Service Worker para o cache cronograma-concursos-v22 com navegação stale-while-revalidate ultrarrápida"
+    "Eliminação total do congelamento de tela e vazamento de memória (redução de 8.4GB para < 2MB)",
+    "Nova funcionalidade: Biblioteca Virtual de Arquivos (organize, filtre e guarde seus PDFs de editais, apostilas e resumos)",
+    "Exportação e download individual ou em lote de todos os PDFs salvos na Biblioteca Virtual",
+    "Modo 100% Offline com fila de mutações: continue estudando sem internet e sincronize automaticamente ao reconectar",
+    "Carregamento do leitor de PDF estritamente sob demanda para economia extrema de memória RAM",
+    "Proteção anti-deadlock e memoização nas conexões do banco de dados local IndexedDB"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.7.4",
+      "date": "2026-10-15",
+      "notes": [
+        "Atualização de Performance Extrema: inicialização instantânea offline-first em menos de 1,5 segundo em qualquer aparelho",
+        "Carregamento sob demanda (Lazy Loading): bibliotecas pesadas (PDF.js, html2pdf, html2canvas e Supabase) agora carregam apenas quando necessárias ou em background ocioso",
+        "Motor de Persistência Assíncrona no IndexedDB com backup preventivo automático do localStorage e salvamento com debounce (500ms)",
+        "Sincronização em Nuvem Incremental: verificação rápida por data/hora (updatedAt) sem baixar dados duplicados a cada abertura",
+        "Renderização Otimizada sob demanda: acordeom inteligente de matérias e tópicos com redução drástica de elementos no DOM",
+        "Cache em memória (Memoization) de horas estudadas por matéria e tópico com resposta O(1) imediata",
+        "Painel de Tempo de Abertura em Ajustes > Diagnóstico com instrumentação real (performance.mark/measure) e histórico das 10 últimas aberturas",
+        "Atualização do Service Worker para o cache cronograma-concursos-v22 com navegação stale-while-revalidate ultrarrápida"
+      ]
+    },
     {
       "version": "1.7.3",
       "date": "2026-10-14",

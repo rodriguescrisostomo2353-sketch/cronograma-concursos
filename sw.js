@@ -1,5 +1,5 @@
-// Service Worker para o PWA Cronograma de Estudos para Concursos (v1.7.4 - Performance Update)
-const CACHE_NAME = 'cronograma-concursos-v23';
+// Service Worker para o PWA Cronograma de Estudos para Concursos (v1.7.5 - Performance & Library Update)
+const CACHE_NAME = 'cronograma-concursos-v24';
 
 // Recursos essenciais para abertura instantânea offline-first (leve e não-bloqueante)
 const PRECACHE_ASSETS = [

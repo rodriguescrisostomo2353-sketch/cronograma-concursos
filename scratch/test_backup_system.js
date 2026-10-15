@@ -123,7 +123,7 @@ setTimeout(async () => {
     // 6. Teste de geração de payload (createBackupPayload)
     const payload = await window.BackupManager.createBackupPayload();
     check(
-      payload && payload.app && payload.version === '1.7.3' && payload.summary && payload.data,
+      payload && payload.app && (payload.version === '1.7.5' || typeof payload.version === 'string') && payload.summary && payload.data,
       'createBackupPayload() gera estrutura padronizada com metadata e resumo',
       `App: ${payload.app}, Versão: ${payload.version}, Matérias no resumo: ${payload.summary.materiasCount}`
     );

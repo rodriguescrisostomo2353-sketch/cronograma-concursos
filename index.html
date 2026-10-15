@@ -8814,38 +8814,61 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       dbName: 'ConcursoPdfReaderDB',
       dbVersion: 2,
       db: null,
+      _dbPromise: null,
 
       async getDb() {
         if (this.db) return this.db;
-        return new Promise((resolve, reject) => {
-          const request = indexedDB.open(this.dbName, this.dbVersion);
-          request.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains('files')) {
-              db.createObjectStore('files', { keyPath: 'id' });
-            }
-            if (!db.objectStoreNames.contains('annotations')) {
-              db.createObjectStore('annotations', { keyPath: 'id' });
-            }
-            if (!db.objectStoreNames.contains('bookmarks')) {
-              db.createObjectStore('bookmarks', { keyPath: 'id' });
-            }
-            if (!db.objectStoreNames.contains('library_files')) {
-              db.createObjectStore('library_files', { keyPath: 'id' });
-            }
-            if (!db.objectStoreNames.contains('library_metadata')) {
-              db.createObjectStore('library_metadata', { keyPath: 'id' });
-            }
-          };
-          request.onsuccess = (e) => {
-            this.db = e.target.result;
-            resolve(this.db);
-          };
-          request.onerror = (e) => {
-            console.error('[PdfStorage] Erro ao abrir IndexedDB:', e);
-            reject(e.target.error);
-          };
+        if (this._dbPromise) return this._dbPromise;
+        if (typeof indexedDB === 'undefined') {
+          return Promise.reject(new Error('IndexedDB não suportado neste ambiente'));
+        }
+        this._dbPromise = new Promise((resolve, reject) => {
+          try {
+            const request = indexedDB.open(this.dbName, this.dbVersion);
+            request.onblocked = () => {
+              console.warn('[PdfStorage] Abertura do IndexedDB aguardando liberação de conexões anteriores.');
+            };
+            request.onupgradeneeded = (e) => {
+              const db = e.target.result;
+              if (!db.objectStoreNames.contains('files')) {
+                db.createObjectStore('files', { keyPath: 'id' });
+              }
+              if (!db.objectStoreNames.contains('annotations')) {
+                db.createObjectStore('annotations', { keyPath: 'id' });
+              }
+              if (!db.objectStoreNames.contains('bookmarks')) {
+                db.createObjectStore('bookmarks', { keyPath: 'id' });
+              }
+              if (!db.objectStoreNames.contains('library_files')) {
+                db.createObjectStore('library_files', { keyPath: 'id' });
+              }
+              if (!db.objectStoreNames.contains('library_metadata')) {
+                db.createObjectStore('library_metadata', { keyPath: 'id' });
+              }
+            };
+            request.onsuccess = (e) => {
+              this.db = e.target.result;
+              this.db.onversionchange = () => {
+                if (this.db) {
+                  this.db.close();
+                  this.db = null;
+                }
+                this._dbPromise = null;
+              };
+              this._dbPromise = null;
+              resolve(this.db);
+            };
+            request.onerror = (e) => {
+              this._dbPromise = null;
+              console.error('[PdfStorage] Erro ao abrir IndexedDB:', e);
+              reject(e.target.error || new Error('Falha ao abrir IndexedDB'));
+            };
+          } catch (err) {
+            this._dbPromise = null;
+            reject(err);
+          }
         });
+        return this._dbPromise;
       },
 
       async saveFile(id, name, arrayBuffer, totalPages = 0) {
@@ -9740,6 +9763,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
     };
 
     const SyncManager = {
+      initialized: false,
       client: null,
       user: null,
       syncStatus: 'local', // 'local' | 'synced' | 'syncing' | 'error'
@@ -9836,6 +9860,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       })(),
 
       async init() {
+        if (this.initialized) return;
+        this.initialized = true;
         try {
           if (typeof supabase === 'undefined' || !supabase.createClient) {
             if (typeof LazyLoader !== 'undefined') {
@@ -10620,7 +10646,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
 
         if (saveLocal) {
-          App.saveToStorage();
+          App.saveToStorage(false, false); // Salva localmente SEM disparar re-upload em loop para a nuvem
         }
 
         this.lastSyncTime = new Date();
@@ -11693,8 +11719,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.7.4";
-    const APP_BUILD_TIME = "14/10/2026 17:35:00";
+    const APP_VERSION = "1.7.5";
+    const APP_BUILD_TIME = "15/10/2026 13:05:00";
     window.APP_VERSION = APP_VERSION;
     window.APP_BUILD_TIME = APP_BUILD_TIME;
     const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
@@ -13513,17 +13539,6 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             }
           });
 
-          // Migração automática v1.6.2 do divisor
-          safeRun('Migração de Tópicos', () => {
-            const migratedV162 = localStorage.getItem('concurso_v162_divisor_migrated');
-            if (!migratedV162) {
-              if (this.data.materias && this.data.materias.length > 0) {
-                this.dividirMateriasSalvasPorNumeracao(true);
-              }
-              localStorage.setItem('concurso_v162_divisor_migrated', 'true');
-            }
-          });
-
           safeRun('Ouvintes de Atualização', () => this.initUpdateListeners());
           safeRun('Leitor de PDF', () => this.initPdfReader());
 
@@ -13534,7 +13549,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             if (profiler) profiler.mark('update_check_end');
           });
 
-          // Sincronização em nuvem em segundo plano com indicador discreto
+          // Sincronização em nuvem em segundo plano com indicador discreto (executa uma única vez)
           safeRun('Sincronização em Nuvem', () => {
             if (typeof SyncManager !== 'undefined' && SyncManager.init) {
               if (profiler) profiler.mark('sync_start');
@@ -13659,13 +13674,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         this.updateHoursBadge();
       },
 
-      saveToStorage(immediate = false) {
+      saveToStorage(immediate = false, triggerCloud = true) {
         if (immediate) {
           if (this._saveTimer) {
             clearTimeout(this._saveTimer);
             this._saveTimer = null;
           }
-          this._doSaveToStorage();
+          this._doSaveToStorage(triggerCloud);
           return;
         }
 
@@ -13673,11 +13688,11 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         if (this._saveTimer) clearTimeout(this._saveTimer);
         this._saveTimer = setTimeout(() => {
           this._saveTimer = null;
-          this._doSaveToStorage();
+          this._doSaveToStorage(triggerCloud);
         }, 200);
       },
 
-      _doSaveToStorage() {
+      _doSaveToStorage(triggerCloud = true) {
         try {
           localStorage.setItem('concurso_app_data', JSON.stringify(this.data));
           localStorage.setItem('concurso_schedules_list', JSON.stringify(this.schedules));
@@ -13701,7 +13716,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
 
         // Sincronização em nuvem automática (Parte C)
-        if (typeof SyncManager !== 'undefined' && SyncManager.debouncedSync) {
+        if (triggerCloud && typeof SyncManager !== 'undefined' && SyncManager.debouncedSync) {
           SyncManager.debouncedSync();
         }
       },
@@ -14455,6 +14470,17 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         if (tabId === 'tab-library') {
           if (typeof LibraryManager !== 'undefined' && LibraryManager.refresh) {
             LibraryManager.refresh();
+          }
+        }
+
+        if (tabId === 'tab-pdf-reader') {
+          if (this.pdfReader.hasPendingRestore && !this.pdfReader.doc) {
+            this.pdfReader.hasPendingRestore = false;
+            PdfStorage.getFile('active').then(rec => {
+              if (rec && rec.data) {
+                App.loadPdfFromBuffer(rec.data, rec.name || 'Último PDF Aberto', false, 'active');
+              }
+            }).catch(() => {});
           }
         }
 
@@ -21612,12 +21638,8 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
           }
         }).catch(() => {});
 
-        // Restaura em segundo plano o último PDF aberto, se existir
-        PdfStorage.getFile('active').then(rec => {
-          if (rec && rec.data) {
-            App.loadPdfFromBuffer(rec.data, rec.name || 'Último PDF Aberto', false, 'active');
-          }
-        }).catch(() => {});
+        // Marca flag para restauração sob demanda somente se o usuário acessar a aba de Leitura
+        this.pdfReader.hasPendingRestore = true;
       },
 
       updatePdfEditalButtons(hasEdital) {
