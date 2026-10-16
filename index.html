@@ -21605,9 +21605,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
             const slotCard = document.createElement('div');
             slotCard.className = `clean-slot-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`;
             slotCard.id = `card-${slot.slotKey}`;
-            slotCard.style.borderLeftColor = pal.border || 'var(--primary)';
-            slotCard.style.background = pal.bg;
-            slotCard.style.color = pal.text;
+            slotCard.style.borderLeft = `4px solid ${pal.border || pal.text || 'var(--accent-primary)'}`;
             slotCard.draggable = true;
             slotCard.title = `${slot.subjectName}\n\n${slot.topic || ''}`;
 
@@ -21815,9 +21813,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
             const slotCard = document.createElement('div');
             slotCard.className = `clean-slot-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`;
             slotCard.id = `mob-card-${slot.slotKey}`;
-            slotCard.style.borderLeftColor = pal.border || 'var(--primary)';
-            slotCard.style.background = pal.bg;
-            slotCard.style.color = pal.text;
+            slotCard.style.borderLeft = `4px solid ${pal.border || pal.text || 'var(--accent-primary)'}`;
 
             slotCard.onclick = (e) => {
               if (e.target && e.target.type === 'checkbox') return;

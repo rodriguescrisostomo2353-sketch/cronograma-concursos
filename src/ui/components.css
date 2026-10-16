@@ -650,4 +650,141 @@
   font-weight: 700;
 }
 
+/* ==============================================================================
+   9. CRONOGRAMA TÁTICO (GRADE DESKTOP & DIA ÚNICO MOBILE)
+   ============================================================================== */
+.schedule-column {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.schedule-col-header {
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.schedule-col-header h4 {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.schedule-col-header span {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.schedule-col-body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+/* Cartões de Sessão Táticos */
+.clean-slot-card {
+  background: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 10px 12px !important;
+  margin-bottom: 6px;
+  transition: all var(--transition-fast) !important;
+  cursor: pointer;
+}
+
+.clean-slot-card:hover {
+  border-color: var(--border-focus) !important;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.clean-slot-card.completed {
+  opacity: 0.6;
+  background: var(--bg-subtle) !important;
+}
+
+.clean-slot-card.completed .clean-slot-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.clean-slot-time {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-primary) !important;
+}
+
+.clean-slot-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main) !important;
+  margin-top: 3px;
+}
+
+.clean-slot-topic {
+  font-size: 0.76rem;
+  color: var(--text-muted) !important;
+  margin-top: 2px;
+}
+
+/* Navegação Mobile do Cronograma */
+.mobile-day-pill {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.mobile-day-pill.active {
+  background: var(--accent-primary);
+  color: #0E1116;
+  border-color: var(--accent-primary);
+  font-weight: 800;
+}
+
+.mobile-day-pill.today-highlight:not(.active) {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.col-add-session-btn {
+  background: var(--bg-subtle);
+  border: 1px dashed var(--border-color);
+  color: var(--text-muted);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  transition: all var(--transition-fast);
+}
+
+.col-add-session-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--text-main);
+  background: var(--bg-card);
+}
+
+
 
