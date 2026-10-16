@@ -67,6 +67,7 @@ public class UserDataController : ControllerBase
             PdfAnnotations = JsonDocument.Parse(data.PdfAnnotationsJson).RootElement,
             PdfBookmarks = JsonDocument.Parse(data.PdfBookmarksJson).RootElement,
             DataVersion = data.DataVersion,
+            ResetEpoch = data.ResetEpoch,
             DeviceId = data.DeviceId,
             Revision = data.Revision,
             ContentHash = data.ContentHash,
@@ -137,6 +138,9 @@ public class UserDataController : ControllerBase
         if (payload.DataVersion.HasValue)
             data.DataVersion = payload.DataVersion.Value;
 
+        if (payload.ResetEpoch.HasValue && payload.ResetEpoch.Value > data.ResetEpoch)
+            data.ResetEpoch = payload.ResetEpoch.Value;
+
         if (!string.IsNullOrEmpty(payload.DeviceId))
             data.DeviceId = payload.DeviceId;
 
@@ -149,7 +153,7 @@ public class UserDataController : ControllerBase
         data.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-        _logger.LogInformation("Dados sincronizados com sucesso para usuário {UserId} (DeviceId: {DeviceId}, Rev: {Rev})", userId, data.DeviceId, data.Revision);
+        _logger.LogInformation("Dados sincronizados com sucesso para usuário {UserId} (DeviceId: {DeviceId}, Rev: {Rev}, Epoch: {Epoch})", userId, data.DeviceId, data.Revision, data.ResetEpoch);
 
         return Ok(new SyncResponse
         {
@@ -165,7 +169,7 @@ public class UserDataController : ControllerBase
         var userId = GetCurrentUserId();
         var data = await _context.UserData
             .AsNoTracking()
-            .Select(d => new { d.UserId, d.UpdatedAt, d.DataVersion, d.DeviceId, d.Revision, d.ContentHash })
+            .Select(d => new { d.UserId, d.UpdatedAt, d.DataVersion, d.ResetEpoch, d.DeviceId, d.Revision, d.ContentHash })
             .FirstOrDefaultAsync(d => d.UserId == userId);
 
         return Ok(new SyncCheckResponse
@@ -173,6 +177,7 @@ public class UserDataController : ControllerBase
             HasData = data != null,
             UpdatedAt = data?.UpdatedAt,
             DataVersion = data?.DataVersion ?? 1,
+            ResetEpoch = data?.ResetEpoch ?? 0,
             DeviceId = data?.DeviceId,
             Revision = data?.Revision ?? 1,
             ContentHash = data?.ContentHash,

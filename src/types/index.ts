@@ -140,6 +140,7 @@ export interface CloudSyncPayload {
   device_id?: string;
   revision?: number;
   content_hash?: string;
+  reset_epoch?: number;
   updated_at?: string;
 }
 
@@ -147,6 +148,7 @@ export interface SyncCheckResult {
   hasData: boolean;
   updatedAt?: string | null;
   dataVersion: number;
+  resetEpoch?: number;
   deviceId?: string | null;
   revision: number;
   contentHash?: string | null;

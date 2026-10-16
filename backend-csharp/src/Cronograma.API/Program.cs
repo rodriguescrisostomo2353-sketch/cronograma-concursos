@@ -133,6 +133,11 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
+    try
+    {
+        db.Database.ExecuteSqlRaw("ALTER TABLE UserData ADD COLUMN ResetEpoch INTEGER NOT NULL DEFAULT 0;");
+    }
+    catch { /* Coluna ResetEpoch já existe */ }
 }
 
 // 10. Pipeline HTTP e Swagger (Habilitado para fácil teste na nuvem)

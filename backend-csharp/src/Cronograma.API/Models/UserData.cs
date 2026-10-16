@@ -46,6 +46,8 @@ public class UserData
 
     public int DataVersion { get; set; } = 1;
 
+    public long ResetEpoch { get; set; } = 0;
+
     [MaxLength(100)]
     public string? DeviceId { get; set; }
 
