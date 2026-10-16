@@ -83,8 +83,7 @@
   <script>
     (function() {
       const savedTheme = localStorage.getItem('concurso_theme_preference');
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+      const theme = savedTheme || 'dark';
       document.documentElement.setAttribute('data-theme', theme);
     })();
   </script>
@@ -100,124 +99,170 @@
 
   <!-- Módulo de Horas de Estudo (CSS) -->
   <link rel="stylesheet" href="study-hours.css">
+  <!-- Tokens de Design Modular -->
+  <link rel="stylesheet" href="src/styles/tokens.css">
+  <link rel="stylesheet" href="src/ui/components.css">
 
   <style>
     /* ==========================================================================
-       1. VARIÁVEIS DE DESIGN & TONS PASTEL (TEMA CLARO DEFAULT)
+       1. VARIÁVEIS DE DESIGN TÁTICO (TEMA ESCURO OPERACIONAL DEFAULT)
        ========================================================================== */
-    :root {
-      --bg-page: #fbfbfe;
-      --bg-card: #ffffff;
-      --bg-subtle: #f4f6fa;
-      --bg-header: rgba(255, 255, 255, 0.94);
-      --border-color: #e5e9f2;
-      --border-focus: #cbd5e1;
-      
-      --text-main: #1e293b;
-      --text-muted: #64748b;
-      --text-light: #94a3b8;
-      
-      /* Tons Pastel Curados - Tema Claro */
-      --pastel-blue-bg: #e0f2fe;
-      --pastel-blue-border: #bae6fd;
-      --pastel-blue-text: #0369a1;
+    :root, :root[data-theme="dark"] {
+      --bg-page: #0E1116;
+      --bg-app: #0E1116;
+      --bg-card: #151A21;
+      --bg-subtle: #1C222B;
+      --bg-elevated: #1C222B;
+      --bg-header: rgba(14, 17, 22, 0.94);
+      --border-color: #262E39;
+      --border-focus: #F5A524;
+      --border-subtle: rgba(255, 255, 255, 0.06);
 
-      --pastel-green-bg: #dcfce7;
-      --pastel-green-border: #bbf7d0;
-      --pastel-green-text: #15803d;
+      --text-main: #E8ECF1;
+      --text-muted: #8B96A5;
+      --text-dimmed: #5E6977;
+      --text-light: #8B96A5;
 
-      --pastel-purple-bg: #ede9fe;
-      --pastel-purple-border: #ddd6fe;
-      --pastel-purple-text: #6d28d9;
+      /* Cores de Ação e Destaque Tático */
+      --accent-primary: #F5A524;
+      --accent-hover: #E0921B;
+      --accent-soft: rgba(245, 165, 36, 0.12);
+      --accent-border: rgba(245, 165, 36, 0.3);
+      --accent-contrast: #0E1116;
 
-      --pastel-amber-bg: #fef3c7;
-      --pastel-amber-border: #fde68a;
-      --pastel-amber-text: #b45309;
+      /* Status Funcionais */
+      --color-success: #3DDC97;
+      --color-success-soft: rgba(61, 220, 151, 0.12);
+      --color-warning: #FFB020;
+      --color-warning-soft: rgba(255, 176, 32, 0.12);
+      --color-danger: #FF5C5C;
+      --color-danger-soft: rgba(255, 92, 92, 0.12);
+      --color-info: #4DA3FF;
+      --color-info-soft: rgba(77, 163, 255, 0.12);
 
-      --pastel-rose-bg: #ffe4e6;
-      --pastel-rose-border: #fecdd3;
-      --pastel-rose-text: #be123c;
+      /* Tons de Disciplinas - Tema Escuro */
+      --pastel-blue-bg: #14283E;
+      --pastel-blue-border: #1E456D;
+      --pastel-blue-text: #7DD3FC;
 
-      --pastel-teal-bg: #ccfbf1;
-      --pastel-teal-border: #99f6e4;
-      --pastel-teal-text: #0f766e;
+      --pastel-green-bg: #122E20;
+      --pastel-green-border: #195234;
+      --pastel-green-text: #86EFAC;
 
-      --pastel-indigo-bg: #e0e7ff;
-      --pastel-indigo-border: #c7d2fe;
-      --pastel-indigo-text: #4338ca;
+      --pastel-purple-bg: #271C3F;
+      --pastel-purple-border: #442D72;
+      --pastel-purple-text: #C4B5FD;
 
-      --pastel-peach-bg: #ffedd5;
-      --pastel-peach-border: #fed7aa;
-      --pastel-peach-text: #c2410c;
+      --pastel-amber-bg: #322514;
+      --pastel-amber-border: #5A3E1A;
+      --pastel-amber-text: #FDE047;
 
-      --pastel-neutral-bg: #f1f5f9;
-      --pastel-neutral-border: #e2e8f0;
-      --pastel-neutral-text: #475569;
+      --pastel-rose-bg: #351721;
+      --pastel-rose-border: #5D2233;
+      --pastel-rose-text: #FDA4AF;
+
+      --pastel-teal-bg: #112D2A;
+      --pastel-teal-border: #194E48;
+      --pastel-teal-text: #5EEAD4;
+
+      --pastel-indigo-bg: #1F2349;
+      --pastel-indigo-border: #323C7B;
+      --pastel-indigo-text: #A5B4FC;
+
+      --pastel-peach-bg: #382015;
+      --pastel-peach-border: #623620;
+      --pastel-peach-text: #FDBA74;
+
+      --pastel-neutral-bg: #1C222B;
+      --pastel-neutral-border: #2B3441;
+      --pastel-neutral-text: #CBD5E1;
 
       --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 18px;
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-      --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
-      --shadow-lg: 0 10px 25px -3px rgba(15, 23, 42, 0.06), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
-      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-full: 9999px;
+      --min-touch-target: 44px;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 3px 10px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+      --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* ==========================================================================
-       TEMA ESCURO (Dark Mode Confortável e Suave)
+       2. TEMA CLARO (EQUIVALENTE TÁTICO DIURNO - WCAG 4.5:1+)
        ========================================================================== */
-    :root[data-theme="dark"] {
-      --bg-page: #0f172a;        /* Fundo cinza-escuro suave (não preto puro) */
-      --bg-card: #1e293b;        /* Superfície dos cards */
-      --bg-subtle: #273549;      /* Fundos secundários e abas */
-      --bg-header: rgba(15, 23, 42, 0.94);
-      --border-color: #334155;    /* Linhas e divisores discretos */
-      --border-focus: #475569;
-      
-      --text-main: #f8fafc;      /* Texto de alto contraste e boa leitura */
-      --text-muted: #94a3b8;
-      --text-light: #64748b;
-      
-      /* Tons Pastel Adaptados para Tema Escuro (confortáveis e luminosos) */
-      --pastel-blue-bg: #14283e;
-      --pastel-blue-border: #1e456d;
-      --pastel-blue-text: #7dd3fc;
+    :root[data-theme="light"] {
+      --bg-page: #F4F6F9;
+      --bg-app: #F4F6F9;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #EDF1F6;
+      --bg-elevated: #EDF1F6;
+      --bg-header: rgba(244, 246, 249, 0.94);
+      --border-color: #D5DCE5;
+      --border-focus: #D97706;
+      --border-subtle: rgba(0, 0, 0, 0.06);
 
-      --pastel-green-bg: #122e20;
-      --pastel-green-border: #195234;
-      --pastel-green-text: #86efac;
+      --text-main: #0F172A;
+      --text-muted: #525F72;
+      --text-dimmed: #7E8D9F;
+      --text-light: #525F72;
 
-      --pastel-purple-bg: #271c3f;
-      --pastel-purple-border: #442d72;
-      --pastel-purple-text: #c4b5fd;
+      --accent-primary: #D97706;
+      --accent-hover: #B45309;
+      --accent-soft: rgba(217, 119, 6, 0.1);
+      --accent-border: rgba(217, 119, 6, 0.3);
+      --accent-contrast: #FFFFFF;
 
-      --pastel-amber-bg: #322514;
-      --pastel-amber-border: #5a3e1a;
-      --pastel-amber-text: #fde047;
+      --color-success: #059669;
+      --color-success-soft: rgba(5, 150, 105, 0.1);
+      --color-warning: #D97706;
+      --color-warning-soft: rgba(217, 119, 6, 0.1);
+      --color-danger: #DC2626;
+      --color-danger-soft: rgba(220, 38, 38, 0.1);
+      --color-info: #2563EB;
+      --color-info-soft: rgba(37, 99, 235, 0.1);
 
-      --pastel-rose-bg: #351721;
-      --pastel-rose-border: #5d2233;
-      --pastel-rose-text: #fda4af;
+      /* Tons de Disciplinas - Tema Claro */
+      --pastel-blue-bg: #E0F2FE;
+      --pastel-blue-border: #BAE6FD;
+      --pastel-blue-text: #0369A1;
 
-      --pastel-teal-bg: #112d2a;
-      --pastel-teal-border: #194e48;
-      --pastel-teal-text: #5eead4;
+      --pastel-green-bg: #DCFCE7;
+      --pastel-green-border: #BBF7D0;
+      --pastel-green-text: #15803D;
 
-      --pastel-indigo-bg: #1f2349;
-      --pastel-indigo-border: #323c7b;
-      --pastel-indigo-text: #a5b4fc;
+      --pastel-purple-bg: #EDE9FE;
+      --pastel-purple-border: #DDD6FE;
+      --pastel-purple-text: #6D28D9;
 
-      --pastel-peach-bg: #361f14;
-      --pastel-peach-border: #5d331d;
-      --pastel-peach-text: #fdba74;
+      --pastel-amber-bg: #FEF3C7;
+      --pastel-amber-border: #FDE68A;
+      --pastel-amber-text: #92400E;
 
-      --pastel-neutral-bg: #1e293b;
-      --pastel-neutral-border: #334155;
-      --pastel-neutral-text: #cbd5e1;
+      --pastel-rose-bg: #FFE4E6;
+      --pastel-rose-border: #FECDD3;
+      --pastel-rose-text: #BE123C;
 
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
-      --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
-      --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.45);
+      --pastel-teal-bg: #CCFBF1;
+      --pastel-teal-border: #99F6E4;
+      --pastel-teal-text: #0F766E;
+
+      --pastel-indigo-bg: #E0E7FF;
+      --pastel-indigo-border: #C7D2FE;
+      --pastel-indigo-text: #4338CA;
+
+      --pastel-peach-bg: #FFEDD5;
+      --pastel-peach-border: #FED7AA;
+      --pastel-peach-text: #C2410C;
+
+      --pastel-neutral-bg: #F1F5F9;
+      --pastel-neutral-border: #E2E8F0;
+      --pastel-neutral-text: #334155;
+
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 3px 10px rgba(15, 23, 42, 0.07);
+      --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.1);
     }
 
     html, body {
@@ -5498,6 +5543,7 @@
       overflow: hidden;
       display: -webkit-box;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       -webkit-box-orient: vertical;
     }
 
@@ -5589,32 +5635,32 @@
   <!-- ==========================================================================
        CABEÇALHO
        ========================================================================== -->
-  <header>
-    <div class="container header-inner">
-      <div class="logo-area">
-        <div class="logo-badge">📚</div>
+  <header class="app-tactical-header">
+    <div class="container header-inner" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px;">
+      <div class="logo-area" onclick="App.switchTab('tab-today')" style="cursor: pointer; display: flex; align-items: center; gap: 10px;">
+        <div class="logo-badge" style="font-size: 1.4rem;">🛡️</div>
         <div class="logo-titles">
-          <h1>Cronograma de Concursos</h1>
-          <p>Leitura de edital em PDF & criação de cronogramas inteligentes</p>
+          <h1 style="margin: 0; font-size: 1.05rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text-main);">
+            CRONOGRAMA <span style="color: var(--accent-primary);">TÁTICO</span>
+          </h1>
+          <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+            Estudo & Disciplina Operacional
+          </p>
         </div>
       </div>
-      <div class="header-actions">
-        <!-- Botão de Sincronização em Nuvem / Conta (Parte C) -->
-        <button id="btnHeaderAuth" class="btn btn-secondary btn-sm header-auth-btn" onclick="App.openAuthOrSyncModal()" title="Conta e Sincronização em Nuvem" aria-label="Conta e Sincronização">
-          <span id="headerSyncIcon">☁️</span>
-          <span id="headerAuthText">Entrar</span>
-          <span class="sync-dot mode-local" id="headerSyncDot" title="Modo Local"></span>
+      <div class="header-actions" style="display: flex; align-items: center; gap: 8px;">
+        <!-- Indicador de Sincronização / Nuvem no Topo -->
+        <button id="btnHeaderAuth" class="header-sync-pill" onclick="App.openAuthOrSyncModal()" title="Conta e Sincronização em Nuvem" aria-label="Conta e Sincronização">
+          <span class="sync-dot-tactical online" id="headerSyncDot" title="Sincronização Ativa"></span>
+          <span id="headerAuthText" style="font-size: 0.75rem;">Entrar</span>
         </button>
-        <!-- Botão de Alternância de Tema Escuro / Claro -->
-        <button id="btnToggleTheme" class="btn btn-secondary btn-sm theme-toggle-btn" title="Alternar entre tema claro e escuro" aria-label="Alternar tema">
+        <!-- Alternar Tema Escuro / Claro -->
+        <button id="btnToggleTheme" class="btn-icon" title="Alternar tema claro/escuro" aria-label="Alternar tema">
           <span id="themeToggleIcon">🌙</span>
-          <span id="themeToggleText">Escuro</span>
         </button>
-        <button id="btnLoadDemo" class="btn btn-secondary btn-sm" title="Carregar disciplinas de exemplo para testar">
-          ✨ Carregar Exemplo
-        </button>
-        <button id="btnClearAll" class="btn btn-danger-soft btn-sm" title="Limpar todos os dados salvos">
-          🗑️ Limpar Dados
+        <!-- Menu de Ações Secundárias (⋮) -->
+        <button id="btnHeaderMoreActions" class="btn-icon" onclick="App.toggleMoreMenuSheet()" title="Mais Ações" aria-label="Menu de Ações">
+          <span style="font-size: 1.2rem; font-weight: 700;">⋮</span>
         </button>
       </div>
     </div>
@@ -5627,8 +5673,11 @@
     
     <!-- Navegação em Abas (Desktop) -->
     <nav class="nav-tabs" aria-label="Navegação do aplicativo">
-      <button class="nav-tab-btn active" data-tab="tab-subjects">
-        📚 Matérias & Tópicos <span class="tab-badge" id="badgeSubjectsCount">0</span>
+      <button class="nav-tab-btn active" data-tab="tab-today">
+        🎯 Hoje
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-subjects">
+        📋 Edital <span class="tab-badge" id="badgeSubjectsCount">0</span>
       </button>
       <button class="nav-tab-btn" data-tab="tab-schedule">
         🗓️ Cronograma
@@ -5636,27 +5685,143 @@
       <button class="nav-tab-btn" data-tab="tab-study-hours">
         ⏱️ Horas de Estudo
       </button>
-      <button class="nav-tab-btn" data-tab="tab-pdf-reader">
-        📖 Leitor de PDF
-      </button>
       <button class="nav-tab-btn" data-tab="tab-library">
         📁 Biblioteca <span class="tab-badge" id="badgeLibraryCount" style="display: none;">0</span>
-      </button>
-      <button class="nav-tab-btn" data-tab="tab-upload">
-        📄 Upload do Edital
-      </button>
-      <button class="nav-tab-btn" data-tab="tab-updates">
-        🔄 Atualizações <span class="tab-badge-dot" id="topUpdatesBadgeDot" style="display: none;"></span>
       </button>
       <button class="nav-tab-btn" data-tab="tab-settings">
         ⚙️ Ajustes
       </button>
+      <button class="nav-tab-btn" data-tab="tab-upload" style="display: none;">
+        📄 Upload do Edital
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-pdf-reader" style="display: none;">
+        📖 Leitor de PDF
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-updates" style="display: none;">
+        🔄 Atualizações <span class="tab-badge-dot" id="topUpdatesBadgeDot" style="display: none;"></span>
+      </button>
     </nav>
+
+    <!-- ========================================================================
+         ABA 0: HOJE ("DIREÇÃO DO DIA" - NOVO DASHBOARD INICIAL)
+         ======================================================================== -->
+    <section id="tab-today" class="tab-content active">
+      <!-- Card Hero: Missão do Dia e Saudação -->
+      <div class="today-hero-card tactical-card" style="margin-bottom: 20px;">
+        <div class="today-hero-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <div class="tactical-badge" style="margin-bottom: 6px;">
+              <span class="sync-dot-tactical online"></span> MISSÃO OPERACIONAL DO DIA
+            </div>
+            <h2 id="todayGreeting" style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--text-main);">
+              Bom dia, Guerreiro!
+            </h2>
+            <p id="todayDateSubtitle" style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">
+              Carregando calendário...
+            </p>
+          </div>
+          <!-- Contagem Regressiva para a Prova -->
+          <div id="todayExamCountdownBox" class="today-countdown-box" onclick="App.openExamDateModal()" title="Clique para configurar ou ver a contagem da prova">
+            <span class="countdown-clock-icon">⏳</span>
+            <div style="text-align: right;">
+              <div id="todayExamCountdownDays" style="font-size: 1.1rem; font-weight: 800; color: var(--accent-primary);">-- DIAS</div>
+              <div id="todayExamTitle" style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Prova Alvo</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grade de Estatísticas Rápidas de Estudo (Hoje, Semana, Conclusão) -->
+        <div class="today-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-top: 18px;">
+          <div class="stat-card-tactical">
+            <span class="stat-label-tactical">Estudado Hoje</span>
+            <span class="stat-value-tactical" id="todayHoursValue">0h 0m</span>
+            <span class="stat-subtext-tactical" id="todaySlotsProgressText">0 de 0 sessões</span>
+          </div>
+          <div class="stat-card-tactical">
+            <span class="stat-label-tactical">Nesta Semana</span>
+            <span class="stat-value-tactical" id="weekHoursValue">0h 0m</span>
+            <span class="stat-subtext-tactical" id="weekStreakSubtext">Ritmo constante</span>
+          </div>
+          <div class="stat-card-tactical" style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+            <div>
+              <span class="stat-label-tactical">Meta do Dia</span>
+              <span class="stat-value-tactical" id="todayPercentText">0%</span>
+              <span class="stat-subtext-tactical" id="todayCompletedText">0 concluídos</span>
+            </div>
+            <!-- Anel de Progresso SVG -->
+            <div class="progress-ring-container" style="width: 50px; height: 50px;">
+              <svg width="50" height="50" viewBox="0 0 50 50">
+                <circle cx="25" cy="25" r="20" fill="none" stroke="var(--bg-subtle)" stroke-width="5"/>
+                <circle id="todayProgressRingCircle" cx="25" cy="25" r="20" fill="none" stroke="var(--accent-primary)" stroke-width="5"
+                  stroke-dasharray="125.66" stroke-dashoffset="125.66" stroke-linecap="round"
+                  transform="rotate(-90 25 25)" style="transition: stroke-dashoffset 0.4s ease;"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cartão Principal: O Que Estudar Hoje -->
+      <div class="tactical-card" style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+              <span>🎯</span> O Que Estudar Hoje
+            </h3>
+            <span id="todayScheduleDayLabel" style="font-size: 0.78rem; color: var(--text-muted);">Sessões programadas para o dia</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('tab-schedule')">
+              🗓️ Ver Semana
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.openAutoSchedulePreview()">
+              ⚡ Ajustar Ciclo
+            </button>
+          </div>
+        </div>
+
+        <!-- Lista de Sessões do Dia (Populada Dinamicamente) -->
+        <div id="todaySessionsList" style="display: flex; flex-direction: column; gap: 10px;">
+          <!-- Sessões injetadas via App.renderTodayView() -->
+        </div>
+
+        <!-- Estado Vazio caso não haja sessões para hoje -->
+        <div id="todayEmptyState" class="empty-state-tactical" style="display: none;">
+          <div class="empty-state-icon">🗓️</div>
+          <h4 class="empty-state-title">Nenhum cronograma gerado para hoje</h4>
+          <p class="empty-state-desc">Gere seu ciclo de estudos automático ou adicione sessões para visualizar sua missão diária aqui.</p>
+          <button type="button" class="btn btn-primary" onclick="App.openAutoSchedulePreview()">
+            ⚡ Gerar Cronograma Inteligente
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra de Atalhos Rápidos Operacionais -->
+      <div class="today-quick-actions-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 24px;">
+        <div class="tactical-card" style="cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 12px 14px;" onclick="App.resumeLastPdf()">
+          <span style="font-size: 1.6rem;">📖</span>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Continuar Leitura</div>
+            <div id="todayLastPdfName" style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Nenhum PDF recente</div>
+          </div>
+          <span style="color: var(--accent-primary); font-weight: 700;">➔</span>
+        </div>
+
+        <div class="tactical-card" style="cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 12px 14px;" onclick="App.switchTab('tab-subjects')">
+          <span style="font-size: 1.6rem;">📋</span>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Edital Verticalizado</div>
+            <div id="todaySubjectsQuickCount" style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Ver progresso dos tópicos</div>
+          </div>
+          <span style="color: var(--accent-primary); font-weight: 700;">➔</span>
+        </div>
+      </div>
+    </section>
 
     <!-- ========================================================================
          ABA 1: UPLOAD DE PDF DO EDITAL
          ======================================================================== -->
-    <section id="tab-upload" class="tab-content active">
+    <section id="tab-upload" class="tab-content">
       <div class="upload-card" id="dropZone">
         <div class="upload-icon">📑</div>
         <h3>Arraste o PDF do Edital ou Clique para Selecionar</h3>
@@ -5705,12 +5870,71 @@
     </section>
 
     <!-- ========================================================================
-         ABA 2: MATÉRIAS GRAVADAS & TÓPICOS
+         ABA 2: EDITAL VERTICALIZADO INTERATIVO (ETAPA 3.2)
          ======================================================================== -->
     <section id="tab-subjects" class="tab-content">
-      <div class="section-header">
+      
+      <!-- 1. Barra de Progresso Geral do Edital no Topo -->
+      <div class="tactical-card" id="editalOverallSummaryCard" style="margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+          <div>
+            <div style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-primary);">
+              EDITAL VERTICALIZADO INTERATIVO
+            </div>
+            <h3 style="margin: 2px 0 0 0; font-size: 1.15rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+              <span>📋</span> Progresso Geral do Edital
+            </h3>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="text-align: right;">
+              <span id="editalOverallPercent" style="font-size: 1.35rem; font-weight: 800; color: var(--accent-primary);">0%</span>
+              <div id="editalOverallRatio" style="font-size: 0.76rem; color: var(--text-muted);">0 de 0 tópicos concluídos</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de Progresso Tática -->
+        <div class="progress-bar-tactical" style="height: 10px; margin-bottom: 12px;">
+          <div class="progress-fill-tactical" id="editalOverallProgressFill" style="width: 0%;"></div>
+        </div>
+
+        <!-- Estatísticas Rápidas do Edital -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+          <div>
+            <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Total Matérias</span>
+            <div id="editalTotalSubjectsStat" style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">0</div>
+          </div>
+          <div>
+            <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Horas Acumuladas</span>
+            <div id="editalTotalHoursStat" style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">0h 0m</div>
+          </div>
+          <div>
+            <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Tópicos Pendentes</span>
+            <div id="editalPendingTopicsStat" style="font-size: 0.95rem; font-weight: 700; color: var(--warning);">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Barra de Busca e Filtro por Status -->
+      <div class="tactical-card" style="margin-bottom: 16px; padding: 12px 14px;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+          <div style="flex: 1; min-width: 220px; position: relative;">
+            <input type="text" id="editalSearchInput" class="input-field" placeholder="🔍 Buscar matéria ou tópico no edital..."
+              oninput="App.handleEditalSearch(this.value)" style="margin: 0; padding-left: 12px; height: 38px;">
+          </div>
+          <div class="filter-pills" id="editalStatusFilterPills" style="display: flex; gap: 6px; overflow-x: auto; max-width: 100%; padding-bottom: 2px;">
+            <button type="button" class="chip active" data-status="all" onclick="App.setEditalStatusFilter('all')">Todos</button>
+            <button type="button" class="chip" data-status="pending" onclick="App.setEditalStatusFilter('pending')">Não Iniciados</button>
+            <button type="button" class="chip" data-status="studying" onclick="App.setEditalStatusFilter('studying')">Estudando</button>
+            <button type="button" class="chip" data-status="review" onclick="App.setEditalStatusFilter('review')">Revisar</button>
+            <button type="button" class="chip" data-status="completed" onclick="App.setEditalStatusFilter('completed')">Concluídos</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-bottom: 12px;">
         <div class="section-title">
-          <span>Matérias Identificadas</span>
+          <span>Matérias do Edital</span>
           <span class="section-count" id="headerCountLabel">0 matérias cadastradas</span>
         </div>
         <!-- Ações no Computador (Desktop) -->
@@ -5724,17 +5948,17 @@
           <button class="btn btn-secondary btn-sm" id="btnSplitByNumbering" onclick="App.dividirTopicosPorNumeracaoPrompt()" title="Dividir tópicos por numeração hierárquica (ex.: 7.1, 7.1.1)">
             🔢 Dividir por numeração
           </button>
-          <button class="btn btn-secondary btn-sm" id="btnExpandAll">
+          <button class="btn btn-secondary btn-sm" id="btnExpandAll" onclick="App.toggleExpandAll()">
             ↕️ Expandir/Recolher
           </button>
-          <button class="btn btn-pastel-purple btn-sm" id="btnOpenAddSubjectModal">
+          <button class="btn btn-primary btn-sm" id="btnOpenAddSubjectModal" onclick="App.openAddSubjectModal()">
             ➕ Adicionar Matéria
           </button>
         </div>
 
         <!-- Ações no Celular (Mobile) -->
         <div class="subject-header-mobile-actions">
-          <button type="button" class="btn btn-pastel-purple btn-sm" onclick="App.openAddSubjectModal()" style="min-height: 40px; padding: 6px 12px; font-weight: 600;">
+          <button type="button" class="btn btn-primary btn-sm" onclick="App.openAddSubjectModal()" style="min-height: 40px; padding: 6px 12px; font-weight: 600;">
             ➕ Nova
           </button>
           <div class="dropdown-menu-wrapper" id="subjectMoreMenuWrapper">
@@ -6514,14 +6738,14 @@
               <ul class="new-version-notes-list" id="newVersionNotesList">
                 <!-- Inserido dinamicamente -->
               </ul>
-              <a id="btnDownloadApk" href="#" target="_blank" class="btn btn-primary btn-lg" style="width: 100%; text-decoration: none; margin-top: 14px; text-align: center;">
+              <a id="btnDownloadApk" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg" style="width: 100%; text-decoration: none; margin-top: 14px; text-align: center;">
                 📥 Baixar Nova Versão (APK)
               </a>
               <div id="downloadHelpBox" style="margin-top: 12px; font-size: 0.82rem; color: var(--text-main); background: rgba(0,0,0,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; display: none;">
                 <p style="margin: 0 0 6px 0; font-weight: 600;">O download não iniciou ou o link deu erro?</p>
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                   <button type="button" id="btnRetryDownload" class="btn btn-sm btn-secondary" style="padding: 4px 10px; font-size: 0.78rem;">🔄 Tentar Novamente</button>
-                  <a id="btnOpenReleasesPage" href="https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases" target="_blank" class="btn btn-sm btn-outline" style="padding: 4px 10px; font-size: 0.78rem; text-decoration: none;">🌐 Abrir no GitHub</a>
+                  <a id="btnOpenReleasesPage" href="https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline" style="padding: 4px 10px; font-size: 0.78rem; text-decoration: none;">🌐 Abrir no GitHub</a>
                 </div>
               </div>
               <p class="new-version-install-tip">
@@ -7025,162 +7249,6 @@
               <span class="info-label">Privacidade</span>
               <span class="info-value">100% Local (seus dados nunca saem do celular)</span>
             </div>
-          </div>
-        </div>
-
-        <!-- Card: Tempo de Abertura & Performance do Aplicativo (Etapa 1 & 6) -->
-        <div class="settings-card" id="settingsStartupPerformanceCard">
-          <div class="settings-card-header">
-            <span class="settings-card-icon">⚡</span>
-            <div>
-              <h3>Tempo de Abertura & Performance</h3>
-              <p>Métricas reais instrumentadas (performance.mark/measure) com abertura instantânea offline-first (&lt; 1,5s)</p>
-            </div>
-          </div>
-          <div class="settings-card-body">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-              <div id="startupTotalBadge" class="performance-badge-good">
-                ⚡ Tempo Total: <strong id="startupTotalValue">0 ms</strong>
-              </div>
-              <div style="display: flex; gap: 6px;">
-                <button type="button" class="btn btn-secondary btn-sm" id="btnCopyStartupMetrics" onclick="App.copyStartupPerformanceMetrics()">
-                  📋 Copiar Métricas
-                </button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="App.renderStartupPerformanceMetrics()">
-                  🔄 Atualizar
-                </button>
-              </div>
-            </div>
-
-            <!-- Tabela de Fases de Abertura -->
-            <div style="overflow-x: auto; margin-bottom: 14px;">
-              <table class="performance-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
-                <thead>
-                  <tr style="border-bottom: 2px solid var(--border-color); text-align: left; color: var(--text-muted);">
-                    <th style="padding: 8px 6px;">Fase da Abertura</th>
-                    <th style="padding: 8px 6px; text-align: right;">Duração</th>
-                    <th style="padding: 8px 6px; text-align: right;">Execução</th>
-                  </tr>
-                </thead>
-                <tbody id="startupPhasesTableBody">
-                  <!-- Inserido dinamicamente via JS -->
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Histórico das 10 últimas aberturas -->
-            <details class="performance-history-details" style="font-size: 0.8rem; margin-top: 8px;">
-              <summary style="cursor: pointer; font-weight: 600; color: var(--primary);">
-                📜 Ver histórico das últimas 10 aberturas
-              </summary>
-              <div id="startupHistoryBox" style="margin-top: 8px; max-height: 160px; overflow-y: auto; font-family: monospace; font-size: 0.74rem; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px; white-space: pre-wrap;">
-Carregando histórico...
-              </div>
-            </details>
-          </div>
-        </div>
-
-        <!-- Card: Tempo de Abertura & Performance do Aplicativo (Etapa 1 & 6) -->
-        <div class="settings-card" id="settingsStartupPerformanceCard">
-          <div class="settings-card-header">
-            <span class="settings-card-icon">⚡</span>
-            <div>
-              <h3>Tempo de Abertura & Performance</h3>
-              <p>Métricas reais instrumentadas (performance.mark/measure) com abertura instantânea offline-first (&lt; 1,5s)</p>
-            </div>
-          </div>
-          <div class="settings-card-body">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-              <div id="startupTotalBadge" class="performance-badge-good">
-                ⚡ Tempo Total: <strong id="startupTotalValue">0 ms</strong>
-              </div>
-              <div style="display: flex; gap: 6px;">
-                <button type="button" class="btn btn-secondary btn-sm" id="btnCopyStartupMetrics" onclick="App.copyStartupPerformanceMetrics()">
-                  📋 Copiar Métricas
-                </button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="App.renderStartupPerformanceMetrics()">
-                  🔄 Atualizar
-                </button>
-              </div>
-            </div>
-
-            <!-- Tabela de Fases de Abertura -->
-            <div style="overflow-x: auto; margin-bottom: 14px;">
-              <table class="performance-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
-                <thead>
-                  <tr style="border-bottom: 2px solid var(--border-color); text-align: left; color: var(--text-muted);">
-                    <th style="padding: 8px 6px;">Fase da Abertura</th>
-                    <th style="padding: 8px 6px; text-align: right;">Duração</th>
-                    <th style="padding: 8px 6px; text-align: right;">Execução</th>
-                  </tr>
-                </thead>
-                <tbody id="startupPhasesTableBody">
-                  <!-- Inserido dinamicamente via JS -->
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Histórico das 10 últimas aberturas -->
-            <details class="performance-history-details" style="font-size: 0.8rem; margin-top: 8px;">
-              <summary style="cursor: pointer; font-weight: 600; color: var(--primary);">
-                📜 Ver histórico das últimas 10 aberturas
-              </summary>
-              <div id="startupHistoryBox" style="margin-top: 8px; max-height: 160px; overflow-y: auto; font-family: monospace; font-size: 0.74rem; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px; white-space: pre-wrap;">
-Carregando histórico...
-              </div>
-            </details>
-          </div>
-        </div>
-
-        <!-- Card: Tempo de Abertura & Performance do Aplicativo (Etapa 1 & 6) -->
-        <div class="settings-card" id="settingsStartupPerformanceCard">
-          <div class="settings-card-header">
-            <span class="settings-card-icon">⚡</span>
-            <div>
-              <h3>Tempo de Abertura & Performance</h3>
-              <p>Métricas reais instrumentadas (performance.mark/measure) com abertura instantânea offline-first (&lt; 1,5s)</p>
-            </div>
-          </div>
-          <div class="settings-card-body">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-              <div id="startupTotalBadge" class="performance-badge-good">
-                ⚡ Tempo Total: <strong id="startupTotalValue">0 ms</strong>
-              </div>
-              <div style="display: flex; gap: 6px;">
-                <button type="button" class="btn btn-secondary btn-sm" id="btnCopyStartupMetrics" onclick="App.copyStartupPerformanceMetrics()">
-                  📋 Copiar Métricas
-                </button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="App.renderStartupPerformanceMetrics()">
-                  🔄 Atualizar
-                </button>
-              </div>
-            </div>
-
-            <!-- Tabela de Fases de Abertura -->
-            <div style="overflow-x: auto; margin-bottom: 14px;">
-              <table class="performance-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
-                <thead>
-                  <tr style="border-bottom: 2px solid var(--border-color); text-align: left; color: var(--text-muted);">
-                    <th style="padding: 8px 6px;">Fase da Abertura</th>
-                    <th style="padding: 8px 6px; text-align: right;">Duração</th>
-                    <th style="padding: 8px 6px; text-align: right;">Execução</th>
-                  </tr>
-                </thead>
-                <tbody id="startupPhasesTableBody">
-                  <!-- Inserido dinamicamente via JS -->
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Histórico das 10 últimas aberturas -->
-            <details class="performance-history-details" style="font-size: 0.8rem; margin-top: 8px;">
-              <summary style="cursor: pointer; font-weight: 600; color: var(--primary);">
-                📜 Ver histórico das últimas 10 aberturas
-              </summary>
-              <div id="startupHistoryBox" style="margin-top: 8px; max-height: 160px; overflow-y: auto; font-family: monospace; font-size: 0.74rem; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px; white-space: pre-wrap;">
-Carregando histórico...
-              </div>
-            </details>
           </div>
         </div>
 
@@ -8600,32 +8668,33 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
     <span class="fab-label" id="fabLabel">Nova Matéria</span>
   </button>
 
-  <!-- Navegação Inferior Fixa (Mobile Bottom Navigation) -->
+  <!-- Navegação Inferior Fixa (Mobile Bottom Navigation - 5 Itens Táticos) -->
   <nav class="bottom-nav" id="bottomNav" aria-label="Navegação Principal Mobile">
-    <button class="bottom-nav-item active" data-tab="tab-subjects">
+    <button class="bottom-nav-item active" data-tab="tab-today" aria-label="Tela Hoje">
       <div class="bottom-nav-icon-wrapper">
-        <span class="bottom-nav-icon">📚</span>
+        <span class="bottom-nav-icon">🎯</span>
+      </div>
+      <span class="bottom-nav-label">Hoje</span>
+    </button>
+    <button class="bottom-nav-item" data-tab="tab-subjects" aria-label="Edital Verticalizado">
+      <div class="bottom-nav-icon-wrapper">
+        <span class="bottom-nav-icon">📋</span>
         <span class="bottom-nav-badge" id="bottomBadgeSubjects">0</span>
       </div>
-      <span class="bottom-nav-label">Matérias</span>
+      <span class="bottom-nav-label">Edital</span>
     </button>
-    <button class="bottom-nav-item" data-tab="tab-schedule">
+    <button class="bottom-nav-item" data-tab="tab-schedule" aria-label="Cronograma Semanal">
       <div class="bottom-nav-icon-wrapper">
         <span class="bottom-nav-icon">🗓️</span>
       </div>
       <span class="bottom-nav-label">Cronograma</span>
     </button>
-    <button class="bottom-nav-item" data-tab="tab-pdf-reader">
+    <button class="bottom-nav-item" data-tab="tab-library" aria-label="Biblioteca Virtual">
       <div class="bottom-nav-icon-wrapper">
-        <span class="bottom-nav-icon">📖</span>
+        <span class="bottom-nav-icon">📁</span>
+        <span class="bottom-nav-badge" id="bottomBadgeLibrary" style="display: none;">0</span>
       </div>
-      <span class="bottom-nav-label">Leitor</span>
-    </button>
-    <button class="bottom-nav-item" data-tab="tab-upload">
-      <div class="bottom-nav-icon-wrapper">
-        <span class="bottom-nav-icon">📄</span>
-      </div>
-      <span class="bottom-nav-label">Edital</span>
+      <span class="bottom-nav-label">Biblioteca</span>
     </button>
     <button class="bottom-nav-item" data-tab="tab-more" id="bottomNavMoreBtn" aria-label="Mais opções">
       <div class="bottom-nav-icon-wrapper">
@@ -8791,7 +8860,22 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
         const safeId = idMateria(m) || ('mat_' + i);
         const safeNome = nomeMateria(m);
-        const safeTopicos = Array.isArray(m.topicos) ? m.topicos.map(t => typeof t === 'string' ? t : (t && t.texto ? t : { ...t, texto: textoSeguro(t) })) : [];
+        const safeTopicos = Array.isArray(m.topicos) ? m.topicos.map((t, tIdx) => {
+          if (typeof t === 'string') {
+            return {
+              id: 'top_' + safeId + '_' + tIdx,
+              texto: t,
+              concluido: false
+            };
+          }
+          const tText = t && t.texto ? t.texto : textoSeguro(t);
+          return {
+            ...t,
+            id: (t && t.id) ? t.id : ('top_' + safeId + '_' + tIdx),
+            texto: tText,
+            concluido: Boolean(t && (t.concluido || t.isDone))
+          };
+        }) : [];
         return {
           ...m,
           id: safeId,
@@ -9135,6 +9219,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
       }
     };
+    window.PdfStorage = PdfStorage;
 
     /**
      * =========================================================================
@@ -9757,6 +9842,85 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      * SINCRONIZAÇÃO EM NUVEM E AUTENTICAÇÃO (PARTE C - SUPABASE)
      * =========================================================================
      */
+    /**
+     * =========================================================================
+     * SISTEMA DE IDENTIFICADORES DETERMINÍSTICOS E ESTÁVEIS (IdUtils)
+     * =========================================================================
+     */
+    const IdUtils = {
+      stableHashString(str, seed = 0) {
+        let h1 = 0xdeadbeef ^ seed;
+        let h2 = 0x41c6ce57 ^ seed;
+        const s = String(str || '');
+        for (let i = 0, ch; i < s.length; i++) {
+          ch = s.charCodeAt(i);
+          h1 = Math.imul(h1 ^ ch, 2654435761);
+          h2 = Math.imul(h2 ^ ch, 1597334677);
+        }
+        h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+        h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+        const hashVal = 4294967296 * (2097151 & h2) + (h1 >>> 0);
+        return hashVal.toString(36).padStart(11, '0');
+      },
+      normalizeKey(text) {
+        return String(text || '')
+          .trim()
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/\s+/g, ' ');
+      },
+      generateUUID() {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+          return crypto.randomUUID();
+        }
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+          const r = (Math.random() * 16) | 0;
+          const v = c === 'x' ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        });
+      },
+      getMateriaId(nome, editalId = 'default', existingId) {
+        if (existingId && typeof existingId === 'string' && existingId.trim() && !existingId.startsWith('mat-temp-')) {
+          return existingId.trim();
+        }
+        const cleanName = this.normalizeKey(nome);
+        const cleanEdital = this.normalizeKey(editalId);
+        const hash = this.stableHashString(`${cleanEdital}::${cleanName}`);
+        return `mat_${hash}`;
+      },
+      getTopicoId(materiaNomeOrId, numero, texto, editalId = 'default', existingId) {
+        if (existingId && typeof existingId === 'string' && existingId.trim() && !existingId.startsWith('top-temp-')) {
+          return existingId.trim();
+        }
+        const cleanEdital = this.normalizeKey(editalId);
+        const cleanMat = this.normalizeKey(materiaNomeOrId);
+        const cleanNum = numero ? String(numero).trim() : '';
+        const cleanText = this.normalizeKey(texto);
+        const key = `${cleanEdital}::${cleanMat}::${cleanNum}::${cleanText}`;
+        const hash = this.stableHashString(key);
+        return `top_${hash}`;
+      },
+      getStudyLogId(existingId) {
+        if (existingId && typeof existingId === 'string' && existingId.trim()) {
+          return existingId.trim();
+        }
+        return `log_${this.generateUUID()}`;
+      },
+      getScheduleId(nome, existingId) {
+        if (existingId && typeof existingId === 'string' && existingId.trim()) {
+          return existingId.trim();
+        }
+        const cleanName = this.normalizeKey(nome);
+        const hash = this.stableHashString(`sched::${cleanName}`);
+        return `sch_${hash}`;
+      },
+      getOperationId(opType, entityId) {
+        return `op_${opType}_${entityId}_${this.stableHashString(`${opType}:${entityId}`)}`;
+      }
+    };
+    window.IdUtils = IdUtils;
+
     const SUPABASE_CONFIG = {
       url: 'https://arhhajxkmjpjwbrlcsqm.supabase.co',
       anonKey: 'sb_publishable_zZUuqpP2FXG9am-Q7UY95g_musS2nA-'
@@ -9772,12 +9936,253 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       isSyncing: false,
       hasPendingSync: false,
       pendingCloudData: null,
+      deviceId: (function() {
+        try {
+          let id = localStorage.getItem('concurso_device_id');
+          if (!id) {
+            id = 'dev_' + (typeof IdUtils !== 'undefined' ? IdUtils.generateUUID() : Math.random().toString(36).substring(2, 10));
+            localStorage.setItem('concurso_device_id', id);
+          }
+          return id;
+        } catch(e) { return 'dev_unknown'; }
+      })(),
+      revision: (function() {
+        try {
+          const rev = parseInt(localStorage.getItem('concurso_data_revision') || '1', 10);
+          return isNaN(rev) ? 1 : rev;
+        } catch(e) { return 1; }
+      })(),
+      lastAppliedHash: (function() {
+        try { return localStorage.getItem('concurso_last_content_hash') || ''; } catch(e) { return ''; }
+      })(),
+      windowListenersAttached: false,
+      authSubscription: null,
       forceOffline: (function() {
         try { return localStorage.getItem('concurso_force_offline') === 'true'; } catch(e) { return false; }
       })(),
       offlineQueue: (function() {
         try { return JSON.parse(localStorage.getItem('concurso_offline_mutation_queue') || '[]'); } catch(e) { return []; }
       })(),
+      circuitBreakerTripped: (function() {
+        try { return localStorage.getItem('concurso_circuit_breaker_tripped') !== null; } catch(e) { return false; }
+      })(),
+      circuitBreakerDiagnostic: (function() {
+        try {
+          const r = localStorage.getItem('concurso_circuit_breaker_tripped');
+          return r ? JSON.parse(r) : null;
+        } catch(e) { return null; }
+      })(),
+      safeMode: false,
+      resetEpoch: (function() {
+        try {
+          const ep = parseInt(localStorage.getItem('concurso_reset_epoch') || '0', 10);
+          return isNaN(ep) ? 0 : ep;
+        } catch(e) { return 0; }
+      })(),
+      hasDedicatedResetEpochColumn: (function() {
+        try { return localStorage.getItem('concurso_sync_has_reset_epoch_col') !== 'false'; } catch(e) { return true; }
+      })(),
+
+      handleServerResetEpoch(serverEpoch) {
+        const cloudEpoch = parseInt(serverEpoch, 10) || 0;
+        if (cloudEpoch > this.resetEpoch) {
+          console.warn(`[SyncManager] Reset geracional na nuvem detectado: Epoch ${cloudEpoch} > Local ${this.resetEpoch}`);
+
+          // 1. Backup de segurança local pré-reset rigoroso
+          try {
+            const preResetBackup = {
+              timestamp: new Date().toISOString(),
+              previousEpoch: this.resetEpoch,
+              newEpoch: cloudEpoch,
+              data: App.data || { materias: [], naoClassificado: [] },
+              schedules: App.schedules || [],
+              activeScheduleId: App.activeScheduleId || null,
+              completedSlots: App.completedSlots || {},
+              priorities: App.priorities || {},
+              autoConfig: localStorage.getItem('concurso_auto_config_last'),
+              studyLog: App.studyLog || [],
+              examDate: App.examDate || null,
+              examTitle: App.examTitle || '',
+              theme: App.theme || 'light'
+            };
+            localStorage.setItem('concurso_pre_reset_backup', JSON.stringify(preResetBackup));
+            localStorage.setItem(`concurso_backup_epoch_${this.resetEpoch}_${Date.now()}`, JSON.stringify(preResetBackup));
+            console.log('[SyncManager] Backup pré-reset gravado em concurso_pre_reset_backup com sucesso.');
+          } catch (e) {
+            console.error('[SyncManager] Erro ao gravar concurso_pre_reset_backup:', e);
+          }
+
+          // 2. Purga outbox/fila offline para prevenir ressurreição de dados zumbis
+          this.offlineQueue = [];
+          try {
+            localStorage.removeItem('concurso_offline_mutation_queue');
+          } catch (e) {}
+
+          // 3. Atualiza epoch local
+          this.resetEpoch = cloudEpoch;
+          try {
+            localStorage.setItem('concurso_reset_epoch', String(cloudEpoch));
+          } catch (e) {}
+
+          // 4. Limpa dados locais
+          App.data = { materias: [], naoClassificado: [] };
+          App.schedules = [];
+          App.schedule = null;
+          App.activeScheduleId = null;
+          App.completedSlots = {};
+          App.priorities = {};
+          App.studyLog = [];
+          App.spacedReviews = [];
+          if (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.invalidateCache) {
+            StudyHoursManager.invalidateCache();
+          }
+          App.saveToStorage(false, false);
+          App.renderAll();
+
+          if (typeof App !== 'undefined' && App.showToast) {
+            App.showToast('ℹ️ Os dados da nuvem foram reiniciados pelo administrador. Um backup local foi criado com segurança.', 'info');
+          }
+          return true;
+        }
+        return false;
+      },
+
+      countPayloadItems(payload) {
+        if (!payload) return 0;
+        let count = 0;
+        if (Array.isArray(payload.materias)) {
+          count += payload.materias.length;
+          payload.materias.forEach(m => {
+            if (m && Array.isArray(m.topicos)) count += m.topicos.length;
+          });
+        }
+        if (Array.isArray(payload.schedules)) count += payload.schedules.length;
+        const logs = payload.study_log || (payload.auto_config && payload.auto_config.study_log) || [];
+        if (Array.isArray(logs)) count += logs.length;
+        if (Array.isArray(payload.spaced_reviews)) count += payload.spaced_reviews.length;
+        if (Array.isArray(payload.nao_classificado)) count += payload.nao_classificado.length;
+        return count;
+      },
+
+      checkCircuitBreaker(localPayload, mergedPayload, allowOverride = false) {
+        const localCount = this.countPayloadItems(localPayload);
+        const mergedCount = this.countPayloadItems(mergedPayload);
+
+        // Se o usuário explicitamente permitiu via UI / flag descartável
+        const isOverridden = allowOverride || (function() {
+          try {
+            const flag = localStorage.getItem('concurso_sync_allow_large_merge') === 'true';
+            if (flag) localStorage.removeItem('concurso_sync_allow_large_merge');
+            return flag;
+          } catch(e) { return false; }
+        })();
+
+        if (isOverridden) {
+          this.circuitBreakerTripped = false;
+          this.safeMode = false;
+          try { localStorage.removeItem('concurso_circuit_breaker_tripped'); } catch(e) {}
+          return { ok: true, localCount, mergedCount, delta: mergedCount - localCount, growthPercent: 0 };
+        }
+
+        const delta = mergedCount - localCount;
+        const growthPercent = localCount > 0 ? (delta / localCount) * 100 : 0;
+
+        // Dispara disjuntor se crescimento for maior que 20% E mais que 500 itens em um único sync
+        if (delta > 500 && growthPercent > 20) {
+          this.circuitBreakerTripped = true;
+          this.safeMode = true;
+          const diag = {
+            timestamp: new Date().toISOString(),
+            localCount,
+            mergedCount,
+            delta,
+            growthPercent: growthPercent.toFixed(1) + '%',
+            reason: `Crescimento de dados acima do limite de segurança (+${delta} itens, +${growthPercent.toFixed(1)}%). Sincronização pausada para prevenir duplicação em cascata.`
+          };
+          this.circuitBreakerDiagnostic = diag;
+          try {
+            localStorage.setItem('concurso_circuit_breaker_tripped', JSON.stringify(diag));
+          } catch(e) {}
+
+          console.warn('[SyncManager] DISJUNTOR DE SEGURANÇA DISPARADO!', diag);
+          return { ok: false, ...diag };
+        }
+
+        this.circuitBreakerTripped = false;
+        this.safeMode = false;
+        try { localStorage.removeItem('concurso_circuit_breaker_tripped'); } catch(e) {}
+        return { ok: true, localCount, mergedCount, delta, growthPercent };
+      },
+
+      resetCircuitBreaker() {
+        this.circuitBreakerTripped = false;
+        this.safeMode = false;
+        this.circuitBreakerDiagnostic = null;
+        try {
+          localStorage.removeItem('concurso_circuit_breaker_tripped');
+          localStorage.setItem('concurso_sync_allow_large_merge', 'true');
+        } catch(e) {}
+        if (typeof App !== 'undefined' && App.showToast) {
+          App.showToast('Disjuntor de segurança liberado para a próxima sincronização.', 'info');
+        }
+        this.updateDiagnosticsUI();
+        this.debouncedSync();
+      },
+
+      computePayloadHash(payload) {
+        if (!payload) return '';
+        const canon = {
+          matCount: (payload.materias || []).length,
+          topCount: (payload.materias || []).reduce((acc, m) => acc + (m.topicos ? m.topicos.length : 0), 0),
+          schedCount: (payload.schedules || []).length,
+          logCount: (payload.study_log || (payload.auto_config && payload.auto_config.study_log) || []).length,
+          exam: payload.exam_title || '',
+          theme: payload.theme || 'light',
+          firstMatId: (payload.materias && payload.materias[0]) ? (payload.materias[0].id || '') : '',
+          lastLogId: (payload.study_log && payload.study_log[0]) ? (payload.study_log[0].id || '') : ''
+        };
+        const str = JSON.stringify(canon);
+        return (typeof IdUtils !== 'undefined') ? IdUtils.stableHashString(str) : String(str.length);
+      },
+
+      isolateUserCache(userId) {
+        if (!userId) return;
+        try {
+          const snapshot = {
+            appData: localStorage.getItem('concurso_app_data'),
+            schedules: localStorage.getItem('concurso_schedules_list'),
+            studyLog: localStorage.getItem('concurso_study_log'),
+            reviews: localStorage.getItem('concurso_spaced_reviews'),
+            queue: localStorage.getItem('concurso_offline_mutation_queue'),
+            lastHash: this.lastAppliedHash,
+            revision: this.revision
+          };
+          localStorage.setItem(`concurso_user_cache_${userId}`, JSON.stringify(snapshot));
+          this.offlineQueue = [];
+          this.hasPendingSync = false;
+          localStorage.removeItem('concurso_offline_mutation_queue');
+        } catch(e) {}
+      },
+
+      restoreUserCache(userId) {
+        if (!userId) return;
+        try {
+          const raw = localStorage.getItem(`concurso_user_cache_${userId}`);
+          if (raw) {
+            const snapshot = JSON.parse(raw);
+            if (snapshot.appData) localStorage.setItem('concurso_app_data', snapshot.appData);
+            if (snapshot.schedules) localStorage.setItem('concurso_schedules_list', snapshot.schedules);
+            if (snapshot.studyLog) localStorage.setItem('concurso_study_log', snapshot.studyLog);
+            if (snapshot.reviews) localStorage.setItem('concurso_spaced_reviews', snapshot.reviews);
+            if (snapshot.queue) {
+              this.offlineQueue = JSON.parse(snapshot.queue);
+              localStorage.setItem('concurso_offline_mutation_queue', snapshot.queue);
+            }
+            if (snapshot.lastHash) this.lastAppliedHash = snapshot.lastHash;
+            if (snapshot.revision) this.revision = snapshot.revision;
+          }
+        } catch(e) {}
+      },
 
       isOffline() {
         return this.forceOffline || (typeof navigator !== 'undefined' && !navigator.onLine);
@@ -9805,15 +10210,46 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
       },
 
-      recordOfflineMutation(type, desc) {
+      compactOfflineQueue() {
+        const map = new Map();
+        for (const item of (this.offlineQueue || [])) {
+          const key = `${item.entityType || 'mutation'}::${item.entityId || item.opId || item.id}`;
+          map.set(key, item);
+        }
+        this.offlineQueue = Array.from(map.values());
+        try {
+          localStorage.setItem('concurso_offline_mutation_queue', JSON.stringify(this.offlineQueue));
+        } catch(e) {}
+      },
+
+      recordOfflineMutation(type, desc, entityType, entityId, payload) {
+        const entType = entityType || type || 'save_state';
+        const entId = entityId || (payload && payload.id) || 'global';
+        const opId = (typeof IdUtils !== 'undefined') ? IdUtils.getOperationId(entType, entId) : `op_${entType}_${entId}`;
+
         const mutation = {
-          id: 'mut_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+          opId: opId,
+          id: opId,
           type: type || 'save_state',
+          entityType: entType,
+          entityId: entId,
           desc: desc || 'Alteração salva offline',
-          timestamp: Date.now()
+          payload: payload || null,
+          timestamp: Date.now(),
+          retries: 0
         };
-        this.offlineQueue.push(mutation);
-        if (this.offlineQueue.length > 100) this.offlineQueue.shift();
+
+        if (!Array.isArray(this.offlineQueue)) this.offlineQueue = [];
+
+        // Compactação em tempo de inserção: substitui mutação pendente na mesma entidade
+        const existingIdx = this.offlineQueue.findIndex(m => m.opId === opId || (m.entityType === entType && m.entityId === entId));
+        if (existingIdx !== -1) {
+          this.offlineQueue[existingIdx] = mutation;
+        } else {
+          this.offlineQueue.push(mutation);
+        }
+
+        if (this.offlineQueue.length > 500) this.offlineQueue.shift();
         try {
           localStorage.setItem('concurso_offline_mutation_queue', JSON.stringify(this.offlineQueue));
         } catch(e) {}
@@ -9823,26 +10259,67 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       async flushOfflineQueue() {
         if (this.isOffline()) {
           App.showToast('Você está no modo offline. Desative o modo offline nos Ajustes para sincronizar.', 'warning');
-          return;
+          return false;
         }
         if (!this.user || !this.client) {
           this.offlineQueue = [];
           try { localStorage.removeItem('concurso_offline_mutation_queue'); } catch(e) {}
           this.updateDiagnosticsUI();
           App.showToast('Dados locais preservados no navegador.', 'info');
-          return;
+          return true;
         }
+        if (this.isSyncing) return false;
+
+        // Verificação geracional de segurança: se o servidor tem reset_epoch mais recente, purga fila offline
+        if (this.user && this.client) {
+          try {
+            const { data: serverCheck } = await this.client
+              .from('user_data')
+              .select('reset_epoch, auto_config')
+              .eq('user_id', this.user.id)
+              .maybeSingle();
+
+            if (serverCheck) {
+              const serverEpoch = serverCheck.reset_epoch !== undefined
+                ? (parseInt(serverCheck.reset_epoch, 10) || 0)
+                : (serverCheck.auto_config && serverCheck.auto_config.reset_epoch !== undefined ? (parseInt(serverCheck.auto_config.reset_epoch, 10) || 0) : 0);
+
+              if (serverEpoch > this.resetEpoch) {
+                console.warn(`[SyncManager] Servidor possui reset_epoch mais recente (${serverEpoch} > ${this.resetEpoch}). Purgando fila offline para evitar ressurreição de dados.`);
+                this.handleServerResetEpoch(serverEpoch);
+                return true;
+              }
+            }
+          } catch (e) {}
+        }
+
+        const now = Date.now();
+        if (this.lastSyncAttempt && (now - this.lastSyncAttempt < 1000)) {
+          return false;
+        }
+        this.lastSyncAttempt = now;
+
+        this.compactOfflineQueue();
+        const pendingOpIds = (this.offlineQueue || []).map(m => m.opId);
+
         try {
-          const count = this.offlineQueue.length;
+          const count = pendingOpIds.length;
           this.setSyncStatus('syncing', 'Sincronizando...');
           await this.syncUp();
-          this.offlineQueue = [];
-          try { localStorage.removeItem('concurso_offline_mutation_queue'); } catch(e) {}
+
+          // Remove SOMENTE após confirmação de sucesso do servidor
+          this.offlineQueue = (this.offlineQueue || []).filter(m => !pendingOpIds.includes(m.opId));
+          try { localStorage.setItem('concurso_offline_mutation_queue', JSON.stringify(this.offlineQueue)); } catch(e) {}
+          this.retryFailures = 0;
           this.updateDiagnosticsUI();
           App.showToast(`✅ Sincronização concluída: ${count > 0 ? count + ' alterações enviadas' : 'dados atualizados'}!`, 'success');
+          return true;
         } catch(err) {
-          console.warn('[SyncManager] Erro ao descarregar fila offline:', err);
+          this.retryFailures = (this.retryFailures || 0) + 1;
+          const backoff = Math.min(60000, 1000 * Math.pow(2, this.retryFailures));
+          console.warn(`[SyncManager] Erro ao descarregar fila offline (falha ${this.retryFailures}, backoff ${backoff}ms):`, err);
           this.setSyncStatus('offline', 'Falha ao sincronizar');
+          return false;
         }
       },
       hasDedicatedStudyLogColumn: (() => {
@@ -9901,40 +10378,53 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             this.updateDiagnosticsUI();
           }
 
-          // Monitora eventos de autenticação
-          this.client.auth.onAuthStateChange(async (event, session) => {
+          // Garante apenas UM ouvinte de autenticação ativo por vez
+          if (this.authSubscription && typeof this.authSubscription.unsubscribe === 'function') {
+            try { this.authSubscription.unsubscribe(); } catch(e) {}
+            this.authSubscription = null;
+          }
+
+          const { data: authSub } = this.client.auth.onAuthStateChange(async (event, session) => {
             const prevUser = this.user;
             this.user = session ? session.user : null;
             this.updateAuthUI();
 
             if (event === 'SIGNED_IN') {
               if (!prevUser || prevUser.id !== this.user?.id) {
+                if (this.user?.id) this.restoreUserCache(this.user.id);
                 await this.handleInitialLoginSync();
               }
             } else if (event === 'SIGNED_OUT') {
               this.setSyncStatus('local');
               this.lastSyncTime = null;
+              if (prevUser && prevUser.id) {
+                this.isolateUserCache(prevUser.id);
+              }
             } else if (event === 'PASSWORD_RECOVERY') {
               App.showToast('Recuperação de senha: você pode atualizar sua senha nas configurações.', 'info');
             }
           });
+          this.authSubscription = authSub ? (authSub.subscription || authSub) : null;
 
-          // Conectividade de rede
-          window.addEventListener('online', () => {
-            if (this.user) {
-              if (this.hasPendingSync) {
-                this.syncUp();
-              } else {
-                this.setSyncStatus('synced');
+          // Conectividade de rede (apenas UM ouvinte global protegido por flag)
+          if (!this.windowListenersAttached) {
+            this.windowListenersAttached = true;
+            window.addEventListener('online', () => {
+              if (this.user) {
+                if (this.hasPendingSync || (this.offlineQueue && this.offlineQueue.length > 0)) {
+                  this.flushOfflineQueue();
+                } else {
+                  this.setSyncStatus('synced');
+                }
               }
-            }
-          });
+            });
 
-          window.addEventListener('offline', () => {
-            if (this.user) {
-              this.setSyncStatus('local', 'Offline');
-            }
-          });
+            window.addEventListener('offline', () => {
+              if (this.user) {
+                this.setSyncStatus('local', 'Offline');
+              }
+            });
+          }
 
         } catch (err) {
           console.warn('[SyncManager] Falha ao inicializar Supabase:', err);
@@ -10065,6 +10555,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         // Sempre salva study_log dentro de auto_config para garantir persistência 100%
         // funcional na nuvem mesmo que a tabela user_data não possua a coluna 'study_log' (PGRST204)
         autoConfigObj.study_log = App.studyLog || [];
+        autoConfigObj.reset_epoch = this.resetEpoch || 0;
 
         const payload = {
           materias: App.data ? (App.data.materias || []) : [],
@@ -10086,6 +10577,16 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         if (this.hasDedicatedStudyLogColumn === true) {
           payload.study_log = App.studyLog || [];
         }
+        if (this.hasDedicatedResetEpochColumn === true) {
+          payload.reset_epoch = this.resetEpoch || 0;
+        }
+
+        // Anti-Eco e Controle de Versão por Revisão e Hash (Etapa 1.4)
+        payload.device_id = this.deviceId;
+        this.revision = (parseInt(this.revision, 10) || 1) + 1;
+        payload.revision = this.revision;
+        payload.content_hash = this.computePayloadHash(payload);
+        try { localStorage.setItem('concurso_data_revision', String(this.revision)); } catch(e) {}
 
         return payload;
       },
@@ -10100,29 +10601,39 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           .from('user_data')
           .upsert(payload, { onConflict: 'user_id' });
 
-        // Se houver erro PGRST204 de coluna ausente (especificamente study_log)
-        if (res.error && (res.error.code === 'PGRST204' || (res.error.message && res.error.message.includes('study_log')))) {
-          console.warn('[SyncManager] Coluna "study_log" não encontrada no Supabase (PGRST204). Ativando fallback transparente em auto_config.study_log.');
-          this.hasDedicatedStudyLogColumn = false;
-          try { localStorage.setItem('concurso_sync_has_study_log_col', 'false'); } catch (e) {}
-
-          // Remove a coluna inexistente da raiz do payload
-          delete payload.study_log;
-
-          // Garante que os logs estão preservados dentro de auto_config.study_log
+        // Se houver erro PGRST204 de coluna ausente (especificamente study_log ou reset_epoch)
+        if (res.error && (res.error.code === 'PGRST204' || (res.error.message && (res.error.message.includes('study_log') || res.error.message.includes('reset_epoch'))))) {
+          if (res.error.message && res.error.message.includes('study_log')) {
+            console.warn('[SyncManager] Coluna "study_log" não encontrada no Supabase (PGRST204). Ativando fallback em auto_config.study_log.');
+            this.hasDedicatedStudyLogColumn = false;
+            try { localStorage.setItem('concurso_sync_has_study_log_col', 'false'); } catch (e) {}
+            delete payload.study_log;
+          }
+          if (res.error.message && res.error.message.includes('reset_epoch')) {
+            console.warn('[SyncManager] Coluna "reset_epoch" não encontrada no Supabase (PGRST204). Ativando fallback em auto_config.reset_epoch.');
+            this.hasDedicatedResetEpochColumn = false;
+            try { localStorage.setItem('concurso_sync_has_reset_epoch_col', 'false'); } catch (e) {}
+            delete payload.reset_epoch;
+          }
           if (!payload.auto_config || typeof payload.auto_config !== 'object') {
             payload.auto_config = {};
           }
           payload.auto_config.study_log = App.studyLog || [];
+          payload.auto_config.reset_epoch = this.resetEpoch || 0;
 
-          // Tenta novamente sem a coluna que causou o erro no schema cache
+          // Tenta novamente sem as colunas que causaram o erro no schema cache
           res = await this.client
             .from('user_data')
             .upsert(payload, { onConflict: 'user_id' });
-        } else if (!res.error && payload.study_log !== undefined && this.hasDedicatedStudyLogColumn !== true) {
-          // Gravou com sucesso com a coluna study_log na raiz
-          this.hasDedicatedStudyLogColumn = true;
-          try { localStorage.setItem('concurso_sync_has_study_log_col', 'true'); } catch (e) {}
+        } else if (!res.error) {
+          if (payload.study_log !== undefined && this.hasDedicatedStudyLogColumn !== true) {
+            this.hasDedicatedStudyLogColumn = true;
+            try { localStorage.setItem('concurso_sync_has_study_log_col', 'true'); } catch (e) {}
+          }
+          if (payload.reset_epoch !== undefined && this.hasDedicatedResetEpochColumn !== true) {
+            this.hasDedicatedResetEpochColumn = true;
+            try { localStorage.setItem('concurso_sync_has_reset_epoch_col', 'true'); } catch (e) {}
+          }
         }
 
         return res;
@@ -10143,6 +10654,12 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           const { error } = await this.upsertUserData(payload);
 
           if (error) throw error;
+
+          this.lastAppliedHash = payload.content_hash || '';
+          try {
+            localStorage.setItem('concurso_last_content_hash', this.lastAppliedHash);
+            localStorage.setItem('concurso_sync_last_time', payload.updated_at);
+          } catch(e) {}
 
           this.lastError = null;
           try { localStorage.removeItem('concurso_sync_last_error'); } catch (e) {}
@@ -10266,7 +10783,10 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
         const lastErrEl = document.getElementById('diagLastError');
         if (lastErrEl) {
-          if (this.lastError && this.lastError.message) {
+          if (this.circuitBreakerTripped && this.circuitBreakerDiagnostic) {
+            lastErrEl.innerHTML = `⚠️ <strong style="color:#ef4444">DISJUNTOR DE SEGURANÇA ATIVADO</strong>: ${this.circuitBreakerDiagnostic.reason} <br><button onclick="SyncManager.resetCircuitBreaker()" class="btn btn-secondary btn-sm" style="margin-top:6px;font-size:11px;padding:3px 8px;cursor:pointer;">Desbloquear Disjuntor</button>`;
+            lastErrEl.style.color = '#ef4444';
+          } else if (this.lastError && this.lastError.message) {
             lastErrEl.textContent = `${this.lastError.code ? '[' + this.lastError.code + '] ' : ''}${this.lastError.message} (${this.lastError.time})`;
             lastErrEl.style.color = '#ef4444';
           } else {
@@ -10276,22 +10796,43 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
       },
 
-      // Sincronização Incremental: baixa apenas se o timestamp na nuvem for mais recente (Etapa 3)
+      // Sincronização Incremental: checagem leve com anti-eco por device_id e content_hash (Etapa 1.4)
       async syncDownIncremental() {
         if (!this.user || !this.client) return;
         if (this.isSyncing) return;
 
         try {
           this.isSyncing = true;
-          // Checagem ultraleve: busca apenas a coluna updated_at (~50 bytes)
+          // Checagem ultraleve: busca updated_at, device_id, revision, content_hash, reset_epoch
           const { data: cloudStamp, error: stampErr } = await this.client
             .from('user_data')
-            .select('updated_at')
+            .select('updated_at, device_id, revision, content_hash, reset_epoch')
             .eq('user_id', this.user.id)
             .maybeSingle();
 
           if (stampErr || !cloudStamp) {
             this.isSyncing = false;
+            return;
+          }
+
+          // Prioridade Máxima: se houver nova geração de reset na nuvem, força syncDownAndMerge
+          if (cloudStamp.reset_epoch && cloudStamp.reset_epoch > this.resetEpoch) {
+            console.warn(`[SyncManager] Reset geracional detectado no sync incremental: ${cloudStamp.reset_epoch} > ${this.resetEpoch}`);
+            await this.syncDownAndMerge();
+            return;
+          }
+
+          // Anti-eco: se a alteração na nuvem veio deste mesmo aparelho, ignora
+          if (cloudStamp.device_id && cloudStamp.device_id === this.deviceId) {
+            this.isSyncing = false;
+            this.setSyncStatus('synced');
+            return;
+          }
+
+          // Anti-eco: se o hash do conteúdo na nuvem é idêntico ao já aplicado, ignora
+          if (cloudStamp.content_hash && cloudStamp.content_hash === this.lastAppliedHash) {
+            this.isSyncing = false;
+            this.setSyncStatus('synced');
             return;
           }
 
@@ -10303,43 +10844,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             return;
           }
 
-          // Mudança detectada na nuvem: baixa e mescla
-          await this.syncDownAndMerge();
-        } catch(e) {
-          console.warn('[SyncManager] Falha no sync incremental:', e);
-        } finally {
-          this.isSyncing = false;
-        }
-      },
-
-      // Sincronização Incremental: baixa apenas se o timestamp na nuvem for mais recente (Etapa 3)
-      async syncDownIncremental() {
-        if (!this.user || !this.client) return;
-        if (this.isSyncing) return;
-
-        try {
-          this.isSyncing = true;
-          // Checagem ultraleve: busca apenas a coluna updated_at (~50 bytes)
-          const { data: cloudStamp, error: stampErr } = await this.client
-            .from('user_data')
-            .select('updated_at')
-            .eq('user_id', this.user.id)
-            .maybeSingle();
-
-          if (stampErr || !cloudStamp) {
-            this.isSyncing = false;
-            return;
-          }
-
-          const localLastSync = localStorage.getItem('concurso_sync_last_time');
-          if (localLastSync && cloudStamp.updated_at && new Date(cloudStamp.updated_at).getTime() <= new Date(localLastSync).getTime()) {
-            // Nuvem idêntica ou mais antiga: não precisa baixar tudo de novo!
-            this.isSyncing = false;
-            this.setSyncStatus('synced');
-            return;
-          }
-
-          // Mudança detectada na nuvem: baixa e mescla
+          // Mudança externa legítima detectada na nuvem: baixa e mescla
           await this.syncDownAndMerge();
         } catch(e) {
           console.warn('[SyncManager] Falha no sync incremental:', e);
@@ -10362,11 +10867,33 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             return;
           }
 
+          // Verificação geracional prioritária: se a nuvem foi reiniciada pelo administrador (Etapa 2.1)
+          const cloudEpoch = cloudData.reset_epoch !== undefined
+            ? (parseInt(cloudData.reset_epoch, 10) || 0)
+            : (cloudData.auto_config && cloudData.auto_config.reset_epoch !== undefined ? (parseInt(cloudData.auto_config.reset_epoch, 10) || 0) : 0);
+
+          if (cloudEpoch > this.resetEpoch) {
+            this.handleServerResetEpoch(cloudEpoch);
+            await this.applyCloudPayload(cloudData, true, true);
+            this.lastSyncTime = new Date();
+            this.setSyncStatus('synced', 'Sincronizado');
+            this.renderLastSyncTime();
+            this.updateDiagnosticsUI();
+            return;
+          }
+
+          // Anti-eco direto
+          if (cloudData.device_id && cloudData.device_id === this.deviceId) {
+            this.setSyncStatus('synced');
+            this.updateDiagnosticsUI();
+            return;
+          }
+
           const localPayload = await this.gatherPayload();
           const localHas = this.hasLocalData();
 
           if (!localHas) {
-            await this.applyCloudPayload(cloudData, true);
+            await this.applyCloudPayload(cloudData, true, true);
             this.lastSyncTime = new Date();
             this.setSyncStatus('synced', 'Sincronizado');
             this.renderLastSyncTime();
@@ -10375,7 +10902,23 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           }
 
           const merged = this.mergePayloads(localPayload, cloudData);
-          await this.applyCloudPayload(merged, true);
+
+          // Disjuntor de Segurança (Circuit Breaker - Etapa 1.5)
+          const breaker = this.checkCircuitBreaker(localPayload, merged);
+          if (!breaker.ok) {
+            this.setSyncStatus('error', 'Disjuntor Ativado');
+            this.recordSyncError({
+              message: breaker.reason,
+              code: 'CIRCUIT_BREAKER_TRIPPED'
+            });
+            if (typeof App !== 'undefined' && App.showToast) {
+              App.showToast(`⚠️ Sincronização interrompida: Disjuntor detectou crescimento anômalo (+${breaker.delta} itens). Proteção ativada.`, 'warning');
+            }
+            this.updateDiagnosticsUI();
+            return;
+          }
+
+          await this.applyCloudPayload(merged, true, true);
           await this.syncUp();
           this.lastSyncTime = new Date();
           this.setSyncStatus('synced', 'Sincronizado');
@@ -10573,8 +11116,23 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
       },
 
-      async applyCloudPayload(cloudData, saveLocal = true) {
+      async applyCloudPayload(cloudData, saveLocal = true, force = false) {
         if (!cloudData) return;
+
+        // Verificação Anti-Eco (Etapa 1.4)
+        if (!force) {
+          if (cloudData.device_id && cloudData.device_id === this.deviceId) {
+            console.log('[SyncManager] Ignorando payload da nuvem: eco detectado do proprio dispositivo (' + this.deviceId + ')');
+            this.setSyncStatus('synced');
+            return;
+          }
+          const cloudHash = cloudData.content_hash || this.computePayloadHash(cloudData);
+          if (cloudHash && cloudHash === this.lastAppliedHash) {
+            console.log('[SyncManager] Ignorando payload da nuvem: hash identico ao ja aplicado (' + cloudHash + ')');
+            this.setSyncStatus('synced');
+            return;
+          }
+        }
 
         // Backup de segurança prévio no localStorage
         try {
@@ -10649,6 +11207,23 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           App.saveToStorage(false, false); // Salva localmente SEM disparar re-upload em loop para a nuvem
         }
 
+        this.lastAppliedHash = cloudData.content_hash || this.computePayloadHash(cloudData);
+        if (cloudData.revision) {
+          this.revision = Math.max(this.revision, parseInt(cloudData.revision, 10) || 1);
+        }
+        const cloudEpoch = cloudData.reset_epoch !== undefined
+          ? (parseInt(cloudData.reset_epoch, 10) || 0)
+          : (cloudData.auto_config && cloudData.auto_config.reset_epoch !== undefined ? (parseInt(cloudData.auto_config.reset_epoch, 10) || 0) : 0);
+        if (cloudEpoch > this.resetEpoch) {
+          this.resetEpoch = cloudEpoch;
+          try { localStorage.setItem('concurso_reset_epoch', String(cloudEpoch)); } catch(e) {}
+        }
+        try {
+          localStorage.setItem('concurso_last_content_hash', this.lastAppliedHash);
+          localStorage.setItem('concurso_data_revision', String(this.revision));
+          localStorage.setItem('concurso_sync_last_time', new Date().toISOString());
+        } catch (e) {}
+
         this.lastSyncTime = new Date();
         this.setSyncStatus('synced', 'Sincronizado');
         this.renderLastSyncTime();
@@ -10663,37 +11238,86 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       mergePayloads(localData, cloudData) {
         if (!cloudData) return localData;
 
-        // Mescla matérias sem duplicar
+        // Mescla matérias por chave lógica sem duplicar (Etapa 1.5)
         const localMaterias = (localData.materias || []);
         const cloudMaterias = (cloudData.materias || []);
         const mergedMaterias = [...localMaterias];
 
+        const normalizeKey = (str) => {
+          return String(str || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        };
+
+        const getTopicLogicalKey = (t, matNorm) => {
+          if (!t) return '';
+          const txt = (typeof t === 'object' ? (t.texto || t.text || t.nome || '') : String(t)).trim();
+          const cleanTxt = normalizeKey(txt).replace(/[^a-z0-9]/g, '');
+          const num = (typeof t === 'object' && t.numero !== undefined && t.numero !== null) ? String(t.numero).trim() : null;
+          if (num) {
+            return `${matNorm}#num_${num}#${cleanTxt.substring(0, 20)}`;
+          }
+          return `${matNorm}#txt_${cleanTxt}`;
+        };
+
         cloudMaterias.forEach(cMat => {
           const cId = typeof idMateria === 'function' ? idMateria(cMat) : (cMat.id || '');
-          const cNome = (typeof nomeMateria === 'function' ? nomeMateria(cMat) : (cMat.nome || '')).trim().toLowerCase();
+          const cNome = (typeof nomeMateria === 'function' ? nomeMateria(cMat) : (cMat.nome || '')).trim();
+          const cNomeNorm = normalizeKey(cNome);
 
           const existing = mergedMaterias.find(m => {
             const mId = typeof idMateria === 'function' ? idMateria(m) : (m.id || '');
-            const mNome = (typeof nomeMateria === 'function' ? nomeMateria(m) : (m.nome || '')).trim().toLowerCase();
-            return (mId && cId && mId === cId) || (mNome && cNome && mNome === cNome);
+            const mNome = (typeof nomeMateria === 'function' ? nomeMateria(m) : (m.nome || '')).trim();
+            const mNomeNorm = normalizeKey(mNome);
+            return (mId && cId && mId === cId) || (mNomeNorm && cNomeNorm && mNomeNorm === cNomeNorm);
           });
+
           if (!existing) {
             mergedMaterias.push(cMat);
           } else {
             const existingTopicos = existing.topicos || [];
             const cloudTopicos = cMat.topicos || [];
-            cloudTopicos.forEach(ct => {
-              const ctText = (typeof ct === 'object' && ct ? (ct.texto || ct.text || '') : String(ct)).trim().toLowerCase();
-              const hasTopic = existingTopicos.find(et => {
-                const etText = (typeof et === 'object' && et ? (et.texto || et.text || '') : String(et)).trim().toLowerCase();
-                return (et.id && ct.id && et.id === ct.id) || (etText && ctText && etText === ctText);
-              });
+
+            // Índices O(1) para mesclagem de alto desempenho (escalabilidade para 20.000+ tópicos)
+            const topicById = new Map();
+            const topicByKey = new Map();
+            const topicByText = new Map();
+
+            for (let i = 0; i < existingTopicos.length; i++) {
+              const et = existingTopicos[i];
+              if (!et) continue;
+              if (et.id) topicById.set(et.id, et);
+              const etKey = getTopicLogicalKey(et, cNomeNorm);
+              if (etKey) topicByKey.set(etKey, et);
+              const etText = (typeof et === 'object' ? (et.texto || et.text || '') : String(et)).trim();
+              const etTextNorm = normalizeKey(etText);
+              if (etTextNorm) topicByText.set(etTextNorm, et);
+            }
+
+            for (let j = 0; j < cloudTopicos.length; j++) {
+              const ct = cloudTopicos[j];
+              if (!ct) continue;
+              const ctKey = getTopicLogicalKey(ct, cNomeNorm);
+              const ctText = (typeof ct === 'object' ? (ct.texto || ct.text || '') : String(ct)).trim();
+              const ctTextNorm = normalizeKey(ctText);
+
+              const hasTopic = (ct.id && topicById.get(ct.id)) ||
+                               (ctKey && topicByKey.get(ctKey)) ||
+                               (ctTextNorm && topicByText.get(ctTextNorm));
+
               if (!hasTopic) {
                 existingTopicos.push(ct);
-              } else if (ct && ct.concluido) {
-                if (typeof hasTopic === 'object') hasTopic.concluido = true;
+                if (ct.id) topicById.set(ct.id, ct);
+                if (ctKey) topicByKey.set(ctKey, ct);
+                if (ctTextNorm) topicByText.set(ctTextNorm, ct);
+              } else {
+                if (ct && ct.concluido) {
+                  if (typeof hasTopic === 'object') hasTopic.concluido = true;
+                }
+                if (typeof hasTopic === 'object') {
+                  if (!hasTopic.anotacoes && ct.anotacoes) hasTopic.anotacoes = ct.anotacoes;
+                  if (!hasTopic.prioridade && ct.prioridade) hasTopic.prioridade = ct.prioridade;
+                }
               }
-            });
+            }
             existing.topicos = existingTopicos;
           }
         });
@@ -10703,7 +11327,11 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         const cloudSchedules = cloudData.schedules || [];
         const mergedSchedules = [...localSchedules];
         cloudSchedules.forEach(cs => {
-          const exists = mergedSchedules.find(s => (s.id && cs.id && s.id === cs.id) || (s.name && cs.name && s.name === cs.name) || (s.nome && cs.nome && s.nome === cs.nome));
+          const csNameNorm = normalizeKey(cs.name || cs.nome || '');
+          const exists = mergedSchedules.find(s => {
+            const sNameNorm = normalizeKey(s.name || s.nome || '');
+            return (s.id && cs.id && s.id === cs.id) || (sNameNorm && csNameNorm && sNameNorm === csNameNorm);
+          });
           if (!exists) {
             mergedSchedules.push(cs);
           } else if (cs.columns && cs.columns.length > 0 && (!exists.columns || exists.columns.length === 0)) {
@@ -10717,15 +11345,18 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         // Prioridades
         const mergedPriorities = Object.assign({}, cloudData.priorities || {}, localData.priorities || {});
 
-        // Revisões espaçadas
+        // Revisões espaçadas por ID e chave única
         const localReviews = localData.spaced_reviews || [];
         const cloudReviews = cloudData.spaced_reviews || [];
-        const mergedReviews = [...localReviews];
-        cloudReviews.forEach(cr => {
-          if (!mergedReviews.find(lr => lr.id === cr.id)) {
-            mergedReviews.push(cr);
+        const reviewMap = new Map();
+        [...localReviews, ...cloudReviews].forEach(r => {
+          if (!r) return;
+          const k = r.id || `${r.materiaId || ''}_${r.topicoId || ''}_${r.dataEstudo || ''}`;
+          if (!reviewMap.has(k) || r.concluida) {
+            reviewMap.set(k, r);
           }
         });
+        const mergedReviews = Array.from(reviewMap.values());
 
         // Mescla logs de estudo (studyLog) sem duplicar e respeitando updatedAt mais recente
         const localLogs = (Array.isArray(localData.study_log) && localData.study_log.length > 0)
@@ -10737,28 +11368,69 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           : ((cloudData.auto_config && Array.isArray(cloudData.auto_config.study_log)) ? cloudData.auto_config.study_log : (Array.isArray(cloudData.study_log) ? cloudData.study_log : []));
 
         const logMap = new Map();
-        localLogs.forEach(l => { if (l && l.id) logMap.set(l.id, l); });
+        const getLogKey = (l) => {
+          if (l.id) return l.id;
+          return `${l.data}_${l.materiaId}_${l.topicoId || 'geral'}_${l.minutos}_${l.criadoEm}`;
+        };
+        localLogs.forEach(l => {
+          if (l) logMap.set(getLogKey(l), l);
+        });
         cloudLogs.forEach(cl => {
-          if (!cl || !cl.id) return;
-          if (!logMap.has(cl.id)) {
-            logMap.set(cl.id, cl);
+          if (!cl) return;
+          const k = getLogKey(cl);
+          if (!logMap.has(k)) {
+            logMap.set(k, cl);
           } else {
-            const existing = logMap.get(cl.id);
+            const existing = logMap.get(k);
             const clTime = cl.updatedAt ? new Date(cl.updatedAt).getTime() : 0;
             const exTime = existing.updatedAt ? new Date(existing.updatedAt).getTime() : 0;
             if (clTime > exTime) {
-              logMap.set(cl.id, cl);
+              logMap.set(k, cl);
             }
           }
         });
         const mergedStudyLogs = Array.from(logMap.values());
+
+        // Deduplicação estrita de nao_classificado por chave normalizada
+        const cleanNcSet = new Set();
+        const mergedNaoClassificado = [];
+        [...(localData.nao_classificado || []), ...(cloudData.nao_classificado || [])].forEach(item => {
+          const s = String(item || '').trim();
+          const norm = normalizeKey(s);
+          if (norm && !cleanNcSet.has(norm)) {
+            cleanNcSet.add(norm);
+            mergedNaoClassificado.push(s);
+          }
+        });
+
+        // Deduplicação estrita de pdf_annotations
+        const annMap = new Map();
+        (localData.pdf_annotations || []).concat(cloudData.pdf_annotations || []).forEach(a => {
+          if (!a) return;
+          const k = a.id || `${a.fileId || ''}_${a.page || 0}_${(a.text || '').substring(0, 30)}`;
+          if (!annMap.has(k) || (a.updatedAt && annMap.get(k).updatedAt < a.updatedAt)) {
+            annMap.set(k, a);
+          }
+        });
+        const mergedPdfAnnotations = Array.from(annMap.values());
+
+        // Deduplicação estrita de pdf_bookmarks
+        const bmMap = new Map();
+        (localData.pdf_bookmarks || []).concat(cloudData.pdf_bookmarks || []).forEach(b => {
+          if (!b) return;
+          const k = b.id || `${b.fileId || ''}_${b.page || 0}_${b.title || ''}`;
+          if (!bmMap.has(k) || (b.updatedAt && bmMap.get(k).updatedAt < b.updatedAt)) {
+            bmMap.set(k, b);
+          }
+        });
+        const mergedPdfBookmarks = Array.from(bmMap.values());
 
         const mergedAutoConfig = Object.assign({}, cloudData.auto_config || {}, localData.auto_config || {});
         mergedAutoConfig.study_log = mergedStudyLogs;
 
         const mergedPayload = {
           materias: mergedMaterias,
-          nao_classificado: [...(localData.nao_classificado || []), ...(cloudData.nao_classificado || [])],
+          nao_classificado: mergedNaoClassificado,
           schedules: mergedSchedules,
           active_schedule_id: localData.active_schedule_id || cloudData.active_schedule_id,
           completed_slots: mergedCompleted,
@@ -10768,13 +11440,10 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           exam_title: localData.exam_title || cloudData.exam_title,
           spaced_reviews: mergedReviews,
           theme: localData.theme || cloudData.theme || 'light',
-          pdf_annotations: (localData.pdf_annotations || []).concat(cloudData.pdf_annotations || []),
-          pdf_bookmarks: (localData.pdf_bookmarks || []).concat(cloudData.pdf_bookmarks || [])
+          pdf_annotations: mergedPdfAnnotations,
+          pdf_bookmarks: mergedPdfBookmarks,
+          study_log: mergedStudyLogs
         };
-
-        if (this.hasDedicatedStudyLogColumn === true) {
-          mergedPayload.study_log = mergedStudyLogs;
-        }
 
         return mergedPayload;
       },
@@ -11719,8 +12388,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.7.5";
-    const APP_BUILD_TIME = "15/10/2026 13:05:00";
+    const APP_VERSION = "1.9.0";
+    const APP_BUILD_TIME = "16/10/2026 14:45:00";
     window.APP_VERSION = APP_VERSION;
     window.APP_BUILD_TIME = APP_BUILD_TIME;
     const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
@@ -11869,7 +12538,9 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       }
       achados.forEach((a, i) => {
         const fim = i + 1 < achados.length ? achados[i + 1].inicio : texto.length;
-        topicos.push({ numero: a.numero, nivel: a.nivel, texto: texto.slice(a.inicio, fim).trim() });
+        const topTexto = texto.slice(a.inicio, fim).trim();
+        const topId = (typeof IdUtils !== 'undefined') ? IdUtils.getTopicoId('default', a.numero, topTexto) : undefined;
+        topicos.push({ id: topId, numero: a.numero, nivel: a.nivel, texto: topTexto });
       });
 
       // teste de integridade: nada pode se perder
@@ -12027,8 +12698,9 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       addLogEntry(entry) {
         if (!entry) return null;
         const list = this.getStudyLog();
+        const logId = (typeof IdUtils !== 'undefined') ? IdUtils.getStudyLogId(entry.id) : (entry.id || ('log_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8)));
         const newLog = {
-          id: entry.id || ('log_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8)),
+          id: logId,
           topicoId: entry.topicoId || '',
           topicoNome: entry.topicoNome || '',
           materiaId: entry.materiaId || '',
@@ -12040,9 +12712,27 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           origem: entry.origem || 'manual',
           updatedAt: new Date().toISOString()
         };
-        list.push(newLog); if (this.invalidateCache) this.invalidateCache(); if (this.invalidateCache) this.invalidateCache();
+
+        const existingIdx = list.findIndex(item => {
+          if (!item) return false;
+          if (item.id && item.id === newLog.id) return true;
+          if (newLog.sessaoId && item.sessaoId && item.sessaoId === newLog.sessaoId) return true;
+          return item.data === newLog.data &&
+                 item.materiaId === newLog.materiaId &&
+                 item.topicoId === newLog.topicoId &&
+                 item.minutos === newLog.minutos &&
+                 item.criadoEm === newLog.criadoEm;
+        });
+
+        if (existingIdx !== -1) {
+          list[existingIdx] = { ...list[existingIdx], ...newLog };
+        } else {
+          list.push(newLog);
+        }
+
+        if (this.invalidateCache) this.invalidateCache();
         App.saveToStorage();
-        return newLog;
+        return existingIdx !== -1 ? list[existingIdx] : newLog;
       },
 
       removeLogById(logId) {
@@ -12422,6 +13112,14 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         const materia = (App.data.materias || []).find(m => idMateria(m) === materiaId);
         if (!materia || !materia.topicos || !materia.topicos[topicIndex]) return;
 
+        if (typeof materia.topicos[topicIndex] === 'string') {
+          materia.topicos[topicIndex] = {
+            id: 'top_' + materiaId + '_' + topicIndex,
+            texto: materia.topicos[topicIndex],
+            concluido: false
+          };
+        }
+
         const topic = materia.topicos[topicIndex];
         const isDone = !!topic.concluido;
         const topicId = this.ensureTopicId(materia, topic, topicIndex);
@@ -12779,8 +13477,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             const x = gap + i * (barW + gap);
             const y = chartH - h + 25;
 
-            const barColor = isToday ? 'var(--primary)' : (mins > 0 ? 'rgba(99, 102, 241, 0.75)' : 'var(--border-color)');
-            const labelColor = isToday ? 'var(--primary)' : 'var(--text-muted)';
+            const barColor = isToday ? 'var(--accent-primary)' : (mins > 0 ? 'var(--accent-primary)' : 'var(--border-color)');
+            const labelColor = isToday ? 'var(--accent-primary)' : 'var(--text-muted)';
             const labelWeight = isToday ? '700' : '500';
 
             barsSvg += `
@@ -12882,7 +13580,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             const h = dItem.mins > 0 ? Math.max(6, Math.round((dItem.mins / maxM) * chartH)) : 2;
             const x = 10 + i * (barW + gap);
             const y = chartH - h + 25;
-            const barColor = isToday ? 'var(--primary)' : (dItem.mins > 0 ? 'rgba(99, 102, 241, 0.75)' : 'var(--border-color)');
+            const barColor = isToday ? 'var(--accent-primary)' : (dItem.mins > 0 ? 'var(--accent-primary)' : 'var(--border-color)');
 
             barsSvg += `
               <rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="2" ry="2" fill="${barColor}" class="study-chart-bar" title="Dia ${dItem.day}: ${this.formatMinutes(dItem.mins)}" />
@@ -13503,8 +14201,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         });
         if (profiler) profiler.mark('first_render_end');
 
-        // Se houver matérias gravadas, inicia em Matérias; se vazio, inicia em Upload
-        const initialTab = (this.data.materias && this.data.materias.length > 0) ? 'tab-subjects' : 'tab-upload';
+        // Inicia na nova tela HOJE (dashboard e direção tática do dia)
+        const initialTab = 'tab-today';
         this.switchTab(initialTab);
 
         if (profiler) profiler.mark('ui_ready');
@@ -13653,6 +14351,14 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         this.showToast(next === 'dark' ? 'Tema escuro ativado 🌙' : 'Tema claro ativado ☀️', 'info');
       },
 
+      getLocalDateString(d = new Date()) {
+        const dateObj = (d instanceof Date) ? d : new Date(d);
+        const y = dateObj.getFullYear();
+        const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      },
+
       /* Persistência LocalStorage */
       _saveTimer: null,
 
@@ -13694,6 +14400,10 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
       _doSaveToStorage(triggerCloud = true) {
         try {
+          localStorage.setItem('concurso_data_version', '1');
+          if (this.data && typeof this.data === 'object') {
+            this.data.dataVersion = 1;
+          }
           localStorage.setItem('concurso_app_data', JSON.stringify(this.data));
           localStorage.setItem('concurso_schedules_list', JSON.stringify(this.schedules));
           localStorage.setItem('concurso_active_schedule_id', this.activeScheduleId || '');
@@ -13723,6 +14433,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
       loadFromStorage() {
         try {
+          const rawVersion = localStorage.getItem('concurso_data_version');
+          let currentVersion = rawVersion ? parseInt(rawVersion, 10) : 0;
           const raw = localStorage.getItem('concurso_app_data');
           if (raw) {
             // Backup automático de segurança antes de qualquer migração ou normalização
@@ -13734,7 +14446,17 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             this.data = JSON.parse(raw);
           } else {
             // Inicializa limpo
-            this.data = { materias: [], naoClassificado: [] };
+            this.data = { materias: [], naoClassificado: [], dataVersion: 1 };
+          }
+
+          if (currentVersion < 1) {
+            if (this.data && Array.isArray(this.data.materias)) {
+              this.data.materias = normalizarMaterias(this.data.materias);
+            }
+            currentVersion = 1;
+            try {
+              localStorage.setItem('concurso_data_version', '1');
+            } catch (eV) {}
           }
 
           // Normaliza matérias (aceita formato antigo e novo sem perda de dados)
@@ -14461,6 +15183,10 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         this.activeTab = tabId;
         this.updateFab(tabId);
 
+        if (tabId === 'tab-today') {
+          this.renderTodayView();
+        }
+
         if (tabId === 'tab-study-hours') {
           if (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.renderTab) {
             StudyHoursManager.renderTab(true);
@@ -14529,7 +15255,12 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           return;
         }
 
-        if (tabId === 'tab-subjects') {
+        if (tabId === 'tab-today') {
+          fab.style.display = 'inline-flex';
+          icon.textContent = '⚡';
+          label.textContent = 'Gerar Ciclo';
+          fab.onclick = () => App.openAutoSchedulePreview();
+        } else if (tabId === 'tab-subjects') {
           fab.style.display = 'inline-flex';
           icon.textContent = '➕';
           label.textContent = 'Nova Matéria';
@@ -15044,7 +15775,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           let existing = materiasMap.find(m => m.nome.toLowerCase() === sec.nome.toLowerCase());
           if (!existing) {
             existing = {
-              id: 'mat-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
+              id: (typeof IdUtils !== 'undefined') ? IdUtils.getMateriaId(sec.nome, App.examTitle || 'edital') : ('mat-' + Date.now()),
               nome: sec.nome,
               paletteId: getNextPaletteId(),
               rawLines: [...sec.lines]
@@ -15068,7 +15799,16 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
           const res = App.dividirTopicos(fullText);
           if (res && res.topicos && res.topicos.length > 0) {
-            m.topicos = res.topicos;
+            m.topicos = res.topicos.map((t, tIdx) => {
+              const topText = (typeof t === 'object' && t) ? (t.texto || '') : String(t);
+              const topNum = (typeof t === 'object' && t) ? t.numero : (tIdx + 1);
+              const topId = (typeof t === 'object' && t && t.id)
+                ? t.id
+                : ((typeof IdUtils !== 'undefined') ? IdUtils.getTopicoId(m.nome, topNum, topText, App.examTitle || 'edital') : ('top-' + tIdx));
+              return (typeof t === 'object' && t)
+                ? { ...t, id: topId }
+                : { id: topId, numero: null, nivel: 1, texto: topText, concluido: false };
+            });
             m.divisaoFalhou = !!res.falhou;
             if (res.falhou) {
               m.divisaoMotivo = res.motivo;
@@ -15076,7 +15816,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
               delete m.divisaoMotivo;
             }
           } else {
-            m.topicos = [{ numero: null, nivel: 1, texto: fullText }];
+            const defId = (typeof IdUtils !== 'undefined') ? IdUtils.getTopicoId(m.nome, null, fullText, App.examTitle || 'edital') : 'top-1';
+            m.topicos = [{ id: defId, numero: null, nivel: 1, texto: fullText, concluido: false }];
             m.divisaoFalhou = true;
             m.divisaoMotivo = (res && res.motivo) || 'Estrutura não reconhecida pelo divisor numérico';
           }
@@ -15829,11 +16570,252 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
          RENDERIZAÇÃO VISUAL (ETAPAS 1, 3 & 4)
          ======================================================================== */
       renderAll() {
+        this.renderTodayView();
         this.renderSubjectList();
         this.renderUnclassified();
         this.renderSchedule();
         this.renderAutoConfigPanel();
         this.updateHeaderCounters();
+      },
+
+      /* ------------------------------------------------------------------------
+         TELA HOJE: DIREÇÃO DO DIA, SESSÕES, CONTADOR E PROGRESSO
+         ------------------------------------------------------------------------ */
+      renderTodayView() {
+        const now = new Date();
+        const hour = now.getHours();
+        let greeting = 'Bom dia, combatente';
+        if (hour >= 12 && hour < 18) greeting = 'Boa tarde, combatente';
+        else if (hour >= 18 || hour < 5) greeting = 'Boa noite, combatente';
+
+        const greetingEl = document.getElementById('todayGreetingTitle');
+        if (greetingEl) greetingEl.textContent = greeting;
+
+        const dateSubEl = document.getElementById('todayDateSubtitle');
+        if (dateSubEl) {
+          const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+          const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+          dateSubEl.textContent = `${diasSemana[now.getDay()]}, ${now.getDate()} de ${meses[now.getMonth()]} de ${now.getFullYear()}`;
+        }
+
+        // 2. Contagem regressiva da prova
+        const countdownBadge = document.getElementById('todayCountdownBadge');
+        const countdownTitle = document.getElementById('todayCountdownTitle');
+        if (this.examDate) {
+          const days = this.calculateDaysToExam ? this.calculateDaysToExam(this.examDate) : null;
+          if (days !== null && days >= 0) {
+            if (countdownBadge) countdownBadge.textContent = `${days} DIAS RESTANTES`;
+            if (countdownTitle) countdownTitle.textContent = this.examTitle ? `Prova: ${this.examTitle}` : 'Data da Prova';
+          } else if (days !== null && days < 0) {
+            if (countdownBadge) countdownBadge.textContent = 'PROVA FINALIZADA';
+            if (countdownTitle) countdownTitle.textContent = this.examTitle ? `Prova: ${this.examTitle}` : 'Data da Prova';
+          }
+        } else {
+          if (countdownBadge) countdownBadge.textContent = 'DEFINIR DATA';
+          if (countdownTitle) countdownTitle.textContent = 'Contagem para a Prova';
+        }
+
+        // 3. Horas estudadas hoje e nesta semana
+        const todayStr = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.getLocalDateString) 
+          ? StudyHoursManager.getLocalDateString(now)
+          : `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+        
+        const weekRange = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.getWeekRange)
+          ? StudyHoursManager.getWeekRange(now)
+          : null;
+
+        const studyList = Array.isArray(this.studyLog) ? this.studyLog : [];
+        let todayMins = 0;
+        let weekMins = 0;
+        studyList.forEach(entry => {
+          const m = Number(entry.minutos) || 0;
+          if (entry.data === todayStr) todayMins += m;
+          if (weekRange && entry.data >= weekRange.startStr && entry.data <= weekRange.endStr) weekMins += m;
+        });
+
+        const fmtHours = (mins) => {
+          if (mins <= 0) return '0h 0m';
+          const h = Math.floor(mins / 60);
+          const rem = mins % 60;
+          return `${h}h ${rem}m`;
+        };
+
+        const todayHrsEl = document.getElementById('todayHoursValue');
+        if (todayHrsEl) todayHrsEl.textContent = fmtHours(todayMins);
+
+        const weekHrsEl = document.getElementById('weekHoursValue');
+        if (weekHrsEl) weekHrsEl.textContent = fmtHours(weekMins);
+
+        // 4. Sessões do cronograma de hoje
+        const dayIdx = now.getDay();
+        const dayPrefixes = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb', 'sab'];
+        const curPrefix = dayPrefixes[dayIdx];
+
+        let todayCol = null;
+        if (this.schedule && Array.isArray(this.schedule.columns)) {
+          todayCol = this.schedule.columns.find(col => {
+            if (!col || !col.dia) return false;
+            const d = col.dia.toLowerCase();
+            return d.startsWith(curPrefix) || (dayIdx === 6 && d.includes('sab'));
+          });
+        }
+
+        const listContainer = document.getElementById('todaySessionsList');
+        const emptyState = document.getElementById('todayEmptyState');
+        const dayLabel = document.getElementById('todayScheduleDayLabel');
+        const slotsProgressText = document.getElementById('todaySlotsProgressText');
+        const percentText = document.getElementById('todayPercentText');
+        const completedText = document.getElementById('todayCompletedText');
+        const ringCircle = document.getElementById('todayProgressRingCircle');
+
+        const slots = (todayCol && Array.isArray(todayCol.slots)) ? todayCol.slots : [];
+        const totalSlots = slots.length;
+        let completedSlotsCount = 0;
+
+        slots.forEach(s => {
+          if (this.completedSlots && this.completedSlots[s.slotKey]) {
+            completedSlotsCount++;
+          }
+        });
+
+        const percent = totalSlots > 0 ? Math.round((completedSlotsCount / totalSlots) * 100) : 0;
+
+        if (slotsProgressText) slotsProgressText.textContent = `${completedSlotsCount} de ${totalSlots} sessões`;
+        if (percentText) percentText.textContent = `${percent}%`;
+        if (completedText) completedText.textContent = `${completedSlotsCount} concluída${completedSlotsCount === 1 ? '' : 's'}`;
+
+        if (ringCircle) {
+          const circumference = 125.66;
+          const offset = circumference * (1 - (percent / 100));
+          ringCircle.style.strokeDashoffset = String(offset);
+        }
+
+        if (dayLabel) {
+          dayLabel.textContent = todayCol ? `${todayCol.dia} • ${totalSlots} bloco${totalSlots === 1 ? '' : 's'} de estudo` : 'Nenhum bloco para hoje';
+        }
+
+        if (totalSlots === 0) {
+          if (listContainer) listContainer.style.display = 'none';
+          if (emptyState) emptyState.style.display = 'block';
+        } else {
+          if (emptyState) emptyState.style.display = 'none';
+          if (listContainer) {
+            listContainer.style.display = 'flex';
+            listContainer.innerHTML = '';
+
+            slots.forEach(slot => {
+              const pal = this.getPalette(slot.paletteId);
+              const isDone = !!(this.completedSlots && this.completedSlots[slot.slotKey]);
+              const duration = slot.duration || slot.duracao || (typeof StudyHoursManager !== 'undefined' ? StudyHoursManager.defaultMinutes : 30);
+
+              const card = document.createElement('div');
+              card.className = `tactical-card session-card ${isDone ? 'completed' : ''}`;
+              card.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 14px;
+                border-left: 4px solid ${pal.border || 'var(--accent-primary)'};
+                background: ${isDone ? 'var(--bg-subtle)' : 'var(--bg-card)'};
+                transition: all var(--transition-fast);
+              `;
+
+              card.innerHTML = `
+                <label style="display: flex; align-items: center; cursor: pointer; margin: 0;" title="${isDone ? 'Marcar como não concluído' : 'Marcar como concluído'}">
+                  <input type="checkbox" ${isDone ? 'checked' : ''} style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent-primary);"
+                    onchange="App.toggleTodaySessionCompleted('${slot.slotKey}')">
+                </label>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span style="font-weight: 700; font-size: 0.95rem; color: ${isDone ? 'var(--text-muted)' : 'var(--text-main)'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
+                      ${App.escapeHtml(slot.subjectName || 'Matéria')}
+                    </span>
+                    <span class="badge ${isDone ? 'badge-success' : 'badge-warning'}" style="font-size: 0.7rem;">
+                      ${isDone ? '✓ Concluído' : `${duration} min`}
+                    </span>
+                  </div>
+                  <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    ${App.escapeHtml(slot.topic || 'Estudo de teoria e questões')}
+                  </div>
+                </div>
+                <button type="button" class="btn-icon" title="Ver no Edital" onclick="App.openSubjectDetailByName('${App.escapeHtml(slot.subjectName || '')}')" style="opacity: 0.8;">
+                  ➔
+                </button>
+              `;
+
+              listContainer.appendChild(card);
+            });
+          }
+        }
+
+        // 5. Atualização dos atalhos rápidos
+        const subjectsCountEl = document.getElementById('todaySubjectsQuickCount');
+        if (subjectsCountEl) {
+          const sCount = (this.data && Array.isArray(this.data.materias)) ? this.data.materias.length : 0;
+          subjectsCountEl.textContent = `${sCount} matéria${sCount === 1 ? '' : 's'} no edital`;
+        }
+
+        const lastPdfNameEl = document.getElementById('todayLastPdfName');
+        if (lastPdfNameEl) {
+          if (typeof PdfStorage !== 'undefined') {
+            PdfStorage.getFile('active').then(rec => {
+              if (rec && rec.name) {
+                lastPdfNameEl.textContent = rec.name;
+              } else if (typeof LibraryManager !== 'undefined' && LibraryManager.files && LibraryManager.files.length > 0) {
+                lastPdfNameEl.textContent = LibraryManager.files[0].name;
+              } else {
+                lastPdfNameEl.textContent = 'Abrir Biblioteca de PDFs';
+              }
+            }).catch(() => {
+              lastPdfNameEl.textContent = 'Abrir Biblioteca de PDFs';
+            });
+          }
+        }
+      },
+
+      toggleTodaySessionCompleted(slotKey) {
+        this.toggleSlotCompleted(slotKey);
+        this.renderTodayView();
+      },
+
+      resumeLastPdf() {
+        if (typeof PdfStorage !== 'undefined') {
+          PdfStorage.getFile('active').then(rec => {
+            if (rec && rec.data) {
+              App.loadPdfFromBuffer(rec.data, rec.name || 'Último PDF Aberto', false, 'active');
+              App.switchTab('tab-pdf-reader');
+            } else {
+              App.switchTab('tab-library');
+            }
+          }).catch(() => {
+            App.switchTab('tab-library');
+          });
+        } else {
+          App.switchTab('tab-library');
+        }
+      },
+
+      openSubjectDetailByName(subjectName) {
+        if (!subjectName) {
+          App.switchTab('tab-subjects');
+          return;
+        }
+        App.switchTab('tab-subjects');
+        setTimeout(() => {
+          const cards = document.querySelectorAll('.subject-card');
+          for (const card of cards) {
+            const titleEl = card.querySelector('.subject-header h3');
+            if (titleEl && titleEl.textContent.trim().toLowerCase() === subjectName.trim().toLowerCase()) {
+              const body = card.querySelector('.subject-body');
+              if (body && body.style.display === 'none') {
+                const btn = card.querySelector('.btn-toggle-subject');
+                if (btn) btn.click();
+              }
+              card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              break;
+            }
+          }
+        }, 120);
       },
 
       updateHeaderCounters() {
@@ -15911,6 +16893,43 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           const topId = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.ensureTopicId) ? StudyHoursManager.ensureTopicId(materia, topObj, topIndex) : (topObj.id || ('top_' + topIndex));
           const totalMins = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.getTotalMinutesForTopic) ? StudyHoursManager.getTotalMinutesForTopic(topId) : 0;
           const safeTopicTextEsc = App.escapeHtml(it.text).replace(/'/g, "\\'");
+
+          // Status tático do tópico (não iniciado, estudando, revisar, concluído)
+          const inReview = (App.spacedReviews || []).some(r => !r.completed && (r.topic === it.text || (topObj && r.topic === topObj.texto)));
+          let statusKey = 'pending';
+          let statusBadge = '';
+
+          if (it.isDone) {
+            statusKey = 'completed';
+            statusBadge = '<span class="badge badge-success" style="font-size: 0.68rem; margin-left: 6px;">✓ Concluído</span>';
+          } else if (inReview) {
+            statusKey = 'review';
+            statusBadge = '<span class="badge badge-warning" style="font-size: 0.68rem; margin-left: 6px;">🔄 Revisar</span>';
+          } else if (totalMins > 0) {
+            statusKey = 'studying';
+            statusBadge = '<span class="badge badge-info" style="font-size: 0.68rem; margin-left: 6px;">⚡ Estudando</span>';
+          } else {
+            statusKey = 'pending';
+            statusBadge = '<span class="badge badge-muted" style="font-size: 0.68rem; margin-left: 6px; opacity: 0.75;">⚪ Não iniciado</span>';
+          }
+
+          // Filtro por status
+          if (App.editalStatusFilter && App.editalStatusFilter !== 'all') {
+            if (App.editalStatusFilter !== statusKey) {
+              return '';
+            }
+          }
+
+          // Filtro por busca
+          if (App.editalSearchQuery) {
+            const q = App.editalSearchQuery;
+            const matchesTopic = it.text.toLowerCase().includes(q);
+            const matchesMat = (nomeMateria(materia) || '').toLowerCase().includes(q);
+            if (!matchesTopic && !matchesMat) {
+              return '';
+            }
+          }
+
           const timeBadge = totalMins > 0 
             ? `<span class="study-topic-badge" onclick="event.stopPropagation(); StudyHoursManager.openTopicHistoryModal('${materia.id}', '${topId}', '${safeTopicTextEsc}')" title="Clique para ver o histórico de estudo">⏱️ ${StudyHoursManager.formatMinutes(totalMins)}</span>`
             : (it.isDone ? `<span class="study-topic-badge unrecorded" onclick="event.stopPropagation(); StudyHoursManager.openQuickLogModal('${materia.id}', ${topIndex}, true)" title="Sem tempo registrado. Clique para adicionar">+ tempo</span>` : '');
@@ -15929,6 +16948,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
                 ${it.isPrincipal ? '<span class="topic-parent-badge">Tópico Principal</span>' : ''}
                 ${App.escapeHtml(it.text)}
                 ${timeBadge}
+                ${statusBadge}
               </span>
               <div class="topic-actions">
                 <button class="btn-icon" onclick="event.stopPropagation(); StudyHoursManager.openQuickLogModal('${materia.id}', ${topIndex}, true)" title="Registrar mais tempo neste tópico">
@@ -15959,10 +16979,66 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
       },
 
+      renderEditalOverallSummary() {
+        const materias = Array.isArray(this.data.materias) ? this.data.materias : [];
+        let totalTopics = 0;
+        let completedTopics = 0;
+        let totalMins = 0;
+
+        materias.forEach(m => {
+          const tops = Array.isArray(m.topicos) ? m.topicos : [];
+          totalTopics += tops.length;
+          tops.forEach(t => {
+            if (t && t.concluido) completedTopics++;
+          });
+        });
+
+        (this.studyLog || []).forEach(l => {
+          totalMins += (Number(l.minutos) || 0);
+        });
+
+        const percent = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+        const pending = totalTopics - completedTopics;
+
+        const pEl = document.getElementById('editalOverallPercent');
+        const rEl = document.getElementById('editalOverallRatio');
+        const fillEl = document.getElementById('editalOverallProgressFill');
+        const totSubEl = document.getElementById('editalTotalSubjectsStat');
+        const totHrsEl = document.getElementById('editalTotalHoursStat');
+        const pendEl = document.getElementById('editalPendingTopicsStat');
+
+        if (pEl) pEl.textContent = `${percent}%`;
+        if (rEl) rEl.textContent = `${completedTopics} de ${totalTopics} tópicos concluídos`;
+        if (fillEl) fillEl.style.width = `${percent}%`;
+        if (totSubEl) totSubEl.textContent = String(materias.length);
+        if (totHrsEl) {
+          const h = Math.floor(totalMins / 60);
+          const m = totalMins % 60;
+          totHrsEl.textContent = `${h}h ${m}m`;
+        }
+        if (pendEl) pendEl.textContent = String(pending);
+      },
+
+      handleEditalSearch(query) {
+        this.editalSearchQuery = (query || '').trim().toLowerCase();
+        this.renderSubjectList();
+      },
+
+      setEditalStatusFilter(status) {
+        this.editalStatusFilter = status || 'all';
+        const chips = document.querySelectorAll('#editalStatusFilterPills .chip');
+        chips.forEach(c => {
+          c.classList.toggle('active', c.getAttribute('data-status') === this.editalStatusFilter);
+        });
+        this.renderSubjectList();
+      },
+
       renderSubjectList() {
         const container = document.getElementById('subjectListContainer');
         if (!container) return;
         container.innerHTML = '';
+
+        this.renderEditalOverallSummary();
 
         if (!this.data.materias || this.data.materias.length === 0) {
           container.innerHTML = `
@@ -15984,26 +17060,82 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
 
         const fragment = document.createDocumentFragment();
+        const filterStatus = this.editalStatusFilter || 'all';
+        const searchQuery = (this.editalSearchQuery || '').trim().toLowerCase();
 
         this.data.materias.forEach((materia, matIndex) => {
           const pal = this.getPalette(materia.paletteId);
+          const totalTopicos = materia.topicos ? materia.topicos.length : 0;
+          let completedTopicos = 0;
+          let matMins = 0;
+
+          (materia.topicos || []).forEach(t => {
+            if (t && t.concluido) completedTopicos++;
+          });
+
+          (this.studyLog || []).forEach(l => {
+            if (l && (l.materiaId === materia.id || l.materiaNome === nomeMateria(materia))) {
+              matMins += (Number(l.minutos) || 0);
+            }
+          });
+
+          const matPercent = totalTopicos > 0 ? Math.round((completedTopicos / totalTopicos) * 100) : 0;
+          const matHoursFormatted = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.formatMinutes)
+            ? StudyHoursManager.formatMinutes(matMins)
+            : `${Math.floor(matMins / 60)}h ${matMins % 60}m`;
+
+          // Linked PDF na biblioteca
+          const linkedPdf = (typeof LibraryManager !== 'undefined' && Array.isArray(LibraryManager.files))
+            ? LibraryManager.files.find(f => f.subjectId === materia.id || f.subjectName === nomeMateria(materia))
+            : null;
+
+          // Se tem filtro ou busca, decide se card deve ser exibido
+          if (searchQuery || filterStatus !== 'all') {
+            const matchesMatName = (nomeMateria(materia) || '').toLowerCase().includes(searchQuery);
+            let hasMatchingTopic = false;
+            (materia.topicos || []).forEach((t, tIdx) => {
+              const text = (App.getTopicText(t) || '').toLowerCase();
+              const isDone = !!(t && t.concluido);
+              const tId = t.id || `top_${tIdx}`;
+              const tMins = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.getTotalMinutesForTopic) ? StudyHoursManager.getTotalMinutesForTopic(tId) : 0;
+              const inRev = (App.spacedReviews || []).some(r => !r.completed && (r.topic === t.texto || r.topic === text));
+              
+              let sKey = isDone ? 'completed' : (inRev ? 'review' : (tMins > 0 ? 'studying' : 'pending'));
+              const statusMatch = (filterStatus === 'all') || (filterStatus === sKey);
+              const queryMatch = (!searchQuery) || matchesMatName || text.includes(searchQuery);
+              if (statusMatch && queryMatch) {
+                hasMatchingTopic = true;
+              }
+            });
+
+            if (!matchesMatName && !hasMatchingTopic) {
+              return;
+            }
+          }
+
           const card = document.createElement('div');
           card.className = 'subject-card';
           card.setAttribute('data-id', idMateria(materia));
 
-          const totalTopicos = materia.topicos ? materia.topicos.length : 0;
           const isOpen = this.openSubjectIds.has(materia.id);
-
-          // RENDERIZAÇÃO SOB DEMANDA (ETAPA 5): Tópicos só são montados se o card estiver aberto!
-          // Isso reduz em até 95% os nós DOM criados na abertura fria/quente do app.
           const topicsHtml = isOpen ? this.renderTopicItemsHtml(materia) : '';
 
           card.innerHTML = `
             <div class="subject-header-row ${isOpen ? 'open' : ''}" onclick="App.toggleSubjectBody('${materia.id}')">
               <div class="subject-title-area">
-                <span class="subject-pill" style="background: ${pal.text};"></span>
+                <span class="subject-pill" style="background: ${pal.border || pal.text || 'var(--accent-primary)'};"></span>
                 <span class="subject-name">${App.escapeHtml(nomeMateria(materia))}</span>
-                <span class="subject-topics-count">• ${totalTopicos} tópico${totalTopicos === 1 ? '' : 's'}</span>
+                <span class="badge ${matPercent === 100 ? 'badge-success' : 'badge-warning'}" style="font-size: 0.72rem;">
+                  ${completedTopicos}/${totalTopicos} (${matPercent}%)
+                </span>
+                <span class="badge badge-muted" style="font-size: 0.72rem;">
+                  ⏱️ ${matHoursFormatted}
+                </span>
+                ${linkedPdf ? `
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); LibraryManager.openFile('${linkedPdf.id}')" title="Abrir PDF vinculado na biblioteca" style="padding: 2px 8px; font-size: 0.72rem;">
+                    📖 PDF
+                  </button>
+                ` : ''}
               </div>
               <div class="subject-actions" onclick="event.stopPropagation()">
                 <button class="btn btn-secondary btn-sm" onclick="App.openEditSubjectModal('${materia.id}')" title="Editar nome/cor">
@@ -16014,6 +17146,11 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
                 </button>
                 <span class="subject-toggle-icon">▼</span>
               </div>
+            </div>
+
+            <!-- Mini barra de progresso tática sob o cabeçalho da matéria -->
+            <div class="progress-bar-tactical" style="height: 3px; border-radius: 0; background: var(--bg-subtle);">
+              <div class="progress-fill-tactical" style="width: ${matPercent}%; border-radius: 0; background: ${matPercent === 100 ? 'var(--success)' : 'var(--accent-primary)'};"></div>
             </div>
 
             <div class="subject-body ${isOpen ? 'open' : ''}" id="body-${materia.id}" data-rendered="${isOpen ? 'true' : 'false'}">
@@ -16034,8 +17171,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
               </div>
 
               <!-- Adicionar Novo Tópico Manualmente -->
-              <div class="add-topic-row">
-                <input type="text" class="input-field" id="newTopicInput-${materia.id}" placeholder="Escreva um novo tópico ou item programático...">
+              <div class="add-topic-row" style="margin-top: 12px; display: flex; gap: 8px;">
+                <input type="text" class="input-field" id="newTopicInput-${materia.id}" placeholder="Escreva um novo tópico ou item programático..." style="margin: 0; flex: 1;">
                 <button class="btn btn-secondary btn-sm" onclick="App.addTopicManual('${materia.id}')">
                   ➕ Adicionar
                 </button>
@@ -16283,7 +17420,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           this.showToast('Matéria atualizada!');
         } else {
           const newMat = {
-            id: 'mat-' + Date.now(),
+            id: (typeof IdUtils !== 'undefined') ? IdUtils.getMateriaId(name) : ('mat-' + Date.now()),
             nome: name,
             paletteId: paletteId,
             topicos: []
@@ -18504,7 +19641,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
         const selectedSwatch = document.querySelector('#colorPickerExtraSubjectContainer .color-swatch.selected');
         const paletteId = selectedSwatch ? selectedSwatch.dataset.paletteId : 'blue';
 
-        const newId = 'mat-avulsa-' + Date.now();
+        const newId = (typeof IdUtils !== 'undefined') ? IdUtils.getMateriaId(name) : ('mat-avulsa-' + Date.now());
         const newSubject = {
           id: newId,
           nome: name,
@@ -20307,9 +21444,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
             const slotCard = document.createElement('div');
             slotCard.className = `clean-slot-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`;
             slotCard.id = `card-${slot.slotKey}`;
-            slotCard.style.borderLeftColor = pal.border || 'var(--primary)';
-            slotCard.style.background = pal.bg;
-            slotCard.style.color = pal.text;
+            slotCard.style.borderLeft = `4px solid ${pal.border || pal.text || 'var(--accent-primary)'}`;
             slotCard.draggable = true;
             slotCard.title = `${slot.subjectName}\n\n${slot.topic || ''}`;
 
@@ -20517,9 +21652,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
             const slotCard = document.createElement('div');
             slotCard.className = `clean-slot-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`;
             slotCard.id = `mob-card-${slot.slotKey}`;
-            slotCard.style.borderLeftColor = pal.border || 'var(--primary)';
-            slotCard.style.background = pal.bg;
-            slotCard.style.color = pal.text;
+            slotCard.style.borderLeft = `4px solid ${pal.border || pal.text || 'var(--accent-primary)'}`;
 
             slotCard.onclick = (e) => {
               if (e.target && e.target.type === 'checkbox') return;
@@ -20910,7 +22043,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
         if (titleIn) titleIn.value = this.examTitle || '';
         if (dateIn) {
           dateIn.value = this.examDate || '';
-          const today = new Date().toISOString().split('T')[0];
+          const today = this.getLocalDateString();
           dateIn.min = today;
         }
         this.previewExamCountdown();
@@ -21036,7 +22169,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
               paletteId: slot.paletteId || 'blue',
               code: intv.code,
               label: intv.label,
-              dueDate: dueDate.toISOString().split('T')[0],
+              dueDate: this.getLocalDateString(dueDate),
               completed: false,
               completedAt: null
             });
@@ -21118,8 +22251,8 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
           return;
         }
 
-        const todayStr = new Date().toISOString().split('T')[0];
-        const next7Days = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        const todayStr = this.getLocalDateString();
+        const next7Days = this.getLocalDateString(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
 
         const pending = this.spacedReviews.filter(r => !r.completed);
         const completed = this.spacedReviews.filter(r => r.completed);
@@ -22062,7 +23195,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
           if (viewport) viewport.classList.add('pdf-night-mode');
           if (btn) {
             btn.style.background = 'var(--accent-primary)';
-            btn.style.color = '#ffffff';
+            btn.style.color = 'var(--accent-contrast, #0E1116)';
           }
           this.showToast('Modo de leitura noturna ativado.', 'info');
         } else {
@@ -22461,5 +23594,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
       });
     }
   </script>
+  <!-- Módulos do Front-End (Main Bootstrap) -->
+  <script type="module" src="src/main.js"></script>
 </body>
 </html>

@@ -87,13 +87,26 @@ Caso queira fazer sem o script automático, siga este checklist:
   versionName "1.1.0" // Coloque o mesmo texto da versão
   ```
 
-### 3) Sincronizar os arquivos para o Android
-- No PowerShell, execute:
+### 3) Validar Integridade (Testes de Fumaça, Anti-Duplicação & Regras)
+- Antes de gerar o APK ou subir para a web, execute a validação completa:
   ```powershell
-  powershell -ExecutionPolicy Bypass -File .\prepare_android.ps1
+  npm run test:smoke
+  node test_antiduplication_suite.js
+  node test_reset_epoch.js
+  ```
+- Todos os testes devem reportar 100% de aprovação (0 falhas).
+
+### 4) Sincronizar os arquivos para o Android e Capacitor
+- No PowerShell, execute a preparação dos assets:
+  ```powershell
+  npm run prepare-android
+  ```
+- E em seguida sincronize o Capacitor:
+  ```powershell
+  npx cap sync android
   ```
 
-### 4) Gerar o novo APK assinado
+### 5) Gerar o novo APK assinado
 - **Pelo script automático de compilação (Recomendado):**
   ```powershell
   powershell -ExecutionPolicy Bypass -File .\sync_and_build_apk.ps1

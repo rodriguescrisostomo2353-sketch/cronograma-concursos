@@ -9,19 +9,9 @@ Copy-Item -Path (Join-Path $PSScriptRoot "manifest.json") -Destination $targetDi
 Copy-Item -Path (Join-Path $PSScriptRoot "sw.js") -Destination $targetDir -Force
 Copy-Item -Path (Join-Path $PSScriptRoot "version.json") -Destination $targetDir -Force
 
-$divisorFile = Join-Path $PSScriptRoot "divisor-topicos.js"
-if (Test-Path $divisorFile) {
-    Copy-Item -Path $divisorFile -Destination $targetDir -Force
-}
-
 $libPdf = Join-Path $PSScriptRoot "html2pdf.bundle.min.js"
 if (Test-Path $libPdf) {
     Copy-Item -Path $libPdf -Destination $targetDir -Force
-}
-
-$libSupabase = Join-Path $PSScriptRoot "supabase.js"
-if (Test-Path $libSupabase) {
-    Copy-Item -Path $libSupabase -Destination $targetDir -Force
 }
 
 $studyCss = Join-Path $PSScriptRoot "study-hours.css"
@@ -29,10 +19,17 @@ if (Test-Path $studyCss) {
     Copy-Item -Path $studyCss -Destination $targetDir -Force
 }
 
-$studyJs = Join-Path $PSScriptRoot "study-hours-manager.js"
-if (Test-Path $studyJs) {
-    Copy-Item -Path $studyJs -Destination $targetDir -Force
+
+$srcFolder = Join-Path $PSScriptRoot "src"
+if (Test-Path $srcFolder) {
+    Copy-Item -Path $srcFolder -Destination $targetDir -Recurse -Force
 }
+
+$distFolder = Join-Path $PSScriptRoot "dist"
+if (Test-Path $distFolder) {
+    Copy-Item -Path $distFolder -Destination $targetDir -Recurse -Force
+}
+
 
 $iconsSource = Join-Path $PSScriptRoot "icons"
 $iconsTarget = Join-Path $targetDir "icons"

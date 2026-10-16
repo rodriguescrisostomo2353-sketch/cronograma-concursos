@@ -1,16 +1,42 @@
 {
-  "version": "1.7.5",
-  "date": "2026-10-15",
+  "version": "1.9.0",
+  "date": "2026-10-16",
   "notes": [
-    "Eliminação total do congelamento de tela e vazamento de memória (redução de 8.4GB para < 2MB)",
-    "Nova funcionalidade: Biblioteca Virtual de Arquivos (organize, filtre e guarde seus PDFs de editais, apostilas e resumos)",
-    "Exportação e download individual ou em lote de todos os PDFs salvos na Biblioteca Virtual",
-    "Modo 100% Offline com fila de mutações: continue estudando sem internet e sincronize automaticamente ao reconectar",
-    "Carregamento do leitor de PDF estritamente sob demanda para economia extrema de memória RAM",
-    "Proteção anti-deadlock e memoização nas conexões do banco de dados local IndexedDB"
+    "Redesign Visual Completo: Identidade tática própria para concursos policiais (tema escuro #0E1116 com acento âmbar #F5A524 e tema claro de alto contraste)",
+    "Nova Tela Hoje: Dashboard tático com contagem regressiva da prova, progresso circular SVG do dia, lista de sessões com checkbox e métricas rápidas",
+    "Edital Verticalizado Tático: Barra de progresso geral no topo, chips de status rápidos, cartões de disciplinas com faixa de cor e hierarquia em acordeom",
+    "Cronograma Semanal & Diário: Visão tática em cartões com identificadores visuais, barra de dias por pílulas no celular e suporte a drag & drop",
+    "Painel de Horas de Estudo: Cards de resumo tático, seletor de período, gráficos SVG limpos e histórico detalhado por disciplina",
+    "Biblioteca & Leitor de PDF: Cards de arquivos categorizados e toolbar tática de leitura com alto contraste no modo noturno",
+    "Design System Robusto: src/styles/tokens.css e src/ui/components.css com conformidade WCAG AA (contraste mínimo 4.5:1) e zero alteração de regras de negócio"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.8.0",
+      "date": "2026-10-15",
+      "notes": [
+        "Reorganização modular completa do Front-End (camadas core, data, sync, features, ui, styles)",
+        "Camada única de dados (Data Repository Pattern): nenhuma tela acessa o armazenamento diretamente",
+        "Barramento central de eventos (EventBus) e Error Boundary para isolamento total de falhas",
+        "Correção de data local: eliminação do avanço indevido de datas após 21h (bug de UTC)",
+        "Controle de versão do esquema de dados (dataVersion: 1) com migrações defensivas",
+        "Segurança reforçada: rel=noopener noreferrer em links externos e allowBackup desativado no Android",
+        "Documentação técnica e testes automatizados de segurança do backend em nuvem com Supabase (BACKEND.md)"
+      ]
+    },
+    {
+      "version": "1.7.5",
+      "date": "2026-10-15",
+      "notes": [
+        "Eliminação total do congelamento de tela e vazamento de memória (redução de 8.4GB para < 2MB)",
+        "Nova funcionalidade: Biblioteca Virtual de Arquivos (organize, filtre e guarde seus PDFs de editais, apostilas e resumos)",
+        "Exportação e download individual ou em lote de todos os PDFs salvos na Biblioteca Virtual",
+        "Modo 100% Offline com fila de mutações: continue estudando sem internet e sincronize automaticamente ao reconectar",
+        "Carregamento do leitor de PDF estritamente sob demanda para economia extrema de memória RAM",
+        "Proteção anti-deadlock e memoização nas conexões do banco de dados local IndexedDB"
+      ]
+    },
     {
       "version": "1.7.4",
       "date": "2026-10-15",

@@ -11,6 +11,7 @@
 *.secret
 credentials*.json
 google-services.json
+backup_*.json
 
 # ==============================================================================
 # DEPENDÊNCIAS & ARQUIVOS PRIVADOS
@@ -31,6 +32,8 @@ android/app/src/main/assets/public/
 android/.gradle/
 .gradle/
 www/
+dist/
+
 
 # ==============================================================================
 # SCRIPTS LOCAIS ESPECÍFICOS & LIBS GRANDES LOCAIS
@@ -53,3 +56,20 @@ Thumbs.db
 .idea/
 .vscode/
 *.tmp
+*.bak
+*.patch
+*.lnk
+
+# ==============================================================================
+# .NET / C# ARQUIVOS DE BUILD & BANCO LOCAL
+# ==============================================================================
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.db
+*.db-shm
+*.db-wal
+storage/
+scratch/

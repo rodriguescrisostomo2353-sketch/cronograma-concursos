@@ -3,14 +3,28 @@
   "version": "1.0.0",
   "description": "Aplicativo de Cronograma de Estudos para Concursos",
   "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "watch": "tsc --watch",
+    "test:smoke": "node test_smoke_suite.js",
+    "test:anti-dup": "node test_antiduplication_suite.js",
+    "test:reset": "node test_reset_epoch.js",
+    "test:admin": "node test_admin_reset_tool.js",
+    "test:rules": "node scratch/test_backend_rules.js",
+    "test:csharp": "node scratch/test_csharp_api.js",
+    "backend:start": "dotnet run --project backend-csharp/src/Cronograma.API/Cronograma.API.csproj --urls http://localhost:5000",
+    "lint": "npx eslint src/",
+    "format": "npx prettier --check src/",
     "prepare-android": "powershell -ExecutionPolicy Bypass -File ./prepare_android.ps1"
   },
+
   "dependencies": {
     "@capacitor/android": "^6.0.0",
     "@capacitor/cli": "^6.0.0",
     "@capacitor/core": "^6.0.0"
   },
   "devDependencies": {
-    "jsdom": "^30.1.2"
+    "jsdom": "^30.1.2",
+    "typescript": "^7.0.2"
   }
 }
