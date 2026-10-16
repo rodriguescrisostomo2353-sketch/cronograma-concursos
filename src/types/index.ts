@@ -7,6 +7,8 @@ export interface Topico {
   id: string;
   texto: string;
   concluido: boolean;
+  numero?: string | number | null;
+  nivel?: number;
   prioridade?: 'baixa' | 'media' | 'alta';
   anotacoes?: string;
   dataConclusao?: string;

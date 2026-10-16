@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Cronograma.API.Data;
 using Cronograma.API.Models;
 using Cronograma.API.Models.DTOs;
+using Cronograma.API.Services;
 
 namespace Cronograma.API.Controllers;
 
@@ -87,12 +88,12 @@ public class UserDataController : ControllerBase
             _context.UserData.Add(data);
         }
 
-        // Atualiza campos JSON
+        // Atualiza campos JSON com sanitização e desduplicação rigorosa
         if (payload.Materias.HasValue)
-            data.MateriasJson = payload.Materias.Value.GetRawText();
+            data.MateriasJson = DataSanitizer.SanitizeMateriasJson(payload.Materias.Value.GetRawText());
 
         if (payload.NaoClassificado.HasValue)
-            data.NaoClassificadoJson = payload.NaoClassificado.Value.GetRawText();
+            data.NaoClassificadoJson = DataSanitizer.SanitizeStringArray(payload.NaoClassificado.Value.GetRawText());
 
         if (payload.Schedules.HasValue)
             data.SchedulesJson = payload.Schedules.Value.GetRawText();
@@ -119,7 +120,7 @@ public class UserDataController : ControllerBase
             data.SpacedReviewsJson = payload.SpacedReviews.Value.GetRawText();
 
         if (payload.StudyLog.HasValue)
-            data.StudyLogJson = payload.StudyLog.Value.GetRawText();
+            data.StudyLogJson = DataSanitizer.SanitizeStudyLogJson(payload.StudyLog.Value.GetRawText());
 
         if (!string.IsNullOrEmpty(payload.Theme))
             data.Theme = payload.Theme;

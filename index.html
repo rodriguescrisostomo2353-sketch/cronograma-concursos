@@ -9775,6 +9775,85 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      * SINCRONIZAÇÃO EM NUVEM E AUTENTICAÇÃO (PARTE C - SUPABASE)
      * =========================================================================
      */
+    /**
+     * =========================================================================
+     * SISTEMA DE IDENTIFICADORES DETERMINÍSTICOS E ESTÁVEIS (IdUtils)
+     * =========================================================================
+     */
+    const IdUtils = {
+      stableHashString(str, seed = 0) {
+        let h1 = 0xdeadbeef ^ seed;
+        let h2 = 0x41c6ce57 ^ seed;
+        const s = String(str || '');
+        for (let i = 0, ch; i < s.length; i++) {
+          ch = s.charCodeAt(i);
+          h1 = Math.imul(h1 ^ ch, 2654435761);
+          h2 = Math.imul(h2 ^ ch, 1597334677);
+        }
+        h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+        h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+        const hashVal = 4294967296 * (2097151 & h2) + (h1 >>> 0);
+        return hashVal.toString(36).padStart(11, '0');
+      },
+      normalizeKey(text) {
+        return String(text || '')
+          .trim()
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/\s+/g, ' ');
+      },
+      generateUUID() {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+          return crypto.randomUUID();
+        }
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+          const r = (Math.random() * 16) | 0;
+          const v = c === 'x' ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        });
+      },
+      getMateriaId(nome, editalId = 'default', existingId) {
+        if (existingId && typeof existingId === 'string' && existingId.trim() && !existingId.startsWith('mat-temp-')) {
+          return existingId.trim();
+        }
+        const cleanName = this.normalizeKey(nome);
+        const cleanEdital = this.normalizeKey(editalId);
+        const hash = this.stableHashString(`${cleanEdital}::${cleanName}`);
+        return `mat_${hash}`;
+      },
+      getTopicoId(materiaNomeOrId, numero, texto, editalId = 'default', existingId) {
+        if (existingId && typeof existingId === 'string' && existingId.trim() && !existingId.startsWith('top-temp-')) {
+          return existingId.trim();
+        }
+        const cleanEdital = this.normalizeKey(editalId);
+        const cleanMat = this.normalizeKey(materiaNomeOrId);
+        const cleanNum = numero ? String(numero).trim() : '';
+        const cleanText = this.normalizeKey(texto);
+        const key = `${cleanEdital}::${cleanMat}::${cleanNum}::${cleanText}`;
+        const hash = this.stableHashString(key);
+        return `top_${hash}`;
+      },
+      getStudyLogId(existingId) {
+        if (existingId && typeof existingId === 'string' && existingId.trim()) {
+          return existingId.trim();
+        }
+        return `log_${this.generateUUID()}`;
+      },
+      getScheduleId(nome, existingId) {
+        if (existingId && typeof existingId === 'string' && existingId.trim()) {
+          return existingId.trim();
+        }
+        const cleanName = this.normalizeKey(nome);
+        const hash = this.stableHashString(`sched::${cleanName}`);
+        return `sch_${hash}`;
+      },
+      getOperationId(opType, entityId) {
+        return `op_${opType}_${entityId}_${this.stableHashString(`${opType}:${entityId}`)}`;
+      }
+    };
+    window.IdUtils = IdUtils;
+
     const SUPABASE_CONFIG = {
       url: 'https://arhhajxkmjpjwbrlcsqm.supabase.co',
       anonKey: 'sb_publishable_zZUuqpP2FXG9am-Q7UY95g_musS2nA-'
@@ -11887,7 +11966,9 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       }
       achados.forEach((a, i) => {
         const fim = i + 1 < achados.length ? achados[i + 1].inicio : texto.length;
-        topicos.push({ numero: a.numero, nivel: a.nivel, texto: texto.slice(a.inicio, fim).trim() });
+        const topTexto = texto.slice(a.inicio, fim).trim();
+        const topId = (typeof IdUtils !== 'undefined') ? IdUtils.getTopicoId('default', a.numero, topTexto) : undefined;
+        topicos.push({ id: topId, numero: a.numero, nivel: a.nivel, texto: topTexto });
       });
 
       // teste de integridade: nada pode se perder
@@ -12046,7 +12127,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         if (!entry) return null;
         const list = this.getStudyLog();
         const newLog = {
-          id: entry.id || ('log_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8)),
+          id: (typeof IdUtils !== 'undefined') ? IdUtils.getStudyLogId(entry.id) : (entry.id || ('log_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8))),
           topicoId: entry.topicoId || '',
           topicoNome: entry.topicoNome || '',
           materiaId: entry.materiaId || '',
@@ -15094,7 +15175,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           let existing = materiasMap.find(m => m.nome.toLowerCase() === sec.nome.toLowerCase());
           if (!existing) {
             existing = {
-              id: 'mat-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
+              id: (typeof IdUtils !== 'undefined') ? IdUtils.getMateriaId(sec.nome, App.examTitle || 'edital') : ('mat-' + Date.now()),
               nome: sec.nome,
               paletteId: getNextPaletteId(),
               rawLines: [...sec.lines]
@@ -15118,7 +15199,16 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
           const res = App.dividirTopicos(fullText);
           if (res && res.topicos && res.topicos.length > 0) {
-            m.topicos = res.topicos;
+            m.topicos = res.topicos.map((t, tIdx) => {
+              const topText = (typeof t === 'object' && t) ? (t.texto || '') : String(t);
+              const topNum = (typeof t === 'object' && t) ? t.numero : (tIdx + 1);
+              const topId = (typeof t === 'object' && t && t.id)
+                ? t.id
+                : ((typeof IdUtils !== 'undefined') ? IdUtils.getTopicoId(m.nome, topNum, topText, App.examTitle || 'edital') : ('top-' + tIdx));
+              return (typeof t === 'object' && t)
+                ? { ...t, id: topId }
+                : { id: topId, numero: null, nivel: 1, texto: topText, concluido: false };
+            });
             m.divisaoFalhou = !!res.falhou;
             if (res.falhou) {
               m.divisaoMotivo = res.motivo;
@@ -15126,7 +15216,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
               delete m.divisaoMotivo;
             }
           } else {
-            m.topicos = [{ numero: null, nivel: 1, texto: fullText }];
+            const defId = (typeof IdUtils !== 'undefined') ? IdUtils.getTopicoId(m.nome, null, fullText, App.examTitle || 'edital') : 'top-1';
+            m.topicos = [{ id: defId, numero: null, nivel: 1, texto: fullText, concluido: false }];
             m.divisaoFalhou = true;
             m.divisaoMotivo = (res && res.motivo) || 'Estrutura não reconhecida pelo divisor numérico';
           }
@@ -16333,7 +16424,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           this.showToast('Matéria atualizada!');
         } else {
           const newMat = {
-            id: 'mat-' + Date.now(),
+            id: (typeof IdUtils !== 'undefined') ? IdUtils.getMateriaId(name) : ('mat-' + Date.now()),
             nome: name,
             paletteId: paletteId,
             topicos: []
@@ -18554,7 +18645,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
         const selectedSwatch = document.querySelector('#colorPickerExtraSubjectContainer .color-swatch.selected');
         const paletteId = selectedSwatch ? selectedSwatch.dataset.paletteId : 'blue';
 
-        const newId = 'mat-avulsa-' + Date.now();
+        const newId = (typeof IdUtils !== 'undefined') ? IdUtils.getMateriaId(name) : ('mat-avulsa-' + Date.now());
         const newSubject = {
           id: newId,
           nome: name,

@@ -6,6 +6,7 @@
 
 import { getLocalDateString } from '../core/date-utils';
 import { eventBus } from '../core/events';
+import { getMateriaId, getTopicoId, getStudyLogId } from '../core/id-utils';
 import {
   Materia,
   Topico,
@@ -40,20 +41,25 @@ export class DataRepository {
   // ==========================================
   // HELPERS DE NORMALIZAÇÃO
   // ==========================================
-  static normalizarTopicos(topicos: any[] = []): Topico[] {
+  static normalizarTopicos(topicos: any[] = [], materiaNome = 'default'): Topico[] {
     if (!Array.isArray(topicos)) return [];
-    return topicos.map((topico, idx) => {
+    return topicos.map((topico, idx): Topico | null => {
       if (typeof topico === 'string') {
+        const txt = topico.trim();
         return {
-          id: `top_${Date.now()}_${idx}`,
-          texto: topico.trim(),
+          id: getTopicoId(materiaNome, idx + 1, txt),
+          texto: txt,
           concluido: false
         };
       }
       if (topico && typeof topico === 'object') {
+        const txt = String(topico.texto || topico.nome || topico.title || '').trim();
+        const num = topico.numero ?? (idx + 1);
         return {
-          id: topico.id || `top_${Date.now()}_${idx}`,
-          texto: String(topico.texto || topico.nome || topico.title || '').trim(),
+          id: getTopicoId(materiaNome, num, txt, undefined, topico.id),
+          numero: topico.numero,
+          nivel: topico.nivel,
+          texto: txt,
           concluido: Boolean(topico.concluido || topico.completed || topico.done),
           prioridade: topico.prioridade || 'media',
           anotacoes: topico.anotacoes || ''
@@ -66,15 +72,16 @@ export class DataRepository {
   static normalizarMateria(materia: any, idx = 0): Materia | null {
     if (!materia) return null;
     if (typeof materia === 'string') {
+      const nome = materia.trim();
       return {
-        id: `mat-${Date.now()}-${idx}`,
-        nome: materia.trim(),
+        id: getMateriaId(nome),
+        nome,
         topicos: []
       };
     }
-    const id = materia.id || `mat-${Date.now()}-${idx}`;
     const nome = String(materia.nome || materia.name || materia.titulo || 'Disciplina').trim();
-    const topicos = this.normalizarTopicos(materia.topicos || materia.topics || []);
+    const id = getMateriaId(nome, undefined, materia.id);
+    const topicos = this.normalizarTopicos(materia.topicos || materia.topics || [], nome);
     return {
       ...materia,
       id,
@@ -252,7 +259,7 @@ export class DataRepository {
     try {
       const log = this.obterRegistrosEstudo();
       const novoRegistro: StudyLogEntry = {
-        id: registro.id || `log_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+        id: getStudyLogId(registro.id),
         data: registro.data || getLocalDateString(),
         topicoId: registro.topicoId || null,
         topicoNome: registro.topicoNome || '',
