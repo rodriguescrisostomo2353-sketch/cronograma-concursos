@@ -1603,6 +1603,255 @@
   box-shadow: 0 0 14px rgba(245, 165, 36, 0.35) !important;
 }
 
+/* ==========================================================================
+   13. AJUSTES, CONTA, ATUALIZAÇÕES E ESTADOS TÁTICOS (ETAPAS 3.7 & 3.8)
+   ========================================================================== */
+
+/* Cards de Ajustes e Atualizações */
+.settings-container, .updates-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.settings-card, .update-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast);
+}
+
+.settings-card:hover, .update-card:hover {
+  border-color: var(--border-focus);
+}
+
+.settings-card-header, .update-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.settings-card-icon, .update-badge-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-subtle) !important;
+  border: 1px solid var(--accent-primary) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--accent-primary) !important;
+  flex-shrink: 0;
+}
+
+.settings-card-header h3, .update-header h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0 0 2px 0;
+  letter-spacing: -0.01em;
+}
+
+.settings-card-header p, .update-header p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Card de Conta e Nuvem */
+.settings-auth-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-auth-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--bg-card-secondary, var(--bg-card));
+  border-bottom: 1px solid var(--border-color);
+}
+
+.auth-icon-badge {
+  font-size: 1.6rem;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.auth-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+
+.auth-tab-btn {
+  flex: 1;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.auth-tab-btn:hover {
+  color: var(--text-main);
+}
+
+.auth-tab-btn.active {
+  color: var(--accent-primary) !important;
+  border-bottom: 2px solid var(--accent-primary) !important;
+  font-weight: 800;
+}
+
+/* Bottom Sheet Mais Opções */
+.modal-sheet-card {
+  border-radius: 16px 16px 0 0 !important;
+  border: 1px solid var(--border-color) !important;
+  background: var(--bg-card) !important;
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+.bottom-sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+  margin: 6px auto 14px;
+}
+
+.sheet-menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-main);
+  text-align: left;
+  touch-action: manipulation;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.sheet-menu-item:hover {
+  background: var(--bg-subtle);
+  border-color: var(--border-focus);
+}
+
+.sheet-menu-item.active-menu-option {
+  border-color: var(--accent-primary) !important;
+  background: var(--accent-subtle) !important;
+  color: var(--accent-primary) !important;
+}
+
+[data-theme="dark"] .sheet-menu-item.active-menu-option {
+  border-color: var(--accent-primary) !important;
+  background: var(--accent-subtle) !important;
+  color: var(--accent-primary) !important;
+}
+
+/* Atualizações Táticas */
+.update-status-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+
+.new-version-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--accent-primary);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-top: 16px;
+  box-shadow: 0 0 16px var(--accent-glow);
+}
+
+.new-version-badge {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--accent-contrast, #0E1116);
+  background: var(--accent-primary);
+  padding: 3px 10px;
+  border-radius: 9999px;
+}
+
+/* Estados do Sistema: Skeletons, Empty States, Offline Banners */
+.skeleton-tactical {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-subtle) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+  border-radius: var(--radius-xs);
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.empty-state-tactical {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-muted);
+}
+
+.empty-state-tactical .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+
+.empty-state-tactical h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.empty-state-tactical p {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  max-width: 440px;
+  margin: 0 auto 18px;
+}
+
+#offlinePendingBanner {
+  background: var(--accent-subtle) !important;
+  border: 1px solid var(--accent-primary) !important;
+  color: var(--accent-primary) !important;
+  font-weight: 600;
+}
+
+
 
 
 
