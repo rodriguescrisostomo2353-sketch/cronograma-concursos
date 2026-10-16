@@ -176,7 +176,7 @@ async function run() {
         const mats = Array.isArray(r.materias) ? r.materias : [];
         const tops = mats.reduce((acc, m) => acc + (Array.isArray(m.topicos) ? m.topicos.length : 0), 0);
         const logs = Array.isArray(r.study_log) ? r.study_log : ((r.auto_config && r.auto_config.study_log) || []);
-        const epoch = parseInt(r.reset_epoch || 0, 10);
+        const epoch = parseInt(r.reset_epoch !== undefined ? r.reset_epoch : (r.auto_config && r.auto_config.reset_epoch) || 0, 10);
         if (epoch > maxEpoch) maxEpoch = epoch;
 
         totalMaterias += mats.length;
@@ -225,6 +225,8 @@ async function run() {
 
       for (const row of rows) {
         const userId = row.user_id;
+        const availableCols = new Set(Object.keys(row));
+
         const cleanPayload = {
           materias: [],
           nao_classificado: [],
@@ -232,14 +234,27 @@ async function run() {
           active_schedule_id: null,
           completed_slots: {},
           priorities: {},
-          auto_config: { reset_epoch: newEpoch, study_log: [] },
-          study_log: [],
+          auto_config: {
+            ...(row.auto_config && typeof row.auto_config === 'object' ? row.auto_config : {}),
+            reset_epoch: newEpoch,
+            study_log: []
+          },
           spaced_reviews: [],
-          reset_epoch: newEpoch,
-          device_id: 'admin_reset_cli',
-          revision: 1,
           updated_at: new Date().toISOString()
         };
+
+        if (availableCols.has('study_log')) {
+          cleanPayload.study_log = [];
+        }
+        if (availableCols.has('reset_epoch')) {
+          cleanPayload.reset_epoch = newEpoch;
+        }
+        if (availableCols.has('device_id')) {
+          cleanPayload.device_id = 'admin_reset_cli';
+        }
+        if (availableCols.has('revision')) {
+          cleanPayload.revision = 1;
+        }
 
         const patchUrl = `${options.url.replace(/\/$/, '')}/rest/v1/user_data?user_id=eq.${userId}`;
         const patchRes = await fetch(patchUrl, {

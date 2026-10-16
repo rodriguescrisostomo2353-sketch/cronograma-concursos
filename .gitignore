@@ -11,6 +11,7 @@
 *.secret
 credentials*.json
 google-services.json
+backup_*.json
 
 # ==============================================================================
 # DEPENDÊNCIAS & ARQUIVOS PRIVADOS
