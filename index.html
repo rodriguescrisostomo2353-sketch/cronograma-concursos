@@ -5640,32 +5640,32 @@
   <!-- ==========================================================================
        CABEÇALHO
        ========================================================================== -->
-  <header>
-    <div class="container header-inner">
-      <div class="logo-area">
-        <div class="logo-badge">📚</div>
+  <header class="app-tactical-header">
+    <div class="container header-inner" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px;">
+      <div class="logo-area" onclick="App.switchTab('tab-today')" style="cursor: pointer; display: flex; align-items: center; gap: 10px;">
+        <div class="logo-badge" style="font-size: 1.4rem;">🛡️</div>
         <div class="logo-titles">
-          <h1>Cronograma de Concursos</h1>
-          <p>Leitura de edital em PDF & criação de cronogramas inteligentes</p>
+          <h1 style="margin: 0; font-size: 1.05rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text-main);">
+            CRONOGRAMA <span style="color: var(--accent-primary);">TÁTICO</span>
+          </h1>
+          <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+            Estudo & Disciplina Operacional
+          </p>
         </div>
       </div>
-      <div class="header-actions">
-        <!-- Botão de Sincronização em Nuvem / Conta (Parte C) -->
-        <button id="btnHeaderAuth" class="btn btn-secondary btn-sm header-auth-btn" onclick="App.openAuthOrSyncModal()" title="Conta e Sincronização em Nuvem" aria-label="Conta e Sincronização">
-          <span id="headerSyncIcon">☁️</span>
-          <span id="headerAuthText">Entrar</span>
-          <span class="sync-dot mode-local" id="headerSyncDot" title="Modo Local"></span>
+      <div class="header-actions" style="display: flex; align-items: center; gap: 8px;">
+        <!-- Indicador de Sincronização / Nuvem no Topo -->
+        <button id="btnHeaderAuth" class="header-sync-pill" onclick="App.openAuthOrSyncModal()" title="Conta e Sincronização em Nuvem" aria-label="Conta e Sincronização">
+          <span class="sync-dot-tactical online" id="headerSyncDot" title="Sincronização Ativa"></span>
+          <span id="headerAuthText" style="font-size: 0.75rem;">Entrar</span>
         </button>
-        <!-- Botão de Alternância de Tema Escuro / Claro -->
-        <button id="btnToggleTheme" class="btn btn-secondary btn-sm theme-toggle-btn" title="Alternar entre tema claro e escuro" aria-label="Alternar tema">
+        <!-- Alternar Tema Escuro / Claro -->
+        <button id="btnToggleTheme" class="btn-icon" title="Alternar tema claro/escuro" aria-label="Alternar tema">
           <span id="themeToggleIcon">🌙</span>
-          <span id="themeToggleText">Escuro</span>
         </button>
-        <button id="btnLoadDemo" class="btn btn-secondary btn-sm" title="Carregar disciplinas de exemplo para testar">
-          ✨ Carregar Exemplo
-        </button>
-        <button id="btnClearAll" class="btn btn-danger-soft btn-sm" title="Limpar todos os dados salvos">
-          🗑️ Limpar Dados
+        <!-- Menu de Ações Secundárias (⋮) -->
+        <button id="btnHeaderMoreActions" class="btn-icon" onclick="App.toggleMoreMenuSheet()" title="Mais Ações" aria-label="Menu de Ações">
+          <span style="font-size: 1.2rem; font-weight: 700;">⋮</span>
         </button>
       </div>
     </div>
@@ -5678,8 +5678,11 @@
     
     <!-- Navegação em Abas (Desktop) -->
     <nav class="nav-tabs" aria-label="Navegação do aplicativo">
-      <button class="nav-tab-btn active" data-tab="tab-subjects">
-        📚 Matérias & Tópicos <span class="tab-badge" id="badgeSubjectsCount">0</span>
+      <button class="nav-tab-btn active" data-tab="tab-today">
+        🎯 Hoje
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-subjects">
+        📋 Edital <span class="tab-badge" id="badgeSubjectsCount">0</span>
       </button>
       <button class="nav-tab-btn" data-tab="tab-schedule">
         🗓️ Cronograma
@@ -5687,27 +5690,143 @@
       <button class="nav-tab-btn" data-tab="tab-study-hours">
         ⏱️ Horas de Estudo
       </button>
-      <button class="nav-tab-btn" data-tab="tab-pdf-reader">
-        📖 Leitor de PDF
-      </button>
       <button class="nav-tab-btn" data-tab="tab-library">
         📁 Biblioteca <span class="tab-badge" id="badgeLibraryCount" style="display: none;">0</span>
-      </button>
-      <button class="nav-tab-btn" data-tab="tab-upload">
-        📄 Upload do Edital
-      </button>
-      <button class="nav-tab-btn" data-tab="tab-updates">
-        🔄 Atualizações <span class="tab-badge-dot" id="topUpdatesBadgeDot" style="display: none;"></span>
       </button>
       <button class="nav-tab-btn" data-tab="tab-settings">
         ⚙️ Ajustes
       </button>
+      <button class="nav-tab-btn" data-tab="tab-upload" style="display: none;">
+        📄 Upload do Edital
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-pdf-reader" style="display: none;">
+        📖 Leitor de PDF
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-updates" style="display: none;">
+        🔄 Atualizações <span class="tab-badge-dot" id="topUpdatesBadgeDot" style="display: none;"></span>
+      </button>
     </nav>
+
+    <!-- ========================================================================
+         ABA 0: HOJE ("DIREÇÃO DO DIA" - NOVO DASHBOARD INICIAL)
+         ======================================================================== -->
+    <section id="tab-today" class="tab-content active">
+      <!-- Card Hero: Missão do Dia e Saudação -->
+      <div class="today-hero-card tactical-card" style="margin-bottom: 20px;">
+        <div class="today-hero-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <div class="tactical-badge" style="margin-bottom: 6px;">
+              <span class="sync-dot-tactical online"></span> MISSÃO OPERACIONAL DO DIA
+            </div>
+            <h2 id="todayGreeting" style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--text-main);">
+              Bom dia, Guerreiro!
+            </h2>
+            <p id="todayDateSubtitle" style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">
+              Carregando calendário...
+            </p>
+          </div>
+          <!-- Contagem Regressiva para a Prova -->
+          <div id="todayExamCountdownBox" class="today-countdown-box" onclick="App.openExamDateModal()" title="Clique para configurar ou ver a contagem da prova">
+            <span class="countdown-clock-icon">⏳</span>
+            <div style="text-align: right;">
+              <div id="todayExamCountdownDays" style="font-size: 1.1rem; font-weight: 800; color: var(--accent-primary);">-- DIAS</div>
+              <div id="todayExamTitle" style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Prova Alvo</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grade de Estatísticas Rápidas de Estudo (Hoje, Semana, Conclusão) -->
+        <div class="today-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-top: 18px;">
+          <div class="stat-card-tactical">
+            <span class="stat-label-tactical">Estudado Hoje</span>
+            <span class="stat-value-tactical" id="todayHoursValue">0h 0m</span>
+            <span class="stat-subtext-tactical" id="todaySlotsProgressText">0 de 0 sessões</span>
+          </div>
+          <div class="stat-card-tactical">
+            <span class="stat-label-tactical">Nesta Semana</span>
+            <span class="stat-value-tactical" id="weekHoursValue">0h 0m</span>
+            <span class="stat-subtext-tactical" id="weekStreakSubtext">Ritmo constante</span>
+          </div>
+          <div class="stat-card-tactical" style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+            <div>
+              <span class="stat-label-tactical">Meta do Dia</span>
+              <span class="stat-value-tactical" id="todayPercentText">0%</span>
+              <span class="stat-subtext-tactical" id="todayCompletedText">0 concluídos</span>
+            </div>
+            <!-- Anel de Progresso SVG -->
+            <div class="progress-ring-container" style="width: 50px; height: 50px;">
+              <svg width="50" height="50" viewBox="0 0 50 50">
+                <circle cx="25" cy="25" r="20" fill="none" stroke="var(--bg-subtle)" stroke-width="5"/>
+                <circle id="todayProgressRingCircle" cx="25" cy="25" r="20" fill="none" stroke="var(--accent-primary)" stroke-width="5"
+                  stroke-dasharray="125.66" stroke-dashoffset="125.66" stroke-linecap="round"
+                  transform="rotate(-90 25 25)" style="transition: stroke-dashoffset 0.4s ease;"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cartão Principal: O Que Estudar Hoje -->
+      <div class="tactical-card" style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+              <span>🎯</span> O Que Estudar Hoje
+            </h3>
+            <span id="todayScheduleDayLabel" style="font-size: 0.78rem; color: var(--text-muted);">Sessões programadas para o dia</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchTab('tab-schedule')">
+              🗓️ Ver Semana
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.openAutoSchedulePreview()">
+              ⚡ Ajustar Ciclo
+            </button>
+          </div>
+        </div>
+
+        <!-- Lista de Sessões do Dia (Populada Dinamicamente) -->
+        <div id="todaySessionsList" style="display: flex; flex-direction: column; gap: 10px;">
+          <!-- Sessões injetadas via App.renderTodayView() -->
+        </div>
+
+        <!-- Estado Vazio caso não haja sessões para hoje -->
+        <div id="todayEmptyState" class="empty-state-tactical" style="display: none;">
+          <div class="empty-state-icon">🗓️</div>
+          <h4 class="empty-state-title">Nenhum cronograma gerado para hoje</h4>
+          <p class="empty-state-desc">Gere seu ciclo de estudos automático ou adicione sessões para visualizar sua missão diária aqui.</p>
+          <button type="button" class="btn btn-primary" onclick="App.openAutoSchedulePreview()">
+            ⚡ Gerar Cronograma Inteligente
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra de Atalhos Rápidos Operacionais -->
+      <div class="today-quick-actions-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 24px;">
+        <div class="tactical-card" style="cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 12px 14px;" onclick="App.resumeLastPdf()">
+          <span style="font-size: 1.6rem;">📖</span>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Continuar Leitura</div>
+            <div id="todayLastPdfName" style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Nenhum PDF recente</div>
+          </div>
+          <span style="color: var(--accent-primary); font-weight: 700;">➔</span>
+        </div>
+
+        <div class="tactical-card" style="cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 12px 14px;" onclick="App.switchTab('tab-subjects')">
+          <span style="font-size: 1.6rem;">📋</span>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Edital Verticalizado</div>
+            <div id="todaySubjectsQuickCount" style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Ver progresso dos tópicos</div>
+          </div>
+          <span style="color: var(--accent-primary); font-weight: 700;">➔</span>
+        </div>
+      </div>
+    </section>
 
     <!-- ========================================================================
          ABA 1: UPLOAD DE PDF DO EDITAL
          ======================================================================== -->
-    <section id="tab-upload" class="tab-content active">
+    <section id="tab-upload" class="tab-content">
       <div class="upload-card" id="dropZone">
         <div class="upload-icon">📑</div>
         <h3>Arraste o PDF do Edital ou Clique para Selecionar</h3>
@@ -8651,32 +8770,33 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
     <span class="fab-label" id="fabLabel">Nova Matéria</span>
   </button>
 
-  <!-- Navegação Inferior Fixa (Mobile Bottom Navigation) -->
+  <!-- Navegação Inferior Fixa (Mobile Bottom Navigation - 5 Itens Táticos) -->
   <nav class="bottom-nav" id="bottomNav" aria-label="Navegação Principal Mobile">
-    <button class="bottom-nav-item active" data-tab="tab-subjects">
+    <button class="bottom-nav-item active" data-tab="tab-today" aria-label="Tela Hoje">
       <div class="bottom-nav-icon-wrapper">
-        <span class="bottom-nav-icon">📚</span>
+        <span class="bottom-nav-icon">🎯</span>
+      </div>
+      <span class="bottom-nav-label">Hoje</span>
+    </button>
+    <button class="bottom-nav-item" data-tab="tab-subjects" aria-label="Edital Verticalizado">
+      <div class="bottom-nav-icon-wrapper">
+        <span class="bottom-nav-icon">📋</span>
         <span class="bottom-nav-badge" id="bottomBadgeSubjects">0</span>
       </div>
-      <span class="bottom-nav-label">Matérias</span>
+      <span class="bottom-nav-label">Edital</span>
     </button>
-    <button class="bottom-nav-item" data-tab="tab-schedule">
+    <button class="bottom-nav-item" data-tab="tab-schedule" aria-label="Cronograma Semanal">
       <div class="bottom-nav-icon-wrapper">
         <span class="bottom-nav-icon">🗓️</span>
       </div>
       <span class="bottom-nav-label">Cronograma</span>
     </button>
-    <button class="bottom-nav-item" data-tab="tab-pdf-reader">
+    <button class="bottom-nav-item" data-tab="tab-library" aria-label="Biblioteca Virtual">
       <div class="bottom-nav-icon-wrapper">
-        <span class="bottom-nav-icon">📖</span>
+        <span class="bottom-nav-icon">📁</span>
+        <span class="bottom-nav-badge" id="bottomBadgeLibrary" style="display: none;">0</span>
       </div>
-      <span class="bottom-nav-label">Leitor</span>
-    </button>
-    <button class="bottom-nav-item" data-tab="tab-upload">
-      <div class="bottom-nav-icon-wrapper">
-        <span class="bottom-nav-icon">📄</span>
-      </div>
-      <span class="bottom-nav-label">Edital</span>
+      <span class="bottom-nav-label">Biblioteca</span>
     </button>
     <button class="bottom-nav-item" data-tab="tab-more" id="bottomNavMoreBtn" aria-label="Mais opções">
       <div class="bottom-nav-icon-wrapper">
@@ -14183,8 +14303,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         });
         if (profiler) profiler.mark('first_render_end');
 
-        // Se houver matérias gravadas, inicia em Matérias; se vazio, inicia em Upload
-        const initialTab = (this.data.materias && this.data.materias.length > 0) ? 'tab-subjects' : 'tab-upload';
+        // Inicia na nova tela HOJE (dashboard e direção tática do dia)
+        const initialTab = 'tab-today';
         this.switchTab(initialTab);
 
         if (profiler) profiler.mark('ui_ready');
@@ -15165,6 +15285,10 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         this.activeTab = tabId;
         this.updateFab(tabId);
 
+        if (tabId === 'tab-today') {
+          this.renderTodayView();
+        }
+
         if (tabId === 'tab-study-hours') {
           if (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.renderTab) {
             StudyHoursManager.renderTab(true);
@@ -15233,7 +15357,12 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           return;
         }
 
-        if (tabId === 'tab-subjects') {
+        if (tabId === 'tab-today') {
+          fab.style.display = 'inline-flex';
+          icon.textContent = '⚡';
+          label.textContent = 'Gerar Ciclo';
+          fab.onclick = () => App.openAutoSchedulePreview();
+        } else if (tabId === 'tab-subjects') {
           fab.style.display = 'inline-flex';
           icon.textContent = '➕';
           label.textContent = 'Nova Matéria';
@@ -16543,11 +16672,252 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
          RENDERIZAÇÃO VISUAL (ETAPAS 1, 3 & 4)
          ======================================================================== */
       renderAll() {
+        this.renderTodayView();
         this.renderSubjectList();
         this.renderUnclassified();
         this.renderSchedule();
         this.renderAutoConfigPanel();
         this.updateHeaderCounters();
+      },
+
+      /* ------------------------------------------------------------------------
+         TELA HOJE: DIREÇÃO DO DIA, SESSÕES, CONTADOR E PROGRESSO
+         ------------------------------------------------------------------------ */
+      renderTodayView() {
+        const now = new Date();
+        const hour = now.getHours();
+        let greeting = 'Bom dia, combatente';
+        if (hour >= 12 && hour < 18) greeting = 'Boa tarde, combatente';
+        else if (hour >= 18 || hour < 5) greeting = 'Boa noite, combatente';
+
+        const greetingEl = document.getElementById('todayGreetingTitle');
+        if (greetingEl) greetingEl.textContent = greeting;
+
+        const dateSubEl = document.getElementById('todayDateSubtitle');
+        if (dateSubEl) {
+          const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+          const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+          dateSubEl.textContent = `${diasSemana[now.getDay()]}, ${now.getDate()} de ${meses[now.getMonth()]} de ${now.getFullYear()}`;
+        }
+
+        // 2. Contagem regressiva da prova
+        const countdownBadge = document.getElementById('todayCountdownBadge');
+        const countdownTitle = document.getElementById('todayCountdownTitle');
+        if (this.examDate) {
+          const days = this.calculateDaysToExam ? this.calculateDaysToExam(this.examDate) : null;
+          if (days !== null && days >= 0) {
+            if (countdownBadge) countdownBadge.textContent = `${days} DIAS RESTANTES`;
+            if (countdownTitle) countdownTitle.textContent = this.examTitle ? `Prova: ${this.examTitle}` : 'Data da Prova';
+          } else if (days !== null && days < 0) {
+            if (countdownBadge) countdownBadge.textContent = 'PROVA FINALIZADA';
+            if (countdownTitle) countdownTitle.textContent = this.examTitle ? `Prova: ${this.examTitle}` : 'Data da Prova';
+          }
+        } else {
+          if (countdownBadge) countdownBadge.textContent = 'DEFINIR DATA';
+          if (countdownTitle) countdownTitle.textContent = 'Contagem para a Prova';
+        }
+
+        // 3. Horas estudadas hoje e nesta semana
+        const todayStr = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.getLocalDateString) 
+          ? StudyHoursManager.getLocalDateString(now)
+          : `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+        
+        const weekRange = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.getWeekRange)
+          ? StudyHoursManager.getWeekRange(now)
+          : null;
+
+        const studyList = Array.isArray(this.studyLog) ? this.studyLog : [];
+        let todayMins = 0;
+        let weekMins = 0;
+        studyList.forEach(entry => {
+          const m = Number(entry.minutos) || 0;
+          if (entry.data === todayStr) todayMins += m;
+          if (weekRange && entry.data >= weekRange.startStr && entry.data <= weekRange.endStr) weekMins += m;
+        });
+
+        const fmtHours = (mins) => {
+          if (mins <= 0) return '0h 0m';
+          const h = Math.floor(mins / 60);
+          const rem = mins % 60;
+          return `${h}h ${rem}m`;
+        };
+
+        const todayHrsEl = document.getElementById('todayHoursValue');
+        if (todayHrsEl) todayHrsEl.textContent = fmtHours(todayMins);
+
+        const weekHrsEl = document.getElementById('weekHoursValue');
+        if (weekHrsEl) weekHrsEl.textContent = fmtHours(weekMins);
+
+        // 4. Sessões do cronograma de hoje
+        const dayIdx = now.getDay();
+        const dayPrefixes = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb', 'sab'];
+        const curPrefix = dayPrefixes[dayIdx];
+
+        let todayCol = null;
+        if (this.schedule && Array.isArray(this.schedule.columns)) {
+          todayCol = this.schedule.columns.find(col => {
+            if (!col || !col.dia) return false;
+            const d = col.dia.toLowerCase();
+            return d.startsWith(curPrefix) || (dayIdx === 6 && d.includes('sab'));
+          });
+        }
+
+        const listContainer = document.getElementById('todaySessionsList');
+        const emptyState = document.getElementById('todayEmptyState');
+        const dayLabel = document.getElementById('todayScheduleDayLabel');
+        const slotsProgressText = document.getElementById('todaySlotsProgressText');
+        const percentText = document.getElementById('todayPercentText');
+        const completedText = document.getElementById('todayCompletedText');
+        const ringCircle = document.getElementById('todayProgressRingCircle');
+
+        const slots = (todayCol && Array.isArray(todayCol.slots)) ? todayCol.slots : [];
+        const totalSlots = slots.length;
+        let completedSlotsCount = 0;
+
+        slots.forEach(s => {
+          if (this.completedSlots && this.completedSlots[s.slotKey]) {
+            completedSlotsCount++;
+          }
+        });
+
+        const percent = totalSlots > 0 ? Math.round((completedSlotsCount / totalSlots) * 100) : 0;
+
+        if (slotsProgressText) slotsProgressText.textContent = `${completedSlotsCount} de ${totalSlots} sessões`;
+        if (percentText) percentText.textContent = `${percent}%`;
+        if (completedText) completedText.textContent = `${completedSlotsCount} concluída${completedSlotsCount === 1 ? '' : 's'}`;
+
+        if (ringCircle) {
+          const circumference = 125.66;
+          const offset = circumference * (1 - (percent / 100));
+          ringCircle.style.strokeDashoffset = String(offset);
+        }
+
+        if (dayLabel) {
+          dayLabel.textContent = todayCol ? `${todayCol.dia} • ${totalSlots} bloco${totalSlots === 1 ? '' : 's'} de estudo` : 'Nenhum bloco para hoje';
+        }
+
+        if (totalSlots === 0) {
+          if (listContainer) listContainer.style.display = 'none';
+          if (emptyState) emptyState.style.display = 'block';
+        } else {
+          if (emptyState) emptyState.style.display = 'none';
+          if (listContainer) {
+            listContainer.style.display = 'flex';
+            listContainer.innerHTML = '';
+
+            slots.forEach(slot => {
+              const pal = this.getPalette(slot.paletteId);
+              const isDone = !!(this.completedSlots && this.completedSlots[slot.slotKey]);
+              const duration = slot.duration || slot.duracao || (typeof StudyHoursManager !== 'undefined' ? StudyHoursManager.defaultMinutes : 30);
+
+              const card = document.createElement('div');
+              card.className = `tactical-card session-card ${isDone ? 'completed' : ''}`;
+              card.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 14px;
+                border-left: 4px solid ${pal.border || 'var(--accent-primary)'};
+                background: ${isDone ? 'var(--bg-subtle)' : 'var(--bg-card)'};
+                transition: all var(--transition-fast);
+              `;
+
+              card.innerHTML = `
+                <label style="display: flex; align-items: center; cursor: pointer; margin: 0;" title="${isDone ? 'Marcar como não concluído' : 'Marcar como concluído'}">
+                  <input type="checkbox" ${isDone ? 'checked' : ''} style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent-primary);"
+                    onchange="App.toggleTodaySessionCompleted('${slot.slotKey}')">
+                </label>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span style="font-weight: 700; font-size: 0.95rem; color: ${isDone ? 'var(--text-muted)' : 'var(--text-main)'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
+                      ${App.escapeHtml(slot.subjectName || 'Matéria')}
+                    </span>
+                    <span class="badge ${isDone ? 'badge-success' : 'badge-warning'}" style="font-size: 0.7rem;">
+                      ${isDone ? '✓ Concluído' : `${duration} min`}
+                    </span>
+                  </div>
+                  <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    ${App.escapeHtml(slot.topic || 'Estudo de teoria e questões')}
+                  </div>
+                </div>
+                <button type="button" class="btn-icon" title="Ver no Edital" onclick="App.openSubjectDetailByName('${App.escapeHtml(slot.subjectName || '')}')" style="opacity: 0.8;">
+                  ➔
+                </button>
+              `;
+
+              listContainer.appendChild(card);
+            });
+          }
+        }
+
+        // 5. Atualização dos atalhos rápidos
+        const subjectsCountEl = document.getElementById('todaySubjectsQuickCount');
+        if (subjectsCountEl) {
+          const sCount = (this.data && Array.isArray(this.data.materias)) ? this.data.materias.length : 0;
+          subjectsCountEl.textContent = `${sCount} matéria${sCount === 1 ? '' : 's'} no edital`;
+        }
+
+        const lastPdfNameEl = document.getElementById('todayLastPdfName');
+        if (lastPdfNameEl) {
+          if (typeof PdfStorage !== 'undefined') {
+            PdfStorage.getFile('active').then(rec => {
+              if (rec && rec.name) {
+                lastPdfNameEl.textContent = rec.name;
+              } else if (typeof LibraryManager !== 'undefined' && LibraryManager.files && LibraryManager.files.length > 0) {
+                lastPdfNameEl.textContent = LibraryManager.files[0].name;
+              } else {
+                lastPdfNameEl.textContent = 'Abrir Biblioteca de PDFs';
+              }
+            }).catch(() => {
+              lastPdfNameEl.textContent = 'Abrir Biblioteca de PDFs';
+            });
+          }
+        }
+      },
+
+      toggleTodaySessionCompleted(slotKey) {
+        this.toggleSlotCompleted(slotKey);
+        this.renderTodayView();
+      },
+
+      resumeLastPdf() {
+        if (typeof PdfStorage !== 'undefined') {
+          PdfStorage.getFile('active').then(rec => {
+            if (rec && rec.data) {
+              App.loadPdfFromBuffer(rec.data, rec.name || 'Último PDF Aberto', false, 'active');
+              App.switchTab('tab-pdf-reader');
+            } else {
+              App.switchTab('tab-library');
+            }
+          }).catch(() => {
+            App.switchTab('tab-library');
+          });
+        } else {
+          App.switchTab('tab-library');
+        }
+      },
+
+      openSubjectDetailByName(subjectName) {
+        if (!subjectName) {
+          App.switchTab('tab-subjects');
+          return;
+        }
+        App.switchTab('tab-subjects');
+        setTimeout(() => {
+          const cards = document.querySelectorAll('.subject-card');
+          for (const card of cards) {
+            const titleEl = card.querySelector('.subject-header h3');
+            if (titleEl && titleEl.textContent.trim().toLowerCase() === subjectName.trim().toLowerCase()) {
+              const body = card.querySelector('.subject-body');
+              if (body && body.style.display === 'none') {
+                const btn = card.querySelector('.btn-toggle-subject');
+                if (btn) btn.click();
+              }
+              card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              break;
+            }
+          }
+        }, 120);
       },
 
       updateHeaderCounters() {

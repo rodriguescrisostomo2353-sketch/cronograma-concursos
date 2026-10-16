@@ -364,3 +364,73 @@
   margin: 0 auto 8px auto;
   line-height: 1.5;
 }
+
+/* ==============================================================================
+   7. CABEÇALHO TÁTICO & COUNTDOWN
+   ============================================================================== */
+.app-tactical-header {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  background-color: var(--bg-header);
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.header-sync-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 6px 12px;
+  min-height: 36px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all var(--transition-fast);
+}
+
+.header-sync-pill:hover {
+  border-color: var(--border-focus);
+  color: var(--text-main);
+}
+
+.today-countdown-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.today-countdown-box:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.countdown-clock-icon {
+  font-size: 1.3rem;
+}
+
+.tactical-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-primary);
+}
+
