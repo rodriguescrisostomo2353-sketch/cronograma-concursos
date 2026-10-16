@@ -67,6 +67,9 @@ public class UserDataController : ControllerBase
             PdfAnnotations = JsonDocument.Parse(data.PdfAnnotationsJson).RootElement,
             PdfBookmarks = JsonDocument.Parse(data.PdfBookmarksJson).RootElement,
             DataVersion = data.DataVersion,
+            DeviceId = data.DeviceId,
+            Revision = data.Revision,
+            ContentHash = data.ContentHash,
             UpdatedAt = data.UpdatedAt
         });
     }
@@ -134,10 +137,19 @@ public class UserDataController : ControllerBase
         if (payload.DataVersion.HasValue)
             data.DataVersion = payload.DataVersion.Value;
 
+        if (!string.IsNullOrEmpty(payload.DeviceId))
+            data.DeviceId = payload.DeviceId;
+
+        if (payload.Revision.HasValue)
+            data.Revision = payload.Revision.Value;
+
+        if (!string.IsNullOrEmpty(payload.ContentHash))
+            data.ContentHash = payload.ContentHash;
+
         data.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-        _logger.LogInformation("Dados sincronizados com sucesso para usuário {UserId}", userId);
+        _logger.LogInformation("Dados sincronizados com sucesso para usuário {UserId} (DeviceId: {DeviceId}, Rev: {Rev})", userId, data.DeviceId, data.Revision);
 
         return Ok(new SyncResponse
         {
@@ -153,7 +165,7 @@ public class UserDataController : ControllerBase
         var userId = GetCurrentUserId();
         var data = await _context.UserData
             .AsNoTracking()
-            .Select(d => new { d.UserId, d.UpdatedAt, d.DataVersion })
+            .Select(d => new { d.UserId, d.UpdatedAt, d.DataVersion, d.DeviceId, d.Revision, d.ContentHash })
             .FirstOrDefaultAsync(d => d.UserId == userId);
 
         return Ok(new SyncCheckResponse
@@ -161,6 +173,9 @@ public class UserDataController : ControllerBase
             HasData = data != null,
             UpdatedAt = data?.UpdatedAt,
             DataVersion = data?.DataVersion ?? 1,
+            DeviceId = data?.DeviceId,
+            Revision = data?.Revision ?? 1,
+            ContentHash = data?.ContentHash,
             ServerTimeUnixMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
         });
     }

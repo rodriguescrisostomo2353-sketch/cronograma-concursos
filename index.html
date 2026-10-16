@@ -9869,12 +9869,88 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       isSyncing: false,
       hasPendingSync: false,
       pendingCloudData: null,
+      deviceId: (function() {
+        try {
+          let id = localStorage.getItem('concurso_device_id');
+          if (!id) {
+            id = 'dev_' + (typeof IdUtils !== 'undefined' ? IdUtils.generateUUID() : Math.random().toString(36).substring(2, 10));
+            localStorage.setItem('concurso_device_id', id);
+          }
+          return id;
+        } catch(e) { return 'dev_unknown'; }
+      })(),
+      revision: (function() {
+        try {
+          const rev = parseInt(localStorage.getItem('concurso_data_revision') || '1', 10);
+          return isNaN(rev) ? 1 : rev;
+        } catch(e) { return 1; }
+      })(),
+      lastAppliedHash: (function() {
+        try { return localStorage.getItem('concurso_last_content_hash') || ''; } catch(e) { return ''; }
+      })(),
+      windowListenersAttached: false,
+      authSubscription: null,
       forceOffline: (function() {
         try { return localStorage.getItem('concurso_force_offline') === 'true'; } catch(e) { return false; }
       })(),
       offlineQueue: (function() {
         try { return JSON.parse(localStorage.getItem('concurso_offline_mutation_queue') || '[]'); } catch(e) { return []; }
       })(),
+
+      computePayloadHash(payload) {
+        if (!payload) return '';
+        const canon = {
+          matCount: (payload.materias || []).length,
+          topCount: (payload.materias || []).reduce((acc, m) => acc + (m.topicos ? m.topicos.length : 0), 0),
+          schedCount: (payload.schedules || []).length,
+          logCount: (payload.study_log || (payload.auto_config && payload.auto_config.study_log) || []).length,
+          exam: payload.exam_title || '',
+          theme: payload.theme || 'light',
+          firstMatId: (payload.materias && payload.materias[0]) ? (payload.materias[0].id || '') : '',
+          lastLogId: (payload.study_log && payload.study_log[0]) ? (payload.study_log[0].id || '') : ''
+        };
+        const str = JSON.stringify(canon);
+        return (typeof IdUtils !== 'undefined') ? IdUtils.stableHashString(str) : String(str.length);
+      },
+
+      isolateUserCache(userId) {
+        if (!userId) return;
+        try {
+          const snapshot = {
+            appData: localStorage.getItem('concurso_app_data'),
+            schedules: localStorage.getItem('concurso_schedules_list'),
+            studyLog: localStorage.getItem('concurso_study_log'),
+            reviews: localStorage.getItem('concurso_spaced_reviews'),
+            queue: localStorage.getItem('concurso_offline_mutation_queue'),
+            lastHash: this.lastAppliedHash,
+            revision: this.revision
+          };
+          localStorage.setItem(`concurso_user_cache_${userId}`, JSON.stringify(snapshot));
+          this.offlineQueue = [];
+          this.hasPendingSync = false;
+          localStorage.removeItem('concurso_offline_mutation_queue');
+        } catch(e) {}
+      },
+
+      restoreUserCache(userId) {
+        if (!userId) return;
+        try {
+          const raw = localStorage.getItem(`concurso_user_cache_${userId}`);
+          if (raw) {
+            const snapshot = JSON.parse(raw);
+            if (snapshot.appData) localStorage.setItem('concurso_app_data', snapshot.appData);
+            if (snapshot.schedules) localStorage.setItem('concurso_schedules_list', snapshot.schedules);
+            if (snapshot.studyLog) localStorage.setItem('concurso_study_log', snapshot.studyLog);
+            if (snapshot.reviews) localStorage.setItem('concurso_spaced_reviews', snapshot.reviews);
+            if (snapshot.queue) {
+              this.offlineQueue = JSON.parse(snapshot.queue);
+              localStorage.setItem('concurso_offline_mutation_queue', snapshot.queue);
+            }
+            if (snapshot.lastHash) this.lastAppliedHash = snapshot.lastHash;
+            if (snapshot.revision) this.revision = snapshot.revision;
+          }
+        } catch(e) {}
+      },
 
       isOffline() {
         return this.forceOffline || (typeof navigator !== 'undefined' && !navigator.onLine);
@@ -10047,40 +10123,53 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             this.updateDiagnosticsUI();
           }
 
-          // Monitora eventos de autenticação
-          this.client.auth.onAuthStateChange(async (event, session) => {
+          // Garante apenas UM ouvinte de autenticação ativo por vez
+          if (this.authSubscription && typeof this.authSubscription.unsubscribe === 'function') {
+            try { this.authSubscription.unsubscribe(); } catch(e) {}
+            this.authSubscription = null;
+          }
+
+          const { data: authSub } = this.client.auth.onAuthStateChange(async (event, session) => {
             const prevUser = this.user;
             this.user = session ? session.user : null;
             this.updateAuthUI();
 
             if (event === 'SIGNED_IN') {
               if (!prevUser || prevUser.id !== this.user?.id) {
+                if (this.user?.id) this.restoreUserCache(this.user.id);
                 await this.handleInitialLoginSync();
               }
             } else if (event === 'SIGNED_OUT') {
               this.setSyncStatus('local');
               this.lastSyncTime = null;
+              if (prevUser && prevUser.id) {
+                this.isolateUserCache(prevUser.id);
+              }
             } else if (event === 'PASSWORD_RECOVERY') {
               App.showToast('Recuperação de senha: você pode atualizar sua senha nas configurações.', 'info');
             }
           });
+          this.authSubscription = authSub ? (authSub.subscription || authSub) : null;
 
-          // Conectividade de rede
-          window.addEventListener('online', () => {
-            if (this.user) {
-              if (this.hasPendingSync) {
-                this.syncUp();
-              } else {
-                this.setSyncStatus('synced');
+          // Conectividade de rede (apenas UM ouvinte global protegido por flag)
+          if (!this.windowListenersAttached) {
+            this.windowListenersAttached = true;
+            window.addEventListener('online', () => {
+              if (this.user) {
+                if (this.hasPendingSync || (this.offlineQueue && this.offlineQueue.length > 0)) {
+                  this.flushOfflineQueue();
+                } else {
+                  this.setSyncStatus('synced');
+                }
               }
-            }
-          });
+            });
 
-          window.addEventListener('offline', () => {
-            if (this.user) {
-              this.setSyncStatus('local', 'Offline');
-            }
-          });
+            window.addEventListener('offline', () => {
+              if (this.user) {
+                this.setSyncStatus('local', 'Offline');
+              }
+            });
+          }
 
         } catch (err) {
           console.warn('[SyncManager] Falha ao inicializar Supabase:', err);
@@ -10233,6 +10322,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           payload.study_log = App.studyLog || [];
         }
 
+        // Anti-Eco e Controle de Versão por Revisão e Hash (Etapa 1.4)
+        payload.device_id = this.deviceId;
+        this.revision = (parseInt(this.revision, 10) || 1) + 1;
+        payload.revision = this.revision;
+        payload.content_hash = this.computePayloadHash(payload);
+        try { localStorage.setItem('concurso_data_revision', String(this.revision)); } catch(e) {}
+
         return payload;
       },
 
@@ -10289,6 +10385,12 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           const { error } = await this.upsertUserData(payload);
 
           if (error) throw error;
+
+          this.lastAppliedHash = payload.content_hash || '';
+          try {
+            localStorage.setItem('concurso_last_content_hash', this.lastAppliedHash);
+            localStorage.setItem('concurso_sync_last_time', payload.updated_at);
+          } catch(e) {}
 
           this.lastError = null;
           try { localStorage.removeItem('concurso_sync_last_error'); } catch (e) {}
@@ -10422,22 +10524,36 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
       },
 
-      // Sincronização Incremental: baixa apenas se o timestamp na nuvem for mais recente (Etapa 3)
+      // Sincronização Incremental: checagem leve com anti-eco por device_id e content_hash (Etapa 1.4)
       async syncDownIncremental() {
         if (!this.user || !this.client) return;
         if (this.isSyncing) return;
 
         try {
           this.isSyncing = true;
-          // Checagem ultraleve: busca apenas a coluna updated_at (~50 bytes)
+          // Checagem ultraleve: busca updated_at, device_id, revision, content_hash
           const { data: cloudStamp, error: stampErr } = await this.client
             .from('user_data')
-            .select('updated_at')
+            .select('updated_at, device_id, revision, content_hash')
             .eq('user_id', this.user.id)
             .maybeSingle();
 
           if (stampErr || !cloudStamp) {
             this.isSyncing = false;
+            return;
+          }
+
+          // Anti-eco: se a alteração na nuvem veio deste mesmo aparelho, ignora
+          if (cloudStamp.device_id && cloudStamp.device_id === this.deviceId) {
+            this.isSyncing = false;
+            this.setSyncStatus('synced');
+            return;
+          }
+
+          // Anti-eco: se o hash do conteúdo na nuvem é idêntico ao já aplicado, ignora
+          if (cloudStamp.content_hash && cloudStamp.content_hash === this.lastAppliedHash) {
+            this.isSyncing = false;
+            this.setSyncStatus('synced');
             return;
           }
 
@@ -10449,43 +10565,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             return;
           }
 
-          // Mudança detectada na nuvem: baixa e mescla
-          await this.syncDownAndMerge();
-        } catch(e) {
-          console.warn('[SyncManager] Falha no sync incremental:', e);
-        } finally {
-          this.isSyncing = false;
-        }
-      },
-
-      // Sincronização Incremental: baixa apenas se o timestamp na nuvem for mais recente (Etapa 3)
-      async syncDownIncremental() {
-        if (!this.user || !this.client) return;
-        if (this.isSyncing) return;
-
-        try {
-          this.isSyncing = true;
-          // Checagem ultraleve: busca apenas a coluna updated_at (~50 bytes)
-          const { data: cloudStamp, error: stampErr } = await this.client
-            .from('user_data')
-            .select('updated_at')
-            .eq('user_id', this.user.id)
-            .maybeSingle();
-
-          if (stampErr || !cloudStamp) {
-            this.isSyncing = false;
-            return;
-          }
-
-          const localLastSync = localStorage.getItem('concurso_sync_last_time');
-          if (localLastSync && cloudStamp.updated_at && new Date(cloudStamp.updated_at).getTime() <= new Date(localLastSync).getTime()) {
-            // Nuvem idêntica ou mais antiga: não precisa baixar tudo de novo!
-            this.isSyncing = false;
-            this.setSyncStatus('synced');
-            return;
-          }
-
-          // Mudança detectada na nuvem: baixa e mescla
+          // Mudança externa legítima detectada na nuvem: baixa e mescla
           await this.syncDownAndMerge();
         } catch(e) {
           console.warn('[SyncManager] Falha no sync incremental:', e);
@@ -10508,11 +10588,18 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             return;
           }
 
+          // Anti-eco direto
+          if (cloudData.device_id && cloudData.device_id === this.deviceId) {
+            this.setSyncStatus('synced');
+            this.updateDiagnosticsUI();
+            return;
+          }
+
           const localPayload = await this.gatherPayload();
           const localHas = this.hasLocalData();
 
           if (!localHas) {
-            await this.applyCloudPayload(cloudData, true);
+            await this.applyCloudPayload(cloudData, true, true);
             this.lastSyncTime = new Date();
             this.setSyncStatus('synced', 'Sincronizado');
             this.renderLastSyncTime();
@@ -10521,7 +10608,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           }
 
           const merged = this.mergePayloads(localPayload, cloudData);
-          await this.applyCloudPayload(merged, true);
+          await this.applyCloudPayload(merged, true, true);
           await this.syncUp();
           this.lastSyncTime = new Date();
           this.setSyncStatus('synced', 'Sincronizado');
@@ -10719,8 +10806,23 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
       },
 
-      async applyCloudPayload(cloudData, saveLocal = true) {
+      async applyCloudPayload(cloudData, saveLocal = true, force = false) {
         if (!cloudData) return;
+
+        // Verificação Anti-Eco (Etapa 1.4)
+        if (!force) {
+          if (cloudData.device_id && cloudData.device_id === this.deviceId) {
+            console.log('[SyncManager] Ignorando payload da nuvem: eco detectado do proprio dispositivo (' + this.deviceId + ')');
+            this.setSyncStatus('synced');
+            return;
+          }
+          const cloudHash = cloudData.content_hash || this.computePayloadHash(cloudData);
+          if (cloudHash && cloudHash === this.lastAppliedHash) {
+            console.log('[SyncManager] Ignorando payload da nuvem: hash identico ao ja aplicado (' + cloudHash + ')');
+            this.setSyncStatus('synced');
+            return;
+          }
+        }
 
         // Backup de segurança prévio no localStorage
         try {
@@ -10794,6 +10896,16 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         if (saveLocal) {
           App.saveToStorage(false, false); // Salva localmente SEM disparar re-upload em loop para a nuvem
         }
+
+        this.lastAppliedHash = cloudData.content_hash || this.computePayloadHash(cloudData);
+        if (cloudData.revision) {
+          this.revision = Math.max(this.revision, parseInt(cloudData.revision, 10) || 1);
+        }
+        try {
+          localStorage.setItem('concurso_last_content_hash', this.lastAppliedHash);
+          localStorage.setItem('concurso_data_revision', String(this.revision));
+          localStorage.setItem('concurso_sync_last_time', new Date().toISOString());
+        } catch (e) {}
 
         this.lastSyncTime = new Date();
         this.setSyncStatus('synced', 'Sincronizado');

@@ -120,3 +120,35 @@ export interface AuthSession {
   } | null;
   isAuthenticated: boolean;
 }
+
+export interface CloudSyncPayload {
+  user_id?: string;
+  materias: Materia[];
+  nao_classificado?: string[];
+  schedules: Cronograma[];
+  active_schedule_id: string | null;
+  completed_slots: Record<string, boolean>;
+  priorities: Record<string, any>;
+  auto_config?: any;
+  exam_date?: string | null;
+  exam_title?: string | null;
+  spaced_reviews?: SpacedReview[];
+  study_log?: StudyLogEntry[];
+  theme?: 'light' | 'dark';
+  pdf_annotations?: any[];
+  pdf_bookmarks?: any[];
+  device_id?: string;
+  revision?: number;
+  content_hash?: string;
+  updated_at?: string;
+}
+
+export interface SyncCheckResult {
+  hasData: boolean;
+  updatedAt?: string | null;
+  dataVersion: number;
+  deviceId?: string | null;
+  revision: number;
+  contentHash?: string | null;
+  serverTimeUnixMs: number;
+}
