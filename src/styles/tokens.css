@@ -1,60 +1,219 @@
 /**
- * Design System Tokens: Cores, Temas e Tipografia
- * Mantém os dois temas (Claro e Escuro) consistentes com layout mobile limpo.
+ * SISTEMA DE DESIGN TÁTICO: TOKENS DE ESTILO
+ * Tema Escuro (Padrão Operacional) e Tema Claro (WCAG 4.5:1+)
+ * Mantém conformidade de contraste, legibilidade máxima e alta performance.
  */
 
 :root {
-  /* Cores Globais */
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
-  --primary-light: #eef2ff;
-  --success: #10b981;
-  --success-light: #ecfdf5;
-  --danger: #ef4444;
-  --danger-light: #fef2f2;
-  --warning: #f59e0b;
-  --warning-light: #fffbeb;
+  /* Tipografia Nativa Zero-Lag */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
-  /* Espaçamento e Geometria */
-  --radius-xs: 4px;
+  /* Espaçamentos Táticos (Grid de 4px) */
+  --space-xxs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 20px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+
+  /* Geometria e Raios de Canto */
+  --radius-xs: 6px;
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
   --radius-full: 9999px;
 
-  /* Toque Mínimo Acessível (WCAG 2.5.5) */
+  /* Alvo de Toque Mínimo Acessível (WCAG 2.5.5) */
   --min-touch-target: 44px;
 
-  /* Transições Suaves */
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Animações Curtas e Otimizadas */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Tema Claro (Padrão) */
-[data-theme="light"], :root {
-  --bg-app: #f8fafc;
-  --bg-card: #ffffff;
-  --bg-surface: #f1f5f9;
-  --border-color: #e2e8f0;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --text-dimmed: #94a3b8;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-  --shadow-lg: 0 10px 28px rgba(0,0,0,0.12);
+/* ==============================================================================
+   TEMA ESCURO (PADRÃO OPERACIONAL DE ALTA PERFORMANCE)
+   ============================================================================== */
+:root, [data-theme="dark"] {
+  --bg-page: #0E1116;
+  --bg-app: #0E1116;
+  --bg-card: #151A21;
+  --bg-subtle: #1C222B;
+  --bg-elevated: #1C222B;
+  --bg-header: rgba(14, 17, 22, 0.94);
+  
+  --border-color: #262E39;
+  --border-focus: #F5A524;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+
+  --text-main: #E8ECF1;
+  --text-muted: #8B96A5;
+  --text-dimmed: #5E6977;
+  --text-light: #8B96A5;
+
+  /* Cores de Ação e Destaque Tático */
+  --accent-primary: #F5A524;
+  --accent-hover: #E0921B;
+  --accent-soft: rgba(245, 165, 36, 0.12);
+  --accent-border: rgba(245, 165, 36, 0.3);
+  --accent-contrast: #0E1116;
+
+  /* Cores de Status Funcional */
+  --color-success: #3DDC97;
+  --color-success-soft: rgba(61, 220, 151, 0.12);
+  --color-success-border: rgba(61, 220, 151, 0.3);
+
+  --color-warning: #FFB020;
+  --color-warning-soft: rgba(255, 176, 32, 0.12);
+  --color-warning-border: rgba(255, 176, 32, 0.3);
+
+  --color-danger: #FF5C5C;
+  --color-danger-soft: rgba(255, 92, 92, 0.12);
+  --color-danger-border: rgba(255, 92, 92, 0.3);
+
+  --color-info: #4DA3FF;
+  --color-info-soft: rgba(77, 163, 255, 0.12);
+  --color-info-border: rgba(77, 163, 255, 0.3);
+
+  /* Sombras Nítidas e Finas */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 3px 10px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+  /* Paleta Harmoniosa de Disciplinas (Matérias) - Escuro */
+  --pastel-blue-bg: #14283E;
+  --pastel-blue-border: #1E456D;
+  --pastel-blue-text: #7DD3FC;
+
+  --pastel-green-bg: #122E20;
+  --pastel-green-border: #195234;
+  --pastel-green-text: #86EFAC;
+
+  --pastel-purple-bg: #271C3F;
+  --pastel-purple-border: #442D72;
+  --pastel-purple-text: #C4B5FD;
+
+  --pastel-amber-bg: #322514;
+  --pastel-amber-border: #5A3E1A;
+  --pastel-amber-text: #FDE047;
+
+  --pastel-rose-bg: #351721;
+  --pastel-rose-border: #5D2233;
+  --pastel-rose-text: #FDA4AF;
+
+  --pastel-teal-bg: #112D2A;
+  --pastel-teal-border: #194E48;
+  --pastel-teal-text: #5EEAD4;
+
+  --pastel-indigo-bg: #1F2349;
+  --pastel-indigo-border: #323C7B;
+  --pastel-indigo-text: #A5B4FC;
+
+  --pastel-peach-bg: #382015;
+  --pastel-peach-border: #623620;
+  --pastel-peach-text: #FDBA74;
+
+  --pastel-neutral-bg: #1C222B;
+  --pastel-neutral-border: #2B3441;
+  --pastel-neutral-text: #CBD5E1;
 }
 
-/* Tema Escuro */
-[data-theme="dark"] {
-  --bg-app: #0f172a;
-  --bg-card: #1e293b;
-  --bg-surface: #334155;
-  --border-color: #334155;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-dimmed: #64748b;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-  --shadow-lg: 0 10px 28px rgba(0,0,0,0.5);
+/* ==============================================================================
+   TEMA CLARO (EQUIVALENTE TÁTICO DIURNO COM CONTRASTE WCAG 4.5:1+)
+   ============================================================================== */
+[data-theme="light"] {
+  --bg-page: #F4F6F9;
+  --bg-app: #F4F6F9;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #EDF1F6;
+  --bg-elevated: #EDF1F6;
+  --bg-header: rgba(244, 246, 249, 0.94);
+  
+  --border-color: #D5DCE5;
+  --border-focus: #D97706;
+  --border-subtle: rgba(0, 0, 0, 0.06);
+
+  --text-main: #0F172A;
+  --text-muted: #525F72;
+  --text-dimmed: #7E8D9F;
+  --text-light: #525F72;
+
+  /* Cores de Ação e Destaque Tático Diurno */
+  --accent-primary: #D97706;
+  --accent-hover: #B45309;
+  --accent-soft: rgba(217, 119, 6, 0.1);
+  --accent-border: rgba(217, 119, 6, 0.3);
+  --accent-contrast: #FFFFFF;
+
+  /* Cores de Status Funcional */
+  --color-success: #059669;
+  --color-success-soft: rgba(5, 150, 105, 0.1);
+  --color-success-border: rgba(5, 150, 105, 0.3);
+
+  --color-warning: #D97706;
+  --color-warning-soft: rgba(217, 119, 6, 0.1);
+  --color-warning-border: rgba(217, 119, 6, 0.3);
+
+  --color-danger: #DC2626;
+  --color-danger-soft: rgba(220, 38, 38, 0.1);
+  --color-danger-border: rgba(220, 38, 38, 0.3);
+
+  --color-info: #2563EB;
+  --color-info-soft: rgba(37, 99, 235, 0.1);
+  --color-info-border: rgba(37, 99, 235, 0.3);
+
+  /* Sombras Nítidas */
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 3px 10px rgba(15, 23, 42, 0.07);
+  --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.1);
+
+  /* Paleta Harmoniosa de Disciplinas (Matérias) - Claro */
+  --pastel-blue-bg: #E0F2FE;
+  --pastel-blue-border: #BAE6FD;
+  --pastel-blue-text: #0369A1;
+
+  --pastel-green-bg: #DCFCE7;
+  --pastel-green-border: #BBF7D0;
+  --pastel-green-text: #15803D;
+
+  --pastel-purple-bg: #EDE9FE;
+  --pastel-purple-border: #DDD6FE;
+  --pastel-purple-text: #6D28D9;
+
+  --pastel-amber-bg: #FEF3C7;
+  --pastel-amber-border: #FDE68A;
+  --pastel-amber-text: #92400E;
+
+  --pastel-rose-bg: #FFE4E6;
+  --pastel-rose-border: #FECDD3;
+  --pastel-rose-text: #BE123C;
+
+  --pastel-teal-bg: #CCFBF1;
+  --pastel-teal-border: #99F6E4;
+  --pastel-teal-text: #0F766E;
+
+  --pastel-indigo-bg: #E0E7FF;
+  --pastel-indigo-border: #C7D2FE;
+  --pastel-indigo-text: #4338CA;
+
+  --pastel-peach-bg: #FFEDD5;
+  --pastel-peach-border: #FED7AA;
+  --pastel-peach-text: #C2410C;
+
+  --pastel-neutral-bg: #F1F5F9;
+  --pastel-neutral-border: #E2E8F0;
+  --pastel-neutral-text: #334155;
+}
+
+/* Suporte Acessível a Movimento Reduzido (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

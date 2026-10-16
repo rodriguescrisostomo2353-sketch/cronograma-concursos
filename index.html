@@ -83,8 +83,7 @@
   <script>
     (function() {
       const savedTheme = localStorage.getItem('concurso_theme_preference');
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+      const theme = savedTheme || 'dark';
       document.documentElement.setAttribute('data-theme', theme);
     })();
   </script>
@@ -102,120 +101,169 @@
   <link rel="stylesheet" href="study-hours.css">
   <!-- Tokens de Design Modular -->
   <link rel="stylesheet" href="src/styles/tokens.css">
+  <link rel="stylesheet" href="src/ui/components.css">
 
   <style>
     /* ==========================================================================
-       1. VARIÁVEIS DE DESIGN & TONS PASTEL (TEMA CLARO DEFAULT)
+       1. VARIÁVEIS DE DESIGN TÁTICO (TEMA ESCURO OPERACIONAL DEFAULT)
        ========================================================================== */
-    :root {
-      --bg-page: #fbfbfe;
-      --bg-card: #ffffff;
-      --bg-subtle: #f4f6fa;
-      --bg-header: rgba(255, 255, 255, 0.94);
-      --border-color: #e5e9f2;
-      --border-focus: #cbd5e1;
-      
-      --text-main: #1e293b;
-      --text-muted: #64748b;
-      --text-light: #94a3b8;
-      
-      /* Tons Pastel Curados - Tema Claro */
-      --pastel-blue-bg: #e0f2fe;
-      --pastel-blue-border: #bae6fd;
-      --pastel-blue-text: #0369a1;
+    :root, :root[data-theme="dark"] {
+      --bg-page: #0E1116;
+      --bg-app: #0E1116;
+      --bg-card: #151A21;
+      --bg-subtle: #1C222B;
+      --bg-elevated: #1C222B;
+      --bg-header: rgba(14, 17, 22, 0.94);
+      --border-color: #262E39;
+      --border-focus: #F5A524;
+      --border-subtle: rgba(255, 255, 255, 0.06);
 
-      --pastel-green-bg: #dcfce7;
-      --pastel-green-border: #bbf7d0;
-      --pastel-green-text: #15803d;
+      --text-main: #E8ECF1;
+      --text-muted: #8B96A5;
+      --text-dimmed: #5E6977;
+      --text-light: #8B96A5;
 
-      --pastel-purple-bg: #ede9fe;
-      --pastel-purple-border: #ddd6fe;
-      --pastel-purple-text: #6d28d9;
+      /* Cores de Ação e Destaque Tático */
+      --accent-primary: #F5A524;
+      --accent-hover: #E0921B;
+      --accent-soft: rgba(245, 165, 36, 0.12);
+      --accent-border: rgba(245, 165, 36, 0.3);
+      --accent-contrast: #0E1116;
 
-      --pastel-amber-bg: #fef3c7;
-      --pastel-amber-border: #fde68a;
-      --pastel-amber-text: #b45309;
+      /* Status Funcionais */
+      --color-success: #3DDC97;
+      --color-success-soft: rgba(61, 220, 151, 0.12);
+      --color-warning: #FFB020;
+      --color-warning-soft: rgba(255, 176, 32, 0.12);
+      --color-danger: #FF5C5C;
+      --color-danger-soft: rgba(255, 92, 92, 0.12);
+      --color-info: #4DA3FF;
+      --color-info-soft: rgba(77, 163, 255, 0.12);
 
-      --pastel-rose-bg: #ffe4e6;
-      --pastel-rose-border: #fecdd3;
-      --pastel-rose-text: #be123c;
+      /* Tons de Disciplinas - Tema Escuro */
+      --pastel-blue-bg: #14283E;
+      --pastel-blue-border: #1E456D;
+      --pastel-blue-text: #7DD3FC;
 
-      --pastel-teal-bg: #ccfbf1;
-      --pastel-teal-border: #99f6e4;
-      --pastel-teal-text: #0f766e;
+      --pastel-green-bg: #122E20;
+      --pastel-green-border: #195234;
+      --pastel-green-text: #86EFAC;
 
-      --pastel-indigo-bg: #e0e7ff;
-      --pastel-indigo-border: #c7d2fe;
-      --pastel-indigo-text: #4338ca;
+      --pastel-purple-bg: #271C3F;
+      --pastel-purple-border: #442D72;
+      --pastel-purple-text: #C4B5FD;
 
-      --pastel-peach-bg: #ffedd5;
-      --pastel-peach-border: #fed7aa;
-      --pastel-peach-text: #c2410c;
+      --pastel-amber-bg: #322514;
+      --pastel-amber-border: #5A3E1A;
+      --pastel-amber-text: #FDE047;
 
-      --pastel-neutral-bg: #f1f5f9;
-      --pastel-neutral-border: #e2e8f0;
-      --pastel-neutral-text: #475569;
+      --pastel-rose-bg: #351721;
+      --pastel-rose-border: #5D2233;
+      --pastel-rose-text: #FDA4AF;
+
+      --pastel-teal-bg: #112D2A;
+      --pastel-teal-border: #194E48;
+      --pastel-teal-text: #5EEAD4;
+
+      --pastel-indigo-bg: #1F2349;
+      --pastel-indigo-border: #323C7B;
+      --pastel-indigo-text: #A5B4FC;
+
+      --pastel-peach-bg: #382015;
+      --pastel-peach-border: #623620;
+      --pastel-peach-text: #FDBA74;
+
+      --pastel-neutral-bg: #1C222B;
+      --pastel-neutral-border: #2B3441;
+      --pastel-neutral-text: #CBD5E1;
 
       --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 18px;
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-      --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
-      --shadow-lg: 0 10px 25px -3px rgba(15, 23, 42, 0.06), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
-      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-full: 9999px;
+      --min-touch-target: 44px;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 3px 10px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+      --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* ==========================================================================
-       TEMA ESCURO (Dark Mode Confortável e Suave)
+       2. TEMA CLARO (EQUIVALENTE TÁTICO DIURNO - WCAG 4.5:1+)
        ========================================================================== */
-    :root[data-theme="dark"] {
-      --bg-page: #0f172a;        /* Fundo cinza-escuro suave (não preto puro) */
-      --bg-card: #1e293b;        /* Superfície dos cards */
-      --bg-subtle: #273549;      /* Fundos secundários e abas */
-      --bg-header: rgba(15, 23, 42, 0.94);
-      --border-color: #334155;    /* Linhas e divisores discretos */
-      --border-focus: #475569;
-      
-      --text-main: #f8fafc;      /* Texto de alto contraste e boa leitura */
-      --text-muted: #94a3b8;
-      --text-light: #64748b;
-      
-      /* Tons Pastel Adaptados para Tema Escuro (confortáveis e luminosos) */
-      --pastel-blue-bg: #14283e;
-      --pastel-blue-border: #1e456d;
-      --pastel-blue-text: #7dd3fc;
+    :root[data-theme="light"] {
+      --bg-page: #F4F6F9;
+      --bg-app: #F4F6F9;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #EDF1F6;
+      --bg-elevated: #EDF1F6;
+      --bg-header: rgba(244, 246, 249, 0.94);
+      --border-color: #D5DCE5;
+      --border-focus: #D97706;
+      --border-subtle: rgba(0, 0, 0, 0.06);
 
-      --pastel-green-bg: #122e20;
-      --pastel-green-border: #195234;
-      --pastel-green-text: #86efac;
+      --text-main: #0F172A;
+      --text-muted: #525F72;
+      --text-dimmed: #7E8D9F;
+      --text-light: #525F72;
 
-      --pastel-purple-bg: #271c3f;
-      --pastel-purple-border: #442d72;
-      --pastel-purple-text: #c4b5fd;
+      --accent-primary: #D97706;
+      --accent-hover: #B45309;
+      --accent-soft: rgba(217, 119, 6, 0.1);
+      --accent-border: rgba(217, 119, 6, 0.3);
+      --accent-contrast: #FFFFFF;
 
-      --pastel-amber-bg: #322514;
-      --pastel-amber-border: #5a3e1a;
-      --pastel-amber-text: #fde047;
+      --color-success: #059669;
+      --color-success-soft: rgba(5, 150, 105, 0.1);
+      --color-warning: #D97706;
+      --color-warning-soft: rgba(217, 119, 6, 0.1);
+      --color-danger: #DC2626;
+      --color-danger-soft: rgba(220, 38, 38, 0.1);
+      --color-info: #2563EB;
+      --color-info-soft: rgba(37, 99, 235, 0.1);
 
-      --pastel-rose-bg: #351721;
-      --pastel-rose-border: #5d2233;
-      --pastel-rose-text: #fda4af;
+      /* Tons de Disciplinas - Tema Claro */
+      --pastel-blue-bg: #E0F2FE;
+      --pastel-blue-border: #BAE6FD;
+      --pastel-blue-text: #0369A1;
 
-      --pastel-teal-bg: #112d2a;
-      --pastel-teal-border: #194e48;
-      --pastel-teal-text: #5eead4;
+      --pastel-green-bg: #DCFCE7;
+      --pastel-green-border: #BBF7D0;
+      --pastel-green-text: #15803D;
 
-      --pastel-indigo-bg: #1f2349;
-      --pastel-indigo-border: #323c7b;
-      --pastel-indigo-text: #a5b4fc;
+      --pastel-purple-bg: #EDE9FE;
+      --pastel-purple-border: #DDD6FE;
+      --pastel-purple-text: #6D28D9;
 
-      --pastel-peach-bg: #361f14;
-      --pastel-peach-border: #5d331d;
-      --pastel-peach-text: #fdba74;
+      --pastel-amber-bg: #FEF3C7;
+      --pastel-amber-border: #FDE68A;
+      --pastel-amber-text: #92400E;
 
-      --pastel-neutral-bg: #1e293b;
-      --pastel-neutral-border: #334155;
-      --pastel-neutral-text: #cbd5e1;
+      --pastel-rose-bg: #FFE4E6;
+      --pastel-rose-border: #FECDD3;
+      --pastel-rose-text: #BE123C;
+
+      --pastel-teal-bg: #CCFBF1;
+      --pastel-teal-border: #99F6E4;
+      --pastel-teal-text: #0F766E;
+
+      --pastel-indigo-bg: #E0E7FF;
+      --pastel-indigo-border: #C7D2FE;
+      --pastel-indigo-text: #4338CA;
+
+      --pastel-peach-bg: #FFEDD5;
+      --pastel-peach-border: #FED7AA;
+      --pastel-peach-text: #C2410C;
+
+      --pastel-neutral-bg: #F1F5F9;
+      --pastel-neutral-border: #E2E8F0;
+      --pastel-neutral-text: #334155;
+
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 3px 10px rgba(15, 23, 42, 0.07);
+      --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.1);
+    }
 
       --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
       --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
