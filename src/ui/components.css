@@ -1307,6 +1307,303 @@
   background: #151A21;
 }
 
+/* ==========================================================================
+   12. WIZARDS E ASSISTENTES DE CRIAÇÃO TÁTICOS
+   ========================================================================== */
+
+/* Card Principal do Wizard */
+.modal-wizard-card {
+  max-width: 680px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-lg), 0 0 24px rgba(0, 0, 0, 0.4);
+}
+
+.wizard-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-card-secondary, var(--bg-card));
+  flex-shrink: 0;
+}
+
+.wizard-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.wizard-step-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.wizard-title-group h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 2px 0 0 0;
+  letter-spacing: -0.01em;
+}
+
+.wizard-progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background: var(--bg-subtle);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.wizard-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), #fbbf24) !important;
+  box-shadow: 0 0 8px var(--accent-glow);
+  transition: width var(--transition-normal);
+}
+
+.wizard-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 20px;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  min-height: 0;
+  background: var(--bg-card);
+}
+
+.wizard-footer {
+  padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 0px)) 20px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-card-secondary, var(--bg-card));
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Seletores de Tipo (Manual vs Automático) */
+.wizard-type-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 500px) {
+  .wizard-type-selector {
+    grid-template-columns: 1fr;
+  }
+}
+
+.wizard-type-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.wizard-type-card:hover {
+  border-color: var(--border-focus);
+  background: var(--bg-subtle);
+}
+
+.wizard-type-card.active {
+  border-color: var(--accent-primary) !important;
+  background: var(--accent-subtle) !important;
+  box-shadow: 0 0 12px var(--accent-glow) !important;
+}
+
+.wizard-type-icon {
+  font-size: 1.4rem;
+}
+
+.wizard-type-info strong {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.wizard-type-info span {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+/* Day chips táticos */
+.days-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.day-chip {
+  user-select: none;
+  cursor: pointer;
+}
+
+.day-chip input {
+  display: none;
+}
+
+.day-chip-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  min-width: 44px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--bg-subtle);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+}
+
+.day-chip:hover .day-chip-label {
+  border-color: var(--border-focus);
+  color: var(--text-main);
+}
+
+.day-chip input:checked + .day-chip-label {
+  background: var(--accent-primary) !important;
+  border-color: var(--accent-primary) !important;
+  color: var(--accent-contrast, #0E1116) !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 10px rgba(245, 165, 36, 0.3) !important;
+}
+
+/* Botões Preset */
+.btn-preset {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-preset:hover {
+  border-color: var(--accent-primary);
+  background: var(--bg-subtle);
+}
+
+.btn-preset.active {
+  background: var(--accent-primary) !important;
+  color: var(--accent-contrast, #0E1116) !important;
+  border-color: var(--accent-primary) !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 8px rgba(245, 165, 36, 0.25) !important;
+}
+
+/* Form de Sessão no Wizard */
+.wizard-session-form {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.wizard-session-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  gap: 8px;
+  transition: all var(--transition-fast);
+}
+
+.wizard-session-card:hover {
+  border-color: var(--border-focus);
+}
+
+.wizard-day-group-header {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--accent-primary);
+  margin: 14px 0 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Modal Preview de Cronograma */
+.modal-preview-card {
+  max-width: 760px;
+  width: 100%;
+}
+
+.modal-preview-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.preview-stats-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.preview-stats-pill {
+  color: var(--accent-primary) !important;
+  font-weight: 800 !important;
+}
+
+#previewVariationBadge {
+  color: var(--accent-primary) !important;
+  background: var(--accent-subtle) !important;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 700;
+  border: 1px solid var(--accent-primary);
+}
+
+#btnWizardSave {
+  box-shadow: 0 0 14px rgba(245, 165, 36, 0.35) !important;
+}
+
+
 
 
 
