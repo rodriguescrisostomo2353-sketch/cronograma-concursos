@@ -87,13 +87,14 @@ Caso queira fazer sem o script automático, siga este checklist:
   versionName "1.1.0" // Coloque o mesmo texto da versão
   ```
 
-### 3) Validar Integridade (Testes de Fumaça & Regras)
-- Antes de gerar o APK ou subir para a web, execute a validação:
+### 3) Validar Integridade (Testes de Fumaça, Anti-Duplicação & Regras)
+- Antes de gerar o APK ou subir para a web, execute a validação completa:
   ```powershell
   npm run test:smoke
-  npm run test:rules
+  node test_antiduplication_suite.js
+  node test_reset_epoch.js
   ```
-- Ambos devem reportar 100% de testes aprovados.
+- Todos os testes devem reportar 100% de aprovação (0 falhas).
 
 ### 4) Sincronizar os arquivos para o Android e Capacitor
 - No PowerShell, execute a preparação dos assets:

@@ -205,3 +205,105 @@ Se você preferir criar um novo projeto exclusivo no seu próprio email:
    - Copie a **Project URL**.
    - Copie a chave **anon public**.
 7. Cole esses dois valores em `index.html` em `const SUPABASE_CONFIG`.
+
+---
+
+## 🛡️ 8. Arquitetura Anti-Duplicação e Integridade de Sincronização
+
+A partir da versão 1.8.0, o aplicativo adota um sistema anti-duplicação à prova de falhas com proteção em 6 camadas:
+
+1. **Identificadores Estáveis e Determinísticos (`IdUtils`):**
+   - Itens de edital (matérias e tópicos) recebem identificadores calculados por hashing determinístico de seu conteúdo (`cyrb53` / `FNV-1a 64-bit`).
+   - Reprocessar o mesmo edital gera exatamente os mesmos IDs, impedindo a proliferação de registros órfãos.
+2. **Outbox Idempotente e Compactação de Fila Offline:**
+   - Cada mutação gravada offline recebe um `opId` imutável.
+   - Mutações redundantes sobre a mesma entidade são compactadas em tempo polinomial antes do envio.
+3. **Anti-Eco e Detecção de Ciclo:**
+   - Cada payload inclui `device_id`, `revision` incremental e `content_hash`.
+   - O aplicativo descarta imediatamente payloads que sejam reflexo de suas próprias gravações locais.
+4. **Mesclagem Canônica por Chave Lógica (Complexidade $O(N)$):**
+   - A mesclagem utiliza índices `Map` em memória (`topicById`, `topicByKey`, `topicByText`), garantindo unificação sem duplicação de tópicos em menos de 150ms mesmo para 20.000+ tópicos.
+5. **Disjuntor de Segurança (Circuit Breaker):**
+   - Monitora variações volumétricas anômalas. Caso uma mesclagem tente aumentar o volume de tópicos em mais de 20% e mais de 500 itens simultaneamente, a sincronização é pausada preventivamente e um diagnóstico é registrado.
+6. **Suíte Automatizada de Provas:**
+   - O arquivo `test_antiduplication_suite.js` valida os 8 cenários de integridade de dados e o teste de estresse com 20.000 tópicos:
+     ```bash
+     node test_antiduplication_suite.js
+     ```
+
+---
+
+## ⚡ 9. Controle Geracional por `reset_epoch` e Limpeza Segura
+
+Para permitir que a base de dados na nuvem seja reiniciada de forma limpa sem que clientes offline ressuscitem dados antigos ("zombie data resurrection"), o sistema utiliza o **Controle Geracional por `reset_epoch`**:
+
+1. **O que é o `reset_epoch`:**
+   - É um número de geração (timestamp Unix em milissegundos) registrado tanto na nuvem (`user_data.reset_epoch`) quanto no cliente (`concurso_reset_epoch`).
+2. **Detecção e Backup Local Mandatório:**
+   - Sempre que o cliente detecta que o `reset_epoch` da nuvem é superior ao seu epoch local, ele **executa imediatamente um backup de segurança local** (`concurso_pre_reset_backup`) antes de qualquer alteração.
+3. **Purga da Fila Outbox:**
+   - Todas as mutações locais geradas sob a geração anterior são sumariamente descartadas da fila outbox, impedindo o reenvio de dados antigos.
+4. **Reinicialização Limpa:**
+   - Os dados locais são redefinidos e o novo epoch é gravado, sincronizando perfeitamente com a nova geração limpa.
+
+---
+
+## 🛠️ 10. Manual Operacional: Ferramenta de Reset (`tools/admin/reset-dados.js`)
+
+A pasta `tools/admin/` disponibiliza o utilitário seguro de linha de comando para administração e contingência de dados.
+
+### 🔑 Como Obter a Chave Administrativa (`service_role`)
+> [!CAUTION]
+> A chave `service_role` possui acesso irrestrito ao banco e ignora o RLS. **NUNCA** a insira no código-fonte, commits do Git ou arquivos públicos.
+
+1. Acesse o painel do Supabase: [supabase.com/dashboard](https://supabase.com/dashboard)
+2. Selecione o projeto `arhhajxkmjpjwbrlcsqm` > **Project Settings** (ícone de engrenagem) > **API**.
+3. Na seção **Project API keys**, copie o valor do campo **`service_role` (secret)**.
+4. No terminal, defina a variável de ambiente (apenas na sessão atual):
+   - **PowerShell (Windows):**
+     ```powershell
+     $env:ADMIN_RESET_SECRET="sua-chave-service-role-aqui"
+     ```
+   - **Bash / Linux / macOS:**
+     ```bash
+     export ADMIN_RESET_SECRET="sua-chave-service-role-aqui"
+     ```
+
+---
+
+### 📋 Passo 1: Executar Simulação Prévia (Dry-Run)
+A simulação lista todos os usuários, matérias, tópicos e logs sem fazer nenhuma alteração no banco:
+```bash
+node tools/admin/reset-dados.js --simulacao
+```
+
+### 💾 Passo 2: Exportar Backup Completo de Contingência
+Gera uma cópia fiel em arquivo JSON de todos os registros da tabela `user_data` de todos os usuários:
+```bash
+node tools/admin/reset-dados.js --exportar ./backup_nuvem_pre_reset.json
+```
+
+### 🚨 Passo 3: Execução de Reset Confirmado na Nuvem
+> [!WARNING]
+> Esta operação incrementará o `reset_epoch` e reiniciará matérias, cronogramas e logs de todos os usuários na nuvem. Um backup pré-reset mandatório é salvo automaticamente em disco antes da limpeza.
+
+```bash
+node tools/admin/reset-dados.js --executar-reset-confirmado --confirmar-destruicao-irreversivel
+```
+
+---
+
+### 🔄 Procedimento de Contingência e Rollback
+Se por qualquer motivo for necessário restaurar os dados anteriores ao reset:
+1. Localize o arquivo gerado no Passo 2 (`backup_nuvem_pre_reset.json`) ou o backup mandatório gerado automaticamente (`backup_mandatorio_pre_reset_<epoch>.json`).
+2. O arquivo contém a lista completa de usuários com todas as suas matérias, cronogramas e logs originais.
+3. Para restaurar um usuário individual via Supabase SQL Editor:
+   ```sql
+   UPDATE public.user_data
+   SET materias = '<JSON_MATERIAS>'::jsonb,
+       schedules = '<JSON_SCHEDULES>'::jsonb,
+       study_log = '<JSON_STUDY_LOG>'::jsonb,
+       updated_at = NOW()
+   WHERE user_id = '<ID_DO_USUARIO>';
+   ```
+4. Nos aparelhos dos usuários, o backup local pré-reset também fica salvo no navegador sob a chave `concurso_pre_reset_backup` e pode ser inspecionado ou restaurado pela aba **Ajustes > Restaurar Backup**.
