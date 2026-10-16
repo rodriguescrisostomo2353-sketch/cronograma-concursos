@@ -1,24 +1,38 @@
 /**
- * Módulo de Fila de Sincronização Offline e Estado de Conexão em TypeScript
- * Gerencia operações pendentes quando o aparelho estiver sem internet ou no modo offline forçado.
+ * Módulo de Fila de Sincronização Outbox Idempotente em TypeScript
+ * Garante que:
+ * 1. Cada operação tenha um opId estável.
+ * 2. Múltiplas mutações da mesma entidade sejam compactadas (squashed).
+ * 3. Operações sejam removidas SOMENTE após confirmação do servidor.
+ * 4. Trava de execução única (mutex), debounce e backoff exponencial em erros.
  */
 
 import { eventBus } from '../core/events';
+import { getOperationId } from '../core/id-utils';
 
 export const QUEUE_STORAGE_KEY = 'concurso_offline_mutation_queue';
 export const FORCE_OFFLINE_KEY = 'concurso_force_offline';
 
 export interface QueueItem {
-  id: string;
+  opId: string;
+  id: string; // compatibilidade
   type: string;
+  entityType?: string;
+  entityId?: string;
   description: string;
   payload: any;
   timestamp: number;
+  retryCount: number;
 }
 
 export class SyncQueue {
   public queue: QueueItem[];
   public forceOffline: boolean;
+  public isFlushing: boolean = false;
+  private _failureCount: number = 0;
+  private _lastFlushTime: number = 0;
+  private readonly _minIntervalMs: number = 1000;
+  private _debounceTimer: any = null;
 
   constructor() {
     this.queue = this._loadQueue();
@@ -29,7 +43,8 @@ export class SyncQueue {
   private _loadQueue(): QueueItem[] {
     try {
       const raw = localStorage.getItem(QUEUE_STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
+      const items = raw ? JSON.parse(raw) : [];
+      return Array.isArray(items) ? items : [];
     } catch {
       return [];
     }
@@ -56,7 +71,7 @@ export class SyncQueue {
       window.addEventListener('online', () => {
         eventBus.emit('network:online', { isOnline: true });
         if (!this.forceOffline) {
-          this.flush();
+          this.debouncedFlush();
         }
       });
 
@@ -81,19 +96,64 @@ export class SyncQueue {
     } catch {}
     eventBus.emit('sync:forceOffline', this.forceOffline);
     if (!this.forceOffline && !this.isOffline()) {
-      this.flush();
+      this.debouncedFlush();
     }
   }
 
-  public enqueue(type: string = 'mutation', description: string = '', payload: any = null): QueueItem {
+  /**
+   * Compacta a fila: mantém apenas a última operação por entidade
+   */
+  public compact(): void {
+    const map = new Map<string, QueueItem>();
+    for (const item of this.queue) {
+      const key = `${item.entityType || 'generic'}::${item.entityId || item.opId || item.id}`;
+      map.set(key, item);
+    }
+    this.queue = Array.from(map.values());
+    this._persistQueue();
+  }
+
+  /**
+   * Enfileira uma mutação de forma idempotente com opId estável e auto-compactação
+   */
+  public enqueue(
+    type: string = 'mutation',
+    description: string = '',
+    payload: any = null,
+    entityType?: string,
+    entityId?: string
+  ): QueueItem {
+    const entType = entityType || type || 'save_state';
+    const entId = entityId || (payload && payload.id) || 'global';
+    const opId = getOperationId(entType, entId);
+
     const item: QueueItem = {
-      id: `mut_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      opId,
+      id: opId,
       type,
+      entityType: entType,
+      entityId: entId,
       description,
       payload,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      retryCount: 0
     };
-    this.queue.push(item);
+
+    // Compactação em tempo de inserção: substitui versão anterior da mesma entidade
+    const existingIndex = this.queue.findIndex(
+      q => q.opId === opId || (q.entityType === entType && q.entityId === entId)
+    );
+
+    if (existingIndex !== -1) {
+      this.queue[existingIndex] = item;
+    } else {
+      this.queue.push(item);
+    }
+
+    if (this.queue.length > 500) {
+      this.queue.shift(); // Evita estouro de memória
+    }
+
     this._persistQueue();
     eventBus.emit('sync:queued', item);
     return item;
@@ -113,28 +173,84 @@ export class SyncQueue {
     eventBus.emit('sync:cleared');
   }
 
+  /**
+   * Remove SOMENTE os itens que foram confirmados com sucesso pelo servidor
+   */
+  public removeConfirmed(confirmedOpIds: string[]): void {
+    if (!confirmedOpIds || confirmedOpIds.length === 0) return;
+    const set = new Set(confirmedOpIds);
+    this.queue = this.queue.filter(item => !set.has(item.opId) && !set.has(item.id));
+    this._persistQueue();
+    eventBus.emit('sync:confirmed', { removedCount: confirmedOpIds.length, remaining: this.queue.length });
+  }
+
+  public debouncedFlush(delayMs: number = 1000): void {
+    if (this._debounceTimer) clearTimeout(this._debounceTimer);
+    this._debounceTimer = setTimeout(() => {
+      this.flush();
+    }, delayMs);
+  }
+
+  /**
+   * Descarrega a fila com garantia de exclusão apenas sob confirmação e trava única
+   */
   public async flush(executorFn: ((items: QueueItem[]) => Promise<boolean>) | null = null): Promise<boolean> {
-    if (this.queue.length === 0 || this.isOffline()) return false;
+    if (this.queue.length === 0 || this.isOffline() || this.isFlushing) {
+      return false;
+    }
 
-    eventBus.emit('sync:flushing', { count: this.queue.length });
+    const now = Date.now();
+    if (now - this._lastFlushTime < this._minIntervalMs) {
+      return false;
+    }
 
-    if (typeof executorFn === 'function') {
-      try {
-        const success = await executorFn([...this.queue]);
-        if (success) {
-          this.clear();
-          eventBus.emit('sync:flushed', { success: true });
-          return true;
-        }
-      } catch (err) {
-        console.error('[SyncQueue] Erro ao descarregar fila:', err);
-        eventBus.emit('sync:error', err);
+    // Backoff exponencial se houver falhas consecutivas
+    if (this._failureCount > 0) {
+      const backoffWait = Math.min(60000, 1000 * Math.pow(2, this._failureCount));
+      if (now - this._lastFlushTime < backoffWait) {
         return false;
       }
-    } else if (typeof window !== 'undefined' && (window as any).SyncManager && typeof (window as any).SyncManager.flushOfflineQueue === 'function') {
-      return (window as any).SyncManager.flushOfflineQueue();
     }
-    return false;
+
+    this.isFlushing = true;
+    this._lastFlushTime = now;
+    this.compact();
+
+    const itemsToSend = [...this.queue];
+    const opIdsToSend = itemsToSend.map(i => i.opId);
+
+    eventBus.emit('sync:flushing', { count: itemsToSend.length });
+
+    try {
+      let success = false;
+      if (typeof executorFn === 'function') {
+        success = await executorFn(itemsToSend);
+      } else if (
+        typeof window !== 'undefined' &&
+        (window as any).SyncManager &&
+        typeof (window as any).SyncManager.flushOfflineQueue === 'function'
+      ) {
+        success = await (window as any).SyncManager.flushOfflineQueue();
+      }
+
+      if (success) {
+        this.removeConfirmed(opIdsToSend);
+        this._failureCount = 0;
+        eventBus.emit('sync:flushed', { success: true, count: opIdsToSend.length });
+        return true;
+      } else {
+        this._failureCount++;
+        eventBus.emit('sync:error', { error: 'Servidor recusou ou não confirmou a operação' });
+        return false;
+      }
+    } catch (err) {
+      this._failureCount++;
+      console.error('[SyncQueue] Erro ao descarregar fila:', err);
+      eventBus.emit('sync:error', err);
+      return false;
+    } finally {
+      this.isFlushing = false;
+    }
   }
 }
 

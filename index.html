@@ -9902,15 +9902,46 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
       },
 
-      recordOfflineMutation(type, desc) {
+      compactOfflineQueue() {
+        const map = new Map();
+        for (const item of (this.offlineQueue || [])) {
+          const key = `${item.entityType || 'mutation'}::${item.entityId || item.opId || item.id}`;
+          map.set(key, item);
+        }
+        this.offlineQueue = Array.from(map.values());
+        try {
+          localStorage.setItem('concurso_offline_mutation_queue', JSON.stringify(this.offlineQueue));
+        } catch(e) {}
+      },
+
+      recordOfflineMutation(type, desc, entityType, entityId, payload) {
+        const entType = entityType || type || 'save_state';
+        const entId = entityId || (payload && payload.id) || 'global';
+        const opId = (typeof IdUtils !== 'undefined') ? IdUtils.getOperationId(entType, entId) : `op_${entType}_${entId}`;
+
         const mutation = {
-          id: 'mut_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+          opId: opId,
+          id: opId,
           type: type || 'save_state',
+          entityType: entType,
+          entityId: entId,
           desc: desc || 'Alteração salva offline',
-          timestamp: Date.now()
+          payload: payload || null,
+          timestamp: Date.now(),
+          retries: 0
         };
-        this.offlineQueue.push(mutation);
-        if (this.offlineQueue.length > 100) this.offlineQueue.shift();
+
+        if (!Array.isArray(this.offlineQueue)) this.offlineQueue = [];
+
+        // Compactação em tempo de inserção: substitui mutação pendente na mesma entidade
+        const existingIdx = this.offlineQueue.findIndex(m => m.opId === opId || (m.entityType === entType && m.entityId === entId));
+        if (existingIdx !== -1) {
+          this.offlineQueue[existingIdx] = mutation;
+        } else {
+          this.offlineQueue.push(mutation);
+        }
+
+        if (this.offlineQueue.length > 500) this.offlineQueue.shift();
         try {
           localStorage.setItem('concurso_offline_mutation_queue', JSON.stringify(this.offlineQueue));
         } catch(e) {}
@@ -9920,26 +9951,44 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       async flushOfflineQueue() {
         if (this.isOffline()) {
           App.showToast('Você está no modo offline. Desative o modo offline nos Ajustes para sincronizar.', 'warning');
-          return;
+          return false;
         }
         if (!this.user || !this.client) {
           this.offlineQueue = [];
           try { localStorage.removeItem('concurso_offline_mutation_queue'); } catch(e) {}
           this.updateDiagnosticsUI();
           App.showToast('Dados locais preservados no navegador.', 'info');
-          return;
+          return true;
         }
+        if (this.isSyncing) return false;
+
+        const now = Date.now();
+        if (this.lastSyncAttempt && (now - this.lastSyncAttempt < 1000)) {
+          return false;
+        }
+        this.lastSyncAttempt = now;
+
+        this.compactOfflineQueue();
+        const pendingOpIds = (this.offlineQueue || []).map(m => m.opId);
+
         try {
-          const count = this.offlineQueue.length;
+          const count = pendingOpIds.length;
           this.setSyncStatus('syncing', 'Sincronizando...');
           await this.syncUp();
-          this.offlineQueue = [];
-          try { localStorage.removeItem('concurso_offline_mutation_queue'); } catch(e) {}
+
+          // Remove SOMENTE após confirmação de sucesso do servidor
+          this.offlineQueue = (this.offlineQueue || []).filter(m => !pendingOpIds.includes(m.opId));
+          try { localStorage.setItem('concurso_offline_mutation_queue', JSON.stringify(this.offlineQueue)); } catch(e) {}
+          this.retryFailures = 0;
           this.updateDiagnosticsUI();
           App.showToast(`✅ Sincronização concluída: ${count > 0 ? count + ' alterações enviadas' : 'dados atualizados'}!`, 'success');
+          return true;
         } catch(err) {
-          console.warn('[SyncManager] Erro ao descarregar fila offline:', err);
+          this.retryFailures = (this.retryFailures || 0) + 1;
+          const backoff = Math.min(60000, 1000 * Math.pow(2, this.retryFailures));
+          console.warn(`[SyncManager] Erro ao descarregar fila offline (falha ${this.retryFailures}, backoff ${backoff}ms):`, err);
           this.setSyncStatus('offline', 'Falha ao sincronizar');
+          return false;
         }
       },
       hasDedicatedStudyLogColumn: (() => {
