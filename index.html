@@ -9896,6 +9896,98 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       offlineQueue: (function() {
         try { return JSON.parse(localStorage.getItem('concurso_offline_mutation_queue') || '[]'); } catch(e) { return []; }
       })(),
+      circuitBreakerTripped: (function() {
+        try { return localStorage.getItem('concurso_circuit_breaker_tripped') !== null; } catch(e) { return false; }
+      })(),
+      circuitBreakerDiagnostic: (function() {
+        try {
+          const r = localStorage.getItem('concurso_circuit_breaker_tripped');
+          return r ? JSON.parse(r) : null;
+        } catch(e) { return null; }
+      })(),
+      safeMode: false,
+
+      countPayloadItems(payload) {
+        if (!payload) return 0;
+        let count = 0;
+        if (Array.isArray(payload.materias)) {
+          count += payload.materias.length;
+          payload.materias.forEach(m => {
+            if (m && Array.isArray(m.topicos)) count += m.topicos.length;
+          });
+        }
+        if (Array.isArray(payload.schedules)) count += payload.schedules.length;
+        const logs = payload.study_log || (payload.auto_config && payload.auto_config.study_log) || [];
+        if (Array.isArray(logs)) count += logs.length;
+        if (Array.isArray(payload.spaced_reviews)) count += payload.spaced_reviews.length;
+        if (Array.isArray(payload.nao_classificado)) count += payload.nao_classificado.length;
+        return count;
+      },
+
+      checkCircuitBreaker(localPayload, mergedPayload, allowOverride = false) {
+        const localCount = this.countPayloadItems(localPayload);
+        const mergedCount = this.countPayloadItems(mergedPayload);
+
+        // Se o usuário explicitamente permitiu via UI / flag descartável
+        const isOverridden = allowOverride || (function() {
+          try {
+            const flag = localStorage.getItem('concurso_sync_allow_large_merge') === 'true';
+            if (flag) localStorage.removeItem('concurso_sync_allow_large_merge');
+            return flag;
+          } catch(e) { return false; }
+        })();
+
+        if (isOverridden) {
+          this.circuitBreakerTripped = false;
+          this.safeMode = false;
+          try { localStorage.removeItem('concurso_circuit_breaker_tripped'); } catch(e) {}
+          return { ok: true, localCount, mergedCount, delta: mergedCount - localCount, growthPercent: 0 };
+        }
+
+        const delta = mergedCount - localCount;
+        const growthPercent = localCount > 0 ? (delta / localCount) * 100 : 0;
+
+        // Dispara disjuntor se crescimento for maior que 20% E mais que 500 itens em um único sync
+        if (delta > 500 && growthPercent > 20) {
+          this.circuitBreakerTripped = true;
+          this.safeMode = true;
+          const diag = {
+            timestamp: new Date().toISOString(),
+            localCount,
+            mergedCount,
+            delta,
+            growthPercent: growthPercent.toFixed(1) + '%',
+            reason: `Crescimento de dados acima do limite de segurança (+${delta} itens, +${growthPercent.toFixed(1)}%). Sincronização pausada para prevenir duplicação em cascata.`
+          };
+          this.circuitBreakerDiagnostic = diag;
+          try {
+            localStorage.setItem('concurso_circuit_breaker_tripped', JSON.stringify(diag));
+          } catch(e) {}
+
+          console.warn('[SyncManager] DISJUNTOR DE SEGURANÇA DISPARADO!', diag);
+          return { ok: false, ...diag };
+        }
+
+        this.circuitBreakerTripped = false;
+        this.safeMode = false;
+        try { localStorage.removeItem('concurso_circuit_breaker_tripped'); } catch(e) {}
+        return { ok: true, localCount, mergedCount, delta, growthPercent };
+      },
+
+      resetCircuitBreaker() {
+        this.circuitBreakerTripped = false;
+        this.safeMode = false;
+        this.circuitBreakerDiagnostic = null;
+        try {
+          localStorage.removeItem('concurso_circuit_breaker_tripped');
+          localStorage.setItem('concurso_sync_allow_large_merge', 'true');
+        } catch(e) {}
+        if (typeof App !== 'undefined' && App.showToast) {
+          App.showToast('Disjuntor de segurança liberado para a próxima sincronização.', 'info');
+        }
+        this.updateDiagnosticsUI();
+        this.debouncedSync();
+      },
 
       computePayloadHash(payload) {
         if (!payload) return '';
@@ -10514,7 +10606,10 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
         const lastErrEl = document.getElementById('diagLastError');
         if (lastErrEl) {
-          if (this.lastError && this.lastError.message) {
+          if (this.circuitBreakerTripped && this.circuitBreakerDiagnostic) {
+            lastErrEl.innerHTML = `⚠️ <strong style="color:#ef4444">DISJUNTOR DE SEGURANÇA ATIVADO</strong>: ${this.circuitBreakerDiagnostic.reason} <br><button onclick="SyncManager.resetCircuitBreaker()" class="btn btn-secondary btn-sm" style="margin-top:6px;font-size:11px;padding:3px 8px;cursor:pointer;">Desbloquear Disjuntor</button>`;
+            lastErrEl.style.color = '#ef4444';
+          } else if (this.lastError && this.lastError.message) {
             lastErrEl.textContent = `${this.lastError.code ? '[' + this.lastError.code + '] ' : ''}${this.lastError.message} (${this.lastError.time})`;
             lastErrEl.style.color = '#ef4444';
           } else {
@@ -10608,6 +10703,22 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           }
 
           const merged = this.mergePayloads(localPayload, cloudData);
+
+          // Disjuntor de Segurança (Circuit Breaker - Etapa 1.5)
+          const breaker = this.checkCircuitBreaker(localPayload, merged);
+          if (!breaker.ok) {
+            this.setSyncStatus('error', 'Disjuntor Ativado');
+            this.recordSyncError({
+              message: breaker.reason,
+              code: 'CIRCUIT_BREAKER_TRIPPED'
+            });
+            if (typeof App !== 'undefined' && App.showToast) {
+              App.showToast(`⚠️ Sincronização interrompida: Disjuntor detectou crescimento anômalo (+${breaker.delta} itens). Proteção ativada.`, 'warning');
+            }
+            this.updateDiagnosticsUI();
+            return;
+          }
+
           await this.applyCloudPayload(merged, true, true);
           await this.syncUp();
           this.lastSyncTime = new Date();
@@ -10921,35 +11032,67 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       mergePayloads(localData, cloudData) {
         if (!cloudData) return localData;
 
-        // Mescla matérias sem duplicar
+        // Mescla matérias por chave lógica sem duplicar (Etapa 1.5)
         const localMaterias = (localData.materias || []);
         const cloudMaterias = (cloudData.materias || []);
         const mergedMaterias = [...localMaterias];
 
+        const normalizeKey = (str) => {
+          return String(str || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        };
+
+        const getTopicLogicalKey = (t, matNorm) => {
+          if (!t) return '';
+          const txt = (typeof t === 'object' ? (t.texto || t.text || t.nome || '') : String(t)).trim();
+          const cleanTxt = normalizeKey(txt).replace(/[^a-z0-9]/g, '');
+          const num = (typeof t === 'object' && t.numero !== undefined && t.numero !== null) ? String(t.numero).trim() : null;
+          if (num) {
+            return `${matNorm}#num_${num}#${cleanTxt.substring(0, 20)}`;
+          }
+          return `${matNorm}#txt_${cleanTxt}`;
+        };
+
         cloudMaterias.forEach(cMat => {
           const cId = typeof idMateria === 'function' ? idMateria(cMat) : (cMat.id || '');
-          const cNome = (typeof nomeMateria === 'function' ? nomeMateria(cMat) : (cMat.nome || '')).trim().toLowerCase();
+          const cNome = (typeof nomeMateria === 'function' ? nomeMateria(cMat) : (cMat.nome || '')).trim();
+          const cNomeNorm = normalizeKey(cNome);
 
           const existing = mergedMaterias.find(m => {
             const mId = typeof idMateria === 'function' ? idMateria(m) : (m.id || '');
-            const mNome = (typeof nomeMateria === 'function' ? nomeMateria(m) : (m.nome || '')).trim().toLowerCase();
-            return (mId && cId && mId === cId) || (mNome && cNome && mNome === cNome);
+            const mNome = (typeof nomeMateria === 'function' ? nomeMateria(m) : (m.nome || '')).trim();
+            const mNomeNorm = normalizeKey(mNome);
+            return (mId && cId && mId === cId) || (mNomeNorm && cNomeNorm && mNomeNorm === cNomeNorm);
           });
+
           if (!existing) {
             mergedMaterias.push(cMat);
           } else {
             const existingTopicos = existing.topicos || [];
             const cloudTopicos = cMat.topicos || [];
             cloudTopicos.forEach(ct => {
-              const ctText = (typeof ct === 'object' && ct ? (ct.texto || ct.text || '') : String(ct)).trim().toLowerCase();
+              const ctKey = getTopicLogicalKey(ct, cNomeNorm);
+              const ctText = (typeof ct === 'object' && ct ? (ct.texto || ct.text || '') : String(ct)).trim();
+              const ctTextNorm = normalizeKey(ctText);
+
               const hasTopic = existingTopicos.find(et => {
-                const etText = (typeof et === 'object' && et ? (et.texto || et.text || '') : String(et)).trim().toLowerCase();
-                return (et.id && ct.id && et.id === ct.id) || (etText && ctText && etText === ctText);
+                const etKey = getTopicLogicalKey(et, cNomeNorm);
+                const etText = (typeof et === 'object' && et ? (et.texto || et.text || '') : String(et)).trim();
+                const etTextNorm = normalizeKey(etText);
+                return (et.id && ct.id && et.id === ct.id) ||
+                       (etKey && ctKey && etKey === ctKey) ||
+                       (etTextNorm && ctTextNorm && etTextNorm === ctTextNorm);
               });
+
               if (!hasTopic) {
                 existingTopicos.push(ct);
-              } else if (ct && ct.concluido) {
-                if (typeof hasTopic === 'object') hasTopic.concluido = true;
+              } else {
+                if (ct && ct.concluido) {
+                  if (typeof hasTopic === 'object') hasTopic.concluido = true;
+                }
+                if (typeof hasTopic === 'object') {
+                  if (!hasTopic.anotacoes && ct.anotacoes) hasTopic.anotacoes = ct.anotacoes;
+                  if (!hasTopic.prioridade && ct.prioridade) hasTopic.prioridade = ct.prioridade;
+                }
               }
             });
             existing.topicos = existingTopicos;
@@ -10961,7 +11104,11 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         const cloudSchedules = cloudData.schedules || [];
         const mergedSchedules = [...localSchedules];
         cloudSchedules.forEach(cs => {
-          const exists = mergedSchedules.find(s => (s.id && cs.id && s.id === cs.id) || (s.name && cs.name && s.name === cs.name) || (s.nome && cs.nome && s.nome === cs.nome));
+          const csNameNorm = normalizeKey(cs.name || cs.nome || '');
+          const exists = mergedSchedules.find(s => {
+            const sNameNorm = normalizeKey(s.name || s.nome || '');
+            return (s.id && cs.id && s.id === cs.id) || (sNameNorm && csNameNorm && sNameNorm === csNameNorm);
+          });
           if (!exists) {
             mergedSchedules.push(cs);
           } else if (cs.columns && cs.columns.length > 0 && (!exists.columns || exists.columns.length === 0)) {
@@ -10975,15 +11122,18 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         // Prioridades
         const mergedPriorities = Object.assign({}, cloudData.priorities || {}, localData.priorities || {});
 
-        // Revisões espaçadas
+        // Revisões espaçadas por ID e chave única
         const localReviews = localData.spaced_reviews || [];
         const cloudReviews = cloudData.spaced_reviews || [];
-        const mergedReviews = [...localReviews];
-        cloudReviews.forEach(cr => {
-          if (!mergedReviews.find(lr => lr.id === cr.id)) {
-            mergedReviews.push(cr);
+        const reviewMap = new Map();
+        [...localReviews, ...cloudReviews].forEach(r => {
+          if (!r) return;
+          const k = r.id || `${r.materiaId || ''}_${r.topicoId || ''}_${r.dataEstudo || ''}`;
+          if (!reviewMap.has(k) || r.concluida) {
+            reviewMap.set(k, r);
           }
         });
+        const mergedReviews = Array.from(reviewMap.values());
 
         // Mescla logs de estudo (studyLog) sem duplicar e respeitando updatedAt mais recente
         const localLogs = (Array.isArray(localData.study_log) && localData.study_log.length > 0)
@@ -10995,28 +11145,69 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           : ((cloudData.auto_config && Array.isArray(cloudData.auto_config.study_log)) ? cloudData.auto_config.study_log : (Array.isArray(cloudData.study_log) ? cloudData.study_log : []));
 
         const logMap = new Map();
-        localLogs.forEach(l => { if (l && l.id) logMap.set(l.id, l); });
+        const getLogKey = (l) => {
+          if (l.id) return l.id;
+          return `${l.data}_${l.materiaId}_${l.topicoId || 'geral'}_${l.minutos}_${l.criadoEm}`;
+        };
+        localLogs.forEach(l => {
+          if (l) logMap.set(getLogKey(l), l);
+        });
         cloudLogs.forEach(cl => {
-          if (!cl || !cl.id) return;
-          if (!logMap.has(cl.id)) {
-            logMap.set(cl.id, cl);
+          if (!cl) return;
+          const k = getLogKey(cl);
+          if (!logMap.has(k)) {
+            logMap.set(k, cl);
           } else {
-            const existing = logMap.get(cl.id);
+            const existing = logMap.get(k);
             const clTime = cl.updatedAt ? new Date(cl.updatedAt).getTime() : 0;
             const exTime = existing.updatedAt ? new Date(existing.updatedAt).getTime() : 0;
             if (clTime > exTime) {
-              logMap.set(cl.id, cl);
+              logMap.set(k, cl);
             }
           }
         });
         const mergedStudyLogs = Array.from(logMap.values());
+
+        // Deduplicação estrita de nao_classificado por chave normalizada
+        const cleanNcSet = new Set();
+        const mergedNaoClassificado = [];
+        [...(localData.nao_classificado || []), ...(cloudData.nao_classificado || [])].forEach(item => {
+          const s = String(item || '').trim();
+          const norm = normalizeKey(s);
+          if (norm && !cleanNcSet.has(norm)) {
+            cleanNcSet.add(norm);
+            mergedNaoClassificado.push(s);
+          }
+        });
+
+        // Deduplicação estrita de pdf_annotations
+        const annMap = new Map();
+        (localData.pdf_annotations || []).concat(cloudData.pdf_annotations || []).forEach(a => {
+          if (!a) return;
+          const k = a.id || `${a.fileId || ''}_${a.page || 0}_${(a.text || '').substring(0, 30)}`;
+          if (!annMap.has(k) || (a.updatedAt && annMap.get(k).updatedAt < a.updatedAt)) {
+            annMap.set(k, a);
+          }
+        });
+        const mergedPdfAnnotations = Array.from(annMap.values());
+
+        // Deduplicação estrita de pdf_bookmarks
+        const bmMap = new Map();
+        (localData.pdf_bookmarks || []).concat(cloudData.pdf_bookmarks || []).forEach(b => {
+          if (!b) return;
+          const k = b.id || `${b.fileId || ''}_${b.page || 0}_${b.title || ''}`;
+          if (!bmMap.has(k) || (b.updatedAt && bmMap.get(k).updatedAt < b.updatedAt)) {
+            bmMap.set(k, b);
+          }
+        });
+        const mergedPdfBookmarks = Array.from(bmMap.values());
 
         const mergedAutoConfig = Object.assign({}, cloudData.auto_config || {}, localData.auto_config || {});
         mergedAutoConfig.study_log = mergedStudyLogs;
 
         const mergedPayload = {
           materias: mergedMaterias,
-          nao_classificado: [...(localData.nao_classificado || []), ...(cloudData.nao_classificado || [])],
+          nao_classificado: mergedNaoClassificado,
           schedules: mergedSchedules,
           active_schedule_id: localData.active_schedule_id || cloudData.active_schedule_id,
           completed_slots: mergedCompleted,
@@ -11026,8 +11217,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           exam_title: localData.exam_title || cloudData.exam_title,
           spaced_reviews: mergedReviews,
           theme: localData.theme || cloudData.theme || 'light',
-          pdf_annotations: (localData.pdf_annotations || []).concat(cloudData.pdf_annotations || []),
-          pdf_bookmarks: (localData.pdf_bookmarks || []).concat(cloudData.pdf_bookmarks || [])
+          pdf_annotations: mergedPdfAnnotations,
+          pdf_bookmarks: mergedPdfBookmarks
         };
 
         if (this.hasDedicatedStudyLogColumn === true) {

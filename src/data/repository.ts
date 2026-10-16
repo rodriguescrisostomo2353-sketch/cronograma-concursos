@@ -359,6 +359,66 @@ export class DataRepository {
     return true;
   }
 
+  // ==========================================
+  // MESCLAGEM POR CHAVE LÓGICA E DISJUNTOR (Etapa 1.5)
+  // ==========================================
+  static mesclarMaterias(locais: Materia[] = [], remotas: Materia[] = []): Materia[] {
+    const normalizadasLocais = this.normalizarMaterias(locais);
+    const normalizadasRemotas = this.normalizarMaterias(remotas);
+    const resultado: Materia[] = [...normalizadasLocais];
+
+    for (const rMat of normalizadasRemotas) {
+      const rNomeNorm = (rMat.nome || '').trim().toLowerCase();
+      const existing = resultado.find(m => {
+        const mNomeNorm = (m.nome || '').trim().toLowerCase();
+        return (m.id && rMat.id && m.id === rMat.id) || (mNomeNorm && rNomeNorm && mNomeNorm === rNomeNorm);
+      });
+
+      if (!existing) {
+        resultado.push(rMat);
+      } else {
+        const existingTopicos = existing.topicos || [];
+        const remoteTopicos = rMat.topicos || [];
+        for (const rt of remoteTopicos) {
+          const rtTextNorm = (rt.texto || '').trim().toLowerCase();
+          const hasTopic = existingTopicos.find(et => {
+            const etTextNorm = (et.texto || '').trim().toLowerCase();
+            return (et.id && rt.id && et.id === rt.id) || 
+                   (et.numero !== undefined && rt.numero !== undefined && et.numero !== null && rt.numero !== null && String(et.numero) === String(rt.numero)) ||
+                   (etTextNorm && rtTextNorm && etTextNorm === rtTextNorm);
+          });
+
+          if (!hasTopic) {
+            existingTopicos.push(rt);
+          } else {
+            if (rt.concluido) hasTopic.concluido = true;
+            if (!hasTopic.anotacoes && rt.anotacoes) hasTopic.anotacoes = rt.anotacoes;
+            if (!hasTopic.prioridade && rt.prioridade) hasTopic.prioridade = rt.prioridade;
+          }
+        }
+        existing.topicos = existingTopicos;
+      }
+    }
+    return resultado;
+  }
+
+  static verificarLimiteSeguranca(totalAnterior: number, totalNovo: number, permitirOverride = false): { ok: boolean; delta: number; percentual: number; motivo?: string } {
+    if (permitirOverride) {
+      return { ok: true, delta: totalNovo - totalAnterior, percentual: 0 };
+    }
+    const delta = totalNovo - totalAnterior;
+    const percentual = totalAnterior > 0 ? (delta / totalAnterior) * 100 : 0;
+    if (delta > 500 && percentual > 20) {
+      return {
+        ok: false,
+        delta,
+        percentual,
+        motivo: `Crescimento de dados acima do limite de segurança (+${delta} itens, +${percentual.toFixed(1)}%). Proteção anti-duplicação ativada.`
+      };
+    }
+    return { ok: true, delta, percentual };
+  }
+
   private static _agendarSync(): void {
     if (typeof window !== 'undefined' && (window as any).SyncManager && typeof (window as any).SyncManager.debouncedSync === 'function') {
       (window as any).SyncManager.debouncedSync();
