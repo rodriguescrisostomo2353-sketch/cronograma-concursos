@@ -5875,12 +5875,71 @@
     </section>
 
     <!-- ========================================================================
-         ABA 2: MATÉRIAS GRAVADAS & TÓPICOS
+         ABA 2: EDITAL VERTICALIZADO INTERATIVO (ETAPA 3.2)
          ======================================================================== -->
     <section id="tab-subjects" class="tab-content">
-      <div class="section-header">
+      
+      <!-- 1. Barra de Progresso Geral do Edital no Topo -->
+      <div class="tactical-card" id="editalOverallSummaryCard" style="margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+          <div>
+            <div style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-primary);">
+              EDITAL VERTICALIZADO INTERATIVO
+            </div>
+            <h3 style="margin: 2px 0 0 0; font-size: 1.15rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+              <span>📋</span> Progresso Geral do Edital
+            </h3>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="text-align: right;">
+              <span id="editalOverallPercent" style="font-size: 1.35rem; font-weight: 800; color: var(--accent-primary);">0%</span>
+              <div id="editalOverallRatio" style="font-size: 0.76rem; color: var(--text-muted);">0 de 0 tópicos concluídos</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de Progresso Tática -->
+        <div class="progress-bar-tactical" style="height: 10px; margin-bottom: 12px;">
+          <div class="progress-fill-tactical" id="editalOverallProgressFill" style="width: 0%;"></div>
+        </div>
+
+        <!-- Estatísticas Rápidas do Edital -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+          <div>
+            <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Total Matérias</span>
+            <div id="editalTotalSubjectsStat" style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">0</div>
+          </div>
+          <div>
+            <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Horas Acumuladas</span>
+            <div id="editalTotalHoursStat" style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">0h 0m</div>
+          </div>
+          <div>
+            <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Tópicos Pendentes</span>
+            <div id="editalPendingTopicsStat" style="font-size: 0.95rem; font-weight: 700; color: var(--warning);">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Barra de Busca e Filtro por Status -->
+      <div class="tactical-card" style="margin-bottom: 16px; padding: 12px 14px;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+          <div style="flex: 1; min-width: 220px; position: relative;">
+            <input type="text" id="editalSearchInput" class="input-field" placeholder="🔍 Buscar matéria ou tópico no edital..."
+              oninput="App.handleEditalSearch(this.value)" style="margin: 0; padding-left: 12px; height: 38px;">
+          </div>
+          <div class="filter-pills" id="editalStatusFilterPills" style="display: flex; gap: 6px; overflow-x: auto; max-width: 100%; padding-bottom: 2px;">
+            <button type="button" class="chip active" data-status="all" onclick="App.setEditalStatusFilter('all')">Todos</button>
+            <button type="button" class="chip" data-status="pending" onclick="App.setEditalStatusFilter('pending')">Não Iniciados</button>
+            <button type="button" class="chip" data-status="studying" onclick="App.setEditalStatusFilter('studying')">Estudando</button>
+            <button type="button" class="chip" data-status="review" onclick="App.setEditalStatusFilter('review')">Revisar</button>
+            <button type="button" class="chip" data-status="completed" onclick="App.setEditalStatusFilter('completed')">Concluídos</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-bottom: 12px;">
         <div class="section-title">
-          <span>Matérias Identificadas</span>
+          <span>Matérias do Edital</span>
           <span class="section-count" id="headerCountLabel">0 matérias cadastradas</span>
         </div>
         <!-- Ações no Computador (Desktop) -->
@@ -5894,17 +5953,17 @@
           <button class="btn btn-secondary btn-sm" id="btnSplitByNumbering" onclick="App.dividirTopicosPorNumeracaoPrompt()" title="Dividir tópicos por numeração hierárquica (ex.: 7.1, 7.1.1)">
             🔢 Dividir por numeração
           </button>
-          <button class="btn btn-secondary btn-sm" id="btnExpandAll">
+          <button class="btn btn-secondary btn-sm" id="btnExpandAll" onclick="App.toggleExpandAll()">
             ↕️ Expandir/Recolher
           </button>
-          <button class="btn btn-pastel-purple btn-sm" id="btnOpenAddSubjectModal">
+          <button class="btn btn-primary btn-sm" id="btnOpenAddSubjectModal" onclick="App.openAddSubjectModal()">
             ➕ Adicionar Matéria
           </button>
         </div>
 
         <!-- Ações no Celular (Mobile) -->
         <div class="subject-header-mobile-actions">
-          <button type="button" class="btn btn-pastel-purple btn-sm" onclick="App.openAddSubjectModal()" style="min-height: 40px; padding: 6px 12px; font-weight: 600;">
+          <button type="button" class="btn btn-primary btn-sm" onclick="App.openAddSubjectModal()" style="min-height: 40px; padding: 6px 12px; font-weight: 600;">
             ➕ Nova
           </button>
           <div class="dropdown-menu-wrapper" id="subjectMoreMenuWrapper">
@@ -16995,6 +17054,43 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           const topId = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.ensureTopicId) ? StudyHoursManager.ensureTopicId(materia, topObj, topIndex) : (topObj.id || ('top_' + topIndex));
           const totalMins = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.getTotalMinutesForTopic) ? StudyHoursManager.getTotalMinutesForTopic(topId) : 0;
           const safeTopicTextEsc = App.escapeHtml(it.text).replace(/'/g, "\\'");
+
+          // Status tático do tópico (não iniciado, estudando, revisar, concluído)
+          const inReview = (App.spacedReviews || []).some(r => !r.completed && (r.topic === it.text || (topObj && r.topic === topObj.texto)));
+          let statusKey = 'pending';
+          let statusBadge = '';
+
+          if (it.isDone) {
+            statusKey = 'completed';
+            statusBadge = '<span class="badge badge-success" style="font-size: 0.68rem; margin-left: 6px;">✓ Concluído</span>';
+          } else if (inReview) {
+            statusKey = 'review';
+            statusBadge = '<span class="badge badge-warning" style="font-size: 0.68rem; margin-left: 6px;">🔄 Revisar</span>';
+          } else if (totalMins > 0) {
+            statusKey = 'studying';
+            statusBadge = '<span class="badge badge-info" style="font-size: 0.68rem; margin-left: 6px;">⚡ Estudando</span>';
+          } else {
+            statusKey = 'pending';
+            statusBadge = '<span class="badge badge-muted" style="font-size: 0.68rem; margin-left: 6px; opacity: 0.75;">⚪ Não iniciado</span>';
+          }
+
+          // Filtro por status
+          if (App.editalStatusFilter && App.editalStatusFilter !== 'all') {
+            if (App.editalStatusFilter !== statusKey) {
+              return '';
+            }
+          }
+
+          // Filtro por busca
+          if (App.editalSearchQuery) {
+            const q = App.editalSearchQuery;
+            const matchesTopic = it.text.toLowerCase().includes(q);
+            const matchesMat = (nomeMateria(materia) || '').toLowerCase().includes(q);
+            if (!matchesTopic && !matchesMat) {
+              return '';
+            }
+          }
+
           const timeBadge = totalMins > 0 
             ? `<span class="study-topic-badge" onclick="event.stopPropagation(); StudyHoursManager.openTopicHistoryModal('${materia.id}', '${topId}', '${safeTopicTextEsc}')" title="Clique para ver o histórico de estudo">⏱️ ${StudyHoursManager.formatMinutes(totalMins)}</span>`
             : (it.isDone ? `<span class="study-topic-badge unrecorded" onclick="event.stopPropagation(); StudyHoursManager.openQuickLogModal('${materia.id}', ${topIndex}, true)" title="Sem tempo registrado. Clique para adicionar">+ tempo</span>` : '');
@@ -17013,6 +17109,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
                 ${it.isPrincipal ? '<span class="topic-parent-badge">Tópico Principal</span>' : ''}
                 ${App.escapeHtml(it.text)}
                 ${timeBadge}
+                ${statusBadge}
               </span>
               <div class="topic-actions">
                 <button class="btn-icon" onclick="event.stopPropagation(); StudyHoursManager.openQuickLogModal('${materia.id}', ${topIndex}, true)" title="Registrar mais tempo neste tópico">
@@ -17043,10 +17140,66 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
       },
 
+      renderEditalOverallSummary() {
+        const materias = Array.isArray(this.data.materias) ? this.data.materias : [];
+        let totalTopics = 0;
+        let completedTopics = 0;
+        let totalMins = 0;
+
+        materias.forEach(m => {
+          const tops = Array.isArray(m.topicos) ? m.topicos : [];
+          totalTopics += tops.length;
+          tops.forEach(t => {
+            if (t && t.concluido) completedTopics++;
+          });
+        });
+
+        (this.studyLog || []).forEach(l => {
+          totalMins += (Number(l.minutos) || 0);
+        });
+
+        const percent = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+        const pending = totalTopics - completedTopics;
+
+        const pEl = document.getElementById('editalOverallPercent');
+        const rEl = document.getElementById('editalOverallRatio');
+        const fillEl = document.getElementById('editalOverallProgressFill');
+        const totSubEl = document.getElementById('editalTotalSubjectsStat');
+        const totHrsEl = document.getElementById('editalTotalHoursStat');
+        const pendEl = document.getElementById('editalPendingTopicsStat');
+
+        if (pEl) pEl.textContent = `${percent}%`;
+        if (rEl) rEl.textContent = `${completedTopics} de ${totalTopics} tópicos concluídos`;
+        if (fillEl) fillEl.style.width = `${percent}%`;
+        if (totSubEl) totSubEl.textContent = String(materias.length);
+        if (totHrsEl) {
+          const h = Math.floor(totalMins / 60);
+          const m = totalMins % 60;
+          totHrsEl.textContent = `${h}h ${m}m`;
+        }
+        if (pendEl) pendEl.textContent = String(pending);
+      },
+
+      handleEditalSearch(query) {
+        this.editalSearchQuery = (query || '').trim().toLowerCase();
+        this.renderSubjectList();
+      },
+
+      setEditalStatusFilter(status) {
+        this.editalStatusFilter = status || 'all';
+        const chips = document.querySelectorAll('#editalStatusFilterPills .chip');
+        chips.forEach(c => {
+          c.classList.toggle('active', c.getAttribute('data-status') === this.editalStatusFilter);
+        });
+        this.renderSubjectList();
+      },
+
       renderSubjectList() {
         const container = document.getElementById('subjectListContainer');
         if (!container) return;
         container.innerHTML = '';
+
+        this.renderEditalOverallSummary();
 
         if (!this.data.materias || this.data.materias.length === 0) {
           container.innerHTML = `
@@ -17068,26 +17221,82 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
 
         const fragment = document.createDocumentFragment();
+        const filterStatus = this.editalStatusFilter || 'all';
+        const searchQuery = (this.editalSearchQuery || '').trim().toLowerCase();
 
         this.data.materias.forEach((materia, matIndex) => {
           const pal = this.getPalette(materia.paletteId);
+          const totalTopicos = materia.topicos ? materia.topicos.length : 0;
+          let completedTopicos = 0;
+          let matMins = 0;
+
+          (materia.topicos || []).forEach(t => {
+            if (t && t.concluido) completedTopicos++;
+          });
+
+          (this.studyLog || []).forEach(l => {
+            if (l && (l.materiaId === materia.id || l.materiaNome === nomeMateria(materia))) {
+              matMins += (Number(l.minutos) || 0);
+            }
+          });
+
+          const matPercent = totalTopicos > 0 ? Math.round((completedTopicos / totalTopicos) * 100) : 0;
+          const matHoursFormatted = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.formatMinutes)
+            ? StudyHoursManager.formatMinutes(matMins)
+            : `${Math.floor(matMins / 60)}h ${matMins % 60}m`;
+
+          // Linked PDF na biblioteca
+          const linkedPdf = (typeof LibraryManager !== 'undefined' && Array.isArray(LibraryManager.files))
+            ? LibraryManager.files.find(f => f.subjectId === materia.id || f.subjectName === nomeMateria(materia))
+            : null;
+
+          // Se tem filtro ou busca, decide se card deve ser exibido
+          if (searchQuery || filterStatus !== 'all') {
+            const matchesMatName = (nomeMateria(materia) || '').toLowerCase().includes(searchQuery);
+            let hasMatchingTopic = false;
+            (materia.topicos || []).forEach((t, tIdx) => {
+              const text = (App.getTopicText(t) || '').toLowerCase();
+              const isDone = !!(t && t.concluido);
+              const tId = t.id || `top_${tIdx}`;
+              const tMins = (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.getTotalMinutesForTopic) ? StudyHoursManager.getTotalMinutesForTopic(tId) : 0;
+              const inRev = (App.spacedReviews || []).some(r => !r.completed && (r.topic === t.texto || r.topic === text));
+              
+              let sKey = isDone ? 'completed' : (inRev ? 'review' : (tMins > 0 ? 'studying' : 'pending'));
+              const statusMatch = (filterStatus === 'all') || (filterStatus === sKey);
+              const queryMatch = (!searchQuery) || matchesMatName || text.includes(searchQuery);
+              if (statusMatch && queryMatch) {
+                hasMatchingTopic = true;
+              }
+            });
+
+            if (!matchesMatName && !hasMatchingTopic) {
+              return;
+            }
+          }
+
           const card = document.createElement('div');
           card.className = 'subject-card';
           card.setAttribute('data-id', idMateria(materia));
 
-          const totalTopicos = materia.topicos ? materia.topicos.length : 0;
           const isOpen = this.openSubjectIds.has(materia.id);
-
-          // RENDERIZAÇÃO SOB DEMANDA (ETAPA 5): Tópicos só são montados se o card estiver aberto!
-          // Isso reduz em até 95% os nós DOM criados na abertura fria/quente do app.
           const topicsHtml = isOpen ? this.renderTopicItemsHtml(materia) : '';
 
           card.innerHTML = `
             <div class="subject-header-row ${isOpen ? 'open' : ''}" onclick="App.toggleSubjectBody('${materia.id}')">
               <div class="subject-title-area">
-                <span class="subject-pill" style="background: ${pal.text};"></span>
+                <span class="subject-pill" style="background: ${pal.border || pal.text || 'var(--accent-primary)'};"></span>
                 <span class="subject-name">${App.escapeHtml(nomeMateria(materia))}</span>
-                <span class="subject-topics-count">• ${totalTopicos} tópico${totalTopicos === 1 ? '' : 's'}</span>
+                <span class="badge ${matPercent === 100 ? 'badge-success' : 'badge-warning'}" style="font-size: 0.72rem;">
+                  ${completedTopicos}/${totalTopicos} (${matPercent}%)
+                </span>
+                <span class="badge badge-muted" style="font-size: 0.72rem;">
+                  ⏱️ ${matHoursFormatted}
+                </span>
+                ${linkedPdf ? `
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); LibraryManager.openFile('${linkedPdf.id}')" title="Abrir PDF vinculado na biblioteca" style="padding: 2px 8px; font-size: 0.72rem;">
+                    📖 PDF
+                  </button>
+                ` : ''}
               </div>
               <div class="subject-actions" onclick="event.stopPropagation()">
                 <button class="btn btn-secondary btn-sm" onclick="App.openEditSubjectModal('${materia.id}')" title="Editar nome/cor">
@@ -17098,6 +17307,11 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
                 </button>
                 <span class="subject-toggle-icon">▼</span>
               </div>
+            </div>
+
+            <!-- Mini barra de progresso tática sob o cabeçalho da matéria -->
+            <div class="progress-bar-tactical" style="height: 3px; border-radius: 0; background: var(--bg-subtle);">
+              <div class="progress-fill-tactical" style="width: ${matPercent}%; border-radius: 0; background: ${matPercent === 100 ? 'var(--success)' : 'var(--accent-primary)'};"></div>
             </div>
 
             <div class="subject-body ${isOpen ? 'open' : ''}" id="body-${materia.id}" data-rendered="${isOpen ? 'true' : 'false'}">
@@ -17118,8 +17332,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
               </div>
 
               <!-- Adicionar Novo Tópico Manualmente -->
-              <div class="add-topic-row">
-                <input type="text" class="input-field" id="newTopicInput-${materia.id}" placeholder="Escreva um novo tópico ou item programático...">
+              <div class="add-topic-row" style="margin-top: 12px; display: flex; gap: 8px;">
+                <input type="text" class="input-field" id="newTopicInput-${materia.id}" placeholder="Escreva um novo tópico ou item programático..." style="margin: 0; flex: 1;">
                 <button class="btn btn-secondary btn-sm" onclick="App.addTopicManual('${materia.id}')">
                   ➕ Adicionar
                 </button>
