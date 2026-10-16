@@ -13638,8 +13638,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             const x = gap + i * (barW + gap);
             const y = chartH - h + 25;
 
-            const barColor = isToday ? 'var(--primary)' : (mins > 0 ? 'rgba(99, 102, 241, 0.75)' : 'var(--border-color)');
-            const labelColor = isToday ? 'var(--primary)' : 'var(--text-muted)';
+            const barColor = isToday ? 'var(--accent-primary)' : (mins > 0 ? 'var(--accent-primary)' : 'var(--border-color)');
+            const labelColor = isToday ? 'var(--accent-primary)' : 'var(--text-muted)';
             const labelWeight = isToday ? '700' : '500';
 
             barsSvg += `
@@ -13741,7 +13741,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             const h = dItem.mins > 0 ? Math.max(6, Math.round((dItem.mins / maxM) * chartH)) : 2;
             const x = 10 + i * (barW + gap);
             const y = chartH - h + 25;
-            const barColor = isToday ? 'var(--primary)' : (dItem.mins > 0 ? 'rgba(99, 102, 241, 0.75)' : 'var(--border-color)');
+            const barColor = isToday ? 'var(--accent-primary)' : (dItem.mins > 0 ? 'var(--accent-primary)' : 'var(--border-color)');
 
             barsSvg += `
               <rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="2" ry="2" fill="${barColor}" class="study-chart-bar" title="Dia ${dItem.day}: ${this.formatMinutes(dItem.mins)}" />

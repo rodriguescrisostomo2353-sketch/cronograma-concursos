@@ -786,5 +786,131 @@
   background: var(--bg-card);
 }
 
+/* ==============================================================================
+   10. HORAS DE ESTUDO TÁTICAS (RESUMO, GRÁFICOS & LISTA POR DISCIPLINA)
+   ============================================================================== */
+.study-header-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.study-period-btn-group {
+  display: inline-flex;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 2px;
+}
+
+.study-period-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.study-period-btn:hover {
+  color: var(--text-main);
+}
+
+.study-period-btn.active {
+  background: var(--accent-primary);
+  color: #0E1116;
+  font-weight: 800;
+}
+
+.study-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.study-summary-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.study-summary-card:hover {
+  border-color: var(--border-focus);
+  transform: translateY(-1px);
+}
+
+.study-summary-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.study-summary-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.study-summary-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.study-chart-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.study-subject-acc-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.study-subject-acc-card:hover {
+  border-color: var(--border-focus);
+}
+
+.study-subject-acc-header {
+  padding: 12px 16px;
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+.study-subject-acc-time {
+  font-weight: 800;
+  color: var(--accent-primary);
+  font-size: 0.95rem;
+}
+
+
 
 
