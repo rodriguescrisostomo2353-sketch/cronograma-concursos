@@ -18,7 +18,7 @@ import { ToastUI } from './ui/toast';
 import { ModalUI } from './ui/modal';
 
 export class AppCore {
-  public static version: string = '1.8.0';
+  public static version: string = '1.9.0';
 
   /**
    * Inicialização central do aplicativo

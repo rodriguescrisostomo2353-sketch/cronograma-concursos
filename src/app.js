@@ -13,7 +13,7 @@ import { BibliotecaFeature } from './features/biblioteca/biblioteca';
 import { ToastUI } from './ui/toast';
 import { ModalUI } from './ui/modal';
 export class AppCore {
-    static version = '1.8.0';
+    static version = '1.9.0';
     /**
      * Inicialização central do aplicativo
      */
