@@ -23356,7 +23356,7 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
           if (viewport) viewport.classList.add('pdf-night-mode');
           if (btn) {
             btn.style.background = 'var(--accent-primary)';
-            btn.style.color = '#ffffff';
+            btn.style.color = 'var(--accent-contrast, #0E1116)';
           }
           this.showToast('Modo de leitura noturna ativado.', 'info');
         } else {

@@ -911,6 +911,403 @@
   font-size: 0.95rem;
 }
 
+/* ==========================================================================
+   11. BIBLIOTECA VIRTUAL & LEITOR DE PDF TÁTICO
+   ========================================================================== */
+
+/* Header da Biblioteca */
+.library-header-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.library-header-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--accent-primary);
+}
+
+.library-header-info h2 {
+  margin: 0 0 4px 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+}
+
+.library-header-info p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+/* Toolbar de Busca e Filtros */
+.library-toolbar {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 820px) {
+  .library-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .library-toolbar {
+    grid-template-columns: 1fr;
+  }
+}
+
+.library-toolbar .input-field {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  transition: all var(--transition-fast);
+}
+
+.library-toolbar .input-field:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  outline: none;
+}
+
+/* Dropzone Tático */
+.library-dropzone {
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  text-align: center;
+  background: var(--bg-card);
+  cursor: pointer;
+  margin-bottom: 18px;
+  transition: all var(--transition-fast);
+}
+
+.library-dropzone:hover,
+.library-dropzone.dragover {
+  border-color: var(--accent-primary);
+  background: var(--bg-subtle);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.library-dropzone-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.library-dropzone-icon {
+  font-size: 1.8rem;
+}
+
+.library-dropzone-text strong {
+  color: var(--text-main);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.library-dropzone-text p {
+  margin: 3px 0 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* Barra de Status */
+.library-stats-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.library-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--text-main);
+}
+
+/* Grid & Cards da Biblioteca */
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .library-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.library-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  position: relative;
+}
+
+.library-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-md);
+}
+
+.library-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.library-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+.library-card-icon.category-edital {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.28);
+}
+
+.library-card-icon.category-resumo {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.28);
+}
+
+.library-card-icon.category-questoes {
+  background: rgba(168, 85, 247, 0.12);
+  color: #a855f7;
+  border-color: rgba(168, 85, 247, 0.28);
+}
+
+.library-card-icon.category-legislacao {
+  background: rgba(245, 165, 36, 0.12);
+  color: var(--accent-primary);
+  border-color: rgba(245, 165, 36, 0.3);
+}
+
+.library-card-title-area {
+  flex: 1;
+  min-width: 0;
+}
+
+.library-card-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 4px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.library-card-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.library-badge-cat {
+  font-size: 0.7rem;
+  padding: 1px 7px;
+  border-radius: 9999px;
+  font-weight: 600;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
+.library-badge-subject {
+  font-size: 0.7rem;
+  padding: 1px 7px;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+.library-card-meta {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin: 8px 0 12px 0;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.library-card-notes {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  border-left: 3px solid var(--accent-primary);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.library-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+}
+
+.library-card-actions .btn {
+  flex: 1;
+  justify-content: center;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+}
+
+.library-card-actions .btn-icon {
+  flex: 0 0 32px;
+  height: 32px;
+}
+
+/* Leitor de PDF Tático */
+.pdf-reader-toolbar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+}
+
+.pdf-doc-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-main);
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: var(--bg-subtle);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.pdf-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.pdf-tool-btn:hover {
+  background: var(--bg-subtle);
+  border-color: var(--border-focus);
+}
+
+.pdf-tool-btn.active {
+  background: var(--accent-primary) !important;
+  color: var(--accent-contrast, #0E1116) !important;
+  border-color: var(--accent-primary) !important;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(245, 165, 36, 0.3) !important;
+}
+
+:root[data-theme="dark"] .pdf-tool-btn.active {
+  background: var(--accent-primary) !important;
+  color: var(--accent-contrast, #0E1116) !important;
+  border-color: var(--accent-primary) !important;
+}
+
+.stroke-btn.active {
+  color: var(--accent-primary) !important;
+  background: var(--bg-card);
+  font-weight: 800;
+}
+
+:root[data-theme="dark"] .stroke-btn.active {
+  color: var(--accent-primary) !important;
+}
+
+.sidebar-bookmark-item:hover {
+  background: var(--accent-subtle) !important;
+  color: var(--accent-primary) !important;
+  border-left: 2px solid var(--accent-primary);
+}
+
+.pdf-canvas-viewport.pdf-night-mode {
+  background: #080A0D;
+}
+
+.pdf-canvas-viewport.pdf-night-mode #pdfRenderCanvas {
+  filter: invert(0.92) hue-rotate(180deg) brightness(0.92);
+  background: #151A21;
+}
+
+
 
 
 
