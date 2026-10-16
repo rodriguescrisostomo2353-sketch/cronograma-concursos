@@ -71,3 +71,4 @@ obj/
 *.db-shm
 *.db-wal
 storage/
+scratch/

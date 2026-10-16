@@ -11069,22 +11069,39 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           } else {
             const existingTopicos = existing.topicos || [];
             const cloudTopicos = cMat.topicos || [];
-            cloudTopicos.forEach(ct => {
+
+            // Índices O(1) para mesclagem de alto desempenho (escalabilidade para 20.000+ tópicos)
+            const topicById = new Map();
+            const topicByKey = new Map();
+            const topicByText = new Map();
+
+            for (let i = 0; i < existingTopicos.length; i++) {
+              const et = existingTopicos[i];
+              if (!et) continue;
+              if (et.id) topicById.set(et.id, et);
+              const etKey = getTopicLogicalKey(et, cNomeNorm);
+              if (etKey) topicByKey.set(etKey, et);
+              const etText = (typeof et === 'object' ? (et.texto || et.text || '') : String(et)).trim();
+              const etTextNorm = normalizeKey(etText);
+              if (etTextNorm) topicByText.set(etTextNorm, et);
+            }
+
+            for (let j = 0; j < cloudTopicos.length; j++) {
+              const ct = cloudTopicos[j];
+              if (!ct) continue;
               const ctKey = getTopicLogicalKey(ct, cNomeNorm);
-              const ctText = (typeof ct === 'object' && ct ? (ct.texto || ct.text || '') : String(ct)).trim();
+              const ctText = (typeof ct === 'object' ? (ct.texto || ct.text || '') : String(ct)).trim();
               const ctTextNorm = normalizeKey(ctText);
 
-              const hasTopic = existingTopicos.find(et => {
-                const etKey = getTopicLogicalKey(et, cNomeNorm);
-                const etText = (typeof et === 'object' && et ? (et.texto || et.text || '') : String(et)).trim();
-                const etTextNorm = normalizeKey(etText);
-                return (et.id && ct.id && et.id === ct.id) ||
-                       (etKey && ctKey && etKey === ctKey) ||
-                       (etTextNorm && ctTextNorm && etTextNorm === ctTextNorm);
-              });
+              const hasTopic = (ct.id && topicById.get(ct.id)) ||
+                               (ctKey && topicByKey.get(ctKey)) ||
+                               (ctTextNorm && topicByText.get(ctTextNorm));
 
               if (!hasTopic) {
                 existingTopicos.push(ct);
+                if (ct.id) topicById.set(ct.id, ct);
+                if (ctKey) topicByKey.set(ctKey, ct);
+                if (ctTextNorm) topicByText.set(ctTextNorm, ct);
               } else {
                 if (ct && ct.concluido) {
                   if (typeof hasTopic === 'object') hasTopic.concluido = true;
@@ -11094,7 +11111,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
                   if (!hasTopic.prioridade && ct.prioridade) hasTopic.prioridade = ct.prioridade;
                 }
               }
-            });
+            }
             existing.topicos = existingTopicos;
           }
         });
@@ -11218,12 +11235,9 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           spaced_reviews: mergedReviews,
           theme: localData.theme || cloudData.theme || 'light',
           pdf_annotations: mergedPdfAnnotations,
-          pdf_bookmarks: mergedPdfBookmarks
+          pdf_bookmarks: mergedPdfBookmarks,
+          study_log: mergedStudyLogs
         };
-
-        if (this.hasDedicatedStudyLogColumn === true) {
-          mergedPayload.study_log = mergedStudyLogs;
-        }
 
         return mergedPayload;
       },
@@ -12478,8 +12492,9 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       addLogEntry(entry) {
         if (!entry) return null;
         const list = this.getStudyLog();
+        const logId = (typeof IdUtils !== 'undefined') ? IdUtils.getStudyLogId(entry.id) : (entry.id || ('log_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8)));
         const newLog = {
-          id: (typeof IdUtils !== 'undefined') ? IdUtils.getStudyLogId(entry.id) : (entry.id || ('log_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8))),
+          id: logId,
           topicoId: entry.topicoId || '',
           topicoNome: entry.topicoNome || '',
           materiaId: entry.materiaId || '',
@@ -12491,9 +12506,27 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           origem: entry.origem || 'manual',
           updatedAt: new Date().toISOString()
         };
-        list.push(newLog); if (this.invalidateCache) this.invalidateCache(); if (this.invalidateCache) this.invalidateCache();
+
+        const existingIdx = list.findIndex(item => {
+          if (!item) return false;
+          if (item.id && item.id === newLog.id) return true;
+          if (newLog.sessaoId && item.sessaoId && item.sessaoId === newLog.sessaoId) return true;
+          return item.data === newLog.data &&
+                 item.materiaId === newLog.materiaId &&
+                 item.topicoId === newLog.topicoId &&
+                 item.minutos === newLog.minutos &&
+                 item.criadoEm === newLog.criadoEm;
+        });
+
+        if (existingIdx !== -1) {
+          list[existingIdx] = { ...list[existingIdx], ...newLog };
+        } else {
+          list.push(newLog);
+        }
+
+        if (this.invalidateCache) this.invalidateCache();
         App.saveToStorage();
-        return newLog;
+        return existingIdx !== -1 ? list[existingIdx] : newLog;
       },
 
       removeLogById(logId) {
