@@ -38,6 +38,13 @@ if (-not (Test-Path $iconsTarget)) {
 }
 Copy-Item -Path (Join-Path $iconsSource "*") -Destination $iconsTarget -Force
 
+$assetsSource = Join-Path $PSScriptRoot "assets"
+$assetsTarget = Join-Path $targetDir "assets"
+if (-not (Test-Path $assetsTarget)) {
+    New-Item -ItemType Directory -Path $assetsTarget | Out-Null
+}
+Copy-Item -Path (Join-Path $assetsSource "*") -Destination $assetsTarget -Force
+
 $androidAssets = Join-Path $PSScriptRoot "android\app\src\main\assets\public"
 if (Test-Path $androidAssets) {
     Copy-Item -Path (Join-Path $targetDir "*") -Destination $androidAssets -Recurse -Force

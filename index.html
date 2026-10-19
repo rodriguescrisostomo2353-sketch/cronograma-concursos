@@ -7,16 +7,16 @@
   
   <!-- Configurações PWA e Mobile -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#4f46e5" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#b8860b" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b0e14" media="(prefers-color-scheme: dark)">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Cronograma">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
-  <link rel="shortcut icon" type="image/png" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Cronograma Tático">
+  <link rel="apple-touch-icon" href="assets/logo_faca_caveira.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/logo_faca_caveira.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/logo_faca_caveira.png">
+  <link rel="shortcut icon" type="image/png" href="assets/logo_faca_caveira.png">
   
   <!-- ==========================================================================
        INSTRUMENTAÇÃO DE PERFORMANCE (ETAPA 1) & TEMA IMEDIATO ANTI-FOUC
@@ -108,37 +108,37 @@
        1. VARIÁVEIS DE DESIGN TÁTICO (TEMA ESCURO OPERACIONAL DEFAULT)
        ========================================================================== */
     :root, :root[data-theme="dark"] {
-      --bg-page: #0E1116;
-      --bg-app: #0E1116;
-      --bg-card: #151A21;
-      --bg-subtle: #1C222B;
-      --bg-elevated: #1C222B;
-      --bg-header: rgba(14, 17, 22, 0.94);
-      --border-color: #262E39;
-      --border-focus: #F5A524;
-      --border-subtle: rgba(255, 255, 255, 0.06);
+      --bg-page: #0B0E14;
+      --bg-app: #0B0E14;
+      --bg-card: #121722;
+      --bg-subtle: #19202E;
+      --bg-elevated: #19202E;
+      --bg-header: rgba(11, 14, 20, 0.94);
+      --border-color: #242E40;
+      --border-focus: #D4AF37;
+      --border-subtle: rgba(255, 255, 255, 0.07);
 
       --text-main: #E8ECF1;
       --text-muted: #8B96A5;
       --text-dimmed: #5E6977;
       --text-light: #8B96A5;
 
-      /* Cores de Ação e Destaque Tático */
-      --accent-primary: #F5A524;
-      --accent-hover: #E0921B;
-      --accent-soft: rgba(245, 165, 36, 0.12);
-      --accent-border: rgba(245, 165, 36, 0.3);
-      --accent-contrast: #0E1116;
+      /* Cores de Ação e Destaque Tático (Ouro Distintivo Polícia Civil) */
+      --accent-primary: #D4AF37;
+      --accent-hover: #C5A059;
+      --accent-soft: rgba(212, 175, 55, 0.12);
+      --accent-border: rgba(212, 175, 55, 0.35);
+      --accent-contrast: #0A0D13;
 
-      /* Status Funcionais */
-      --color-success: #3DDC97;
-      --color-success-soft: rgba(61, 220, 151, 0.12);
-      --color-warning: #FFB020;
-      --color-warning-soft: rgba(255, 176, 32, 0.12);
-      --color-danger: #FF5C5C;
-      --color-danger-soft: rgba(255, 92, 92, 0.12);
-      --color-info: #4DA3FF;
-      --color-info-soft: rgba(77, 163, 255, 0.12);
+      /* Cores Secundárias e Status Funcional (Distintivo PCMG) */
+      --color-success: #16A34A;
+      --color-success-soft: rgba(22, 163, 74, 0.14);
+      --color-warning: #D4AF37;
+      --color-warning-soft: rgba(212, 175, 55, 0.14);
+      --color-danger: #DC2626;
+      --color-danger-soft: rgba(220, 38, 38, 0.14);
+      --color-info: #2563EB;
+      --color-info-soft: rgba(37, 99, 235, 0.14);
 
       /* Tons de Disciplinas - Tema Escuro */
       --pastel-blue-bg: #14283E;
@@ -153,9 +153,9 @@
       --pastel-purple-border: #442D72;
       --pastel-purple-text: #C4B5FD;
 
-      --pastel-amber-bg: #322514;
-      --pastel-amber-border: #5A3E1A;
-      --pastel-amber-text: #FDE047;
+      --pastel-amber-bg: #282110;
+      --pastel-amber-border: #5C4A1D;
+      --pastel-amber-text: #F3D882;
 
       --pastel-rose-bg: #351721;
       --pastel-rose-border: #5D2233;
@@ -165,9 +165,9 @@
       --pastel-teal-border: #194E48;
       --pastel-teal-text: #5EEAD4;
 
-      --pastel-indigo-bg: #1F2349;
-      --pastel-indigo-border: #323C7B;
-      --pastel-indigo-text: #A5B4FC;
+      --pastel-indigo-bg: #121C30;
+      --pastel-indigo-border: #1E3A6C;
+      --pastel-indigo-text: #93C5FD;
 
       --pastel-peach-bg: #382015;
       --pastel-peach-border: #623620;
@@ -183,9 +183,9 @@
       --radius-full: 9999px;
       --min-touch-target: 44px;
 
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 3px 10px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45), 0 0 1px rgba(212, 175, 55, 0.2);
+      --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.55), 0 0 2px rgba(212, 175, 55, 0.25);
       --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -193,35 +193,35 @@
        2. TEMA CLARO (EQUIVALENTE TÁTICO DIURNO - WCAG 4.5:1+)
        ========================================================================== */
     :root[data-theme="light"] {
-      --bg-page: #F4F6F9;
-      --bg-app: #F4F6F9;
+      --bg-page: #F3F5F9;
+      --bg-app: #F3F5F9;
       --bg-card: #FFFFFF;
-      --bg-subtle: #EDF1F6;
-      --bg-elevated: #EDF1F6;
-      --bg-header: rgba(244, 246, 249, 0.94);
-      --border-color: #D5DCE5;
-      --border-focus: #D97706;
+      --bg-subtle: #E8EDF5;
+      --bg-elevated: #E8EDF5;
+      --bg-header: rgba(243, 245, 249, 0.94);
+      --border-color: #D3DBE6;
+      --border-focus: #B8860B;
       --border-subtle: rgba(0, 0, 0, 0.06);
 
-      --text-main: #0F172A;
-      --text-muted: #525F72;
+      --text-main: #0B0E14;
+      --text-muted: #4B5565;
       --text-dimmed: #7E8D9F;
-      --text-light: #525F72;
+      --text-light: #4B5565;
 
-      --accent-primary: #D97706;
-      --accent-hover: #B45309;
-      --accent-soft: rgba(217, 119, 6, 0.1);
-      --accent-border: rgba(217, 119, 6, 0.3);
+      --accent-primary: #B8860B;
+      --accent-hover: #996D07;
+      --accent-soft: rgba(184, 134, 11, 0.1);
+      --accent-border: rgba(184, 134, 11, 0.3);
       --accent-contrast: #FFFFFF;
 
-      --color-success: #059669;
-      --color-success-soft: rgba(5, 150, 105, 0.1);
-      --color-warning: #D97706;
-      --color-warning-soft: rgba(217, 119, 6, 0.1);
+      --color-success: #15803D;
+      --color-success-soft: rgba(21, 128, 61, 0.1);
+      --color-warning: #B8860B;
+      --color-warning-soft: rgba(184, 134, 11, 0.1);
       --color-danger: #DC2626;
       --color-danger-soft: rgba(220, 38, 38, 0.1);
-      --color-info: #2563EB;
-      --color-info-soft: rgba(37, 99, 235, 0.1);
+      --color-info: #1D4ED8;
+      --color-info-soft: rgba(29, 78, 216, 0.1);
 
       /* Tons de Disciplinas - Tema Claro */
       --pastel-blue-bg: #E0F2FE;
@@ -329,16 +329,99 @@
     }
 
     .logo-badge {
-      width: 44px;
-      height: 44px;
+      width: 46px;
+      height: 46px;
       border-radius: var(--radius-md);
-      background: var(--pastel-indigo-bg);
-      border: 1px solid var(--pastel-indigo-border);
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), rgba(11, 14, 20, 0.9));
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 12px rgba(212, 175, 55, 0.22);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
-      color: var(--pastel-indigo-text);
+      padding: 3px;
+      flex-shrink: 0;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .logo-badge:hover {
+      transform: scale(1.08);
+      border-color: #D4AF37;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.45);
+    }
+
+    .header-pc-badge {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+      display: block;
+    }
+
+    /* Emblema Tático Faca na Caveira na Aba Hoje */
+    .today-faca-caveira-badge {
+      width: 54px;
+      height: 54px;
+      border-radius: var(--radius-lg);
+      object-fit: cover;
+      border: 2px solid rgba(212, 175, 55, 0.6);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.25);
+      flex-shrink: 0;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .today-faca-caveira-badge:hover {
+      transform: scale(1.08);
+      border-color: #D4AF37;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65), 0 0 24px rgba(212, 175, 55, 0.45);
+    }
+
+    /* Marca d'água tática borrada no fundo do site (Distintivo Polícia Civil) */
+    .tactical-watermark-bg {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(85vw, 680px);
+      height: min(85vw, 680px);
+      background-image: url('assets/distintivo_policia_civil.png');
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: contain;
+      opacity: 0.045;
+      filter: blur(4px) drop-shadow(0 0 60px rgba(212, 175, 55, 0.25));
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 0.3s ease, filter 0.3s ease;
+    }
+
+    [data-theme="light"] .tactical-watermark-bg {
+      opacity: 0.055;
+      filter: blur(5px) drop-shadow(0 0 45px rgba(184, 134, 11, 0.2));
+    }
+
+    /* Conteúdos e layout posicionados com profundidade acima do fundo */
+    header, main, footer, .bottom-nav, .modal {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Badge Faca na Caveira / BOPE na Missão do Dia */
+    .today-faca-caveira-badge {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 2px solid rgba(212, 175, 55, 0.45);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55), 0 0 18px rgba(212, 175, 55, 0.25);
+      object-fit: cover;
+      flex-shrink: 0;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+      background: #0A0D13;
+    }
+
+    .today-faca-caveira-badge:hover {
+      transform: scale(1.08) rotate(-2deg);
+      border-color: #D4AF37;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7), 0 0 24px rgba(212, 175, 55, 0.45);
     }
 
     .logo-titles h1 {
@@ -5632,13 +5715,18 @@
 </head>
 <body>
 
+  <!-- Marca d'água tática borrada do Distintivo da Polícia Civil no plano de fundo -->
+  <div class="tactical-watermark-bg" aria-hidden="true"></div>
+
   <!-- ==========================================================================
        CABEÇALHO
        ========================================================================== -->
   <header class="app-tactical-header">
     <div class="container header-inner" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px;">
-      <div class="logo-area" onclick="App.switchTab('tab-today')" style="cursor: pointer; display: flex; align-items: center; gap: 10px;">
-        <div class="logo-badge" style="font-size: 1.4rem;">🛡️</div>
+      <div class="logo-area" onclick="App.switchTab('tab-today')" style="cursor: pointer; display: flex; align-items: center; gap: 12px;">
+        <div class="logo-badge" title="Polícia Civil MG • Cronograma Tático">
+          <img src="assets/distintivo_policia_civil.png" alt="Distintivo Polícia Civil" class="header-pc-badge" />
+        </div>
         <div class="logo-titles">
           <h1 style="margin: 0; font-size: 1.05rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text-main);">
             CRONOGRAMA <span style="color: var(--accent-primary);">TÁTICO</span>
@@ -5708,17 +5796,20 @@
     <section id="tab-today" class="tab-content active">
       <!-- Card Hero: Missão do Dia e Saudação -->
       <div class="today-hero-card tactical-card" style="margin-bottom: 20px;">
-        <div class="today-hero-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
-          <div>
-            <div class="tactical-badge" style="margin-bottom: 6px;">
-              <span class="sync-dot-tactical online"></span> MISSÃO OPERACIONAL DO DIA
+        <div class="today-hero-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <img src="assets/logo_faca_caveira.png" alt="Logo Faca na Caveira" class="today-faca-caveira-badge" title="Faca na Caveira • Operações Especiais" />
+            <div>
+              <div class="tactical-badge" style="margin-bottom: 6px;">
+                <span class="sync-dot-tactical online"></span> MISSÃO OPERACIONAL DO DIA
+              </div>
+              <h2 id="todayGreeting" style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--text-main);">
+                Bom dia, Guerreiro!
+              </h2>
+              <p id="todayDateSubtitle" style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">
+                Carregando calendário...
+              </p>
             </div>
-            <h2 id="todayGreeting" style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--text-main);">
-              Bom dia, Guerreiro!
-            </h2>
-            <p id="todayDateSubtitle" style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">
-              Carregando calendário...
-            </p>
           </div>
           <!-- Contagem Regressiva para a Prova -->
           <div id="todayExamCountdownBox" class="today-countdown-box" onclick="App.openExamDateModal()" title="Clique para configurar ou ver a contagem da prova">

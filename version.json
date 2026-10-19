@@ -1,17 +1,27 @@
 {
-  "version": "1.9.0",
+  "version": "1.9.1",
   "date": "2026-10-16",
   "notes": [
-    "Redesign Visual Completo: Identidade tática própria para concursos policiais (tema escuro #0E1116 com acento âmbar #F5A524 e tema claro de alto contraste)",
-    "Nova Tela Hoje: Dashboard tático com contagem regressiva da prova, progresso circular SVG do dia, lista de sessões com checkbox e métricas rápidas",
-    "Edital Verticalizado Tático: Barra de progresso geral no topo, chips de status rápidos, cartões de disciplinas com faixa de cor e hierarquia em acordeom",
-    "Cronograma Semanal & Diário: Visão tática em cartões com identificadores visuais, barra de dias por pílulas no celular e suporte a drag & drop",
-    "Painel de Horas de Estudo: Cards de resumo tático, seletor de período, gráficos SVG limpos e histórico detalhado por disciplina",
-    "Biblioteca & Leitor de PDF: Cards de arquivos categorizados e toolbar tática de leitura com alto contraste no modo noturno",
-    "Design System Robusto: src/styles/tokens.css e src/ui/components.css com conformidade WCAG AA (contraste mínimo 4.5:1) e zero alteração de regras de negócio"
+    "Ícone Oficial Faca na Caveira / BOPE com adaga, caveira rachada e pistolas douradas cruzadas",
+    "Distintivo Oficial em Alta Resolução da Polícia Civil de Minas Gerais (PCMG)",
+    "Marca d'água tática com profundidade e blur no plano de fundo do aplicativo",
+    "Geração e alinhamento dos ícones do Android (todas as densidades de mipmaps) e PWA manifest"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.9.0",
+      "date": "2026-10-16",
+      "notes": [
+        "Redesign Visual Completo: Identidade tática própria para concursos policiais (tema escuro #0B0E14 com acento ouro #D4AF37 da Polícia Civil)",
+        "Nova Tela Hoje: Dashboard tático com contagem regressiva da prova, progresso circular SVG do dia, lista de sessões com checkbox e métricas rápidas",
+        "Edital Verticalizado Tático: Barra de progresso geral no topo, chips de status rápidos, cartões de disciplinas com faixa de cor e hierarquia em acordeom",
+        "Cronograma Semanal & Diário: Visão tática em cartões com identificadores visuais, barra de dias por pílulas no celular e suporte a drag & drop",
+        "Painel de Horas de Estudo: Cards de resumo tático, seletor de período, gráficos SVG limpos e histórico detalhado por disciplina",
+        "Biblioteca & Leitor de PDF: Cards de arquivos categorizados e toolbar tática de leitura com alto contraste no modo noturno",
+        "Design System Robusto: src/styles/tokens.css e src/ui/components.css com conformidade WCAG AA (contraste mínimo 4.5:1) e zero alteração de regras de negócio"
+      ]
+    },
     {
       "version": "1.8.0",
       "date": "2026-10-15",
