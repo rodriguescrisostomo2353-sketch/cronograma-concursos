@@ -12,9 +12,12 @@
     "allowJs": true,
     "declaration": true,
     "sourceMap": true,
-    "outDir": "./dist",
-    "rootDir": "./src"
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": ["./*", "./src/*"]
+    },
+    "outDir": "./dist"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "components/**/*", "demo.tsx"],
   "exclude": ["node_modules", "dist", "lixo", "backend-csharp", "www"]
 }

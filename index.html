@@ -51,8 +51,14 @@
           return;
         }
 
-        // Caso contrário, em desktops / telas grandes, carrega o Student OS
-        window.location.replace('student_os.html' + (window.location.search ? window.location.search : ''));
+        // Se o usuário no desktop preferir ir direto para o Student OS dashboard
+        if (localStorage.getItem('preferred_desktop_view') === 'student_os') {
+          window.location.replace('student_os.html' + (window.location.search ? window.location.search : ''));
+          return;
+        }
+
+        // Caso contrário, em desktops / telas grandes, carrega a Tela Inicial com a escultura líquida
+        window.location.replace('landing.html' + (window.location.search ? window.location.search : ''));
       } catch (err) {
         console.warn('Detecção de layout:', err);
       }

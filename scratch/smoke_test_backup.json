@@ -1,9 +1,9 @@
 {
   "app": "Cronograma de Estudos para Concursos",
-  "version": "1.9.0",
-  "buildTime": "16/10/2026 14:45:00",
-  "exportDate": "2026-10-16T19:53:22.829Z",
-  "exportDateFormatted": "16/10/2026 às 16:53",
+  "version": "1.9.1",
+  "buildTime": "19/10/2026 10:00:00",
+  "exportDate": "2026-10-19T15:22:08.630Z",
+  "exportDateFormatted": "19/10/2026 às 12:22",
   "platform": "Web Browser",
   "summary": {
     "materiasCount": 5,
@@ -108,7 +108,7 @@
     ],
     "schedules": [
       {
-        "id": "sched-1792180402745",
+        "id": "sched-1792423328536",
         "name": "Cronograma Teste Smoke Manual",
         "type": "manual",
         "dias": [
@@ -130,8 +130,8 @@
             "dia": "Segunda",
             "slots": [
               {
-                "slotId": "slot-1792180402745-iiwvp",
-                "slotKey": "Segunda-bloco-1792180402745-0",
+                "slotId": "slot-1792423328536-569cd",
+                "slotKey": "Segunda-bloco-1792423328536-0",
                 "slotNumber": 1,
                 "subjectId": "mat-1",
                 "subjectName": "Língua Portuguesa",
@@ -153,10 +153,10 @@
             "slots": []
           }
         ],
-        "createdAt": "16/10/2026"
+        "createdAt": "19/10/2026"
       },
       {
-        "id": "sched-1792180402780",
+        "id": "sched-1792423328580",
         "name": "Cronograma Automático Smoke",
         "type": "auto",
         "dias": [
@@ -197,10 +197,10 @@
             "slots": []
           }
         ],
-        "createdAt": "16/10/2026"
+        "createdAt": "19/10/2026"
       }
     ],
-    "activeScheduleId": "sched-1792180402780",
+    "activeScheduleId": "sched-1792423328580",
     "completedSlots": {},
     "priorities": {},
     "examDate": null,
@@ -213,17 +213,17 @@
     },
     "studyLog": [
       {
-        "id": "log_933ad862-eb78-41a0-b8cf-345f6945028f",
+        "id": "log_db2003a4-2382-4dae-9d56-f3b49df061f9",
         "topicoId": "top_lp_0",
         "topicoNome": "1 Compreensão e interpretação de textos de gêneros variados.",
         "materiaId": "mat-1",
         "materiaNome": "Língua Portuguesa",
         "minutos": 30,
-        "data": "2026-10-16",
-        "criadoEm": "2026-10-16 16:53:22",
+        "data": "2026-10-19",
+        "criadoEm": "2026-10-19 12:22:08",
         "sessaoId": null,
         "origem": "manual",
-        "updatedAt": "2026-10-16T19:53:22.805Z"
+        "updatedAt": "2026-10-19T15:22:08.602Z"
       }
     ],
     "autoConfig": null,
