@@ -244,12 +244,29 @@
       gap: 8px;
     }
 
+    @keyframes radarPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        transform: scale(0.95);
+      }
+      70% {
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+        transform: scale(1.05);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        transform: scale(0.95);
+      }
+    }
+
     .brand-text p .badge-dot {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: var(--accent-green);
+      display: inline-block;
       box-shadow: 0 0 8px var(--accent-green);
+      animation: radarPulse 2s infinite ease-in-out;
     }
 
     .banner-actions {
@@ -271,7 +288,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
       text-decoration: none;
       box-shadow: var(--shadow-sm);
     }
@@ -282,6 +299,10 @@
       color: var(--gold-light);
       transform: translateY(-2px);
       box-shadow: var(--shadow-gold);
+    }
+
+    .banner-btn:active {
+      transform: scale(0.96);
     }
 
     .banner-btn.primary {
@@ -362,7 +383,7 @@
     }
 
     .section-title {
-      font-size: 11px;
+      font-size: 11.5px;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       font-weight: 700;
@@ -371,6 +392,12 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background: rgba(14, 19, 28, 0.65);
+      border: 1px solid var(--border-tactical);
+      border-left: 3px solid var(--gold-primary);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
     }
 
     .quick-actions-list {
@@ -391,7 +418,7 @@
       align-items: center;
       gap: 10px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
       text-align: left;
       width: 100%;
     }
@@ -400,7 +427,12 @@
       background: var(--bg-card-hover);
       border-color: var(--gold-primary);
       color: var(--gold-light);
-      transform: translateX(3px);
+      transform: translateX(4px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 12px rgba(212, 175, 55, 0.25);
+    }
+
+    .btn-quick-action:active {
+      transform: translateX(2px) scale(0.98);
     }
 
     .btn-quick-action .plus-icon {
@@ -426,22 +458,25 @@
       color: var(--text-secondary);
       font-size: 12.5px;
       text-decoration: none;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
       cursor: pointer;
+      border-left: 3px solid transparent;
     }
 
     .nav-item a:hover {
       background: var(--bg-card);
       color: var(--text-main);
-      border-left: 2px solid var(--gold-primary);
+      border-left-color: var(--gold-primary);
       padding-left: 14px;
+      box-shadow: inset 2px 0 8px rgba(212, 175, 55, 0.2);
     }
 
     .nav-item.active a {
       background: var(--bg-card-alt);
       color: var(--gold-light);
       font-weight: 600;
-      border-left: 2px solid var(--gold-primary);
+      border-left-color: var(--gold-primary);
+      box-shadow: inset 3px 0 10px rgba(212, 175, 55, 0.3);
     }
 
     .nav-item svg {
@@ -649,42 +684,83 @@
       animation: fadeInUp 0.5s ease backwards 0.1s;
     }
 
-    /* Cards de Disciplinas do Concurso (Anti-Sobreposição & Fluidez) */
+    /* Cards de Disciplinas do Concurso (Grid de 3 Colunas Estilo Notion Student OS) */
     .classes-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
       width: 100%;
       box-sizing: border-box;
+    }
+
+    @media (max-width: 1280px) {
+      .classes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .classes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @keyframes fadeInUpCard {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .class-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-tactical);
       border-radius: var(--radius-md);
-      padding: 16px;
+      padding: 18px;
       position: relative;
       cursor: pointer;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      justify-content: space-between;
+      height: 100%;
+      box-sizing: border-box;
+      gap: 14px;
       box-shadow: var(--shadow-sm);
-      overflow: hidden;
-      transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
-                  box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+      overflow: visible;
+      animation: fadeInUpCard 0.4s ease-out backwards;
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
                   border-color 0.25s ease,
                   background 0.25s ease;
     }
 
+    .class-card:nth-child(1) { animation-delay: 0.04s; }
+    .class-card:nth-child(2) { animation-delay: 0.08s; }
+    .class-card:nth-child(3) { animation-delay: 0.12s; }
+    .class-card:nth-child(4) { animation-delay: 0.16s; }
+    .class-card:nth-child(5) { animation-delay: 0.20s; }
+    .class-card:nth-child(6) { animation-delay: 0.24s; }
+    .class-card:nth-child(7) { animation-delay: 0.28s; }
+    .class-card:nth-child(8) { animation-delay: 0.32s; }
+    .class-card:nth-child(9) { animation-delay: 0.36s; }
+    .class-card:nth-child(10) { animation-delay: 0.40s; }
+    .class-card:nth-child(11) { animation-delay: 0.44s; }
+    .class-card:nth-child(12) { animation-delay: 0.48s; }
+    .class-card:nth-child(n+13) { animation-delay: 0.52s; }
+
     .class-card:hover {
       background: var(--bg-card);
-      border-color: var(--gold-primary);
-      transform: translateY(-4px) scale(1.015);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65), 0 0 18px rgba(212, 175, 55, 0.25);
+      border-color: var(--card-accent, var(--gold-primary));
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.75), 0 0 20px rgba(0, 0, 0, 0.5);
     }
 
     .class-card:active {
-      transform: translateY(-1px) scale(0.99);
+      transform: translateY(-1px) scale(0.98);
     }
 
     .class-card::before {
@@ -693,10 +769,16 @@
       top: 0;
       left: 16px;
       right: 16px;
-      height: 2px;
+      height: 3px;
       background: var(--card-accent, var(--gold-primary));
       border-radius: var(--radius-full);
       box-shadow: 0 0 8px var(--card-accent, var(--gold-primary));
+      transition: box-shadow 0.25s ease, height 0.25s ease;
+    }
+
+    .class-card:hover::before {
+      height: 4px;
+      box-shadow: 0 0 16px var(--card-accent, var(--gold-primary)), 0 0 28px var(--card-accent, var(--gold-primary));
     }
 
     .class-header {
@@ -779,6 +861,7 @@
     .class-stat-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-size: 11.5px;
       color: var(--text-secondary);
     }
@@ -788,13 +871,32 @@
       font-weight: 600;
     }
 
+    .stat-highlight {
+      color: var(--text-main);
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .stat-highlight-pending {
+      color: var(--gold-light);
+      font-weight: 600;
+      background: rgba(212, 175, 55, 0.1);
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid var(--border-gold);
+    }
+
     .class-progress-bg {
       width: 100%;
-      height: 6px;
+      height: 7px;
       background: #242E40;
       border-radius: var(--radius-full);
-      overflow: hidden;
-      margin-top: 2px;
+      overflow: visible;
+      position: relative;
+      margin-top: 4px;
     }
 
     @keyframes progressShimmer {
@@ -808,7 +910,34 @@
       background-size: 200% 100%;
       border-radius: var(--radius-full);
       animation: progressShimmer 3.2s infinite linear;
-      transition: width 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+    }
+
+    .class-progress-dot {
+      position: absolute;
+      right: -3px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      box-shadow: 0 0 8px var(--card-accent, var(--gold-primary));
+      animation: pulseIndicator 1.8s infinite ease-in-out;
+      pointer-events: none;
+    }
+
+    @keyframes pulseIndicator {
+      0%, 100% {
+        transform: translateY(-50%) scale(0.9);
+        opacity: 0.85;
+      }
+      50% {
+        transform: translateY(-50%) scale(1.3);
+        opacity: 1;
+        box-shadow: 0 0 12px var(--card-accent, var(--gold-primary)), 0 0 20px var(--card-accent, var(--gold-primary));
+      }
     }
 
     /* Sub-grid de 2 colunas no meio (Cronograma & Avaliações) */
@@ -1589,7 +1718,7 @@
     }
 
     .btn-pomo-primary:active {
-      transform: translateY(0) scale(0.98);
+      transform: translateY(0) scale(0.96);
     }
 
     .btn-pomo-icon {
@@ -2006,12 +2135,35 @@
       position: fixed;
       inset: 0;
       z-index: 99999;
-      background: rgba(11, 14, 20, 0.96);
+      background: rgba(11, 14, 20, 0.95);
       backdrop-filter: blur(20px);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .auth-wall-overlay.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    body.auth-locked .app-container {
+      filter: blur(10px);
+      pointer-events: none;
+      user-select: none;
+      transition: filter 0.4s ease-out;
+    }
+
+    body:not(.auth-locked) .app-container {
+      filter: blur(0px);
+      transition: filter 0.4s ease-out;
     }
 
     .auth-wall-card {
@@ -2021,7 +2173,7 @@
       width: 100%;
       max-width: 440px;
       padding: 32px 28px;
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 35px var(--gold-glow);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.95), 0 0 35px var(--gold-glow);
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -2138,19 +2290,56 @@
       pointer-events: none;
     }
 
-    .auth-input-wrapper .form-control {
-      padding-left: 38px;
+    .auth-input-wrapper .form-control,
+    .auth-input-wrapper input {
+      width: 100%;
+      background: rgba(11, 14, 20, 0.7);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      padding: 10px 14px 10px 38px;
+      font-size: 13px;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .auth-input-wrapper .form-control:focus,
+    .auth-input-wrapper input:focus {
+      outline: none;
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.35);
+      background: rgba(18, 23, 34, 0.95);
     }
 
     .auth-submit-btn {
       width: 100%;
-      padding: 11px;
+      padding: 12px;
       font-size: 13.5px;
       font-weight: 700;
       letter-spacing: 0.04em;
       justify-content: center;
-      margin-top: 6px;
+      margin-top: 8px;
       cursor: pointer;
+      background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+      border: 1px solid #D4AF37;
+      color: #0B0E14;
+      border-radius: var(--radius-full);
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+      transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .auth-submit-btn:hover {
+      background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+      color: #000000;
+    }
+
+    .auth-submit-btn:active {
+      transform: scale(0.96);
     }
 
     .auth-wall-feedback {
@@ -2192,47 +2381,66 @@
       color: var(--gold-light);
     }
 
-    /* Badges de Usuário no Topo */
+    /* Badges de Usuário no Topo & Botão Sair Harmonizado */
     .user-session-badge {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(11, 14, 20, 0.85);
-      border: 1px solid var(--border-gold);
-      padding: 5px 12px 5px 10px;
+      gap: 10px;
+      background: rgba(18, 23, 34, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-tactical);
+      padding: 6px 14px;
       border-radius: var(--radius-full);
-      font-size: 11.5px;
+      font-size: 12px;
+      box-shadow: var(--shadow-sm);
+      margin-left: 6px;
     }
 
     .user-agent-icon {
-      font-size: 13px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
     }
 
     .user-email-text {
       color: var(--gold-light);
       font-weight: 600;
-      max-width: 160px;
+      max-width: 180px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      letter-spacing: 0.02em;
     }
 
     .btn-logout {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.35);
+      background: rgba(18, 23, 34, 0.95);
+      border: 1px solid rgba(239, 68, 68, 0.4);
       color: #F87171;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 11.5px;
+      font-weight: 600;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 8px;
       text-transform: uppercase;
-      transition: all 0.2s;
+      letter-spacing: 0.04em;
+      transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: var(--shadow-sm);
     }
 
     .btn-logout:hover {
-      background: #EF4444;
-      color: #fff;
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #EF4444;
+      color: #FFFFFF;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+    }
+
+    .btn-logout:active {
+      transform: scale(0.96);
     }
 
     /* Estados Vazios Táticos */
@@ -2390,7 +2598,10 @@
           <div class="user-session-badge" id="userSessionBadge" style="display: none;">
             <span class="user-agent-icon">👮‍♂️</span>
             <span class="user-email-text" id="userEmailText">agente@pcmg</span>
-            <button class="btn-logout" onclick="logoutTactical()" title="Encerrar Sessão">Sair</button>
+            <button class="btn-logout" onclick="logoutTactical()" title="Encerrar Sessão Tática">
+              <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+              Sair
+            </button>
           </div>
         </div>
       </div>
@@ -2958,18 +3169,18 @@
   <!-- ==========================================================================
        PAREDE DE AUTENTICAÇÃO TÁTICA (LOGIN / CADASTRO OBRIGATÓRIO)
        ========================================================================== -->
-  <div id="tacticalAuthWall" class="auth-wall-overlay" style="display: none;">
+  <div id="tacticalAuthWall" class="auth-wall-overlay">
     <div class="auth-wall-card">
       <div class="auth-wall-header">
         <div class="auth-brand-badge">
           <img src="assets/distintivo_policia_civil.png" alt="Distintivo PCMG" onerror="this.src='assets/logo_faca_caveira.png'">
         </div>
-        <h2>CRONOGRAMA TÁTICO OS</h2>
+        <h2>IDENTIFICAÇÃO OPERACIONAL - CRONOGRAMA TÁTICO OS</h2>
         <div class="auth-subtitle">
           <span class="auth-lock-dot"></span>
           <span>Acesso Restrito • Identificação Obrigatória</span>
         </div>
-        <p class="auth-description">Acesso exclusivo para agentes e estudantes cadastrados. Faça login com sua conta para desbloquear seu ambiente tático.</p>
+        <p class="auth-description">Acesso exclusivo para agentes e estudantes de concursos policiais. Faça login com sua conta ou registre-se para desbloquear seu ambiente operacional.</p>
       </div>
 
       <!-- Abas: Entrar / Cadastrar -->
@@ -2978,15 +3189,24 @@
           Entrar (Login)
         </button>
         <button type="button" class="auth-tab-btn" id="authTabBtnRegister" onclick="switchTacticalAuthTab('register')">
-          Criar Nova Conta
+          Criar Conta (Cadastro)
         </button>
       </div>
 
       <!-- Feedback de status -->
-      <div id="authWallFeedback" class="auth-wall-feedback"></div>
+      <div id="tacticalAuthFeedback" class="auth-wall-feedback"></div>
 
       <!-- Formulário de Autenticação -->
       <form id="tacticalAuthForm" onsubmit="handleTacticalAuthSubmit(event)">
+        <!-- Nome do Agente (apenas na aba de Cadastro) -->
+        <div class="form-group" id="tacticalAuthNameRow" style="display: none;">
+          <label for="tacticalAuthName">Nome do Agente / Operador:</label>
+          <div class="auth-input-wrapper">
+            <svg class="auth-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <input type="text" id="tacticalAuthName" class="form-control" placeholder="Agente / Seu Nome" autocomplete="name">
+          </div>
+        </div>
+
         <div class="form-group">
           <label for="tacticalAuthEmail">E-mail Operacional:</label>
           <div class="auth-input-wrapper">
@@ -3013,7 +3233,7 @@
 
         <div class="auth-actions">
           <button type="submit" class="btn-primary auth-submit-btn" id="btnTacticalAuthSubmit">
-            <span id="btnTacticalAuthText">Acessar Sistema Tático</span>
+            <span id="btnTacticalAuthText">Acessar Sistema</span>
           </button>
         </div>
       </form>
@@ -3139,6 +3359,41 @@
             return u;
           }
         }
+
+        // 3. Sessão do Concurso / Usuário Geral
+        const concursoUserRaw = localStorage.getItem('concurso_user') || localStorage.getItem('user_session');
+        if (concursoUserRaw) {
+          const parsed = JSON.parse(concursoUserRaw);
+          if (parsed && (parsed.email || parsed.id)) {
+            const u = {
+              email: parsed.email || 'agente@pcmg',
+              id: parsed.id || 'usr_app',
+              token: parsed.token || ''
+            };
+            localStorage.setItem('tactical_os_user', JSON.stringify(u));
+            return u;
+          }
+        }
+
+        // 4. Checagem de sessão ativa do Firebase Auth no LocalStorage
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('firebase:authUser:')) {
+            const fbRaw = localStorage.getItem(k);
+            if (fbRaw) {
+              const fbParsed = JSON.parse(fbRaw);
+              if (fbParsed && fbParsed.email) {
+                const u = {
+                  email: fbParsed.email,
+                  id: fbParsed.uid || 'usr_fb',
+                  token: fbParsed.stsTokenManager?.accessToken || ''
+                };
+                localStorage.setItem('tactical_os_user', JSON.stringify(u));
+                return u;
+              }
+            }
+          }
+        }
       } catch(e) {
         console.warn('[TacticalAuth] Erro ao recuperar sessão:', e);
       }
@@ -3168,11 +3423,12 @@
     let activeAuthTab = 'login';
     function switchTacticalAuthTab(tab) {
       activeAuthTab = tab;
-      const tabLogin = document.getElementById('tabTacticalLogin');
-      const tabRegister = document.getElementById('tabTacticalRegister');
+      const tabLogin = document.getElementById('authTabBtnLogin') || document.getElementById('tabTacticalLogin');
+      const tabRegister = document.getElementById('authTabBtnRegister') || document.getElementById('tabTacticalRegister');
+      const nameRow = document.getElementById('tacticalAuthNameRow');
       const passConfirmRow = document.getElementById('tacticalAuthPassConfirmRow');
       const submitText = document.getElementById('btnTacticalAuthText');
-      const feedback = document.getElementById('tacticalAuthFeedback');
+      const feedback = document.getElementById('tacticalAuthFeedback') || document.getElementById('authWallFeedback');
 
       if (feedback) {
         feedback.className = 'auth-wall-feedback';
@@ -3182,18 +3438,20 @@
       if (tab === 'login') {
         tabLogin?.classList.add('active');
         tabRegister?.classList.remove('active');
+        if (nameRow) nameRow.style.display = 'none';
         if (passConfirmRow) passConfirmRow.style.display = 'none';
-        if (submitText) submitText.innerText = 'Acessar Sistema Tático';
+        if (submitText) submitText.innerText = 'Acessar Sistema';
       } else {
         tabLogin?.classList.remove('active');
         tabRegister?.classList.add('active');
+        if (nameRow) nameRow.style.display = 'block';
         if (passConfirmRow) passConfirmRow.style.display = 'block';
-        if (submitText) submitText.innerText = 'Criar Minha Conta Tática';
+        if (submitText) submitText.innerText = 'Registrar Agente';
       }
     }
 
     function showAuthFeedback(msg, type = 'error') {
-      const feedback = document.getElementById('tacticalAuthFeedback');
+      const feedback = document.getElementById('tacticalAuthFeedback') || document.getElementById('authWallFeedback');
       if (!feedback) return;
       feedback.className = 'auth-wall-feedback ' + type;
       feedback.innerText = msg;
@@ -3204,12 +3462,14 @@
       const emailInput = document.getElementById('tacticalAuthEmail');
       const passInput = document.getElementById('tacticalAuthPassword');
       const passConfirmInput = document.getElementById('tacticalAuthPassConfirm');
+      const nameInput = document.getElementById('tacticalAuthName');
       const submitBtn = document.getElementById('btnTacticalAuthSubmit');
       const submitText = document.getElementById('btnTacticalAuthText');
 
       const email = (emailInput?.value || '').trim();
       const password = passInput?.value || '';
       const passConfirm = passConfirmInput?.value || '';
+      const agentName = (nameInput?.value || '').trim();
 
       if (!email || !email.includes('@')) {
         showAuthFeedback('Por favor, informe um endereço de e-mail válido.', 'error');
@@ -3228,7 +3488,7 @@
       }
 
       if (submitBtn) submitBtn.disabled = true;
-      if (submitText) submitText.innerText = activeAuthTab === 'login' ? 'Autenticando...' : 'Criando Conta...';
+      if (submitText) submitText.innerText = activeAuthTab === 'login' ? 'Autenticando...' : 'Registrando Agente...';
 
       try {
         const client = getSupabaseClient();
@@ -3247,7 +3507,13 @@
             authUser = data.user;
             authToken = data.session?.access_token;
           } else {
-            const { data, error } = await client.auth.signUp({ email, password });
+            const { data, error } = await client.auth.signUp({ 
+              email, 
+              password,
+              options: {
+                data: { full_name: agentName || 'Agente Operacional' }
+              }
+            });
             if (error) throw error;
             authUser = data.user;
             authToken = data.session?.access_token;
@@ -3279,26 +3545,27 @@
 
         const userSession = {
           email: authUser?.email || email,
+          name: agentName || (authUser?.email ? authUser.email.split('@')[0] : 'Operador'),
           id: authUser?.id || ('usr_' + Date.now()),
           token: authToken || '',
           loggedAt: new Date().toISOString()
         };
         localStorage.setItem('tactical_os_user', JSON.stringify(userSession));
 
-        showAuthFeedback('Acesso autorizado! Carregando sistema...', 'success');
+        showAuthFeedback('Identificação confirmada! Desbloqueando ambiente operacional...', 'success');
         showToast('Acesso tático liberado com sucesso! Bem-vindo, Operador.', 'success');
 
         setTimeout(() => {
           checkAuth();
           initData();
-        }, 500);
+        }, 400);
 
       } catch(err) {
         console.warn('[TacticalAuth] Erro:', err);
         showAuthFeedback(err.message || 'Erro ao conectar. Verifique seus dados.', 'error');
       } finally {
         if (submitBtn) submitBtn.disabled = false;
-        if (submitText) submitText.innerText = activeAuthTab === 'login' ? 'Acessar Sistema Tático' : 'Criar Minha Conta Tática';
+        if (submitText) submitText.innerText = activeAuthTab === 'login' ? 'Acessar Sistema' : 'Registrar Agente';
       }
     }
 
@@ -3312,7 +3579,7 @@
       } catch(e) {}
 
       checkAuth();
-      showToast('Você saiu da sua conta.', 'info');
+      showToast('Sessão encerrada. Identificação obrigatória para novo acesso.', 'info');
     }
 
     /* ========================================================================
@@ -4006,16 +4273,18 @@
             '<div class="class-body">' +
               '<div class="class-stat-row">' +
                 '<span>Tópicos do Edital:</span>' +
-                '<strong>' + c.topics + ' tópicos</strong>' +
+                '<strong class="stat-highlight">' + c.topics + ' tópicos</strong>' +
               '</div>' +
               '<div class="class-stat-row">' +
                 '<span>Tópicos Pendentes:</span>' +
-                '<strong style="color: var(--gold-light);">' + c.pending + ' tópicos</strong>' +
+                '<strong class="stat-highlight-pending">' + c.pending + ' tópicos</strong>' +
               '</div>' +
               '<div class="class-progress-bg">' +
-                '<div class="class-progress-fill" style="width: ' + c.done + '%;"></div>' +
+                '<div class="class-progress-fill" style="width: ' + c.done + '%;">' +
+                  (c.done > 0 ? '<span class="class-progress-dot"></span>' : '') +
+                '</div>' +
               '</div>' +
-              '<div class="class-stat-row" style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">' +
+              '<div class="class-stat-row" style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">' +
                 '<span>Progresso</span>' +
                 '<span style="color: ' + c.color + '; font-weight: 700;">' + c.done + '%</span>' +
               '</div>' +
