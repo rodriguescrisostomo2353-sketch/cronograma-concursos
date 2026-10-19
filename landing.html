@@ -173,12 +173,15 @@
     }
 
     .sh-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
       color: inherit;
       text-decoration: none;
       font-size: 14px;
       font-weight: 500;
       letter-spacing: -0.01em;
-      opacity: .7;
+      opacity: .75;
       transition: opacity .2s, color .2s;
     }
 
@@ -445,7 +448,27 @@
     }
 
     .quick-card-icon {
-      font-size: 24px;
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9px;
+      background: rgba(212, 175, 55, 0.08);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      color: var(--sh-gold);
+      transition: all .25s ease;
+    }
+
+    .quick-card:hover .quick-card-icon {
+      background: rgba(212, 175, 55, 0.16);
+      border-color: rgba(212, 175, 55, 0.55);
+      transform: scale(1.08);
+    }
+
+    .quick-card-icon svg {
+      width: 20px;
+      height: 20px;
     }
 
     .quick-card-badge {
@@ -536,10 +559,30 @@
       </a>
 
       <ul class="sh-links">
-        <li><a class="sh-link" href="student_os.html">🎓 Student OS</a></li>
-        <li><a class="sh-link" href="index.html?view=mobile">📋 Cronograma</a></li>
-        <li><a class="sh-link" href="student_os.html#subjects">📚 14 Matérias</a></li>
-        <li><a class="sh-link" href="student_os.html#pomodoro">⏱️ Pomodoro</a></li>
+        <li>
+          <a class="sh-link" href="student_os.html">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--sh-gold);"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            <span>Student OS</span>
+          </a>
+        </li>
+        <li>
+          <a class="sh-link" href="index.html?view=mobile">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--sh-gold);"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span>Cronograma</span>
+          </a>
+        </li>
+        <li>
+          <a class="sh-link" href="student_os.html#subjects">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--sh-gold);"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span>14 Matérias</span>
+          </a>
+        </li>
+        <li>
+          <a class="sh-link" href="student_os.html#pomodoro">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--sh-gold);"><circle cx="12" cy="13" r="8"></circle><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="2" x2="12" y2="5"></line><line x1="10" y1="2" x2="14" y2="2"></line></svg>
+            <span>Pomodoro</span>
+          </a>
+        </li>
       </ul>
 
       <div style="display:flex;align-items:center;gap:12px">
@@ -605,7 +648,16 @@
   <section class="quick-strip">
     <a class="quick-card" href="student_os.html#subjects">
       <div class="quick-card-head">
-        <span class="quick-card-icon">⚖️</span>
+        <span class="quick-card-icon" title="Edital Verticalizado">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v18"></path>
+            <path d="M5 6h14"></path>
+            <path d="M5 6l-3 7h6l-3-7z"></path>
+            <path d="M19 6l-3 7h6l-3-7z"></path>
+            <circle cx="12" cy="3" r="1"></circle>
+            <path d="M9 21h6"></path>
+          </svg>
+        </span>
         <span class="quick-card-badge">14 Matérias</span>
       </div>
       <h3 class="quick-card-title">Edital Verticalizado PCMG</h3>
@@ -614,7 +666,14 @@
 
     <a class="quick-card" href="student_os.html#pomodoro">
       <div class="quick-card-head">
-        <span class="quick-card-icon">⏱️</span>
+        <span class="quick-card-icon" title="Pomodoro Tático">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="13" r="8"></circle>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="2" x2="12" y2="5"></line>
+            <line x1="10" y1="2" x2="14" y2="2"></line>
+          </svg>
+        </span>
         <span class="quick-card-badge">Foco Máximo</span>
       </div>
       <h3 class="quick-card-title">Pomodoro Tático &amp; Horas</h3>
@@ -623,7 +682,12 @@
 
     <a class="quick-card" href="student_os.html">
       <div class="quick-card-head">
-        <span class="quick-card-icon">⚡</span>
+        <span class="quick-card-icon" title="Sincronização em Nuvem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+            <polyline points="13 11 10 14 12 14 11 17 14 13 12 13 13 11"></polyline>
+          </svg>
+        </span>
         <span class="quick-card-badge">Nuvem Ativa</span>
       </div>
       <h3 class="quick-card-title">Sincronização em Nuvem</h3>
