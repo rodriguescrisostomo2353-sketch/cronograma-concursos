@@ -2518,10 +2518,10 @@
           </div>
           <div class="habit-meta">
             <span>Disciplina Diária</span>
-            <strong id="habitPercentText">85%</strong>
+            <strong id="habitPercentText">0%</strong>
           </div>
           <div class="habit-progress-bg">
-            <div class="habit-progress-bar" id="habitProgressBar"></div>
+            <div class="habit-progress-bar" id="habitProgressBar" style="width: 0%;"></div>
           </div>
           <div class="habit-days" id="habitDaysContainer">
             <!-- Gerado via JavaScript -->
@@ -2686,7 +2686,7 @@
           <div class="clock-date" id="clockFullDate">--</div>
           <div class="clock-countdown-pill" id="examCountdownDisplay">
             <svg class="tactical-icon beacon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            <span id="countdownText">Carregando contagem...</span>
+            <span id="countdownText">Nenhuma data de concurso configurada.</span>
           </div>
         </div>
 
@@ -2728,21 +2728,21 @@
               <svg class="tactical-icon" style="color: var(--gold-primary); margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="14" r="8"></circle><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="14" x2="12" y2="10"></line></svg>
               Horas Estudadas:
             </span>
-            <span class="metric-value" id="weeklyHoursVal">28.5h</span>
+            <span class="metric-value" id="weeklyHoursVal">0.0h</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">
               <svg class="tactical-icon" style="color: var(--gold-primary); margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><polyline points="9 14 11 16 15 11"></polyline></svg>
               Questões Feitas:
             </span>
-            <span class="metric-value" id="questionsDoneVal">342</span>
+            <span class="metric-value" id="questionsDoneVal">0</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">
               <svg class="tactical-icon" style="color: var(--accent-green); margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle><line x1="12" y1="2" x2="12" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line></svg>
               Precisão em Simulados:
             </span>
-            <span class="metric-value" style="color: var(--accent-green);" id="accuracyVal">82.4%</span>
+            <span class="metric-value" style="color: var(--accent-green);" id="accuracyVal">0.0%</span>
           </div>
         </div>
 
@@ -3718,7 +3718,7 @@
         currentFlashcards = generateFlashcardsForSubjects(configuredMaterias);
         currentNotes = generateNotesForSubjects(configuredMaterias);
         
-        // Tarefas: carregar salvas ou gerar tópicos para matérias configuradas
+        // Tarefas: carregar salvas ou manter limpo até o usuário registrar
         const rawTasks = localStorage.getItem('tactical_os_tasks');
         if (rawTasks) {
           try {
@@ -3727,20 +3727,11 @@
             currentTasks = [];
           }
         } else {
-          // Starter missions para as matérias configuradas
-          currentTasks = configuredMaterias.slice(0, 5).map((m, idx) => ({
-            id: 't_init_' + idx,
-            title: 'Módulo 01: Introdução e Teoria Geral de ' + (m.nome || m),
-            date: 'Hoje',
-            done: false,
-            priority: 4,
-            subject: (m.nome || m)
-          }));
-          localStorage.setItem('tactical_os_tasks', JSON.stringify(currentTasks));
+          currentTasks = [];
         }
       }
 
-      // 2. Metas & Simulados (Persistência real do usuário)
+      // 2. Metas & Simulados (Persistência real do usuário - zero dados fictícios)
       const rawAssessments = localStorage.getItem('tactical_os_assessments');
       if (rawAssessments) {
         try {
@@ -3749,23 +3740,14 @@
           currentAssessments = [];
         }
       } else {
-        // Se usuário configurou matérias, criar meta inicial
-        if (configuredMaterias.length > 0) {
-          currentAssessments = [
-            { id: 'a1', title: 'Prova Oficial do Edital Configurado', date: '2026-12-13', target: '85% acertos (51/60)', status: 'in_progress', badge: 'Meta Principal' },
-            { id: 'a2', title: 'Simulado Geral Tático #01', date: '2026-10-25', target: '60 questões estilo Banca', status: 'not_started', badge: 'Agendado' }
-          ];
-          localStorage.setItem('tactical_os_assessments', JSON.stringify(currentAssessments));
-        } else {
-          currentAssessments = [];
-        }
+        currentAssessments = [];
       }
 
       // 3. Atualizar barra de filtros e selects de matérias nos modais
       renderNotesFilterBar(configuredMaterias);
       populateSubjectDropdowns();
 
-      // 4. Renderizar componentes
+      // 4. Renderizar componentes com dados 100% autênticos
       renderClasses();
       renderTimetable();
       renderAssessments();
@@ -3773,6 +3755,7 @@
       renderFlashcards('hoje');
       renderNotes();
       renderHabitJournal();
+      updateStudyMetrics();
       initCountdown();
     }
 
@@ -3858,14 +3841,34 @@
       const colors = ['#EF4444', '#F59E0B', '#3B82F6', '#10B981', '#8B5CF6', '#D4AF37', '#06B6D4', '#EC4899'];
       const displayClasses = configuredMaterias.map((m, idx) => {
         const name = m.nome || m;
-        const topicosCount = Array.isArray(m.topicos) && m.topicos.length > 0 ? m.topicos.length : 12;
+        // Total de tópicos reais da matéria (0 se não tiver, sem fallbacks fictícios)
+        const topicosCount = Array.isArray(m.topicos) ? m.topicos.length : 0;
         const color = m.color || colors[idx % colors.length];
+
+        // 1. Tópicos concluídos reais calculados exclusivamente a partir dos dados do usuário
+        let concluidosCount = 0;
+        if (Array.isArray(m.topicos) && m.topicos.length > 0) {
+          concluidosCount = m.topicos.filter(t => {
+            if (typeof t === 'object' && t !== null) {
+              return !!t.concluido || t.status === 'concluido' || t.status === 'done';
+            }
+            return false;
+          }).length;
+        }
+
+        // 2. Progresso real (0% a 100%) - Se o usuário não estudou nada ainda, é estritamente 0%
+        const done = topicosCount > 0 ? Math.round((concluidosCount / topicosCount) * 100) : 0;
+
+        // 3. Tópicos pendentes reais
+        const pending = Math.max(0, topicosCount - concluidosCount);
+
         return {
           id: m.id || ('mat_' + idx),
           name: name,
           topics: topicosCount,
-          pending: Math.max(1, Math.round(topicosCount * 0.25)),
-          done: Math.min(100, Math.max(10, Math.round(40 + (idx * 9)))),
+          completed: concluidosCount,
+          pending: pending,
+          done: done,
           color: color
         };
       });
@@ -3884,8 +3887,8 @@
                 '<strong>' + c.topics + ' tópicos</strong>' +
               '</div>' +
               '<div class="class-stat-row">' +
-                '<span>Sessões Pendentes:</span>' +
-                '<strong style="color: var(--gold-light);">' + c.pending + ' sessões</strong>' +
+                '<span>Tópicos Pendentes:</span>' +
+                '<strong style="color: var(--gold-light);">' + c.pending + ' tópicos</strong>' +
               '</div>' +
               '<div class="class-progress-bg">' +
                 '<div class="class-progress-fill" style="width: ' + c.done + '%;"></div>' +
@@ -3999,21 +4002,54 @@
         return;
       }
 
-      const filtered = filterSubject 
-        ? currentTasks.filter(t => t.subject === filterSubject) 
-        : currentTasks;
+      // Se filtrou por matéria, checar se tem tarefas customizadas ou listar os tópicos do edital da matéria
+      let listToRender = [];
+      if (filterSubject) {
+        const custom = currentTasks.filter(t => t.subject === filterSubject);
+        if (custom.length > 0) {
+          listToRender = custom;
+        } else {
+          // Buscar tópicos reais da matéria no edital
+          const mat = configured.find(m => (m.nome || m) === filterSubject);
+          if (mat && Array.isArray(mat.topicos) && mat.topicos.length > 0) {
+            listToRender = mat.topicos.map((top, tIdx) => {
+              const text = typeof top === 'object' && top !== null ? (top.texto || top.nome || 'Tópico ' + (tIdx + 1)) : top;
+              const isDone = typeof top === 'object' && top !== null ? (!!top.concluido || top.status === 'concluido') : false;
+              return {
+                id: 'top_' + (mat.id || 'm') + '_' + tIdx,
+                materiaId: mat.id,
+                topicIdx: tIdx,
+                isEditalTopic: true,
+                title: text,
+                date: 'Edital',
+                done: isDone,
+                priority: 3,
+                subject: filterSubject
+              };
+            });
+          }
+        }
+      } else {
+        listToRender = currentTasks;
+      }
 
-      if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: var(--text-muted);">Nenhuma missão cadastrada para esta disciplina.</td></tr>';
+      if (listToRender.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 12.5px;">' +
+          'Nenhuma missão cadastrada' + (filterSubject ? ' para ' + filterSubject : '') + '.<br>' +
+          '<button class="btn-primary" style="margin-top: 10px; font-size: 11px; padding: 4px 14px;" onclick="openModal(\'modalAddTask\')">+ Adicionar Nova Missão</button>' +
+        '</td></tr>';
         return;
       }
 
-      tbody.innerHTML = filtered.map(t => {
+      tbody.innerHTML = listToRender.map(t => {
         const stars = '★'.repeat(t.priority) + '☆'.repeat(4 - t.priority);
+        const onChangeCall = t.isEditalTopic 
+          ? 'toggleEditalTopicDone(\'' + t.materiaId + '\', ' + t.topicIdx + ', \'' + t.subject + '\')' 
+          : 'toggleTaskDone(\'' + t.id + '\')';
         return (
           '<tr class="' + (t.done ? 'task-completed' : '') + '">' +
             '<td class="task-check-cell">' +
-              '<input type="checkbox" class="task-checkbox" ' + (t.done ? 'checked' : '') + ' onchange="toggleTaskDone(\'' + t.id + '\')">' +
+              '<input type="checkbox" class="task-checkbox" ' + (t.done ? 'checked' : '') + ' onchange="' + onChangeCall + '">' +
             '</td>' +
             '<td>' +
               '<span class="task-title">' + t.title + '</span>' +
@@ -4047,6 +4083,49 @@
       }
     }
 
+    function toggleEditalTopicDone(materiaId, topicIdx, subjectName) {
+      try {
+        const raw = localStorage.getItem('concurso_app_data');
+        if (raw) {
+          const appData = JSON.parse(raw);
+          if (Array.isArray(appData.materias)) {
+            const mat = appData.materias.find(m => m.id === materiaId || m.nome === subjectName);
+            if (mat && Array.isArray(mat.topicos) && mat.topicos[topicIdx] !== undefined) {
+              const cur = mat.topicos[topicIdx];
+              if (typeof cur === 'object' && cur !== null) {
+                cur.concluido = !cur.concluido;
+              } else {
+                mat.topicos[topicIdx] = {
+                  id: 'top_' + (mat.id || 'm') + '_' + topicIdx,
+                  texto: cur,
+                  concluido: true
+                };
+              }
+              localStorage.setItem('concurso_app_data', JSON.stringify(appData));
+            }
+          }
+        }
+
+        const customRaw = localStorage.getItem('tactical_custom_materias');
+        if (customRaw) {
+          const custom = JSON.parse(customRaw);
+          if (Array.isArray(custom)) {
+            const cMat = custom.find(m => m.id === materiaId || (m.nome || m) === subjectName);
+            if (cMat && Array.isArray(cMat.topicos) && cMat.topicos[topicIdx]) {
+              if (typeof cMat.topicos[topicIdx] === 'object') {
+                cMat.topicos[topicIdx].concluido = !cMat.topicos[topicIdx].concluido;
+              }
+              localStorage.setItem('tactical_custom_materias', JSON.stringify(custom));
+            }
+          }
+        }
+      } catch(e) {}
+
+      renderClasses();
+      renderTasks(subjectName);
+      showToast('Status do tópico atualizado com sucesso!', 'success');
+    }
+
     function cycleTaskPriority(taskId) {
       const task = currentTasks.find(t => t.id === taskId);
       if (task) {
@@ -4059,7 +4138,7 @@
 
     function filterTasksBySubject(subjectName) {
       renderTasks(subjectName);
-      showToast('Filtrando missões de: ' + subjectName, 'info');
+      showToast('Filtrando tópicos de: ' + subjectName, 'info');
       highlightSection('missoes');
       document.getElementById('missoes')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
@@ -4262,14 +4341,14 @@
       }
     }
 
-    // Diário de Hábitos
+    // Diário de Hábitos Operacionais
     const HABIT_DAYS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
     function renderHabitJournal() {
       const container = document.getElementById('habitDaysContainer');
       if (!container) return;
 
       const raw = localStorage.getItem('tactical_os_habits');
-      const habits = raw ? JSON.parse(raw) : [true, true, true, true, false, false, false];
+      const habits = raw ? JSON.parse(raw) : [false, false, false, false, false, false, false];
 
       container.innerHTML = HABIT_DAYS.map((d, i) => 
         '<button class="habit-day-btn ' + (habits[i] ? 'done' : '') + '" onclick="toggleHabitDay(' + i + ')" title="Dia ' + d + '">' +
@@ -4279,13 +4358,15 @@
 
       const count = habits.filter(Boolean).length;
       const pct = Math.round((count / 7) * 100);
-      document.getElementById('habitPercentText').innerText = pct + '%';
-      document.getElementById('habitProgressBar').style.width = pct + '%';
+      const textEl = document.getElementById('habitPercentText');
+      if (textEl) textEl.innerText = pct + '%';
+      const barEl = document.getElementById('habitProgressBar');
+      if (barEl) barEl.style.width = pct + '%';
     }
 
     function toggleHabitDay(index) {
       const raw = localStorage.getItem('tactical_os_habits');
-      const habits = raw ? JSON.parse(raw) : [true, true, true, true, false, false, false];
+      const habits = raw ? JSON.parse(raw) : [false, false, false, false, false, false, false];
       habits[index] = !habits[index];
       localStorage.setItem('tactical_os_habits', JSON.stringify(habits));
       renderHabitJournal();
@@ -4295,6 +4376,45 @@
     function toggleHabitToday() {
       const day = (new Date().getDay() + 6) % 7; // Seg = 0
       toggleHabitDay(day);
+    }
+
+    // Métricas de Estudo Reais (Sincronizadas com histórico real)
+    function updateStudyMetrics() {
+      let totalMinutos = 0;
+      let totalQuestoes = 0;
+      let totalAcertos = 0;
+
+      try {
+        const raw = localStorage.getItem('concurso_app_data');
+        if (raw) {
+          const appData = JSON.parse(raw);
+          if (Array.isArray(appData.studyLog)) {
+            appData.studyLog.forEach(log => {
+              if (log.minutos) totalMinutos += Number(log.minutos) || 0;
+              if (log.questoes) totalQuestoes += Number(log.questoes) || 0;
+              if (log.acertos) totalAcertos += Number(log.acertos) || 0;
+            });
+          }
+        }
+      } catch(e) {}
+
+      try {
+        const extraMins = Number(localStorage.getItem('tactical_os_extra_minutes')) || 0;
+        totalMinutos += extraMins;
+      } catch(e) {}
+
+      const elHours = document.getElementById('weeklyHoursVal');
+      const elQuestoes = document.getElementById('questionsDoneVal');
+      const elAccuracy = document.getElementById('accuracyVal');
+
+      const hoursStr = (totalMinutos / 60).toFixed(1) + 'h';
+      const accuracyStr = totalQuestoes > 0 
+        ? ((totalAcertos / totalQuestoes) * 100).toFixed(1) + '%' 
+        : '0.0%';
+
+      if (elHours) { elHours.textContent = hoursStr; elHours.innerText = hoursStr; }
+      if (elQuestoes) { elQuestoes.textContent = totalQuestoes.toString(); elQuestoes.innerText = totalQuestoes.toString(); }
+      if (elAccuracy) { elAccuracy.textContent = accuracyStr; elAccuracy.innerText = accuracyStr; }
     }
 
     /* ========================================================================
@@ -4317,21 +4437,30 @@
 
     function initCountdown() {
       const el = document.getElementById('countdownText');
-      if (!currentAssessments || currentAssessments.length === 0) {
-        if (el) el.innerText = 'Nenhuma data de concurso configurada.';
-        return;
-      }
-
-      let targetDateStr = '2026-12-13';
+      
+      let targetDateStr = null;
       let targetName = 'a Prova';
       try {
         const raw = localStorage.getItem('concurso_exam_target');
         if (raw) {
           const t = JSON.parse(raw);
-          if (t && t.date) targetDateStr = t.date;
-          if (t && t.name) targetName = t.name;
-        } else if (Array.isArray(currentAssessments) && currentAssessments.length > 0) {
-          const active = currentAssessments.find(a => a.status !== 'completed') || currentAssessments[0];
+          if (t && t.date) {
+            targetDateStr = t.date;
+            if (t.name) targetName = t.name;
+          }
+        } else {
+          const rawApp = localStorage.getItem('concurso_app_data');
+          if (rawApp) {
+            const appData = JSON.parse(rawApp);
+            if (appData && appData.examDate) {
+              targetDateStr = appData.examDate;
+              targetName = 'a Prova';
+            }
+          }
+        }
+
+        if (!targetDateStr && Array.isArray(currentAssessments) && currentAssessments.length > 0) {
+          const active = currentAssessments.find(a => a.status !== 'completed' && a.date) || currentAssessments.find(a => a.date);
           if (active && active.date) {
             targetDateStr = active.date;
             targetName = active.title || 'a Prova';
@@ -4339,20 +4468,30 @@
         }
       } catch(e) {}
 
+      if (!targetDateStr) {
+        if (el) {
+          el.textContent = 'Nenhuma data de concurso configurada.';
+          el.innerText = 'Nenhuma data de concurso configurada.';
+        }
+        return;
+      }
+
       const target = new Date(targetDateStr + 'T08:00:00');
       const now = new Date();
       const diffMs = target - now;
       const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
-      const el = document.getElementById('countdownText');
       if (el) {
+        let msg = '';
         if (diffDays > 0) {
-          el.innerText = 'Faltam ' + diffDays + ' dias para ' + targetName + '!';
+          msg = 'Faltam ' + diffDays + ' dias para ' + targetName + '!';
         } else if (diffDays === 0) {
-          el.innerText = 'É HOJE! ' + targetName + ' em andamento!';
+          msg = 'É HOJE! ' + targetName + ' em andamento!';
         } else {
-          el.innerText = 'Meta ' + targetName + ' finalizada! Foco no próximo edital!';
+          msg = 'Meta ' + targetName + ' finalizada! Foco no próximo edital!';
         }
+        el.textContent = msg;
+        el.innerText = msg;
       }
     }
 
@@ -4797,14 +4936,28 @@
 
     function openStudyHoursQuickModal() {
       const mins = prompt('Quantos minutos de estudo você deseja registrar agora? (Ex: 60):', '60');
-      if (mins && !isNaN(mins) && mins > 0) {
-        showToast('Registrado ' + mins + ' min de estudo operacional!', 'success');
-        const cur = parseFloat(document.getElementById('weeklyHoursVal')?.innerText || '28.5');
-        const addedHours = (parseInt(mins) / 60).toFixed(1);
-        const newTotal = (parseFloat(cur) + parseFloat(addedHours)).toFixed(1);
-        if (document.getElementById('weeklyHoursVal')) {
-          document.getElementById('weeklyHoursVal').innerText = newTotal + 'h';
-        }
+      if (mins && !isNaN(mins) && Number(mins) > 0) {
+        const numMins = parseInt(mins, 10);
+        try {
+          const curExtra = Number(localStorage.getItem('tactical_os_extra_minutes')) || 0;
+          localStorage.setItem('tactical_os_extra_minutes', (curExtra + numMins).toString());
+
+          const raw = localStorage.getItem('concurso_app_data');
+          if (raw) {
+            const appData = JSON.parse(raw);
+            if (!Array.isArray(appData.studyLog)) appData.studyLog = [];
+            appData.studyLog.push({
+              id: 'log_tactical_' + Date.now(),
+              minutos: numMins,
+              data: new Date().toISOString().split('T')[0],
+              origem: 'student_os'
+            });
+            localStorage.setItem('concurso_app_data', JSON.stringify(appData));
+          }
+        } catch(e) {}
+
+        updateStudyMetrics();
+        showToast('Registrado ' + numMins + ' min de estudo operacional!', 'success');
       }
     }
 
