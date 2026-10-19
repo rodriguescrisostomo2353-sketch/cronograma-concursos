@@ -5,6 +5,10 @@ if (-not (Test-Path $targetDir)) {
 }
 
 Copy-Item -Path (Join-Path $PSScriptRoot "index.html") -Destination $targetDir -Force
+$studentOs = Join-Path $PSScriptRoot "student_os.html"
+if (Test-Path $studentOs) {
+    Copy-Item -Path $studentOs -Destination $targetDir -Force
+}
 Copy-Item -Path (Join-Path $PSScriptRoot "manifest.json") -Destination $targetDir -Force
 Copy-Item -Path (Join-Path $PSScriptRoot "sw.js") -Destination $targetDir -Force
 Copy-Item -Path (Join-Path $PSScriptRoot "version.json") -Destination $targetDir -Force

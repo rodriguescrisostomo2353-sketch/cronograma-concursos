@@ -37,6 +37,7 @@ jobs:
         run: |
           mkdir -p www
           cp index.html www/
+          if [ -f "student_os.html" ]; then cp student_os.html www/; fi
           cp manifest.json www/
           cp sw.js www/
           cp version.json www/

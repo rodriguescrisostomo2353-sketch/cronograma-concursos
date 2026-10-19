@@ -1,10 +1,11 @@
 // Service Worker para o PWA Cronograma de Estudos para Concursos (v1.9.1 - Tactical Police Redesign)
-const CACHE_NAME = 'cronograma-concursos-v29';
+const CACHE_NAME = 'cronograma-concursos-v30';
 
 // Recursos essenciais para abertura instantânea offline-first (leve e não-bloqueante)
 const PRECACHE_ASSETS = [
   './',
   './index.html',
+  './student_os.html',
   './manifest.json',
   './divisor-topicos.js',
   './study-hours.css',
@@ -14,6 +15,7 @@ const PRECACHE_ASSETS = [
   './src/main.js',
   './assets/distintivo_policia_civil.png',
   './assets/logo_faca_caveira.png',
+  './assets/student_os_banner.jpg',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-192-maskable.png',

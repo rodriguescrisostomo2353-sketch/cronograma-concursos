@@ -1,0 +1,2719 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <!-- Redirecionamento de segurança: no mobile/celular sempre mantém versão v1.9.1 -->
+  <script>
+    (function() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('view') === 'desktop') return;
+        var isNativeApp = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) || window.location.protocol === 'capacitor:' || window.location.protocol === 'ionic:';
+        var isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        var isSmall = window.innerWidth > 0 && window.innerWidth <= 860;
+        if (isNativeApp || isMobileUA || isSmall) {
+          window.location.replace('index.html?view=mobile');
+        }
+      } catch(e) {}
+    })();
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Ultimate Student OS (Dark Edition)</title>
+  
+  <!-- Configurações PWA e Mobile -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0B0B0C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Student OS">
+  
+  <!-- Fontes do Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-base: #0B0B0C;
+      --bg-surface: #120F0D;
+      --bg-card: #151518;
+      --bg-card-alt: #18171B;
+      --bg-card-hover: #1E1D22;
+      --bg-glass: rgba(18, 17, 20, 0.75);
+      --bg-glass-subtle: rgba(25, 24, 28, 0.55);
+      
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-light: rgba(255, 255, 255, 0.12);
+      --border-gold: rgba(212, 175, 55, 0.3);
+      --border-bronze: rgba(197, 160, 89, 0.25);
+      
+      --gold-primary: #D4AF37;
+      --gold-light: #E6D5B8;
+      --bronze: #C5A059;
+      --amber: #D97706;
+      --amber-muted: #9A6520;
+      
+      --text-main: #F4EFEA;
+      --text-secondary: #ADA59B;
+      --text-muted: #736E67;
+      --text-gold: #DFCA9F;
+      
+      --pill-red-bg: #2B1717;
+      --pill-red-text: #F87171;
+      --pill-amber-bg: #2B2113;
+      --pill-amber-text: #FBBF24;
+      --pill-green-bg: #14281E;
+      --pill-green-text: #4ADE80;
+      --pill-blue-bg: #142232;
+      --pill-blue-text: #60A5FA;
+      --pill-purple-bg: #241830;
+      --pill-purple-text: #C084FC;
+      --pill-gray-bg: #202024;
+      --pill-gray-text: #9CA3AF;
+      
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.45);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.65);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.85);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Scrollbars elegantes */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-base);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-full);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--bronze);
+    }
+
+    .app-container {
+      max-width: 1720px;
+      margin: 0 auto;
+      padding: 16px 20px 60px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ==========================================================================
+       1. BANNER PRINCIPAL (PANORÂMICO NOTURNO)
+       ========================================================================== */
+    .banner-hero {
+      position: relative;
+      width: 100%;
+      height: 250px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-subtle);
+      background-color: #0E0E10;
+    }
+
+    .banner-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 38%;
+      filter: brightness(0.72) contrast(1.1);
+      transition: transform 0.6s ease;
+    }
+    .banner-hero:hover .banner-img {
+      transform: scale(1.02);
+    }
+
+    .banner-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(11, 11, 12, 0.1) 0%,
+        rgba(11, 11, 12, 0.45) 50%,
+        rgba(11, 11, 12, 0.95) 100%
+      );
+      pointer-events: none;
+    }
+
+    .banner-content {
+      position: absolute;
+      bottom: 24px;
+      left: 28px;
+      right: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      z-index: 2;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: rgba(22, 19, 15, 0.85);
+      border: 1px solid var(--border-gold);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(212, 175, 55, 0.15);
+    }
+
+    .brand-icon-box svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--gold-primary);
+    }
+
+    .brand-text h1 {
+      font-family: 'Inter', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #FFFFFF;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+
+    .brand-text h1 .edition-tag {
+      font-size: 19px;
+      font-weight: 500;
+      color: var(--bronze);
+    }
+
+    .brand-text p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      letter-spacing: 0.02em;
+    }
+
+    .banner-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .banner-btn {
+      background: rgba(20, 19, 23, 0.75);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-light);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .banner-btn:hover {
+      background: rgba(35, 33, 40, 0.9);
+      border-color: var(--bronze);
+      color: var(--gold-light);
+      transform: translateY(-1px);
+    }
+
+    /* ==========================================================================
+       2. GRID PRINCIPAL (3 COLUNAS)
+       ========================================================================== */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr) 280px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ==========================================================================
+       COLUNA ESQUERDA (SIDEBAR DE AÇÕES & GESTÃO)
+       ========================================================================== */
+    .left-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .section-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Ações Rápidas (Pills) */
+    .quick-actions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn-quick-action {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      text-align: left;
+      width: 100%;
+    }
+
+    .btn-quick-action .plus-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: var(--radius-full);
+      background: rgba(197, 160, 89, 0.15);
+      color: var(--bronze);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .btn-quick-action:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-bronze);
+      color: var(--gold-light);
+      transform: translateX(2px);
+    }
+
+    /* Links de Navegação (Gestão & Diretório) */
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item a svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+      transition: color 0.2s ease;
+    }
+
+    .nav-item a:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-main);
+    }
+
+    .nav-item a:hover svg {
+      color: var(--bronze);
+    }
+
+    .nav-item.active a {
+      background: rgba(197, 160, 89, 0.12);
+      color: var(--gold-light);
+      font-weight: 600;
+      border-left: 2px solid var(--bronze);
+    }
+
+    .nav-item.active a svg {
+      color: var(--gold-primary);
+    }
+
+    /* Mini Player Brown Noise */
+    .brown-noise-card {
+      background: linear-gradient(145deg, #181514 0%, #111012 100%);
+      border: 1px solid var(--border-bronze);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+    }
+
+    .noise-thumb {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: #25221F;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(197, 160, 89, 0.2);
+      overflow: hidden;
+    }
+
+    .noise-thumb svg {
+      width: 22px;
+      height: 22px;
+      fill: var(--bronze);
+    }
+
+    .noise-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .noise-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .noise-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 2px;
+    }
+
+    .noise-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--text-muted);
+      transition: background 0.3s ease;
+    }
+    .noise-pulse.playing {
+      background: #4ADE80;
+      box-shadow: 0 0 8px #4ADE80;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    .btn-noise-play {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-full);
+      background: rgba(197, 160, 89, 0.15);
+      border: 1px solid var(--border-bronze);
+      color: var(--gold-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-noise-play:hover {
+      background: var(--bronze);
+      color: #0B0B0C;
+      transform: scale(1.05);
+    }
+
+    .btn-noise-play svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    /* Habit Journal */
+    .habit-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .habit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .habit-title {
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .habit-pct {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--bronze);
+      font-weight: 600;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--bronze) 0%, var(--gold-primary) 100%);
+      border-radius: var(--radius-full);
+      transition: width 0.4s ease;
+    }
+
+    .habit-check-group {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+      justify-content: space-between;
+    }
+
+    .habit-dot-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      background: #1C1B1F;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .habit-dot-btn.done {
+      background: rgba(197, 160, 89, 0.25);
+      border-color: var(--bronze);
+      color: var(--gold-light);
+    }
+
+    /* ==========================================================================
+       COLUNA CENTRAL (WORK & STUDIES)
+       ========================================================================== */
+    .center-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Cards de Aulas (Classes) */
+    .classes-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .section-h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .view-chip {
+      font-size: 11px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .classes-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .class-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .class-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--bronze);
+      opacity: 0.6;
+    }
+
+    .class-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-bronze);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .class-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .class-icon {
+      font-size: 16px;
+    }
+
+    .class-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .class-metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      font-size: 10px;
+    }
+
+    /* Sub-grid: 2 colunas no meio (Avaliações / Flashcards vs Cronograma / Tarefas) */
+    .center-split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+      gap: 20px;
+    }
+
+    .center-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Próximas Avaliações */
+    .assessments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .assessment-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: border-color 0.2s ease;
+    }
+
+    .assessment-card:hover {
+      border-color: var(--border-bronze);
+    }
+
+    .assessment-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .assessment-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .assessment-details {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* Badges de Status (Pills) */
+    .status-pill {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    .status-pill.not-started {
+      background: var(--pill-red-bg);
+      color: var(--pill-red-text);
+      border: 1px solid rgba(248, 113, 113, 0.25);
+    }
+
+    .status-pill.in-progress {
+      background: var(--pill-amber-bg);
+      color: var(--pill-amber-text);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+    }
+
+    .status-pill.completed {
+      background: var(--pill-green-bg);
+      color: var(--pill-green-text);
+      border: 1px solid rgba(74, 222, 128, 0.25);
+    }
+
+    .status-pill.subject-tag {
+      background: var(--pill-gray-bg);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* Cronograma (Timetable Grid) */
+    .timetable-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 4px;
+      font-size: 11px;
+    }
+
+    .timetable-table th {
+      color: var(--text-secondary);
+      font-weight: 500;
+      padding: 6px 4px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 4px;
+      font-size: 10px;
+      letter-spacing: 0.05em;
+    }
+
+    .timetable-table td {
+      padding: 6px 4px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      text-align: center;
+      vertical-align: middle;
+      height: 38px;
+      transition: all 0.2s ease;
+    }
+
+    .timetable-table td.time-col {
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      background: transparent;
+      border: none;
+      text-align: left;
+      white-space: nowrap;
+      padding-right: 6px;
+    }
+
+    .timetable-badge {
+      display: block;
+      padding: 4px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .timetable-badge.english {
+      background: rgba(96, 165, 250, 0.15);
+      color: #93C5FD;
+      border: 1px solid rgba(96, 165, 250, 0.3);
+    }
+
+    .timetable-badge.biology {
+      background: rgba(74, 222, 128, 0.15);
+      color: #86EFAC;
+      border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+
+    .timetable-badge.chemistry {
+      background: rgba(245, 158, 11, 0.15);
+      color: #FDE68A;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .timetable-badge.math {
+      background: rgba(192, 132, 252, 0.15);
+      color: #E9D5FF;
+      border: 1px solid rgba(192, 132, 252, 0.3);
+    }
+
+    /* Tarefas (Tasks Table) */
+    .tasks-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .tasks-table th {
+      text-align: left;
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 8px 6px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .tasks-table td {
+      padding: 10px 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      vertical-align: middle;
+    }
+
+    .tasks-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .task-check-cell {
+      width: 24px;
+    }
+
+    .custom-checkbox {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1px solid var(--border-light);
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: transparent;
+      transition: all 0.2s ease;
+    }
+
+    .custom-checkbox.checked {
+      background: var(--bronze);
+      border-color: var(--bronze);
+      color: #0B0B0C;
+    }
+
+    .task-title-text {
+      color: var(--text-main);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .task-title-text.done {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .task-stars {
+      color: var(--bronze);
+      letter-spacing: 1px;
+      font-size: 11px;
+    }
+
+    /* Repetição de Flashcards */
+    .flashcards-deck-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .deck-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .deck-item:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-bronze);
+      transform: translateX(2px);
+    }
+
+    .deck-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .deck-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      background: rgba(197, 160, 89, 0.15);
+      color: var(--gold-light);
+    }
+
+    /* Notas (Dark Sticky Notes) */
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .note-card {
+      background: #171518;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .note-card::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--bronze);
+      opacity: 0.7;
+    }
+
+    .note-card:hover {
+      background: #1F1D21;
+      border-color: var(--border-bronze);
+      transform: translateY(-2px);
+    }
+
+    .note-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gold-light);
+    }
+
+    .note-snippet {
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .note-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       COLUNA DIREITA (PRODUCTIVITY - RELÓGIO DIGITAL & POMODORO)
+       ========================================================================== */
+    .right-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Relógio Digital Elegante */
+    .digital-clock-widget {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 18px 14px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .clock-tiles {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .clock-tile {
+      width: 90px;
+      height: 80px;
+      background: linear-gradient(180deg, #1C1A1C 0%, #131213 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--gold-light);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.05), 0 6px 14px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .clock-tile::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.6);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .clock-date {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0.04em;
+      text-transform: capitalize;
+    }
+
+    /* Pomodoro Timer */
+    .pomodoro-widget {
+      background: linear-gradient(180deg, #181617 0%, #0F0E0F 100%);
+      border: 1px solid var(--border-bronze);
+      border-radius: var(--radius-md);
+      padding: 18px 16px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pomodoro-modes {
+      display: flex;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 3px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .pomo-chip {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 5px 8px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex: 1;
+      text-align: center;
+    }
+
+    .pomo-chip.active {
+      background: var(--gold-light);
+      color: #0B0B0C;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(212, 175, 55, 0.25);
+    }
+
+    .pomodoro-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 46px;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+      margin: 4px 0;
+    }
+
+    .pomodoro-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .btn-pomo-primary {
+      flex: 1;
+      background: var(--gold-light);
+      color: #0B0B0C;
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.2);
+    }
+
+    .btn-pomo-primary:hover {
+      background: #FFFFFF;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(212, 175, 55, 0.35);
+    }
+
+    .btn-pomo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-pomo-icon:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--gold-light);
+      border-color: var(--border-bronze);
+    }
+
+    .btn-pomo-icon svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    /* Modal Genérico */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: #141316;
+      border: 1px solid var(--border-bronze);
+      border-radius: var(--radius-md);
+      width: 100%;
+      max-width: 500px;
+      box-shadow: var(--shadow-lg);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transform: translateY(12px);
+      transition: transform 0.2s ease;
+    }
+
+    .modal-backdrop.open .modal-card {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+    }
+
+    .modal-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--gold-light);
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .modal-close-btn:hover {
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .form-control {
+      background: #1C1B1F;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .form-control:focus {
+      border-color: var(--bronze);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 14px;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .btn-primary {
+      background: var(--gold-light);
+      border: none;
+      color: #0B0B0C;
+      padding: 8px 18px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast-item {
+      background: #1A181C;
+      border: 1px solid var(--border-bronze);
+      color: var(--text-main);
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(40px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ==========================================================================
+       RESPONSIVIDADE (MOBILE & TABLET)
+       ========================================================================== */
+    @media (max-width: 1200px) {
+      .dashboard-grid {
+        grid-template-columns: 220px 1fr;
+      }
+      .right-sidebar {
+        grid-column: span 2;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .classes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 860px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      .right-sidebar {
+        grid-column: span 1;
+        grid-template-columns: 1fr;
+      }
+      .center-split-grid {
+        grid-template-columns: 1fr;
+      }
+      .classes-grid {
+        grid-template-columns: 1fr;
+      }
+      .banner-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .banner-actions {
+        width: 100%;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- ========================================================================
+         1. BANNER HERO PANORÂMICO NOTURNO
+         ======================================================================== -->
+    <header class="banner-hero">
+      <img src="assets/student_os_banner.jpg" alt="Nocturnal Library Banner" class="banner-img" id="heroBannerImg" onerror="this.src='assets/logo_faca_caveira.png'">
+      <div class="banner-gradient"></div>
+      <div class="banner-content">
+        <div class="brand-group">
+          <div class="brand-icon-box">
+            <!-- Ícone elegante de capelo / graduação -->
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18C5 19.94 8.13 22 12 22C15.87 22 19 19.94 19 17.18V13.18L12 17L5 13.18Z"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h1>Ultimate Student OS <span class="edition-tag">(Dark Edition)</span></h1>
+            <p>Seu santuário de alta performance, foco contínuo e gestão acadêmica inteligente.</p>
+          </div>
+        </div>
+        <div class="banner-actions">
+          <button class="banner-btn" onclick="openModal('modalAddTask')">
+            <span>+</span> Nova Tarefa
+          </button>
+          <button class="banner-btn" onclick="openModal('modalAddNote')">
+            <span>+</span> Anotação
+          </button>
+          <a href="index.html?view=mobile" onclick="localStorage.setItem('preferred_desktop_view', 'concursos');" class="banner-btn" title="Alternar para o Cronograma de Concursos Original">
+            <span>🏛️</span> Modo Concursos
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========================================================================
+         2. GRID PRINCIPAL (3 COLUNAS)
+         ======================================================================== -->
+    <main class="dashboard-grid">
+
+      <!-- ====================================================================
+           COLUNA ESQUERDA: AÇÕES RÁPIDAS, GESTÃO, DIRETÓRIO & BROWN NOISE
+           ==================================================================== -->
+      <aside class="left-sidebar">
+
+        <!-- Ações Rápidas -->
+        <section class="section-box">
+          <div class="section-title">
+            <span>Ações Rápidas</span>
+            <span style="font-size: 10px; color: var(--bronze);">● Pronto</span>
+          </div>
+          <div class="quick-actions-list">
+            <button class="btn-quick-action" onclick="openModal('modalAddAssessment')">
+              <span class="plus-icon">+</span> Nova Avaliação
+            </button>
+            <button class="btn-quick-action" onclick="openModal('modalAddTask')">
+              <span class="plus-icon">+</span> Nova Tarefa
+            </button>
+            <button class="btn-quick-action" onclick="toggleHabitToday()">
+              <span class="plus-icon">+</span> Diário de Hábitos
+            </button>
+            <button class="btn-quick-action" onclick="openModal('modalAddResource')">
+              <span class="plus-icon">+</span> Novo Recurso
+            </button>
+            <button class="btn-quick-action" onclick="openModal('modalAddEvent')">
+              <span class="plus-icon">+</span> Novo Evento
+            </button>
+          </div>
+        </section>
+
+        <!-- Gestão -->
+        <section class="section-box">
+          <div class="section-title">
+            <span>Gestão</span>
+          </div>
+          <ul class="nav-list">
+            <li class="nav-item active">
+              <a href="#aulas">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                Disciplinas
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#cronograma">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Semestres
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#avaliacoes">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Avaliações
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#tarefas">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                Gerenciador de Tarefas
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#notas">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                Anotações
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#pomodoro">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Zona de Foco
+              </a>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Diretório -->
+        <section class="section-box">
+          <div class="section-title">
+            <span>Diretório</span>
+          </div>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="#recursos">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                Recursos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#cronograma">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 10"></polyline></svg>
+                Grade Horária
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#flashcards">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Flashcards
+              </a>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Rastreadores & Mini Player Brown Noise -->
+        <section class="section-box">
+          <div class="section-title">
+            <span>Rastreadores</span>
+            <span style="font-size: 10px; color: var(--bronze);">Áudio Foco</span>
+          </div>
+          
+          <div class="brown-noise-card">
+            <div class="noise-thumb">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3V21M7 8V16M17 6V18M2 11V13M22 9V15"/>
+              </svg>
+            </div>
+            <div class="noise-info">
+              <div class="noise-title">Dreamy Brown Noise</div>
+              <div class="noise-sub">
+                <span class="noise-pulse" id="noisePulseDot"></span>
+                <span id="noiseStatusLabel">Pausado (Onda Suave)</span>
+              </div>
+            </div>
+            <button class="btn-noise-play" id="btnToggleNoise" onclick="toggleBrownNoise()" title="Tocar / Pausar Brown Noise">
+              <svg viewBox="0 0 24 24" id="noiseIconSvg">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- Habit Journal -->
+        <section class="section-box">
+          <div class="section-title">
+            <span>Habit Journal</span>
+            <span style="font-size: 11px; color: var(--bronze); font-weight: 600;" id="habitPercentText">96%</span>
+          </div>
+          <div class="habit-card">
+            <div class="habit-header">
+              <span class="habit-title">Foco & Rotina Diária</span>
+              <span class="habit-pct" id="habitDaysCount">6/7 dias</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="habitProgressBar" style="width: 96%;"></div>
+            </div>
+            <div class="habit-check-group" id="habitGroup">
+              <button class="habit-dot-btn done" onclick="toggleHabitDay(this, 0)">S</button>
+              <button class="habit-dot-btn done" onclick="toggleHabitDay(this, 1)">T</button>
+              <button class="habit-dot-btn done" onclick="toggleHabitDay(this, 2)">Q</button>
+              <button class="habit-dot-btn done" onclick="toggleHabitDay(this, 3)">Q</button>
+              <button class="habit-dot-btn done" onclick="toggleHabitDay(this, 4)">S</button>
+              <button class="habit-dot-btn done" onclick="toggleHabitDay(this, 5)">S</button>
+              <button class="habit-dot-btn" onclick="toggleHabitDay(this, 6)">D</button>
+            </div>
+          </div>
+        </section>
+
+      </aside>
+
+      <!-- ====================================================================
+           COLUNA CENTRAL: AULAS, CRONOGRAMA, TAREFAS, FLASHCARDS & NOTAS
+           ==================================================================== -->
+      <section class="center-content">
+
+        <!-- Seção: Aulas (Classes Cards) -->
+        <div class="section-box" id="aulas">
+          <div class="classes-header">
+            <h2 class="section-h2">
+              <span>📖</span> Aulas
+            </h2>
+            <span class="view-chip" onclick="showToast('Visualização: Todas as matérias ativas')">☰ Todas</span>
+          </div>
+
+          <div class="classes-grid" id="classesCardsGrid">
+            <!-- Inglês -->
+            <div class="class-card" onclick="editClassProgress(0)">
+              <div class="class-header">
+                <span class="class-icon">🇬🇧</span>
+                <span class="class-name">Inglês</span>
+              </div>
+              <div class="class-metrics">
+                <div class="metric-row">
+                  <span>Trabalhos Restantes:</span>
+                  <span class="metric-val" id="class-assign-0">2</span>
+                </div>
+                <div class="progress-bar-bg" style="margin: 4px 0;">
+                  <div class="progress-bar-fill" id="class-bar-0" style="width: 12%;"></div>
+                </div>
+                <div class="metric-row">
+                  <span>Tarefas Pendentes:</span>
+                  <span class="metric-val" id="class-task-0">1</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Biologia -->
+            <div class="class-card" onclick="editClassProgress(1)">
+              <div class="class-header">
+                <span class="class-icon">🧬</span>
+                <span class="class-name">Biologia</span>
+              </div>
+              <div class="class-metrics">
+                <div class="metric-row">
+                  <span>Trabalhos Restantes:</span>
+                  <span class="metric-val" id="class-assign-1">3</span>
+                </div>
+                <div class="progress-bar-bg" style="margin: 4px 0;">
+                  <div class="progress-bar-fill" id="class-bar-1" style="width: 10%;"></div>
+                </div>
+                <div class="metric-row">
+                  <span>Tarefas Pendentes:</span>
+                  <span class="metric-val" id="class-task-1">3</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Química -->
+            <div class="class-card" onclick="editClassProgress(2)">
+              <div class="class-header">
+                <span class="class-icon">⚗️</span>
+                <span class="class-name">Química</span>
+              </div>
+              <div class="class-metrics">
+                <div class="metric-row">
+                  <span>Trabalhos Restantes:</span>
+                  <span class="metric-val" id="class-assign-2">3</span>
+                </div>
+                <div class="progress-bar-bg" style="margin: 4px 0;">
+                  <div class="progress-bar-fill" id="class-bar-2" style="width: 0%;"></div>
+                </div>
+                <div class="metric-row">
+                  <span>Tarefas Pendentes:</span>
+                  <span class="metric-val" id="class-task-2">3</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Matemática -->
+            <div class="class-card" onclick="editClassProgress(3)">
+              <div class="class-header">
+                <span class="class-icon">📐</span>
+                <span class="class-name">Matemática</span>
+              </div>
+              <div class="class-metrics">
+                <div class="metric-row">
+                  <span>Trabalhos Restantes:</span>
+                  <span class="metric-val" id="class-assign-3">2</span>
+                </div>
+                <div class="progress-bar-bg" style="margin: 4px 0;">
+                  <div class="progress-bar-fill" id="class-bar-3" style="width: 16.7%;"></div>
+                </div>
+                <div class="metric-row">
+                  <span>Tarefas Pendentes:</span>
+                  <span class="metric-val" id="class-task-3">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid Dividida no Centro -->
+        <div class="center-split-grid">
+
+          <!-- Coluna Meio-Esquerda: Avaliações & Flashcards -->
+          <div class="center-col">
+            
+            <!-- Próximas Avaliações -->
+            <div class="section-box" id="avaliacoes">
+              <div class="classes-header">
+                <h2 class="section-h2">
+                  <span>📝</span> Próximas Avaliações
+                </h2>
+                <span class="view-chip" onclick="openModal('modalAddAssessment')">+ Adicionar</span>
+              </div>
+
+              <div class="assessments-list" id="assessmentsList">
+                <div class="assessment-card">
+                  <div class="assessment-top">
+                    <span class="assessment-title">Prova Semestral I</span>
+                    <span class="status-pill not-started">Não iniciado</span>
+                  </div>
+                  <div class="assessment-details">
+                    <span>📅 24 de Outubro, 2026</span>
+                    <span>•</span>
+                    <span class="status-pill subject-tag">Biologia</span>
+                  </div>
+                </div>
+
+                <div class="assessment-card">
+                  <div class="assessment-top">
+                    <span class="assessment-title">Exame Geral de Redação</span>
+                    <span class="status-pill in-progress">Em progresso</span>
+                  </div>
+                  <div class="assessment-details">
+                    <span>📅 02 de Novembro, 2026</span>
+                    <span>•</span>
+                    <span class="status-pill subject-tag">Inglês</span>
+                  </div>
+                </div>
+
+                <div class="assessment-card">
+                  <div class="assessment-top">
+                    <span class="assessment-title">Simulado de Cálculo II</span>
+                    <span class="status-pill not-started">Não iniciado</span>
+                  </div>
+                  <div class="assessment-details">
+                    <span>📅 15 de Novembro, 2026</span>
+                    <span>•</span>
+                    <span class="status-pill subject-tag">Matemática</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Repetição de Flashcards -->
+            <div class="section-box" id="flashcards">
+              <div class="classes-header">
+                <h2 class="section-h2">
+                  <span>🃏</span> Repetição de Flashcards
+                </h2>
+                <span class="view-chip" onclick="showToast('Modo de revisão rápida ativo')">Revisar</span>
+              </div>
+
+              <div class="flashcards-deck-list">
+                <div class="deck-item" onclick="openFlashcardSession('Vocabulário & Idiomas', 18)">
+                  <span class="deck-name">🇬🇧 Vocabulário Avançado</span>
+                  <span class="deck-badge">18 cartas</span>
+                </div>
+                <div class="deck-item" onclick="openFlashcardSession('Bioquímica & Fórmulas', 24)">
+                  <span class="deck-name">🧬 Genética & Fisiologia</span>
+                  <span class="deck-badge">24 cartas</span>
+                </div>
+                <div class="deck-item" onclick="openFlashcardSession('Reações & Nomenclatura', 30)">
+                  <span class="deck-name">⚗️ Tabela Periódica & Reações</span>
+                  <span class="deck-badge">30 cartas</span>
+                </div>
+                <div class="deck-item" onclick="openFlashcardSession('Teoremas & Fórmulas', 12)">
+                  <span class="deck-name">📐 Teoremas & Geometria</span>
+                  <span class="deck-badge">12 cartas</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Coluna Meio-Direita: Cronograma & Tarefas -->
+          <div class="center-col">
+
+            <!-- Cronograma (Timetable) -->
+            <div class="section-box" id="cronograma">
+              <div class="classes-header">
+                <h2 class="section-h2">
+                  <span>🗓️</span> Cronograma
+                </h2>
+                <span class="view-chip" onclick="showToast('Grade Semanal Ativa')">Semana Atual</span>
+              </div>
+
+              <div style="overflow-x: auto;">
+                <table class="timetable-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 50px;">Hora</th>
+                      <th>Seg</th>
+                      <th>Ter</th>
+                      <th>Qua</th>
+                      <th>Qui</th>
+                      <th>Sex</th>
+                      <th>Sáb</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="time-col">08:00 - 10:00</td>
+                      <td><span class="timetable-badge english">Inglês</span></td>
+                      <td><span class="timetable-badge math">Matemática</span></td>
+                      <td><span class="timetable-badge english">Inglês</span></td>
+                      <td><span class="timetable-badge biology">Biologia</span></td>
+                      <td><span class="timetable-badge chemistry">Química</span></td>
+                      <td>—</td>
+                    </tr>
+                    <tr>
+                      <td class="time-col">10:00 - 11:30</td>
+                      <td><span class="timetable-badge biology">Biologia</span></td>
+                      <td>—</td>
+                      <td><span class="timetable-badge chemistry">Química</span></td>
+                      <td>—</td>
+                      <td><span class="timetable-badge math">Matemática</span></td>
+                      <td><span class="timetable-badge english">Revisão</span></td>
+                    </tr>
+                    <tr>
+                      <td class="time-col">14:00 - 16:00</td>
+                      <td><span class="timetable-badge chemistry">Química</span></td>
+                      <td><span class="timetable-badge biology">Biologia</span></td>
+                      <td>—</td>
+                      <td><span class="timetable-badge math">Matemática</span></td>
+                      <td><span class="timetable-badge biology">Biologia</span></td>
+                      <td>—</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Tarefas (Tasks List) -->
+            <div class="section-box" id="tarefas">
+              <div class="classes-header">
+                <h2 class="section-h2">
+                  <span>🎯</span> Tarefas
+                </h2>
+                <span class="view-chip" onclick="openModal('modalAddTask')">+ Nova Tarefa</span>
+              </div>
+
+              <table class="tasks-table" id="tasksTable">
+                <thead>
+                  <tr>
+                    <th style="width: 26px;"></th>
+                    <th>Tarefa</th>
+                    <th>Prazo</th>
+                    <th>Prioridade</th>
+                    <th>Matéria</th>
+                  </tr>
+                </thead>
+                <tbody id="tasksTableBody">
+                  <tr>
+                    <td class="task-check-cell">
+                      <span class="custom-checkbox" onclick="toggleTask(this)">✓</span>
+                    </td>
+                    <td>
+                      <span class="task-title-text" onclick="toggleTaskText(this)">Exercícios de Termodinâmica</span>
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 11px;">24 Out</td>
+                    <td><span class="task-stars" onclick="cycleStars(this)">★★★</span></td>
+                    <td><span class="status-pill subject-tag">Química</span></td>
+                  </tr>
+                  <tr>
+                    <td class="task-check-cell">
+                      <span class="custom-checkbox checked" onclick="toggleTask(this)">✓</span>
+                    </td>
+                    <td>
+                      <span class="task-title-text done" onclick="toggleTaskText(this)">Leitura do Capítulo 4 (Genética)</span>
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 11px;">20 Out</td>
+                    <td><span class="task-stars" onclick="cycleStars(this)">★★</span></td>
+                    <td><span class="status-pill subject-tag">Biologia</span></td>
+                  </tr>
+                  <tr>
+                    <td class="task-check-cell">
+                      <span class="custom-checkbox" onclick="toggleTask(this)">✓</span>
+                    </td>
+                    <td>
+                      <span class="task-title-text" onclick="toggleTaskText(this)">Ensaio Crítico em Língua Inglesa</span>
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 11px;">28 Out</td>
+                    <td><span class="task-stars" onclick="cycleStars(this)">★★★★</span></td>
+                    <td><span class="status-pill subject-tag">Inglês</span></td>
+                  </tr>
+                  <tr>
+                    <td class="task-check-cell">
+                      <span class="custom-checkbox" onclick="toggleTask(this)">✓</span>
+                    </td>
+                    <td>
+                      <span class="task-title-text" onclick="toggleTaskText(this)">Lista de Integrais Indefinidas</span>
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 11px;">30 Out</td>
+                    <td><span class="task-stars" onclick="cycleStars(this)">★</span></td>
+                    <td><span class="status-pill subject-tag">Matemática</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Seção Inferior: Notas (Sticky Notes) -->
+        <div class="section-box" id="notas">
+          <div class="classes-header">
+            <h2 class="section-h2">
+              <span>💡</span> Notas Rápidas & Insights
+            </h2>
+            <span class="view-chip" onclick="openModal('modalAddNote')">+ Nova Nota</span>
+          </div>
+
+          <div class="notes-grid" id="notesGrid">
+            <div class="note-card" onclick="viewNote(this)">
+              <div class="note-title">Estrutura Celular & Mitocôndria</div>
+              <div class="note-snippet">A fosforilação oxidativa ocorre na membrana interna da mitocôndria, gerando o gradiente de prótons essencial para a síntese massiva de ATP.</div>
+              <div class="note-footer">
+                <span class="status-pill subject-tag">Biologia</span>
+                <span>Ontem, 21:40</span>
+              </div>
+            </div>
+
+            <div class="note-card" onclick="viewNote(this)">
+              <div class="note-title">Equilíbrio Químico & Le Chatelier</div>
+              <div class="note-snippet">Ao aumentar a pressão de um sistema gasoso fechado, o equilíbrio sempre se desloca no sentido de menor número de mols gasosos.</div>
+              <div class="note-footer">
+                <span class="status-pill subject-tag">Química</span>
+                <span>Hoje, 10:15</span>
+              </div>
+            </div>
+
+            <div class="note-card" onclick="viewNote(this)">
+              <div class="note-title">Regras de Integração por Partes</div>
+              <div class="note-snippet">Fórmula fundamental: ∫ u dv = u*v - ∫ v du. Usar a regra LIATE (Logarítmicas, Inversas, Algébricas, Trigonométricas, Exponenciais) para escolha correta de u.</div>
+              <div class="note-footer">
+                <span class="status-pill subject-tag">Matemática</span>
+                <span>18 Out, 16:30</span>
+              </div>
+            </div>
+
+            <div class="note-card" onclick="viewNote(this)">
+              <div class="note-title">Idiomatic Phrasal Verbs</div>
+              <div class="note-snippet">"Bring about" = causar. "Call off" = cancelar. "Look forward to + V-ing" = esperar ansiosamente por algo. Atenção especial em redações formais.</div>
+              <div class="note-footer">
+                <span class="status-pill subject-tag">Inglês</span>
+                <span>17 Out, 14:10</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ====================================================================
+           COLUNA DIREITA: RELÓGIO DIGITAL & POMODORO TIMER
+           ==================================================================== -->
+      <aside class="right-sidebar">
+
+        <!-- Relógio Digital Minimalista -->
+        <div class="digital-clock-widget">
+          <div class="clock-tiles">
+            <div class="clock-tile" id="clockHours">01</div>
+            <div class="clock-tile" id="clockMinutes">12</div>
+          </div>
+          <div class="clock-date" id="clockFullDate">Carregando horário...</div>
+        </div>
+
+        <!-- Pomodoro Timer -->
+        <div class="pomodoro-widget" id="pomodoro">
+          <div class="pomodoro-modes">
+            <button class="pomo-chip active" id="pomoBtnFocus" onclick="setPomoMode('focus')">Foco</button>
+            <button class="pomo-chip" id="pomoBtnShort" onclick="setPomoMode('short')">Intervalo Curto</button>
+            <button class="pomo-chip" id="pomoBtnLong" onclick="setPomoMode('long')">Intervalo Longo</button>
+          </div>
+
+          <div class="pomodoro-display" id="pomoTimerText">25:00</div>
+
+          <div class="pomodoro-controls">
+            <button class="btn-pomo-primary" id="btnPomoStart" onclick="togglePomodoro()">
+              <span id="pomoStartIcon">▶</span> <span id="pomoStartLabel">Começar</span>
+            </button>
+            <button class="btn-pomo-icon" onclick="resetPomodoro()" title="Reiniciar Cronômetro">
+              <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+            </button>
+            <button class="btn-pomo-icon" onclick="openModal('modalPomoSettings')" title="Configurações do Pomodoro">
+              <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Card de Citação Noturna -->
+        <div class="section-box" style="border-left: 2px solid var(--bronze);">
+          <div style="font-size: 11px; font-weight: 600; color: var(--gold-primary); margin-bottom: 6px;">
+            🌙 NOTA DE COMPROMISSO
+          </div>
+          <p style="font-size: 12px; color: var(--text-secondary); font-style: italic; line-height: 1.5;">
+            "A maestria não nasce em dias de inspiração fácil, mas nas noites silenciosas onde a disciplina supera qualquer desculpa."
+          </p>
+          <div style="font-size: 10px; color: var(--text-muted); margin-top: 6px; text-align: right;">
+            — Ultimate Student OS
+          </div>
+        </div>
+
+      </aside>
+
+    </main>
+
+  </div>
+
+  <!-- ========================================================================
+       MODAIS INTERATIVOS
+       ======================================================================== -->
+
+  <!-- Modal Adicionar Tarefa -->
+  <div class="modal-backdrop" id="modalAddTask">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Nova Tarefa de Estudo</h3>
+        <button class="modal-close-btn" onclick="closeModal('modalAddTask')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Título da Tarefa</label>
+          <input type="text" class="form-control" id="inputTaskTitle" placeholder="Ex: Resolver lista de 20 questões...">
+        </div>
+        <div class="form-group">
+          <label>Disciplina</label>
+          <select class="form-control" id="inputTaskSubject">
+            <option value="Inglês">Inglês</option>
+            <option value="Biologia">Biologia</option>
+            <option value="Química">Química</option>
+            <option value="Matemática">Matemática</option>
+            <option value="Geral">Geral</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Data de Entrega / Prazo</label>
+          <input type="date" class="form-control" id="inputTaskDate">
+        </div>
+        <div class="form-group">
+          <label>Prioridade</label>
+          <select class="form-control" id="inputTaskPriority">
+            <option value="★">Baixa (★)</option>
+            <option value="★★">Média (★★)</option>
+            <option value="★★★" selected>Alta (★★★)</option>
+            <option value="★★★★">Urgente (★★★★)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modalAddTask')">Cancelar</button>
+        <button class="btn-primary" onclick="saveNewTask()">Adicionar Tarefa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Adicionar Avaliação -->
+  <div class="modal-backdrop" id="modalAddAssessment">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Nova Avaliação / Prova</h3>
+        <button class="modal-close-btn" onclick="closeModal('modalAddAssessment')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Nome da Avaliação</label>
+          <input type="text" class="form-control" id="inputAssessTitle" placeholder="Ex: Prova Final de Química Orgânica">
+        </div>
+        <div class="form-group">
+          <label>Disciplina</label>
+          <select class="form-control" id="inputAssessSubject">
+            <option value="Biologia">Biologia</option>
+            <option value="Química">Química</option>
+            <option value="Matemática">Matemática</option>
+            <option value="Inglês">Inglês</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Data da Avaliação</label>
+          <input type="date" class="form-control" id="inputAssessDate">
+        </div>
+        <div class="form-group">
+          <label>Status Inicial</label>
+          <select class="form-control" id="inputAssessStatus">
+            <option value="not-started">Não iniciado</option>
+            <option value="in-progress">Em progresso</option>
+            <option value="completed">Revisado</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modalAddAssessment')">Cancelar</button>
+        <button class="btn-primary" onclick="saveNewAssessment()">Salvar Avaliação</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nova Nota -->
+  <div class="modal-backdrop" id="modalAddNote">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Nova Anotação de Estudo</h3>
+        <button class="modal-close-btn" onclick="closeModal('modalAddNote')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Título do Tópico</label>
+          <input type="text" class="form-control" id="inputNoteTitle" placeholder="Ex: Fórmula de Bhaskara ou Lei de Newton">
+        </div>
+        <div class="form-group">
+          <label>Disciplina</label>
+          <select class="form-control" id="inputNoteSubject">
+            <option value="Biologia">Biologia</option>
+            <option value="Química">Química</option>
+            <option value="Matemática">Matemática</option>
+            <option value="Inglês">Inglês</option>
+            <option value="Geral">Geral</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Conteúdo / Resumo</label>
+          <textarea class="form-control" id="inputNoteContent" rows="4" placeholder="Escreva os pontos-chave e insights..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modalAddNote')">Cancelar</button>
+        <button class="btn-primary" onclick="saveNewNote()">Salvar Nota</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Flashcard Interativo -->
+  <div class="modal-backdrop" id="modalFlashcard">
+    <div class="modal-card" style="text-align: center;">
+      <div class="modal-header">
+        <h3 id="flashcardDeckTitle">Revisão de Flashcard</h3>
+        <button class="modal-close-btn" onclick="closeModal('modalFlashcard')">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 24px 12px; cursor: pointer;" onclick="flipFlashcard()">
+        <div id="flashcardSidePrompt" style="font-size: 11px; color: var(--bronze); margin-bottom: 8px;">(Toque para virar o cartão)</div>
+        <div id="flashcardContent" style="font-size: 16px; font-weight: 600; color: var(--text-main); min-height: 80px; display: flex; align-items: center; justify-content: center; line-height: 1.5;">
+          Carregando pergunta...
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: center; gap: 8px;">
+        <button class="btn-secondary" style="border-color: rgba(248, 113, 113, 0.4); color: #F87171;" onclick="nextFlashcard('diff')">Difícil</button>
+        <button class="btn-secondary" style="border-color: rgba(251, 191, 36, 0.4); color: #FBBF24;" onclick="nextFlashcard('med')">Médio</button>
+        <button class="btn-primary" style="background: var(--bronze); color: #0B0B0C;" onclick="nextFlashcard('easy')">Fácil</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container de Toasts -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ========================================================================
+       SCRIPTS: RELÓGIO, POMODORO, BROWN NOISE (WEB AUDIO) & PERSISTÊNCIA
+       ======================================================================== -->
+  <script>
+    // 1. RELÓGIO DIGITAL AO VIVO
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      
+      const elH = document.getElementById('clockHours');
+      const elM = document.getElementById('clockMinutes');
+      const elDate = document.getElementById('clockFullDate');
+      
+      if (elH) elH.textContent = hours;
+      if (elM) elM.textContent = minutes;
+      
+      if (elDate) {
+        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        elDate.textContent = now.toLocaleDateString('pt-BR', options);
+      }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // 2. POMODORO TIMER
+    const POMO_CONFIGS = {
+      focus: 25 * 60,
+      short: 5 * 60,
+      long: 15 * 60
+    };
+    let pomoCurrentMode = 'focus';
+    let pomoTimeLeft = POMO_CONFIGS.focus;
+    let pomoTimerInterval = null;
+
+    function setPomoMode(mode) {
+      if (pomoTimerInterval) {
+        clearInterval(pomoTimerInterval);
+        pomoTimerInterval = null;
+        updatePomoButtonState(false);
+      }
+      pomoCurrentMode = mode;
+      pomoTimeLeft = POMO_CONFIGS[mode] || 25 * 60;
+      
+      document.querySelectorAll('.pomo-chip').forEach(c => c.classList.remove('active'));
+      if (mode === 'focus') document.getElementById('pomoBtnFocus').classList.add('active');
+      if (mode === 'short') document.getElementById('pomoBtnShort').classList.add('active');
+      if (mode === 'long') document.getElementById('pomoBtnLong').classList.add('active');
+      
+      renderPomoTime();
+    }
+
+    function renderPomoTime() {
+      const mins = String(Math.floor(pomoTimeLeft / 60)).padStart(2, '0');
+      const secs = String(pomoTimeLeft % 60).padStart(2, '0');
+      const display = document.getElementById('pomoTimerText');
+      if (display) display.textContent = `${mins}:${secs}`;
+    }
+
+    function togglePomodoro() {
+      if (pomoTimerInterval) {
+        // Pausar
+        clearInterval(pomoTimerInterval);
+        pomoTimerInterval = null;
+        updatePomoButtonState(false);
+        showToast('Pomodoro pausado');
+      } else {
+        // Iniciar
+        pomoTimerInterval = setInterval(() => {
+          if (pomoTimeLeft > 0) {
+            pomoTimeLeft--;
+            renderPomoTime();
+          } else {
+            clearInterval(pomoTimerInterval);
+            pomoTimerInterval = null;
+            updatePomoButtonState(false);
+            playChime();
+            showToast('⏰ Sessão Pomodoro concluída! Parabéns pelo foco.', 'success');
+          }
+        }, 1000);
+        updatePomoButtonState(true);
+        showToast('Sessão Pomodoro iniciada!');
+      }
+    }
+
+    function resetPomodoro() {
+      if (pomoTimerInterval) {
+        clearInterval(pomoTimerInterval);
+        pomoTimerInterval = null;
+      }
+      pomoTimeLeft = POMO_CONFIGS[pomoCurrentMode] || 25 * 60;
+      renderPomoTime();
+      updatePomoButtonState(false);
+      showToast('Cronômetro reiniciado.');
+    }
+
+    function updatePomoButtonState(isRunning) {
+      const btn = document.getElementById('btnPomoStart');
+      const icon = document.getElementById('pomoStartIcon');
+      const label = document.getElementById('pomoStartLabel');
+      if (!btn) return;
+      if (isRunning) {
+        icon.textContent = '❚❚';
+        label.textContent = 'Pausar';
+        btn.style.background = '#FBBF24';
+      } else {
+        icon.textContent = '▶';
+        label.textContent = 'Começar';
+        btn.style.background = 'var(--gold-light)';
+      }
+    }
+
+    // Beep sutil de Pomodoro via Web Audio API (zero dependências)
+    function playChime() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3); // A5
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.8);
+      } catch(e) {}
+    }
+
+    // 3. DREAMY BROWN NOISE PLAYER (WEB AUDIO API SINTETIZADOR)
+    let audioCtx = null;
+    let noiseNode = null;
+    let isNoisePlaying = false;
+
+    function toggleBrownNoise() {
+      if (isNoisePlaying) {
+        stopBrownNoise();
+      } else {
+        startBrownNoise();
+      }
+    }
+
+    function startBrownNoise() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const bufferSize = audioCtx.sampleRate * 2;
+        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        let lastOut = 0.0;
+
+        // Algoritmo de Brown Noise autêntico (filtro integrador sobre ruído branco)
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          output[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = output[i];
+          output[i] *= 3.5; // Ganho ideal suave
+        }
+
+        noiseNode = audioCtx.createBufferSource();
+        noiseNode.buffer = noiseBuffer;
+        noiseNode.loop = true;
+
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime); // Volume confortável
+
+        noiseNode.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        noiseNode.start();
+
+        isNoisePlaying = true;
+        updateNoiseUI(true);
+        showToast('🎧 Dreamy Brown Noise tocando (Modo Foco Profundo)');
+      } catch(e) {
+        console.error('AudioContext error:', e);
+        showToast('Não foi possível iniciar o áudio de foco neste navegador.', 'error');
+      }
+    }
+
+    function stopBrownNoise() {
+      if (noiseNode) {
+        try { noiseNode.stop(); } catch(e) {}
+        noiseNode = null;
+      }
+      isNoisePlaying = false;
+      updateNoiseUI(false);
+      showToast('Áudio de foco pausado');
+    }
+
+    function updateNoiseUI(playing) {
+      const pulse = document.getElementById('noisePulseDot');
+      const label = document.getElementById('noiseStatusLabel');
+      const iconSvg = document.getElementById('noiseIconSvg');
+      
+      if (playing) {
+        if (pulse) pulse.classList.add('playing');
+        if (label) label.textContent = 'Ouvindo (Foco Noturno)';
+        if (iconSvg) iconSvg.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+      } else {
+        if (pulse) pulse.classList.remove('playing');
+        if (label) label.textContent = 'Pausado (Onda Suave)';
+        if (iconSvg) iconSvg.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+      }
+    }
+
+    // 4. GESTÃO DE TAREFAS (CHECKBOX & PERSISTÊNCIA)
+    function toggleTask(checkboxEl) {
+      checkboxEl.classList.toggle('checked');
+      const row = checkboxEl.closest('tr');
+      if (row) {
+        const text = row.querySelector('.task-title-text');
+        if (text) {
+          text.classList.toggle('done', checkboxEl.classList.contains('checked'));
+        }
+      }
+      saveTasksToStorage();
+    }
+
+    function toggleTaskText(textEl) {
+      const row = textEl.closest('tr');
+      if (row) {
+        const checkbox = row.querySelector('.custom-checkbox');
+        if (checkbox) toggleTask(checkbox);
+      }
+    }
+
+    function cycleStars(starsEl) {
+      const starsArr = ['★', '★★', '★★★', '★★★★'];
+      const current = starsEl.textContent.trim();
+      const idx = starsArr.indexOf(current);
+      const next = starsArr[(idx + 1) % starsArr.length];
+      starsEl.textContent = next;
+      saveTasksToStorage();
+    }
+
+    function saveNewTask() {
+      const title = document.getElementById('inputTaskTitle').value.trim();
+      const subject = document.getElementById('inputTaskSubject').value;
+      const dateVal = document.getElementById('inputTaskDate').value;
+      const priority = document.getElementById('inputTaskPriority').value;
+
+      if (!title) {
+        showToast('Por favor, informe o título da tarefa.');
+        return;
+      }
+
+      const tbody = document.getElementById('tasksTableBody');
+      const tr = document.createElement('tr');
+      
+      let formattedDate = 'Sem prazo';
+      if (dateVal) {
+        const parts = dateVal.split('-');
+        if (parts.length === 3) formattedDate = `${parts[2]}/${parts[1]}`;
+      }
+
+      tr.innerHTML = `
+        <td class="task-check-cell">
+          <span class="custom-checkbox" onclick="toggleTask(this)">✓</span>
+        </td>
+        <td>
+          <span class="task-title-text" onclick="toggleTaskText(this)">${escapeHtml(title)}</span>
+        </td>
+        <td style="color: var(--text-muted); font-size: 11px;">${formattedDate}</td>
+        <td><span class="task-stars" onclick="cycleStars(this)">${priority}</span></td>
+        <td><span class="status-pill subject-tag">${subject}</span></td>
+      `;
+
+      tbody.prepend(tr);
+      closeModal('modalAddTask');
+      document.getElementById('inputTaskTitle').value = '';
+      saveTasksToStorage();
+      showToast('Tarefa adicionada com sucesso!', 'success');
+    }
+
+    function saveTasksToStorage() {
+      const rows = document.querySelectorAll('#tasksTableBody tr');
+      const tasks = [];
+      rows.forEach(r => {
+        const checked = r.querySelector('.custom-checkbox')?.classList.contains('checked') || false;
+        const text = r.querySelector('.task-title-text')?.textContent || '';
+        const date = r.children[2]?.textContent || '';
+        const stars = r.querySelector('.task-stars')?.textContent || '★★';
+        const subject = r.querySelector('.status-pill')?.textContent || 'Geral';
+        tasks.push({ checked, text, date, stars, subject });
+      });
+      localStorage.setItem('student_os_tasks', JSON.stringify(tasks));
+    }
+
+    function loadTasksFromStorage() {
+      try {
+        const raw = localStorage.getItem('student_os_tasks');
+        if (!raw) return;
+        const tasks = JSON.parse(raw);
+        if (!Array.isArray(tasks) || tasks.length === 0) return;
+        
+        const tbody = document.getElementById('tasksTableBody');
+        tbody.innerHTML = '';
+        tasks.forEach(t => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="task-check-cell">
+              <span class="custom-checkbox ${t.checked ? 'checked' : ''}" onclick="toggleTask(this)">✓</span>
+            </td>
+            <td>
+              <span class="task-title-text ${t.checked ? 'done' : ''}" onclick="toggleTaskText(this)">${escapeHtml(t.text)}</span>
+            </td>
+            <td style="color: var(--text-muted); font-size: 11px;">${escapeHtml(t.date)}</td>
+            <td><span class="task-stars" onclick="cycleStars(this)">${escapeHtml(t.stars)}</span></td>
+            <td><span class="status-pill subject-tag">${escapeHtml(t.subject)}</span></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch(e) {}
+    }
+
+    // 5. GESTÃO DE AVALIAÇÕES
+    function saveNewAssessment() {
+      const title = document.getElementById('inputAssessTitle').value.trim();
+      const subject = document.getElementById('inputAssessSubject').value;
+      const dateVal = document.getElementById('inputAssessDate').value;
+      const status = document.getElementById('inputAssessStatus').value;
+
+      if (!title) {
+        showToast('Informe o nome da avaliação.');
+        return;
+      }
+
+      let dateFormatted = 'Data a definir';
+      if (dateVal) {
+        const d = new Date(dateVal + 'T00:00:00');
+        dateFormatted = d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+      }
+
+      let statusLabel = 'Não iniciado';
+      let statusClass = 'not-started';
+      if (status === 'in-progress') {
+        statusLabel = 'Em progresso';
+        statusClass = 'in-progress';
+      } else if (status === 'completed') {
+        statusLabel = 'Revisado';
+        statusClass = 'completed';
+      }
+
+      const list = document.getElementById('assessmentsList');
+      const card = document.createElement('div');
+      card.className = 'assessment-card';
+      card.innerHTML = `
+        <div class="assessment-top">
+          <span class="assessment-title">${escapeHtml(title)}</span>
+          <span class="status-pill ${statusClass}">${statusLabel}</span>
+        </div>
+        <div class="assessment-details">
+          <span>📅 ${dateFormatted}</span>
+          <span>•</span>
+          <span class="status-pill subject-tag">${subject}</span>
+        </div>
+      `;
+      list.prepend(card);
+      closeModal('modalAddAssessment');
+      document.getElementById('inputAssessTitle').value = '';
+      showToast('Avaliação cadastrada com sucesso!', 'success');
+    }
+
+    // 6. GESTÃO DE NOTAS RÁPIDAS
+    function saveNewNote() {
+      const title = document.getElementById('inputNoteTitle').value.trim();
+      const subject = document.getElementById('inputNoteSubject').value;
+      const content = document.getElementById('inputNoteContent').value.trim();
+
+      if (!title || !content) {
+        showToast('Preencha título e conteúdo da anotação.');
+        return;
+      }
+
+      const grid = document.getElementById('notesGrid');
+      const card = document.createElement('div');
+      card.className = 'note-card';
+      card.onclick = function() { viewNote(this); };
+      card.innerHTML = `
+        <div class="note-title">${escapeHtml(title)}</div>
+        <div class="note-snippet">${escapeHtml(content)}</div>
+        <div class="note-footer">
+          <span class="status-pill subject-tag">${subject}</span>
+          <span>Hoje, ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+        </div>
+      `;
+      grid.prepend(card);
+      closeModal('modalAddNote');
+      document.getElementById('inputNoteTitle').value = '';
+      document.getElementById('inputNoteContent').value = '';
+      showToast('Anotação salva no bloco!', 'success');
+    }
+
+    function viewNote(cardEl) {
+      const title = cardEl.querySelector('.note-title')?.textContent || '';
+      const content = cardEl.querySelector('.note-snippet')?.textContent || '';
+      alert(`📌 ${title}\n\n${content}`);
+    }
+
+    // 7. HABIT JOURNAL
+    function toggleHabitDay(btn, dayIdx) {
+      btn.classList.toggle('done');
+      updateHabitTotal();
+    }
+
+    function toggleHabitToday() {
+      const day = new Date().getDay(); // 0 = dom, 1 = seg...
+      const mapping = [6, 0, 1, 2, 3, 4, 5]; // mapeia para os botões S T Q Q S S D
+      const targetBtn = document.querySelectorAll('.habit-dot-btn')[mapping[day]];
+      if (targetBtn) {
+        targetBtn.classList.toggle('done');
+        updateHabitTotal();
+        showToast('Hábito de hoje atualizado!');
+      }
+    }
+
+    function updateHabitTotal() {
+      const buttons = document.querySelectorAll('.habit-dot-btn');
+      const doneCount = Array.from(buttons).filter(b => b.classList.contains('done')).length;
+      const pct = Math.round((doneCount / buttons.length) * 100);
+      
+      const pctEl = document.getElementById('habitPercentText');
+      const countEl = document.getElementById('habitDaysCount');
+      const barEl = document.getElementById('habitProgressBar');
+
+      if (pctEl) pctEl.textContent = `${pct}%`;
+      if (countEl) countEl.textContent = `${doneCount}/7 dias`;
+      if (barEl) barEl.style.width = `${pct}%`;
+    }
+
+    // 8. FLASHCARDS INTERATIVOS
+    const FLASHCARDS_DECK = {
+      'Vocabulário & Idiomas': [
+        { q: "What does 'serendipity' mean?", a: "The occurrence of events by chance in a happy or beneficial way." },
+        { q: "Translate: 'A duras penas'", a: "With great difficulty / against all odds." },
+        { q: "Difference between 'affect' and 'effect'?", a: "'Affect' is usually a verb (to influence), 'effect' is usually a noun (result)." }
+      ],
+      'Bioquímica & Fórmulas': [
+        { q: "Onde ocorre o ciclo de Krebs?", a: "Na matriz mitocondrial das células eucarióticas." },
+        { q: "Qual a função do RNA transportador?", a: "Transportar aminoácidos específicos até os ribossomos durante a tradução." }
+      ],
+      'Reações & Nomenclatura': [
+        { q: "O que caracteriza uma reação exotérmica?", a: "Liberação de calor para o ambiente (ΔH < 0)." },
+        { q: "Qual o pH de uma solução neutra a 25°C?", a: "pH = 7.0." }
+      ],
+      'Teoremas & Fórmulas': [
+        { q: "Qual a derivada de sin(x)?", a: "cos(x)." },
+        { q: "Qual a integral de 1/x dx?", a: "ln|x| + C." }
+      ]
+    };
+
+    let currentSessionDeck = [];
+    let currentCardIndex = 0;
+    let showingAnswer = false;
+
+    function openFlashcardSession(deckName, count) {
+      const deck = FLASHCARDS_DECK[deckName] || FLASHCARDS_DECK['Vocabulário & Idiomas'];
+      currentSessionDeck = deck;
+      currentCardIndex = 0;
+      showingAnswer = false;
+
+      document.getElementById('flashcardDeckTitle').textContent = deckName;
+      renderCurrentCard();
+      openModal('modalFlashcard');
+    }
+
+    function renderCurrentCard() {
+      const card = currentSessionDeck[currentCardIndex];
+      const contentEl = document.getElementById('flashcardContent');
+      const promptEl = document.getElementById('flashcardSidePrompt');
+
+      if (!card) {
+        contentEl.textContent = '🎉 Sessão de Flashcards concluída com excelência!';
+        promptEl.textContent = 'Todos os cartões revisados.';
+        return;
+      }
+
+      if (showingAnswer) {
+        contentEl.textContent = card.a;
+        contentEl.style.color = 'var(--gold-light)';
+        promptEl.textContent = 'RESPOSTA (Toque para voltar à pergunta)';
+      } else {
+        contentEl.textContent = card.q;
+        contentEl.style.color = 'var(--text-main)';
+        promptEl.textContent = `PERGUNTA ${currentCardIndex + 1} de ${currentSessionDeck.length} (Toque para ver resposta)`;
+      }
+    }
+
+    function flipFlashcard() {
+      showingAnswer = !showingAnswer;
+      renderCurrentCard();
+    }
+
+    function nextFlashcard(rating) {
+      currentCardIndex++;
+      showingAnswer = false;
+      if (currentCardIndex >= currentSessionDeck.length) {
+        showToast('Parabéns! Decks de hoje revisados com sucesso!', 'success');
+        closeModal('modalFlashcard');
+      } else {
+        renderCurrentCard();
+      }
+    }
+
+    // 9. CONTROLE DE MODAIS
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('open');
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('open');
+    }
+
+    // Fechar ao clicar fora
+    document.querySelectorAll('.modal-backdrop').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('open');
+        }
+      });
+    });
+
+    // 10. TOAST NOTIFICATIONS
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = 'toast-item';
+      const icon = type === 'success' ? '✅' : (type === 'error' ? '❌' : '💡');
+      toast.innerHTML = `<span>${icon}</span> <span>${escapeHtml(msg)}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        setTimeout(() => toast.remove(), 400);
+      }, 3200);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Inicialização
+    window.addEventListener('DOMContentLoaded', () => {
+      loadTasksFromStorage();
+    });
+  </script>
+</body>
+</html>
