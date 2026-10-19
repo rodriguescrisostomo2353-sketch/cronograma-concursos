@@ -1,0 +1,236 @@
+{
+  "app": "Cronograma de Estudos para Concursos",
+  "version": "1.9.0",
+  "buildTime": "16/10/2026 14:45:00",
+  "exportDate": "2026-10-16T19:53:22.829Z",
+  "exportDateFormatted": "16/10/2026 às 16:53",
+  "platform": "Web Browser",
+  "summary": {
+    "materiasCount": 5,
+    "topicosCount": 25,
+    "schedulesCount": 2,
+    "completedSlotsCount": 0,
+    "studyHoursTotalMin": 30,
+    "studyLogsCount": 1,
+    "examTarget": "Não definido",
+    "hasPdfData": false
+  },
+  "data": {
+    "materias": [
+      {
+        "id": "mat-1",
+        "nome": "Língua Portuguesa",
+        "paletteId": "blue",
+        "topicos": [
+          {
+            "id": "top_lp_0",
+            "texto": "1 Compreensão e interpretação de textos de gêneros variados.",
+            "concluido": true
+          },
+          {
+            "id": "top_lp_1",
+            "texto": "2 Reconhecimento de tipos e gêneros textuais.",
+            "concluido": false
+          },
+          {
+            "id": "top_lp_2",
+            "texto": "3 Domínio da ortografia oficial: acentuação gráfica e emprego de letras.",
+            "concluido": false
+          },
+          {
+            "id": "top_lp_3",
+            "texto": "4 Domínio dos mecanismos de coesão e coerência textual.",
+            "concluido": false
+          },
+          {
+            "id": "top_lp_4",
+            "texto": "5 Emprego das classes de palavras: substantivo, adjetivo, pronome, verbo.",
+            "concluido": false
+          },
+          {
+            "id": "top_lp_5",
+            "texto": "6 Sintaxe da oração e do período: termos essenciais, concordância e regência.",
+            "concluido": false
+          }
+        ]
+      },
+      {
+        "id": "mat-2",
+        "nome": "Direito Constitucional",
+        "paletteId": "purple",
+        "topicos": [
+          "1 Princípios fundamentais da Constituição da República Federativa do Brasil.",
+          "2 Direitos e garantias fundamentais: direitos individuais e coletivos (art. 5º).",
+          "3 Direitos sociais e da nacionalidade.",
+          "4 Organização político-administrativa do Estado brasileiro.",
+          "5 Da Administração Pública: princípios expressos e implícitos (art. 37)."
+        ]
+      },
+      {
+        "id": "mat-3",
+        "nome": "Direito Administrativo",
+        "paletteId": "green",
+        "topicos": [
+          "1 Noções de organização administrativa: administração direta e indireta.",
+          "2 Atos administrativos: conceitos, requisitos, atributos e anulação/revogação.",
+          "3 Poderes administrativos: poder vinculado, discricionário, hierárquico e de polícia.",
+          "4 Lei nº 14.133/2021 (Nova Lei de Licitações e Contratos Administrativos).",
+          "5 Responsabilidade civil do Estado no ordenamento jurídico brasileiro."
+        ]
+      },
+      {
+        "id": "mat-4",
+        "nome": "Noções de Informática",
+        "paletteId": "teal",
+        "topicos": [
+          "1 Conceitos de internet, intranet e protocolos de redes de computadores.",
+          "2 Segurança da informação: vírus, malwares, backup, criptografia e phishing.",
+          "3 Ferramentas de escritório: edição de textos, planilhas eletrônicas e apresentações.",
+          "4 Sistemas operacionais Windows e Linux: conceitos fundamentais e comandos usuais."
+        ]
+      },
+      {
+        "id": "mat-5",
+        "nome": "Raciocínio Lógico e Matemático",
+        "paletteId": "amber",
+        "topicos": [
+          "1 Estruturas lógicas de relações entre pessoas, lugares, coisas e eventos.",
+          "2 Lógica proposicional: proposições simples e compostas, tabelas-verdade.",
+          "3 Equivalências lógicas e leis de De Morgan.",
+          "4 Diagramas lógicos, conjuntos e operações.",
+          "5 Noções básicas de contagem, probabilidade e porcentagem."
+        ]
+      }
+    ],
+    "naoClassificado": [
+      "INFORMAÇÃO DO EDITAL: Os candidatos deverão comparecer ao local de prova com 60 minutos de antecedência.",
+      "ITEM 8.4: Será considerado aprovado o candidato que obtiver no mínimo 50% dos pontos em Conhecimentos Básicos."
+    ],
+    "schedules": [
+      {
+        "id": "sched-1792180402745",
+        "name": "Cronograma Teste Smoke Manual",
+        "type": "manual",
+        "dias": [
+          "Segunda",
+          "Quarta",
+          "Sexta"
+        ],
+        "materiasIds": [
+          "mat-1",
+          "mat-2",
+          "mat-3",
+          "mat-4",
+          "mat-5"
+        ],
+        "hoursPerDay": 3,
+        "blockDuration": 60,
+        "columns": [
+          {
+            "dia": "Segunda",
+            "slots": [
+              {
+                "slotId": "slot-1792180402745-iiwvp",
+                "slotKey": "Segunda-bloco-1792180402745-0",
+                "slotNumber": 1,
+                "subjectId": "mat-1",
+                "subjectName": "Língua Portuguesa",
+                "paletteId": "blue",
+                "startTime": "08:00",
+                "duration": 60,
+                "endTime": "09:00",
+                "topic": "Interpretação de Texto",
+                "notes": ""
+              }
+            ]
+          },
+          {
+            "dia": "Quarta",
+            "slots": []
+          },
+          {
+            "dia": "Sexta",
+            "slots": []
+          }
+        ],
+        "createdAt": "16/10/2026"
+      },
+      {
+        "id": "sched-1792180402780",
+        "name": "Cronograma Automático Smoke",
+        "type": "auto",
+        "dias": [
+          "Segunda",
+          "Terça",
+          "Quarta",
+          "Quinta",
+          "Sexta"
+        ],
+        "materiasIds": [
+          "mat-1",
+          "mat-2",
+          "mat-3",
+          "mat-4",
+          "mat-5"
+        ],
+        "hoursPerDay": 3,
+        "blockDuration": 60,
+        "columns": [
+          {
+            "dia": "Segunda",
+            "slots": []
+          },
+          {
+            "dia": "Terça",
+            "slots": []
+          },
+          {
+            "dia": "Quarta",
+            "slots": []
+          },
+          {
+            "dia": "Quinta",
+            "slots": []
+          },
+          {
+            "dia": "Sexta",
+            "slots": []
+          }
+        ],
+        "createdAt": "16/10/2026"
+      }
+    ],
+    "activeScheduleId": "sched-1792180402780",
+    "completedSlots": {},
+    "priorities": {},
+    "examDate": null,
+    "examTitle": "",
+    "spacedReviews": [],
+    "sessionBreakMin": 5,
+    "weeklyReview": {
+      "enabled": false,
+      "day": "Domingo"
+    },
+    "studyLog": [
+      {
+        "id": "log_933ad862-eb78-41a0-b8cf-345f6945028f",
+        "topicoId": "top_lp_0",
+        "topicoNome": "1 Compreensão e interpretação de textos de gêneros variados.",
+        "materiaId": "mat-1",
+        "materiaNome": "Língua Portuguesa",
+        "minutos": 30,
+        "data": "2026-10-16",
+        "criadoEm": "2026-10-16 16:53:22",
+        "sessaoId": null,
+        "origem": "manual",
+        "updatedAt": "2026-10-16T19:53:22.805Z"
+      }
+    ],
+    "autoConfig": null,
+    "theme": "light",
+    "studyDefaultMin": 30,
+    "studyAutoQuickMark": true,
+    "pdfAnnotations": [],
+    "pdfBookmarks": []
+  }
+}

@@ -1,0 +1,219 @@
+/**
+ * SISTEMA DE DESIGN TÁTICO: TOKENS DE ESTILO
+ * Tema Escuro (Padrão Operacional) e Tema Claro (WCAG 4.5:1+)
+ * Mantém conformidade de contraste, legibilidade máxima e alta performance.
+ */
+
+:root {
+  /* Tipografia Nativa Zero-Lag */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+  /* Espaçamentos Táticos (Grid de 4px) */
+  --space-xxs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 20px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+
+  /* Geometria e Raios de Canto */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-full: 9999px;
+
+  /* Alvo de Toque Mínimo Acessível (WCAG 2.5.5) */
+  --min-touch-target: 44px;
+
+  /* Animações Curtas e Otimizadas */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==============================================================================
+   TEMA ESCURO (PADRÃO OPERACIONAL DE ALTA PERFORMANCE - POLÍCIA CIVIL)
+   ============================================================================== */
+:root, [data-theme="dark"] {
+  --bg-page: #0B0E14;
+  --bg-app: #0B0E14;
+  --bg-card: #121722;
+  --bg-subtle: #19202E;
+  --bg-elevated: #19202E;
+  --bg-header: rgba(11, 14, 20, 0.94);
+  
+  --border-color: #242E40;
+  --border-focus: #D4AF37;
+  --border-subtle: rgba(255, 255, 255, 0.07);
+
+  --text-main: #E8ECF1;
+  --text-muted: #8B96A5;
+  --text-dimmed: #5E6977;
+  --text-light: #8B96A5;
+
+  /* Cores de Ação e Destaque Tático (Ouro Distintivo Polícia Civil) */
+  --accent-primary: #D4AF37;
+  --accent-hover: #C5A059;
+  --accent-soft: rgba(212, 175, 55, 0.12);
+  --accent-border: rgba(212, 175, 55, 0.35);
+  --accent-contrast: #0A0D13;
+
+  /* Cores Secundárias e Status Funcional (Distintivo PCMG) */
+  --color-success: #16A34A;
+  --color-success-soft: rgba(22, 163, 74, 0.14);
+  --color-success-border: rgba(22, 163, 74, 0.35);
+
+  --color-warning: #D4AF37;
+  --color-warning-soft: rgba(212, 175, 55, 0.14);
+  --color-warning-border: rgba(212, 175, 55, 0.35);
+
+  --color-danger: #DC2626;
+  --color-danger-soft: rgba(220, 38, 38, 0.14);
+  --color-danger-border: rgba(220, 38, 38, 0.35);
+
+  --color-info: #2563EB;
+  --color-info-soft: rgba(37, 99, 235, 0.14);
+  --color-info-border: rgba(37, 99, 235, 0.35);
+
+  /* Sombras Nítidas com Reflexo Dourado Tático */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45), 0 0 1px rgba(212, 175, 55, 0.2);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.55), 0 0 2px rgba(212, 175, 55, 0.25);
+
+  /* Paleta Harmoniosa de Disciplinas (Matérias) - Escuro */
+  --pastel-blue-bg: #14283E;
+  --pastel-blue-border: #1E456D;
+  --pastel-blue-text: #7DD3FC;
+
+  --pastel-green-bg: #122E20;
+  --pastel-green-border: #195234;
+  --pastel-green-text: #86EFAC;
+
+  --pastel-purple-bg: #271C3F;
+  --pastel-purple-border: #442D72;
+  --pastel-purple-text: #C4B5FD;
+
+  --pastel-amber-bg: #282110;
+  --pastel-amber-border: #5C4A1D;
+  --pastel-amber-text: #F3D882;
+
+  --pastel-rose-bg: #351721;
+  --pastel-rose-border: #5D2233;
+  --pastel-rose-text: #FDA4AF;
+
+  --pastel-teal-bg: #112D2A;
+  --pastel-teal-border: #194E48;
+  --pastel-teal-text: #5EEAD4;
+
+  --pastel-indigo-bg: #121C30;
+  --pastel-indigo-border: #1E3A6C;
+  --pastel-indigo-text: #93C5FD;
+
+  --pastel-peach-bg: #382015;
+  --pastel-peach-border: #623620;
+  --pastel-peach-text: #FDBA74;
+
+  --pastel-neutral-bg: #1C222B;
+  --pastel-neutral-border: #2B3441;
+  --pastel-neutral-text: #CBD5E1;
+}
+
+/* ==============================================================================
+   TEMA CLARO (EQUIVALENTE TÁTICO DIURNO COM CONTRASTE WCAG 4.5:1+)
+   ============================================================================== */
+[data-theme="light"] {
+  --bg-page: #F3F5F9;
+  --bg-app: #F3F5F9;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #E8EDF5;
+  --bg-elevated: #E8EDF5;
+  --bg-header: rgba(243, 245, 249, 0.94);
+  
+  --border-color: #D3DBE6;
+  --border-focus: #B8860B;
+  --border-subtle: rgba(0, 0, 0, 0.06);
+
+  --text-main: #0B0E14;
+  --text-muted: #4B5565;
+  --text-dimmed: #7E8D9F;
+  --text-light: #4B5565;
+
+  /* Cores de Ação e Destaque Tático Diurno (Ouro Envelhecido WCAG) */
+  --accent-primary: #B8860B;
+  --accent-hover: #996D07;
+  --accent-soft: rgba(184, 134, 11, 0.1);
+  --accent-border: rgba(184, 134, 11, 0.3);
+  --accent-contrast: #FFFFFF;
+
+  /* Cores de Status Funcional */
+  --color-success: #15803D;
+  --color-success-soft: rgba(21, 128, 61, 0.1);
+  --color-success-border: rgba(21, 128, 61, 0.3);
+
+  --color-warning: #B8860B;
+  --color-warning-soft: rgba(184, 134, 11, 0.1);
+  --color-warning-border: rgba(184, 134, 11, 0.3);
+
+  --color-danger: #DC2626;
+  --color-danger-soft: rgba(220, 38, 38, 0.1);
+  --color-danger-border: rgba(220, 38, 38, 0.3);
+
+  --color-info: #1D4ED8;
+  --color-info-soft: rgba(29, 78, 216, 0.1);
+  --color-info-border: rgba(29, 78, 216, 0.3);
+
+  /* Sombras Nítidas */
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 3px 10px rgba(15, 23, 42, 0.07);
+  --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.1);
+
+  /* Paleta Harmoniosa de Disciplinas (Matérias) - Claro */
+  --pastel-blue-bg: #E0F2FE;
+  --pastel-blue-border: #BAE6FD;
+  --pastel-blue-text: #0369A1;
+
+  --pastel-green-bg: #DCFCE7;
+  --pastel-green-border: #BBF7D0;
+  --pastel-green-text: #15803D;
+
+  --pastel-purple-bg: #EDE9FE;
+  --pastel-purple-border: #DDD6FE;
+  --pastel-purple-text: #6D28D9;
+
+  --pastel-amber-bg: #FEF3C7;
+  --pastel-amber-border: #FDE68A;
+  --pastel-amber-text: #92400E;
+
+  --pastel-rose-bg: #FFE4E6;
+  --pastel-rose-border: #FECDD3;
+  --pastel-rose-text: #BE123C;
+
+  --pastel-teal-bg: #CCFBF1;
+  --pastel-teal-border: #99F6E4;
+  --pastel-teal-text: #0F766E;
+
+  --pastel-indigo-bg: #E0E7FF;
+  --pastel-indigo-border: #C7D2FE;
+  --pastel-indigo-text: #4338CA;
+
+  --pastel-peach-bg: #FFEDD5;
+  --pastel-peach-border: #FED7AA;
+  --pastel-peach-text: #C2410C;
+
+  --pastel-neutral-bg: #F1F5F9;
+  --pastel-neutral-border: #E2E8F0;
+  --pastel-neutral-text: #334155;
+}
+
+/* Suporte Acessível a Movimento Reduzido (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
