@@ -41,7 +41,11 @@ jobs:
           cp sw.js www/
           cp version.json www/
           if [ -f "html2pdf.bundle.min.js" ]; then cp html2pdf.bundle.min.js www/; fi
+          if [ -f "study-hours.css" ]; then cp study-hours.css www/; fi
           if [ -d "icons" ]; then cp -r icons www/; fi
+          if [ -d "assets" ]; then cp -r assets www/; fi
+          if [ -d "src" ]; then cp -r src www/; fi
+          if [ -d "dist" ]; then cp -r dist www/; fi
           mkdir -p android/app/src/main/assets/public
           cp -r www/* android/app/src/main/assets/public/
           npx cap sync android
