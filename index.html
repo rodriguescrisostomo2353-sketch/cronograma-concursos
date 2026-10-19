@@ -6306,7 +6306,7 @@
               <div class="auto-config-title" style="margin-bottom: 8px;">
                 <span>📚 Divisão dos Tópicos no Cronograma</span>
               </div>
-              <select id="selectTopicGranularity" class="input-field" style="padding: 8px 12px;" onchange="App.saveAutoConfigSettings()">
+              <select id="selectTopicGranularity" class="input-field" style="padding: 8px 12px;" onchange="App.saveAutoConfig()">
                 <option value="detailed" selected>Todos os subtópicos detalhados (Recomendado para fechar 100% do edital)</option>
                 <option value="parents">Apenas tópicos principais (Agrupar subtópicos)</option>
               </select>
@@ -14776,36 +14776,44 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
 
-        dropZone.addEventListener('dragover', (e) => {
-          e.preventDefault();
-          dropZone.classList.add('dragover');
-        });
+        if (dropZone) {
+          dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+          });
 
-        dropZone.addEventListener('dragleave', () => {
-          dropZone.classList.remove('dragover');
-        });
+          dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+          });
 
-        dropZone.addEventListener('drop', (e) => {
-          e.preventDefault();
-          dropZone.classList.remove('dragover');
-          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            App.handlePdfFile(e.dataTransfer.files[0]);
-          }
-        });
+          dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+              App.handlePdfFile(e.dataTransfer.files[0]);
+            }
+          });
+        }
 
-        fileInput.addEventListener('change', (e) => {
-          if (e.target.files && e.target.files[0]) {
-            App.handlePdfFile(e.target.files[0]);
-          }
-        });
+        if (fileInput) {
+          fileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+              App.handlePdfFile(e.target.files[0]);
+            }
+          });
+        }
 
         // Botões de topo
-        document.getElementById('btnLoadDemo').addEventListener('click', () => App.loadDemoData());
-        document.getElementById('btnClearAll').addEventListener('click', () => App.clearAllData());
+        const btnDemo = document.getElementById('btnLoadDemo');
+        if (btnDemo) btnDemo.addEventListener('click', () => App.loadDemoData());
+        const btnClear = document.getElementById('btnClearAll');
+        if (btnClear) btnClear.addEventListener('click', () => App.clearAllData());
 
         // Botões da aba de matérias
-        document.getElementById('btnOpenAddSubjectModal').addEventListener('click', () => App.openAddSubjectModal());
-        document.getElementById('btnExpandAll').addEventListener('click', () => App.toggleExpandAll());
+        const btnAddSubj = document.getElementById('btnOpenAddSubjectModal');
+        if (btnAddSubj) btnAddSubj.addEventListener('click', () => App.openAddSubjectModal());
+        const btnExpAll = document.getElementById('btnExpandAll');
+        if (btnExpAll) btnExpAll.addEventListener('click', () => App.toggleExpandAll());
 
         // Controles de Configuração de Cronograma (Parte B)
         const inputHours = document.getElementById('inputHoursPerDay');
@@ -14888,10 +14896,14 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         if (btnManAddExt) btnManAddExt.addEventListener('click', () => App.openAddExtraSubjectModal());
 
         // Ações do Cronograma (PDF, Impressão, Reset)
-        document.getElementById('btnGenerateSchedule').addEventListener('click', () => App.openAutoSchedulePreview());
-        document.getElementById('btnDownloadPdf').addEventListener('click', () => App.exportScheduleToPdf());
-        document.getElementById('btnPrintSchedule').addEventListener('click', () => window.print());
-        document.getElementById('btnResetCompleted').addEventListener('click', () => App.resetCompletedSlots());
+        const btnGenSched = document.getElementById('btnGenerateSchedule');
+        if (btnGenSched) btnGenSched.addEventListener('click', () => App.openAutoSchedulePreview());
+        const btnDlPdf = document.getElementById('btnDownloadPdf');
+        if (btnDlPdf) btnDlPdf.addEventListener('click', () => App.exportScheduleToPdf());
+        const btnPrint = document.getElementById('btnPrintSchedule');
+        if (btnPrint) btnPrint.addEventListener('click', () => window.print());
+        const btnResetComp = document.getElementById('btnResetCompleted');
+        if (btnResetComp) btnResetComp.addEventListener('click', () => App.resetCompletedSlots());
 
         // Ações da Parte C (Pomodoro, Imagem PNG, Compartilhar, Data da Prova, Intervalo)
         const btnPomo = document.getElementById('btnOpenPomodoro');
@@ -14956,8 +14968,10 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         if (selSubj) selSubj.addEventListener('change', (e) => App.populateSubjectTopicsDatalist(e.target.value));
 
         // Salvar modais
-        document.getElementById('btnSaveSubjectModal').addEventListener('click', () => App.saveSubjectModal());
-        document.getElementById('btnSaveTopicModal').addEventListener('click', () => App.saveTopicModal());
+        const btnSaveSubj = document.getElementById('btnSaveSubjectModal');
+        if (btnSaveSubj) btnSaveSubj.addEventListener('click', () => App.saveSubjectModal());
+        const btnSaveTop = document.getElementById('btnSaveTopicModal');
+        if (btnSaveTop) btnSaveTop.addEventListener('click', () => App.saveTopicModal());
 
         // Botão de checagem manual de atualizações
         const btnCheck = document.getElementById('btnCheckUpdates');
@@ -15309,16 +15323,22 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
 
         if (tabId === 'tab-settings') {
-          this.renderDiagnosticsLog();
-          if (typeof SyncManager !== 'undefined' && SyncManager.updateDiagnosticsUI) {
-            SyncManager.updateDiagnosticsUI();
-          }
-          if (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.updateSettingsCard) {
-            StudyHoursManager.updateSettingsCard();
-          }
-          if (typeof BackupManager !== 'undefined' && BackupManager.renderBackupCard) {
-            BackupManager.renderBackupCard();
-          }
+          try { this.renderDiagnosticsLog(); } catch (e) {}
+          try {
+            if (typeof SyncManager !== 'undefined' && SyncManager.updateDiagnosticsUI) {
+              SyncManager.updateDiagnosticsUI();
+            }
+          } catch (e) {}
+          try {
+            if (typeof StudyHoursManager !== 'undefined' && StudyHoursManager.updateSettingsCard) {
+              StudyHoursManager.updateSettingsCard();
+            }
+          } catch (e) {}
+          try {
+            if (typeof BackupManager !== 'undefined' && BackupManager.renderBackupCard) {
+              BackupManager.renderBackupCard();
+            }
+          } catch (e) {}
         }
 
         // Se abriu a aba do leitor e já temos um documento, ajusta se necessário
@@ -20224,6 +20244,10 @@ ${err.stack ? 'Stack: ' + err.stack.split('\n').slice(0, 3).join('\n') : ''}`;
         } catch (e) {
           console.warn('Erro ao salvar autoConfig', e);
         }
+      },
+
+      saveAutoConfigSettings() {
+        this.saveAutoConfig();
       },
 
       /* 2. Renderização do Painel de Configurações Automáticas */
