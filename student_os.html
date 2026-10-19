@@ -1,15 +1,29 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <!-- Redirecionamento de segurança: no mobile/celular sempre mantém versão v1.9.1 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Cronograma Tático OS - Edição Operacional</title>
+  
+  <!-- Configurações PWA e Mobile -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0B0E14">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Cronograma Tático OS">
+  <link rel="icon" type="image/png" href="assets/logo_faca_caveira.png">
+  
+  <!-- Redirecionamento de segurança: no mobile (celular/Android APK), sempre mantém versão v1.9.1 fiel -->
   <script>
     (function() {
       try {
         var params = new URLSearchParams(window.location.search);
         if (params.get('view') === 'desktop') return;
-        var isNativeApp = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) || window.location.protocol === 'capacitor:' || window.location.protocol === 'ionic:';
+        var isNativeApp = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) 
+                          || window.location.protocol === 'capacitor:' 
+                          || window.location.protocol === 'ionic:';
         var isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        var isSmall = window.innerWidth > 0 && window.innerWidth <= 860;
+        var isSmall = (window.innerWidth > 0 && window.innerWidth <= 860);
         if (isNativeApp || isMobileUA || isSmall) {
           window.location.replace('index.html?view=mobile');
         }
@@ -17,64 +31,54 @@
     })();
   </script>
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>Ultimate Student OS (Dark Edition)</title>
-  
-  <!-- Configurações PWA e Mobile -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0B0B0C">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Student OS">
-  
   <!-- Fontes do Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg-base: #0B0B0C;
-      --bg-surface: #120F0D;
-      --bg-card: #151518;
-      --bg-card-alt: #18171B;
-      --bg-card-hover: #1E1D22;
-      --bg-glass: rgba(18, 17, 20, 0.75);
-      --bg-glass-subtle: rgba(25, 24, 28, 0.55);
+      /* Identidade Tática da Polícia Civil / Concursos Policiais */
+      --bg-base: #0B0E14;
+      --bg-surface: #121722;
+      --bg-card: #18202F;
+      --bg-card-alt: #1D2637;
+      --bg-card-hover: #222C3E;
+      --bg-glass: rgba(18, 23, 34, 0.85);
+      --bg-glass-subtle: rgba(24, 32, 47, 0.65);
       
-      --border-subtle: rgba(255, 255, 255, 0.07);
-      --border-light: rgba(255, 255, 255, 0.12);
-      --border-gold: rgba(212, 175, 55, 0.3);
-      --border-bronze: rgba(197, 160, 89, 0.25);
+      --border-tactical: #242E40;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-light: rgba(255, 255, 255, 0.15);
+      --border-gold: rgba(212, 175, 55, 0.35);
+      --border-gold-glow: rgba(212, 175, 55, 0.6);
       
       --gold-primary: #D4AF37;
-      --gold-light: #E6D5B8;
-      --bronze: #C5A059;
-      --amber: #D97706;
-      --amber-muted: #9A6520;
+      --gold-light: #F3E5AB;
+      --gold-hover: #E5C158;
+      --gold-muted: #9E8128;
       
-      --text-main: #F4EFEA;
-      --text-secondary: #ADA59B;
-      --text-muted: #736E67;
-      --text-gold: #DFCA9F;
+      --accent-green: #10B981;
+      --accent-green-bg: rgba(16, 185, 129, 0.12);
+      --accent-red: #EF4444;
+      --accent-red-bg: rgba(239, 68, 68, 0.12);
+      --accent-blue: #3B82F6;
+      --accent-blue-bg: rgba(59, 130, 246, 0.12);
+      --accent-purple: #8B5CF6;
+      --accent-purple-bg: rgba(139, 92, 246, 0.12);
+      --accent-amber: #F59E0B;
+      --accent-amber-bg: rgba(245, 158, 11, 0.12);
       
-      --pill-red-bg: #2B1717;
-      --pill-red-text: #F87171;
-      --pill-amber-bg: #2B2113;
-      --pill-amber-text: #FBBF24;
-      --pill-green-bg: #14281E;
-      --pill-green-text: #4ADE80;
-      --pill-blue-bg: #142232;
-      --pill-blue-text: #60A5FA;
-      --pill-purple-bg: #241830;
-      --pill-purple-text: #C084FC;
-      --pill-gray-bg: #202024;
-      --pill-gray-text: #9CA3AF;
+      --text-main: #E8ECF1;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --text-gold: #E5C158;
       
-      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.45);
-      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.65);
-      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.85);
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.7);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.9);
+      --shadow-gold: 0 4px 20px rgba(212, 175, 55, 0.2);
+      
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 18px;
@@ -95,9 +99,11 @@
       min-height: 100vh;
       overflow-x: hidden;
       line-height: 1.5;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 40%);
     }
 
-    /* Scrollbars elegantes */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -106,65 +112,67 @@
       background: var(--bg-base);
     }
     ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.15);
+      background: #242E40;
       border-radius: var(--radius-full);
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: var(--bronze);
+      background: var(--gold-primary);
     }
 
     .app-container {
       max-width: 1720px;
       margin: 0 auto;
-      padding: 16px 20px 60px 20px;
+      padding: 20px 24px 60px 24px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 24px;
     }
 
     /* ==========================================================================
-       1. BANNER PRINCIPAL (PANORÂMICO NOTURNO)
+       1. BANNER HERO PANORÂMICO OPERACIONAL
        ========================================================================== */
     .banner-hero {
       position: relative;
-      width: 100%;
       height: 250px;
       border-radius: var(--radius-lg);
       overflow: hidden;
       box-shadow: var(--shadow-lg);
-      border: 1px solid var(--border-subtle);
-      background-color: #0E0E10;
+      border: 1px solid var(--border-gold);
     }
 
     .banner-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center 38%;
-      filter: brightness(0.72) contrast(1.1);
-      transition: transform 0.6s ease;
+      object-position: center 30%;
+      filter: brightness(0.65) contrast(1.15) saturate(1.1);
     }
-    .banner-hero:hover .banner-img {
-      transform: scale(1.02);
+
+    .banner-watermark {
+      position: absolute;
+      right: 40px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 220px;
+      height: 220px;
+      opacity: 0.12;
+      pointer-events: none;
+      filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
     }
 
     .banner-gradient {
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba(11, 11, 12, 0.1) 0%,
-        rgba(11, 11, 12, 0.45) 50%,
-        rgba(11, 11, 12, 0.95) 100%
-      );
-      pointer-events: none;
+      background: linear-gradient(180deg, rgba(11, 14, 20, 0.3) 0%, rgba(11, 14, 20, 0.85) 75%, var(--bg-base) 100%),
+                  linear-gradient(90deg, rgba(11, 14, 20, 0.9) 0%, rgba(11, 14, 20, 0.4) 60%, rgba(11, 14, 20, 0.85) 100%);
     }
 
     .banner-content {
       position: absolute;
-      bottom: 24px;
-      left: 28px;
-      right: 28px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px 32px;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
@@ -174,80 +182,113 @@
     .brand-group {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 18px;
     }
 
-    .brand-icon-box {
-      width: 48px;
-      height: 48px;
+    .brand-badge-box {
+      width: 64px;
+      height: 64px;
       border-radius: var(--radius-md);
-      background: rgba(22, 19, 15, 0.85);
-      border: 1px solid var(--border-gold);
+      background: rgba(18, 23, 34, 0.9);
+      border: 1.5px solid var(--gold-primary);
       backdrop-filter: blur(12px);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 16px rgba(212, 175, 55, 0.15);
+      box-shadow: var(--shadow-gold);
+      padding: 6px;
     }
 
-    .brand-icon-box svg {
-      width: 28px;
-      height: 28px;
-      fill: var(--gold-primary);
+    .brand-badge-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8));
     }
 
     .brand-text h1 {
-      font-family: 'Inter', sans-serif;
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-family: 'Cinzel', 'Inter', serif;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
       color: #FFFFFF;
       display: flex;
       align-items: baseline;
-      gap: 10px;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      gap: 12px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
     }
 
     .brand-text h1 .edition-tag {
-      font-size: 19px;
-      font-weight: 500;
-      color: var(--bronze);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--gold-primary);
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--border-gold);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
 
     .brand-text p {
-      font-size: 13px;
+      font-size: 13.5px;
       color: var(--text-secondary);
-      margin-top: 2px;
-      letter-spacing: 0.02em;
+      margin-top: 4px;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-text p .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
     }
 
     .banner-actions {
       display: flex;
       gap: 10px;
+      align-items: center;
     }
 
     .banner-btn {
-      background: rgba(20, 19, 23, 0.75);
+      background: rgba(18, 23, 34, 0.85);
       backdrop-filter: blur(10px);
-      border: 1px solid var(--border-light);
+      border: 1px solid var(--border-tactical);
       color: var(--text-main);
-      padding: 8px 16px;
+      padding: 9px 18px;
       border-radius: var(--radius-full);
-      font-size: 12px;
-      font-weight: 500;
+      font-size: 12.5px;
+      font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
       transition: all 0.2s ease;
       text-decoration: none;
+      box-shadow: var(--shadow-sm);
     }
 
     .banner-btn:hover {
-      background: rgba(35, 33, 40, 0.9);
-      border-color: var(--bronze);
+      background: var(--bg-card);
+      border-color: var(--gold-primary);
       color: var(--gold-light);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-gold);
+    }
+
+    .banner-btn.primary {
+      background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+      color: #0B0E14;
+      border: 1px solid #D4AF37;
+    }
+    .banner-btn.primary:hover {
+      background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 100%);
+      color: #000000;
     }
 
     /* ==========================================================================
@@ -255,13 +296,13 @@
        ========================================================================== */
     .dashboard-grid {
       display: grid;
-      grid-template-columns: 240px minmax(0, 1fr) 280px;
-      gap: 20px;
+      grid-template-columns: 260px minmax(0, 1fr) 300px;
+      gap: 22px;
       align-items: start;
     }
 
     /* ==========================================================================
-       COLUNA ESQUERDA (SIDEBAR DE AÇÕES & GESTÃO)
+       COLUNA ESQUERDA: AÇÕES RÁPIDAS, GESTÃO, ÁUDIO & HÁBITOS
        ========================================================================== */
     .left-sidebar {
       display: flex;
@@ -271,24 +312,29 @@
 
     .section-box {
       background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--border-tactical);
       border-radius: var(--radius-md);
       padding: 16px;
       box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .section-box.gold-accent {
+      border-top: 2px solid var(--gold-primary);
     }
 
     .section-title {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      color: var(--text-secondary);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      color: var(--text-gold);
       margin-bottom: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    /* Ações Rápidas (Pills) */
     .quick-actions-list {
       display: flex;
       flex-direction: column;
@@ -297,43 +343,35 @@
 
     .btn-quick-action {
       background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--border-tactical);
       color: var(--text-main);
-      padding: 8px 12px;
+      padding: 9px 12px;
       border-radius: var(--radius-sm);
       font-size: 12px;
       font-weight: 500;
-      cursor: pointer;
       display: flex;
       align-items: center;
       gap: 10px;
+      cursor: pointer;
       transition: all 0.2s ease;
       text-align: left;
       width: 100%;
     }
 
-    .btn-quick-action .plus-icon {
-      width: 16px;
-      height: 16px;
-      border-radius: var(--radius-full);
-      background: rgba(197, 160, 89, 0.15);
-      color: var(--bronze);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
     .btn-quick-action:hover {
       background: var(--bg-card-hover);
-      border-color: var(--border-bronze);
+      border-color: var(--gold-primary);
       color: var(--gold-light);
-      transform: translateX(2px);
+      transform: translateX(3px);
     }
 
-    /* Links de Navegação (Gestão & Diretório) */
+    .btn-quick-action .plus-icon {
+      font-size: 14px;
+      color: var(--gold-primary);
+      font-weight: 700;
+    }
+
+    /* Listas de navegação da sidebar */
     .nav-list {
       list-style: none;
       display: flex;
@@ -345,360 +383,435 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 8px 10px;
+      padding: 8px 12px;
       border-radius: var(--radius-sm);
       color: var(--text-secondary);
+      font-size: 12.5px;
       text-decoration: none;
-      font-size: 13px;
-      font-weight: 500;
       transition: all 0.2s ease;
-    }
-
-    .nav-item a svg {
-      width: 16px;
-      height: 16px;
-      color: var(--text-muted);
-      transition: color 0.2s ease;
+      cursor: pointer;
     }
 
     .nav-item a:hover {
-      background: var(--bg-card-hover);
+      background: var(--bg-card);
       color: var(--text-main);
-    }
-
-    .nav-item a:hover svg {
-      color: var(--bronze);
+      border-left: 2px solid var(--gold-primary);
+      padding-left: 14px;
     }
 
     .nav-item.active a {
-      background: rgba(197, 160, 89, 0.12);
+      background: var(--bg-card-alt);
       color: var(--gold-light);
       font-weight: 600;
-      border-left: 2px solid var(--bronze);
+      border-left: 2px solid var(--gold-primary);
     }
 
-    .nav-item.active a svg {
-      color: var(--gold-primary);
+    .nav-item svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
     }
 
-    /* Mini Player Brown Noise */
-    .brown-noise-card {
-      background: linear-gradient(145deg, #181514 0%, #111012 100%);
-      border: 1px solid var(--border-bronze);
-      border-radius: var(--radius-md);
-      padding: 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
-    }
-
-    .noise-thumb {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius-sm);
-      background: #25221F;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      border: 1px solid rgba(197, 160, 89, 0.2);
-      overflow: hidden;
-    }
-
-    .noise-thumb svg {
-      width: 22px;
-      height: 22px;
-      fill: var(--bronze);
-    }
-
-    .noise-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .noise-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .noise-sub {
-      font-size: 10px;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-top: 2px;
-    }
-
-    .noise-pulse {
-      width: 6px;
-      height: 6px;
-      border-radius: var(--radius-full);
-      background: var(--text-muted);
-      transition: background 0.3s ease;
-    }
-    .noise-pulse.playing {
-      background: #4ADE80;
-      box-shadow: 0 0 8px #4ADE80;
-      animation: pulse 1.8s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.2); }
-    }
-
-    .btn-noise-play {
-      width: 34px;
-      height: 34px;
-      border-radius: var(--radius-full);
-      background: rgba(197, 160, 89, 0.15);
-      border: 1px solid var(--border-bronze);
-      color: var(--gold-light);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-    }
-
-    .btn-noise-play:hover {
-      background: var(--bronze);
-      color: #0B0B0C;
-      transform: scale(1.05);
-    }
-
-    .btn-noise-play svg {
-      width: 14px;
-      height: 14px;
-      fill: currentColor;
-    }
-
-    /* Habit Journal */
-    .habit-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .habit-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-    }
-
-    .habit-title {
-      font-weight: 500;
-      color: var(--text-main);
-    }
-
-    .habit-pct {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--bronze);
-      font-weight: 600;
-    }
-
-    .progress-bar-bg {
-      width: 100%;
-      height: 5px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: var(--radius-full);
-      overflow: hidden;
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--bronze) 0%, var(--gold-primary) 100%);
-      border-radius: var(--radius-full);
-      transition: width 0.4s ease;
-    }
-
-    .habit-check-group {
-      display: flex;
-      gap: 4px;
-      margin-top: 4px;
-      justify-content: space-between;
-    }
-
-    .habit-dot-btn {
-      width: 22px;
-      height: 22px;
-      border-radius: 4px;
-      background: #1C1B1F;
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      font-size: 10px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-    }
-
-    .habit-dot-btn.done {
-      background: rgba(197, 160, 89, 0.25);
-      border-color: var(--bronze);
-      color: var(--gold-light);
-    }
-
-    /* ==========================================================================
-       COLUNA CENTRAL (WORK & STUDIES)
-       ========================================================================== */
-    .center-content {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    /* Cards de Aulas (Classes) */
-    .classes-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .section-h2 {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .view-chip {
-      font-size: 11px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      padding: 3px 10px;
-      border-radius: var(--radius-full);
-      color: var(--text-secondary);
-      cursor: pointer;
-    }
-
-    .classes-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-    }
-
-    .class-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
+    /* Player Foco Tático (Brown Noise / Alpha) */
+    .brown-noise-player {
+      background: linear-gradient(135deg, #18202F 0%, #121722 100%);
+      border: 1px solid var(--border-gold);
       border-radius: var(--radius-md);
       padding: 14px;
       display: flex;
       flex-direction: column;
       gap: 10px;
       box-shadow: var(--shadow-sm);
-      transition: all 0.2s ease;
-      cursor: pointer;
+    }
+
+    .player-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .player-thumb {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: #0B0E14;
+      border: 1px solid var(--border-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: relative;
       overflow: hidden;
+    }
+
+    .player-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.7;
+    }
+
+    .player-pulse-ring {
+      position: absolute;
+      inset: 0;
+      border: 1px solid var(--gold-primary);
+      border-radius: var(--radius-sm);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .brown-noise-player.playing .player-pulse-ring {
+      opacity: 1;
+      animation: pulseGold 2s infinite ease-out;
+    }
+
+    @keyframes pulseGold {
+      0% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(1.15); opacity: 0; }
+    }
+
+    .player-info h4 {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .player-info p {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .player-btn {
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--gold-primary);
+      color: var(--gold-primary);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .player-btn:hover {
+      background: var(--gold-primary);
+      color: #0B0E14;
+      transform: scale(1.05);
+    }
+
+    .player-progress-bar {
+      flex: 1;
+      height: 4px;
+      background: #242E40;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .player-progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold-primary), var(--gold-light));
+      transition: width 0.3s;
+    }
+
+    /* Diário de Hábitos Operacionais */
+    .habit-journal {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .habit-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .habit-meta span {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .habit-meta strong {
+      font-size: 13px;
+      color: var(--gold-primary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .habit-progress-bg {
+      width: 100%;
+      height: 6px;
+      background: #242E40;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .habit-progress-bar {
+      height: 100%;
+      width: 60%;
+      background: linear-gradient(90deg, var(--gold-primary), var(--accent-green));
+      border-radius: var(--radius-full);
+      transition: width 0.3s;
+    }
+
+    .habit-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+
+    .habit-day-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-tactical);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      padding: 6px 2px;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .habit-day-btn:hover {
+      border-color: var(--gold-primary);
+      color: var(--text-main);
+    }
+
+    .habit-day-btn.done {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+
+    /* ==========================================================================
+       COLUNA CENTRAL (DASHBOARD TÁTICO ACADÊMICO)
+       ========================================================================== */
+    .center-content {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* Cards de Disciplinas do Concurso */
+    .classes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .class-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .class-card:hover {
+      background: var(--bg-card);
+      border-color: var(--gold-primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-gold);
     }
 
     .class-card::before {
       content: '';
       position: absolute;
       top: 0;
-      left: 0;
-      right: 0;
+      left: 16px;
+      right: 16px;
       height: 2px;
-      background: var(--bronze);
-      opacity: 0.6;
-    }
-
-    .class-card:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--border-bronze);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+      background: var(--card-accent, var(--gold-primary));
+      border-radius: var(--radius-full);
     }
 
     .class-header {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .class-icon {
-      font-size: 16px;
+      font-size: 18px;
     }
 
-    .class-name {
-      font-size: 13px;
-      font-weight: 600;
+    .class-header h3 {
+      font-size: 14px;
+      font-weight: 700;
       color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .class-metrics {
+    .class-body {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      font-size: 11px;
+      gap: 6px;
+    }
+
+    .class-stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
       color: var(--text-secondary);
     }
 
-    .metric-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .class-stat-row strong {
+      color: var(--text-main);
+      font-weight: 600;
     }
 
-    .metric-val {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-muted);
-      font-size: 10px;
+    .class-progress-bg {
+      width: 100%;
+      height: 5px;
+      background: #242E40;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-top: 2px;
     }
 
-    /* Sub-grid: 2 colunas no meio (Avaliações / Flashcards vs Cronograma / Tarefas) */
+    .class-progress-fill {
+      height: 100%;
+      background: var(--card-accent, var(--gold-primary));
+      border-radius: var(--radius-full);
+    }
+
+    /* Sub-grid de 2 colunas no meio (Cronograma & Avaliações) */
     .center-split-grid {
       display: grid;
-      grid-template-columns: 1fr 1.25fr;
+      grid-template-columns: 1fr 1fr;
       gap: 20px;
     }
 
-    .center-col {
+    /* Tabela de Cronograma Semanal */
+    .timetable-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 12px;
     }
 
-    /* Próximas Avaliações */
-    .assessments-list {
+    .timetable-wrapper {
+      overflow-x: auto;
+    }
+
+    .timetable-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      text-align: left;
+    }
+
+    .timetable-table th {
+      padding: 8px 6px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-tactical);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 9.5px;
+      letter-spacing: 0.05em;
+    }
+
+    .timetable-table td {
+      padding: 9px 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      color: var(--text-secondary);
+    }
+
+    .time-slot-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-gold);
+      background: rgba(212, 175, 55, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .subject-pill-cell {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .subject-pill-cell:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.2);
+    }
+
+    .pill-blue { background: var(--accent-blue-bg); color: #60A5FA; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .pill-purple { background: var(--accent-purple-bg); color: #C084FC; border: 1px solid rgba(139, 92, 246, 0.3); }
+    .pill-green { background: var(--accent-green-bg); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .pill-amber { background: var(--accent-amber-bg); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .pill-red { background: var(--accent-red-bg); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    /* Próximas Avaliações & Simulados */
+    .assessments-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .assessments-grid {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
 
-    .assessment-card {
+    .assessment-item {
       background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--border-tactical);
       border-radius: var(--radius-sm);
-      padding: 12px;
+      padding: 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      transition: border-color 0.2s ease;
+      gap: 8px;
+      transition: all 0.2s ease;
+      cursor: pointer;
     }
 
-    .assessment-card:hover {
-      border-color: var(--border-bronze);
+    .assessment-item:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--gold-primary);
     }
 
     .assessment-top {
@@ -711,129 +824,64 @@
       font-size: 13px;
       font-weight: 600;
       color: var(--text-main);
-    }
-
-    .assessment-details {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 11px;
-      color: var(--text-secondary);
     }
 
-    /* Badges de Status (Pills) */
-    .status-pill {
+    .status-badge {
       font-size: 10px;
       font-weight: 600;
       padding: 2px 8px;
       border-radius: var(--radius-full);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
-    .status-pill.not-started {
-      background: var(--pill-red-bg);
-      color: var(--pill-red-text);
-      border: 1px solid rgba(248, 113, 113, 0.25);
+    .status-not-started {
+      background: rgba(239, 68, 68, 0.15);
+      color: #F87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
     }
 
-    .status-pill.in-progress {
-      background: var(--pill-amber-bg);
-      color: var(--pill-amber-text);
-      border: 1px solid rgba(251, 191, 36, 0.25);
-    }
-
-    .status-pill.completed {
-      background: var(--pill-green-bg);
-      color: var(--pill-green-text);
-      border: 1px solid rgba(74, 222, 128, 0.25);
-    }
-
-    .status-pill.subject-tag {
-      background: var(--pill-gray-bg);
-      color: var(--text-secondary);
-      border: 1px solid var(--border-subtle);
-    }
-
-    /* Cronograma (Timetable Grid) */
-    .timetable-table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 4px;
-      font-size: 11px;
-    }
-
-    .timetable-table th {
-      color: var(--text-secondary);
-      font-weight: 500;
-      padding: 6px 4px;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.02);
-      border-radius: 4px;
-      font-size: 10px;
-      letter-spacing: 0.05em;
-    }
-
-    .timetable-table td {
-      padding: 6px 4px;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.015);
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      text-align: center;
-      vertical-align: middle;
-      height: 38px;
-      transition: all 0.2s ease;
-    }
-
-    .timetable-table td.time-col {
-      color: var(--text-muted);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      background: transparent;
-      border: none;
-      text-align: left;
-      white-space: nowrap;
-      padding-right: 6px;
-    }
-
-    .timetable-badge {
-      display: block;
-      padding: 4px 6px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .timetable-badge.english {
-      background: rgba(96, 165, 250, 0.15);
-      color: #93C5FD;
-      border: 1px solid rgba(96, 165, 250, 0.3);
-    }
-
-    .timetable-badge.biology {
-      background: rgba(74, 222, 128, 0.15);
-      color: #86EFAC;
-      border: 1px solid rgba(74, 222, 128, 0.3);
-    }
-
-    .timetable-badge.chemistry {
+    .status-in-progress {
       background: rgba(245, 158, 11, 0.15);
-      color: #FDE68A;
+      color: #FBBF24;
       border: 1px solid rgba(245, 158, 11, 0.3);
     }
 
-    .timetable-badge.math {
-      background: rgba(192, 132, 252, 0.15);
-      color: #E9D5FF;
-      border: 1px solid rgba(192, 132, 252, 0.3);
+    .status-completed {
+      background: rgba(16, 185, 129, 0.15);
+      color: #4ADE80;
+      border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
-    /* Tarefas (Tasks Table) */
+    .assessment-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .assessment-date {
+      color: var(--text-gold);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+    }
+
+    /* Gerenciador de Tarefas / Tópicos do Edital */
+    .tasks-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
     .tasks-table {
       width: 100%;
       border-collapse: collapse;
@@ -841,18 +889,20 @@
     }
 
     .tasks-table th {
-      text-align: left;
+      padding: 8px 10px;
       color: var(--text-muted);
+      border-bottom: 1px solid var(--border-tactical);
+      font-weight: 600;
+      text-transform: uppercase;
       font-size: 10px;
-      font-weight: 500;
-      padding: 8px 6px;
-      border-bottom: 1px solid var(--border-subtle);
+      letter-spacing: 0.05em;
+      text-align: left;
     }
 
     .tasks-table td {
-      padding: 10px 6px;
+      padding: 10px 10px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-      vertical-align: middle;
+      color: var(--text-secondary);
     }
 
     .tasks-table tr:hover td {
@@ -860,141 +910,161 @@
     }
 
     .task-check-cell {
-      width: 24px;
+      width: 28px;
     }
 
-    .custom-checkbox {
-      width: 16px;
-      height: 16px;
-      border-radius: 4px;
-      border: 1px solid var(--border-light);
-      background: transparent;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+    .task-checkbox {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--gold-primary);
       cursor: pointer;
-      color: transparent;
-      transition: all 0.2s ease;
     }
 
-    .custom-checkbox.checked {
-      background: var(--bronze);
-      border-color: var(--bronze);
-      color: #0B0B0C;
-    }
-
-    .task-title-text {
+    .task-title {
       color: var(--text-main);
       font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
     }
 
-    .task-title-text.done {
+    .task-completed .task-title {
       text-decoration: line-through;
       color: var(--text-muted);
     }
 
     .task-stars {
-      color: var(--bronze);
-      letter-spacing: 1px;
+      color: var(--gold-primary);
+      letter-spacing: 2px;
       font-size: 11px;
+      cursor: pointer;
     }
 
-    /* Repetição de Flashcards */
-    .flashcards-deck-list {
+    /* Sessão de Flashcards & Anotações / Bizus */
+    .bottom-split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* Flashcards / Ciclo de Revisões */
+    .flashcards-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .flashcards-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-tactical);
+      padding-bottom: 8px;
+    }
+
+    .fc-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .fc-tab-btn.active {
+      background: var(--bg-card);
+      color: var(--gold-light);
+      border: 1px solid var(--border-tactical);
+    }
+
+    .flashcards-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
 
-    .deck-item {
+    .flashcard-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 12px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
     }
 
-    .deck-item:hover {
+    .flashcard-item:hover {
+      border-color: var(--gold-primary);
       background: var(--bg-card-hover);
-      border-color: var(--border-bronze);
-      transform: translateX(2px);
     }
 
-    .deck-name {
+    .fc-title {
       font-size: 12px;
       font-weight: 500;
       color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
-    .deck-badge {
-      font-family: 'JetBrains Mono', monospace;
+    .fc-badge {
       font-size: 10px;
-      padding: 2px 6px;
+      padding: 2px 8px;
       border-radius: var(--radius-full);
-      background: rgba(197, 160, 89, 0.15);
+      background: rgba(212, 175, 55, 0.12);
       color: var(--gold-light);
+      border: 1px solid var(--border-gold);
     }
 
-    /* Notas (Dark Sticky Notes) */
-    .notes-grid {
+    /* Notas & Bizus Táticos */
+    .notes-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sticky-notes-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
 
-    .note-card {
-      background: #171518;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+    .sticky-note {
+      background: linear-gradient(145deg, #18202F 0%, #131A26 100%);
+      border: 1px solid var(--border-tactical);
+      border-top: 2px solid var(--note-accent, var(--gold-primary));
       border-radius: var(--radius-sm);
       padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-      transition: all 0.2s ease;
+      justify-content: space-between;
+      height: 125px;
       cursor: pointer;
-      position: relative;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
     }
 
-    .note-card::after {
-      content: '';
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 6px;
-      height: 6px;
-      border-radius: var(--radius-full);
-      background: var(--bronze);
-      opacity: 0.7;
-    }
-
-    .note-card:hover {
-      background: #1F1D21;
-      border-color: var(--border-bronze);
+    .sticky-note:hover {
       transform: translateY(-2px);
+      border-color: var(--gold-primary);
+      box-shadow: var(--shadow-gold);
     }
 
-    .note-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--gold-light);
-    }
-
-    .note-snippet {
+    .note-text {
       font-size: 11px;
       color: var(--text-secondary);
-      line-height: 1.4;
+      line-height: 1.45;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 4;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
@@ -1003,13 +1073,19 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: auto;
-      font-size: 10px;
+      font-size: 9.5px;
       color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 6px;
+    }
+
+    .note-tag {
+      color: var(--gold-primary);
+      font-weight: 600;
     }
 
     /* ==========================================================================
-       COLUNA DIREITA (PRODUCTIVITY - RELÓGIO DIGITAL & POMODORO)
+       COLUNA DIREITA (PRODUTIVIDADE & FOCO TÁTICO)
        ========================================================================== */
     .right-sidebar {
       display: flex;
@@ -1017,10 +1093,10 @@
       gap: 20px;
     }
 
-    /* Relógio Digital Elegante */
+    /* Relógio Digital Operacional */
     .digital-clock-widget {
       background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--border-tactical);
       border-radius: var(--radius-md);
       padding: 18px 14px;
       box-shadow: var(--shadow-sm);
@@ -1028,6 +1104,7 @@
       flex-direction: column;
       align-items: center;
       gap: 12px;
+      border-top: 2px solid var(--gold-primary);
     }
 
     .clock-tiles {
@@ -1037,16 +1114,16 @@
     }
 
     .clock-tile {
-      width: 90px;
-      height: 80px;
-      background: linear-gradient(180deg, #1C1A1C 0%, #131213 100%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      width: 95px;
+      height: 82px;
+      background: linear-gradient(180deg, #1C2433 0%, #111621 100%);
+      border: 1px solid var(--border-tactical);
       border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 40px;
+      font-size: 42px;
       font-weight: 700;
       color: var(--gold-light);
       box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.05), 0 6px 14px rgba(0, 0, 0, 0.6);
@@ -1060,22 +1137,35 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.7);
       box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
     }
 
     .clock-date {
-      font-size: 11px;
-      font-weight: 500;
+      font-size: 11.5px;
+      font-weight: 600;
       color: var(--text-secondary);
       letter-spacing: 0.04em;
       text-transform: capitalize;
     }
 
-    /* Pomodoro Timer */
+    .clock-countdown-pill {
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--border-gold);
+      color: var(--gold-light);
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Pomodoro Timer Operacional */
     .pomodoro-widget {
-      background: linear-gradient(180deg, #181617 0%, #0F0E0F 100%);
-      border: 1px solid var(--border-bronze);
+      background: linear-gradient(180deg, #18202F 0%, #121722 100%);
+      border: 1px solid var(--border-gold);
       border-radius: var(--radius-md);
       padding: 18px 16px;
       box-shadow: var(--shadow-md);
@@ -1084,15 +1174,14 @@
       align-items: center;
       gap: 16px;
       position: relative;
-      overflow: hidden;
     }
 
     .pomodoro-modes {
       display: flex;
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(11, 14, 20, 0.6);
       padding: 3px;
       border-radius: var(--radius-full);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--border-tactical);
       width: 100%;
       justify-content: space-between;
     }
@@ -1101,8 +1190,8 @@
       background: transparent;
       border: none;
       color: var(--text-secondary);
-      font-size: 10px;
-      font-weight: 500;
+      font-size: 10.5px;
+      font-weight: 600;
       padding: 5px 8px;
       border-radius: var(--radius-full);
       cursor: pointer;
@@ -1112,60 +1201,52 @@
     }
 
     .pomo-chip.active {
-      background: var(--gold-light);
-      color: #0B0B0C;
-      font-weight: 600;
-      box-shadow: 0 2px 8px rgba(212, 175, 55, 0.25);
+      background: var(--gold-primary);
+      color: #0B0E14;
     }
 
     .pomodoro-display {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 46px;
+      font-size: 48px;
       font-weight: 700;
-      color: #FFFFFF;
-      letter-spacing: 2px;
-      text-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-      margin: 4px 0;
+      color: var(--text-main);
+      text-shadow: 0 0 16px rgba(212, 175, 55, 0.25);
+      letter-spacing: -0.02em;
     }
 
     .pomodoro-controls {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       width: 100%;
     }
 
     .btn-pomo-primary {
       flex: 1;
-      background: var(--gold-light);
-      color: #0B0B0C;
+      background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
       border: none;
-      padding: 10px 16px;
+      color: #0B0E14;
+      padding: 9px;
       border-radius: var(--radius-full);
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 12.5px;
+      font-weight: 700;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.2);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
     }
 
     .btn-pomo-primary:hover {
-      background: #FFFFFF;
+      background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 100%);
       transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(212, 175, 55, 0.35);
     }
 
     .btn-pomo-icon {
+      background: var(--bg-card);
+      border: 1px solid var(--border-tactical);
+      color: var(--text-secondary);
       width: 36px;
       height: 36px;
-      border-radius: var(--radius-full);
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1174,46 +1255,74 @@
     }
 
     .btn-pomo-icon:hover {
-      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--gold-primary);
       color: var(--gold-light);
-      border-color: var(--border-bronze);
     }
 
-    .btn-pomo-icon svg {
-      width: 16px;
-      height: 16px;
-      fill: currentColor;
+    /* Painel de Métricas Rápidas */
+    .metrics-widget {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    /* Modal Genérico */
+    .metric-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-sm);
+    }
+
+    .metric-label {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .metric-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+
+    /* ==========================================================================
+       MODAIS E TOASTS
+       ========================================================================== */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(8px);
-      display: flex;
+      z-index: 1000;
+      display: none;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
       padding: 20px;
     }
 
     .modal-backdrop.open {
-      opacity: 1;
-      pointer-events: auto;
+      display: flex;
     }
 
     .modal-card {
-      background: #141316;
-      border: 1px solid var(--border-bronze);
+      background: #141A26;
+      border: 1px solid var(--border-gold);
       border-radius: var(--radius-md);
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
       box-shadow: var(--shadow-lg);
-      padding: 22px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -1229,13 +1338,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-tactical);
       padding-bottom: 12px;
     }
 
     .modal-header h3 {
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--gold-light);
     }
 
@@ -1244,7 +1353,7 @@
       border: none;
       color: var(--text-muted);
       cursor: pointer;
-      font-size: 18px;
+      font-size: 20px;
     }
     .modal-close-btn:hover {
       color: var(--text-main);
@@ -1263,16 +1372,16 @@
     }
 
     .form-group label {
-      font-size: 11px;
-      font-weight: 500;
+      font-size: 11.5px;
+      font-weight: 600;
       color: var(--text-secondary);
     }
 
     .form-control {
-      background: #1C1B1F;
-      border: 1px solid var(--border-subtle);
+      background: #0E131E;
+      border: 1px solid var(--border-tactical);
       border-radius: var(--radius-sm);
-      padding: 9px 12px;
+      padding: 10px 12px;
       color: var(--text-main);
       font-size: 13px;
       outline: none;
@@ -1280,20 +1389,20 @@
     }
 
     .form-control:focus {
-      border-color: var(--bronze);
+      border-color: var(--gold-primary);
     }
 
     .modal-footer {
       display: flex;
       justify-content: flex-end;
       gap: 10px;
-      border-top: 1px solid var(--border-subtle);
+      border-top: 1px solid var(--border-tactical);
       padding-top: 14px;
     }
 
     .btn-secondary {
       background: transparent;
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--border-tactical);
       color: var(--text-secondary);
       padding: 8px 16px;
       border-radius: var(--radius-sm);
@@ -1302,17 +1411,67 @@
     }
 
     .btn-primary {
-      background: var(--gold-light);
+      background: var(--gold-primary);
       border: none;
-      color: #0B0B0C;
+      color: #0B0E14;
       padding: 8px 18px;
       border-radius: var(--radius-sm);
       cursor: pointer;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
-    /* Toast Notifications */
+    /* Modal do Flashcard 3D */
+    .fc-flip-card {
+      background-color: transparent;
+      width: 100%;
+      height: 220px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .fc-flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .fc-flip-card.flipped .fc-flip-inner {
+      transform: rotateY(180deg);
+    }
+
+    .fc-flip-front, .fc-flip-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--border-gold);
+    }
+
+    .fc-flip-front {
+      background: linear-gradient(145deg, #18202F 0%, #111621 100%);
+      color: var(--gold-light);
+    }
+
+    .fc-flip-back {
+      background: linear-gradient(145deg, #1C2638 0%, #141A26 100%);
+      color: var(--text-main);
+      transform: rotateY(180deg);
+      border-color: var(--accent-green);
+    }
+
+    /* Toasts */
     .toast-container {
       position: fixed;
       bottom: 24px;
@@ -1324,12 +1483,12 @@
     }
 
     .toast-item {
-      background: #1A181C;
-      border: 1px solid var(--border-bronze);
+      background: #18202F;
+      border: 1px solid var(--border-gold);
       color: var(--text-main);
-      padding: 10px 16px;
+      padding: 11px 18px;
       border-radius: var(--radius-sm);
-      font-size: 12px;
+      font-size: 12.5px;
       box-shadow: var(--shadow-md);
       display: flex;
       align-items: center;
@@ -1341,49 +1500,6 @@
       from { transform: translateX(40px); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
     }
-
-    /* ==========================================================================
-       RESPONSIVIDADE (MOBILE & TABLET)
-       ========================================================================== */
-    @media (max-width: 1200px) {
-      .dashboard-grid {
-        grid-template-columns: 220px 1fr;
-      }
-      .right-sidebar {
-        grid-column: span 2;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-      }
-      .classes-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 860px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
-      .right-sidebar {
-        grid-column: span 1;
-        grid-template-columns: 1fr;
-      }
-      .center-split-grid {
-        grid-template-columns: 1fr;
-      }
-      .classes-grid {
-        grid-template-columns: 1fr;
-      }
-      .banner-content {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
-      .banner-actions {
-        width: 100%;
-        overflow-x: auto;
-      }
-    }
   </style>
 </head>
 <body>
@@ -1391,33 +1507,33 @@
   <div class="app-container">
 
     <!-- ========================================================================
-         1. BANNER HERO PANORÂMICO NOTURNO
+         1. BANNER HERO PANORÂMICO OPERACIONAL
          ======================================================================== -->
     <header class="banner-hero">
       <img src="assets/student_os_banner.jpg" alt="Nocturnal Library Banner" class="banner-img" id="heroBannerImg" onerror="this.src='assets/logo_faca_caveira.png'">
+      <img src="assets/distintivo_watermark.png" alt="Marca d'Água PCMG" class="banner-watermark" onerror="this.style.display='none'">
       <div class="banner-gradient"></div>
+      
       <div class="banner-content">
         <div class="brand-group">
-          <div class="brand-icon-box">
-            <!-- Ícone elegante de capelo / graduação -->
-            <svg viewBox="0 0 24 24">
-              <path d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18C5 19.94 8.13 22 12 22C15.87 22 19 19.94 19 17.18V13.18L12 17L5 13.18Z"/>
-            </svg>
+          <div class="brand-badge-box">
+            <img src="assets/distintivo_policia_civil.png" alt="Distintivo PCMG" onerror="this.src='assets/logo_faca_caveira.png'">
           </div>
           <div class="brand-text">
-            <h1>Ultimate Student OS <span class="edition-tag">(Dark Edition)</span></h1>
-            <p>Seu santuário de alta performance, foco contínuo e gestão acadêmica inteligente.</p>
+            <h1>CRONOGRAMA TÁTICO OS <span class="edition-tag">Edição Operacional</span></h1>
+            <p><span class="badge-dot"></span> Santuário de Estudos Táticos • Polícia Civil • Foco, Disciplina e Alta Performance</p>
           </div>
         </div>
+        
         <div class="banner-actions">
-          <button class="banner-btn" onclick="openModal('modalAddTask')">
-            <span>+</span> Nova Tarefa
+          <button class="banner-btn primary" onclick="openModal('modalAddTask')">
+            <span>+</span> Nova Missão
           </button>
           <button class="banner-btn" onclick="openModal('modalAddNote')">
-            <span>+</span> Anotação
+            <span>+</span> Novo Bizu
           </button>
-          <a href="index.html?view=mobile" onclick="localStorage.setItem('preferred_desktop_view', 'concursos');" class="banner-btn" title="Alternar para o Cronograma de Concursos Original">
-            <span>🏛️</span> Modo Concursos
+          <a href="index.html?view=mobile" onclick="localStorage.setItem('preferred_desktop_view', 'concursos');" class="banner-btn" title="Alternar para a visualização original de Concursos">
+            <span>🏛️</span> Modo Clássico
           </a>
         </div>
       </div>
@@ -1429,576 +1545,323 @@
     <main class="dashboard-grid">
 
       <!-- ====================================================================
-           COLUNA ESQUERDA: AÇÕES RÁPIDAS, GESTÃO, DIRETÓRIO & BROWN NOISE
+           COLUNA ESQUERDA: AÇÕES RÁPIDAS, GESTÃO, ÁUDIO & HÁBITOS
            ==================================================================== -->
       <aside class="left-sidebar">
 
         <!-- Ações Rápidas -->
-        <section class="section-box">
+        <section class="section-box gold-accent">
           <div class="section-title">
             <span>Ações Rápidas</span>
-            <span style="font-size: 10px; color: var(--bronze);">● Pronto</span>
+            <span style="font-size: 10px; color: var(--gold-primary);">● Operacional</span>
           </div>
           <div class="quick-actions-list">
             <button class="btn-quick-action" onclick="openModal('modalAddAssessment')">
-              <span class="plus-icon">+</span> Nova Avaliação
+              <span class="plus-icon">+</span> Novo Simulado / Meta
             </button>
             <button class="btn-quick-action" onclick="openModal('modalAddTask')">
-              <span class="plus-icon">+</span> Nova Tarefa
+              <span class="plus-icon">+</span> Nova Missão do Edital
             </button>
             <button class="btn-quick-action" onclick="toggleHabitToday()">
-              <span class="plus-icon">+</span> Diário de Hábitos
+              <span class="plus-icon">+</span> Registrar Hábito do Dia
             </button>
-            <button class="btn-quick-action" onclick="openModal('modalAddResource')">
-              <span class="plus-icon">+</span> Novo Recurso
+            <button class="btn-quick-action" onclick="openStudyHoursQuickModal()">
+              <span class="plus-icon">+</span> Registrar Horas de Estudo
             </button>
-            <button class="btn-quick-action" onclick="openModal('modalAddEvent')">
-              <span class="plus-icon">+</span> Novo Evento
+            <button class="btn-quick-action" onclick="openModal('modalAddNote')">
+              <span class="plus-icon">+</span> Anotar Bizu Tático
             </button>
           </div>
         </section>
 
-        <!-- Gestão -->
+        <!-- Gestão Operacional -->
         <section class="section-box">
           <div class="section-title">
-            <span>Gestão</span>
+            <span>Gestão Operacional</span>
           </div>
           <ul class="nav-list">
             <li class="nav-item active">
-              <a href="#aulas">
+              <a href="#disciplinas">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                Disciplinas
+                Disciplinas do Edital
               </a>
             </li>
             <li class="nav-item">
               <a href="#cronograma">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                Semestres
+                Grade Tática Semanal
               </a>
             </li>
             <li class="nav-item">
-              <a href="#avaliacoes">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                Avaliações
+              <a href="#simulados">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Simulados & Metas
               </a>
             </li>
             <li class="nav-item">
-              <a href="#tarefas">
+              <a href="#missoes">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-                Gerenciador de Tarefas
+                Missões & Tópicos
               </a>
             </li>
             <li class="nav-item">
-              <a href="#notas">
+              <a href="#bizus">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                Anotações
+                Bizus & Notas
+              </a>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Diretório Tático -->
+        <section class="section-box">
+          <div class="section-title">
+            <span>Diretório Tático</span>
+          </div>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="#revisoes" onclick="openFlashcardDeck('Direito Penal')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                Ciclo de Revisões (24h/7d)
               </a>
             </li>
             <li class="nav-item">
               <a href="#pomodoro">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                Zona de Foco
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                Zona de Foco Operacional
               </a>
             </li>
           </ul>
         </section>
 
-        <!-- Diretório -->
-        <section class="section-box">
-          <div class="section-title">
-            <span>Diretório</span>
-          </div>
-          <ul class="nav-list">
-            <li class="nav-item">
-              <a href="#recursos">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                Recursos
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#cronograma">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 10"></polyline></svg>
-                Grade Horária
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#flashcards">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-                Flashcards
-              </a>
-            </li>
-          </ul>
-        </section>
-
-        <!-- Rastreadores & Mini Player Brown Noise -->
-        <section class="section-box">
-          <div class="section-title">
-            <span>Rastreadores</span>
-            <span style="font-size: 10px; color: var(--bronze);">Áudio Foco</span>
-          </div>
-          
-          <div class="brown-noise-card">
-            <div class="noise-thumb">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 3V21M7 8V16M17 6V18M2 11V13M22 9V15"/>
-              </svg>
+        <!-- Rastreador de Foco / Ambient Player -->
+        <div class="brown-noise-player" id="brownNoiseWidget">
+          <div class="player-header">
+            <div class="player-thumb">
+              <img src="assets/student_os_banner.jpg" alt="Ambient">
+              <div class="player-pulse-ring"></div>
             </div>
-            <div class="noise-info">
-              <div class="noise-title">Dreamy Brown Noise</div>
-              <div class="noise-sub">
-                <span class="noise-pulse" id="noisePulseDot"></span>
-                <span id="noiseStatusLabel">Pausado (Onda Suave)</span>
-              </div>
+            <div class="player-info">
+              <h4>Foco Tático • Ruído Marrom</h4>
+              <p>Isolamento acústico operacional</p>
             </div>
-            <button class="btn-noise-play" id="btnToggleNoise" onclick="toggleBrownNoise()" title="Tocar / Pausar Brown Noise">
-              <svg viewBox="0 0 24 24" id="noiseIconSvg">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
+          </div>
+          <div class="player-controls">
+            <button class="player-btn" id="btnPlayBrownNoise" onclick="toggleBrownNoise()" title="Ligar/Desligar Som de Foco">
+              <span id="playIcon">▶</span>
             </button>
+            <div class="player-progress-bar">
+              <div class="player-progress-fill" id="noiseProgress"></div>
+            </div>
           </div>
-        </section>
+        </div>
 
-        <!-- Habit Journal -->
-        <section class="section-box">
+        <!-- Diário de Hábitos Operacionais -->
+        <div class="habit-journal">
           <div class="section-title">
-            <span>Habit Journal</span>
-            <span style="font-size: 11px; color: var(--bronze); font-weight: 600;" id="habitPercentText">96%</span>
+            <span>Hábitos Operacionais</span>
           </div>
-          <div class="habit-card">
-            <div class="habit-header">
-              <span class="habit-title">Foco & Rotina Diária</span>
-              <span class="habit-pct" id="habitDaysCount">6/7 dias</span>
-            </div>
-            <div class="progress-bar-bg">
-              <div class="progress-bar-fill" id="habitProgressBar" style="width: 96%;"></div>
-            </div>
-            <div class="habit-check-group" id="habitGroup">
-              <button class="habit-dot-btn done" onclick="toggleHabitDay(this, 0)">S</button>
-              <button class="habit-dot-btn done" onclick="toggleHabitDay(this, 1)">T</button>
-              <button class="habit-dot-btn done" onclick="toggleHabitDay(this, 2)">Q</button>
-              <button class="habit-dot-btn done" onclick="toggleHabitDay(this, 3)">Q</button>
-              <button class="habit-dot-btn done" onclick="toggleHabitDay(this, 4)">S</button>
-              <button class="habit-dot-btn done" onclick="toggleHabitDay(this, 5)">S</button>
-              <button class="habit-dot-btn" onclick="toggleHabitDay(this, 6)">D</button>
-            </div>
+          <div class="habit-meta">
+            <span>Disciplina Diária</span>
+            <strong id="habitPercentText">85%</strong>
           </div>
-        </section>
+          <div class="habit-progress-bg">
+            <div class="habit-progress-bar" id="habitProgressBar"></div>
+          </div>
+          <div class="habit-days" id="habitDaysContainer">
+            <!-- Gerado via JavaScript -->
+          </div>
+        </div>
 
       </aside>
 
       <!-- ====================================================================
-           COLUNA CENTRAL: AULAS, CRONOGRAMA, TAREFAS, FLASHCARDS & NOTAS
+           COLUNA CENTRAL: DISCIPLINAS, GRADE, AVALIAÇÕES, MISSÕES, REVISÕES & BIZUS
            ==================================================================== -->
       <section class="center-content">
 
-        <!-- Seção: Aulas (Classes Cards) -->
-        <div class="section-box" id="aulas">
-          <div class="classes-header">
-            <h2 class="section-h2">
-              <span>📖</span> Aulas
-            </h2>
-            <span class="view-chip" onclick="showToast('Visualização: Todas as matérias ativas')">☰ Todas</span>
+        <!-- 1. Disciplinas do Edital -->
+        <div id="disciplinas">
+          <div class="section-title" style="margin-bottom: 14px;">
+            <span>Disciplinas do Concurso</span>
+            <span style="font-size: 11px; color: var(--text-secondary);" id="totalDisciplinasBadge">6 Disciplinas no Edital</span>
           </div>
-
-          <div class="classes-grid" id="classesCardsGrid">
-            <!-- Inglês -->
-            <div class="class-card" onclick="editClassProgress(0)">
-              <div class="class-header">
-                <span class="class-icon">🇬🇧</span>
-                <span class="class-name">Inglês</span>
-              </div>
-              <div class="class-metrics">
-                <div class="metric-row">
-                  <span>Trabalhos Restantes:</span>
-                  <span class="metric-val" id="class-assign-0">2</span>
-                </div>
-                <div class="progress-bar-bg" style="margin: 4px 0;">
-                  <div class="progress-bar-fill" id="class-bar-0" style="width: 12%;"></div>
-                </div>
-                <div class="metric-row">
-                  <span>Tarefas Pendentes:</span>
-                  <span class="metric-val" id="class-task-0">1</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Biologia -->
-            <div class="class-card" onclick="editClassProgress(1)">
-              <div class="class-header">
-                <span class="class-icon">🧬</span>
-                <span class="class-name">Biologia</span>
-              </div>
-              <div class="class-metrics">
-                <div class="metric-row">
-                  <span>Trabalhos Restantes:</span>
-                  <span class="metric-val" id="class-assign-1">3</span>
-                </div>
-                <div class="progress-bar-bg" style="margin: 4px 0;">
-                  <div class="progress-bar-fill" id="class-bar-1" style="width: 10%;"></div>
-                </div>
-                <div class="metric-row">
-                  <span>Tarefas Pendentes:</span>
-                  <span class="metric-val" id="class-task-1">3</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Química -->
-            <div class="class-card" onclick="editClassProgress(2)">
-              <div class="class-header">
-                <span class="class-icon">⚗️</span>
-                <span class="class-name">Química</span>
-              </div>
-              <div class="class-metrics">
-                <div class="metric-row">
-                  <span>Trabalhos Restantes:</span>
-                  <span class="metric-val" id="class-assign-2">3</span>
-                </div>
-                <div class="progress-bar-bg" style="margin: 4px 0;">
-                  <div class="progress-bar-fill" id="class-bar-2" style="width: 0%;"></div>
-                </div>
-                <div class="metric-row">
-                  <span>Tarefas Pendentes:</span>
-                  <span class="metric-val" id="class-task-2">3</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Matemática -->
-            <div class="class-card" onclick="editClassProgress(3)">
-              <div class="class-header">
-                <span class="class-icon">📐</span>
-                <span class="class-name">Matemática</span>
-              </div>
-              <div class="class-metrics">
-                <div class="metric-row">
-                  <span>Trabalhos Restantes:</span>
-                  <span class="metric-val" id="class-assign-3">2</span>
-                </div>
-                <div class="progress-bar-bg" style="margin: 4px 0;">
-                  <div class="progress-bar-fill" id="class-bar-3" style="width: 16.7%;"></div>
-                </div>
-                <div class="metric-row">
-                  <span>Tarefas Pendentes:</span>
-                  <span class="metric-val" id="class-task-3">1</span>
-                </div>
-              </div>
-            </div>
+          <div class="classes-grid" id="concursoClassesGrid">
+            <!-- Preenchido dinamicamente via JavaScript -->
           </div>
         </div>
 
-        <!-- Grid Dividida no Centro -->
+        <!-- 2. Sub-grid de 2 Colunas: Grade Tática & Simulados/Metas -->
         <div class="center-split-grid">
-
-          <!-- Coluna Meio-Esquerda: Avaliações & Flashcards -->
-          <div class="center-col">
-            
-            <!-- Próximas Avaliações -->
-            <div class="section-box" id="avaliacoes">
-              <div class="classes-header">
-                <h2 class="section-h2">
-                  <span>📝</span> Próximas Avaliações
-                </h2>
-                <span class="view-chip" onclick="openModal('modalAddAssessment')">+ Adicionar</span>
-              </div>
-
-              <div class="assessments-list" id="assessmentsList">
-                <div class="assessment-card">
-                  <div class="assessment-top">
-                    <span class="assessment-title">Prova Semestral I</span>
-                    <span class="status-pill not-started">Não iniciado</span>
-                  </div>
-                  <div class="assessment-details">
-                    <span>📅 24 de Outubro, 2026</span>
-                    <span>•</span>
-                    <span class="status-pill subject-tag">Biologia</span>
-                  </div>
-                </div>
-
-                <div class="assessment-card">
-                  <div class="assessment-top">
-                    <span class="assessment-title">Exame Geral de Redação</span>
-                    <span class="status-pill in-progress">Em progresso</span>
-                  </div>
-                  <div class="assessment-details">
-                    <span>📅 02 de Novembro, 2026</span>
-                    <span>•</span>
-                    <span class="status-pill subject-tag">Inglês</span>
-                  </div>
-                </div>
-
-                <div class="assessment-card">
-                  <div class="assessment-top">
-                    <span class="assessment-title">Simulado de Cálculo II</span>
-                    <span class="status-pill not-started">Não iniciado</span>
-                  </div>
-                  <div class="assessment-details">
-                    <span>📅 15 de Novembro, 2026</span>
-                    <span>•</span>
-                    <span class="status-pill subject-tag">Matemática</span>
-                  </div>
-                </div>
-              </div>
+          
+          <!-- Grade Tática Semanal -->
+          <div class="timetable-card" id="cronograma">
+            <div class="section-title">
+              <span>Grade Tática Semanal</span>
+              <span style="font-size: 10px; color: var(--gold-primary);">Turnos & Missões</span>
             </div>
-
-            <!-- Repetição de Flashcards -->
-            <div class="section-box" id="flashcards">
-              <div class="classes-header">
-                <h2 class="section-h2">
-                  <span>🃏</span> Repetição de Flashcards
-                </h2>
-                <span class="view-chip" onclick="showToast('Modo de revisão rápida ativo')">Revisar</span>
-              </div>
-
-              <div class="flashcards-deck-list">
-                <div class="deck-item" onclick="openFlashcardSession('Vocabulário & Idiomas', 18)">
-                  <span class="deck-name">🇬🇧 Vocabulário Avançado</span>
-                  <span class="deck-badge">18 cartas</span>
-                </div>
-                <div class="deck-item" onclick="openFlashcardSession('Bioquímica & Fórmulas', 24)">
-                  <span class="deck-name">🧬 Genética & Fisiologia</span>
-                  <span class="deck-badge">24 cartas</span>
-                </div>
-                <div class="deck-item" onclick="openFlashcardSession('Reações & Nomenclatura', 30)">
-                  <span class="deck-name">⚗️ Tabela Periódica & Reações</span>
-                  <span class="deck-badge">30 cartas</span>
-                </div>
-                <div class="deck-item" onclick="openFlashcardSession('Teoremas & Fórmulas', 12)">
-                  <span class="deck-name">📐 Teoremas & Geometria</span>
-                  <span class="deck-badge">12 cartas</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Coluna Meio-Direita: Cronograma & Tarefas -->
-          <div class="center-col">
-
-            <!-- Cronograma (Timetable) -->
-            <div class="section-box" id="cronograma">
-              <div class="classes-header">
-                <h2 class="section-h2">
-                  <span>🗓️</span> Cronograma
-                </h2>
-                <span class="view-chip" onclick="showToast('Grade Semanal Ativa')">Semana Atual</span>
-              </div>
-
-              <div style="overflow-x: auto;">
-                <table class="timetable-table">
-                  <thead>
-                    <tr>
-                      <th style="width: 50px;">Hora</th>
-                      <th>Seg</th>
-                      <th>Ter</th>
-                      <th>Qua</th>
-                      <th>Qui</th>
-                      <th>Sex</th>
-                      <th>Sáb</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="time-col">08:00 - 10:00</td>
-                      <td><span class="timetable-badge english">Inglês</span></td>
-                      <td><span class="timetable-badge math">Matemática</span></td>
-                      <td><span class="timetable-badge english">Inglês</span></td>
-                      <td><span class="timetable-badge biology">Biologia</span></td>
-                      <td><span class="timetable-badge chemistry">Química</span></td>
-                      <td>—</td>
-                    </tr>
-                    <tr>
-                      <td class="time-col">10:00 - 11:30</td>
-                      <td><span class="timetable-badge biology">Biologia</span></td>
-                      <td>—</td>
-                      <td><span class="timetable-badge chemistry">Química</span></td>
-                      <td>—</td>
-                      <td><span class="timetable-badge math">Matemática</span></td>
-                      <td><span class="timetable-badge english">Revisão</span></td>
-                    </tr>
-                    <tr>
-                      <td class="time-col">14:00 - 16:00</td>
-                      <td><span class="timetable-badge chemistry">Química</span></td>
-                      <td><span class="timetable-badge biology">Biologia</span></td>
-                      <td>—</td>
-                      <td><span class="timetable-badge math">Matemática</span></td>
-                      <td><span class="timetable-badge biology">Biologia</span></td>
-                      <td>—</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Tarefas (Tasks List) -->
-            <div class="section-box" id="tarefas">
-              <div class="classes-header">
-                <h2 class="section-h2">
-                  <span>🎯</span> Tarefas
-                </h2>
-                <span class="view-chip" onclick="openModal('modalAddTask')">+ Nova Tarefa</span>
-              </div>
-
-              <table class="tasks-table" id="tasksTable">
+            <div class="timetable-wrapper">
+              <table class="timetable-table">
                 <thead>
                   <tr>
-                    <th style="width: 26px;"></th>
-                    <th>Tarefa</th>
-                    <th>Prazo</th>
-                    <th>Prioridade</th>
-                    <th>Matéria</th>
+                    <th>Turno</th>
+                    <th>Seg</th>
+                    <th>Ter</th>
+                    <th>Qua</th>
+                    <th>Qui</th>
+                    <th>Sex</th>
+                    <th>Sáb</th>
                   </tr>
                 </thead>
-                <tbody id="tasksTableBody">
-                  <tr>
-                    <td class="task-check-cell">
-                      <span class="custom-checkbox" onclick="toggleTask(this)">✓</span>
-                    </td>
-                    <td>
-                      <span class="task-title-text" onclick="toggleTaskText(this)">Exercícios de Termodinâmica</span>
-                    </td>
-                    <td style="color: var(--text-muted); font-size: 11px;">24 Out</td>
-                    <td><span class="task-stars" onclick="cycleStars(this)">★★★</span></td>
-                    <td><span class="status-pill subject-tag">Química</span></td>
-                  </tr>
-                  <tr>
-                    <td class="task-check-cell">
-                      <span class="custom-checkbox checked" onclick="toggleTask(this)">✓</span>
-                    </td>
-                    <td>
-                      <span class="task-title-text done" onclick="toggleTaskText(this)">Leitura do Capítulo 4 (Genética)</span>
-                    </td>
-                    <td style="color: var(--text-muted); font-size: 11px;">20 Out</td>
-                    <td><span class="task-stars" onclick="cycleStars(this)">★★</span></td>
-                    <td><span class="status-pill subject-tag">Biologia</span></td>
-                  </tr>
-                  <tr>
-                    <td class="task-check-cell">
-                      <span class="custom-checkbox" onclick="toggleTask(this)">✓</span>
-                    </td>
-                    <td>
-                      <span class="task-title-text" onclick="toggleTaskText(this)">Ensaio Crítico em Língua Inglesa</span>
-                    </td>
-                    <td style="color: var(--text-muted); font-size: 11px;">28 Out</td>
-                    <td><span class="task-stars" onclick="cycleStars(this)">★★★★</span></td>
-                    <td><span class="status-pill subject-tag">Inglês</span></td>
-                  </tr>
-                  <tr>
-                    <td class="task-check-cell">
-                      <span class="custom-checkbox" onclick="toggleTask(this)">✓</span>
-                    </td>
-                    <td>
-                      <span class="task-title-text" onclick="toggleTaskText(this)">Lista de Integrais Indefinidas</span>
-                    </td>
-                    <td style="color: var(--text-muted); font-size: 11px;">30 Out</td>
-                    <td><span class="task-stars" onclick="cycleStars(this)">★</span></td>
-                    <td><span class="status-pill subject-tag">Matemática</span></td>
-                  </tr>
+                <tbody id="timetableBody">
+                  <!-- Gerado via JavaScript -->
                 </tbody>
               </table>
             </div>
+          </div>
 
+          <!-- Próximas Provas & Simulados -->
+          <div class="assessments-card" id="simulados">
+            <div class="section-title">
+              <span>Próximas Provas & Metas</span>
+              <button class="btn-quick-action" style="padding: 3px 8px; font-size: 10.5px; width: auto;" onclick="openModal('modalAddAssessment')">
+                + Meta
+              </button>
+            </div>
+            <div class="assessments-grid" id="assessmentsContainer">
+              <!-- Gerado via JavaScript -->
+            </div>
           </div>
 
         </div>
 
-        <!-- Seção Inferior: Notas (Sticky Notes) -->
-        <div class="section-box" id="notas">
-          <div class="classes-header">
-            <h2 class="section-h2">
-              <span>💡</span> Notas Rápidas & Insights
-            </h2>
-            <span class="view-chip" onclick="openModal('modalAddNote')">+ Nova Nota</span>
-          </div>
-
-          <div class="notes-grid" id="notesGrid">
-            <div class="note-card" onclick="viewNote(this)">
-              <div class="note-title">Estrutura Celular & Mitocôndria</div>
-              <div class="note-snippet">A fosforilação oxidativa ocorre na membrana interna da mitocôndria, gerando o gradiente de prótons essencial para a síntese massiva de ATP.</div>
-              <div class="note-footer">
-                <span class="status-pill subject-tag">Biologia</span>
-                <span>Ontem, 21:40</span>
-              </div>
-            </div>
-
-            <div class="note-card" onclick="viewNote(this)">
-              <div class="note-title">Equilíbrio Químico & Le Chatelier</div>
-              <div class="note-snippet">Ao aumentar a pressão de um sistema gasoso fechado, o equilíbrio sempre se desloca no sentido de menor número de mols gasosos.</div>
-              <div class="note-footer">
-                <span class="status-pill subject-tag">Química</span>
-                <span>Hoje, 10:15</span>
-              </div>
-            </div>
-
-            <div class="note-card" onclick="viewNote(this)">
-              <div class="note-title">Regras de Integração por Partes</div>
-              <div class="note-snippet">Fórmula fundamental: ∫ u dv = u*v - ∫ v du. Usar a regra LIATE (Logarítmicas, Inversas, Algébricas, Trigonométricas, Exponenciais) para escolha correta de u.</div>
-              <div class="note-footer">
-                <span class="status-pill subject-tag">Matemática</span>
-                <span>18 Out, 16:30</span>
-              </div>
-            </div>
-
-            <div class="note-card" onclick="viewNote(this)">
-              <div class="note-title">Idiomatic Phrasal Verbs</div>
-              <div class="note-snippet">"Bring about" = causar. "Call off" = cancelar. "Look forward to + V-ing" = esperar ansiosamente por algo. Atenção especial em redações formais.</div>
-              <div class="note-footer">
-                <span class="status-pill subject-tag">Inglês</span>
-                <span>17 Out, 14:10</span>
-              </div>
+        <!-- 3. Gerenciador de Missões & Tópicos de Estudo -->
+        <div class="tasks-card" id="missoes">
+          <div class="section-title">
+            <span>Missões & Tópicos de Estudo</span>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-quick-action" style="padding: 4px 10px; font-size: 11px; width: auto;" onclick="openModal('modalAddTask')">
+                + Nova Missão
+              </button>
             </div>
           </div>
+          <div style="overflow-x: auto;">
+            <table class="tasks-table">
+              <thead>
+                <tr>
+                  <th class="task-check-cell"></th>
+                  <th>Missão / Tópico</th>
+                  <th>Data Alvo</th>
+                  <th>Status</th>
+                  <th>Prioridade</th>
+                  <th>Disciplina</th>
+                </tr>
+              </thead>
+              <tbody id="tasksTableBody">
+                <!-- Gerado via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 4. Sub-grid Inferior: Ciclo de Revisões & Bizus Táticos -->
+        <div class="bottom-split-grid">
+          
+          <!-- Flashcards & Ciclo de Revisões -->
+          <div class="flashcards-card" id="revisoes">
+            <div class="section-title">
+              <span>Ciclo de Revisões Espaçadas</span>
+            </div>
+            <div class="flashcards-tabs">
+              <button class="fc-tab-btn active" onclick="switchFlashcardTab('hoje', this)">Hoje (Pendentes)</button>
+              <button class="fc-tab-btn" onclick="switchFlashcardTab('7d', this)">7 Dias</button>
+              <button class="fc-tab-btn" onclick="switchFlashcardTab('30d', this)">30 Dias</button>
+              <button class="fc-tab-btn" onclick="switchFlashcardTab('todos', this)">Todos os Bizus</button>
+            </div>
+            <div class="flashcards-list" id="flashcardsListContainer">
+              <!-- Gerado via JavaScript -->
+            </div>
+          </div>
+
+          <!-- Bizus & Notas Táticas -->
+          <div class="notes-card" id="bizus">
+            <div class="section-title">
+              <span>Bizus & Notas Táticas</span>
+              <button class="btn-quick-action" style="padding: 3px 8px; font-size: 10.5px; width: auto;" onclick="openModal('modalAddNote')">
+                + Novo Bizu
+              </button>
+            </div>
+            <div class="sticky-notes-grid" id="stickyNotesContainer">
+              <!-- Gerado via JavaScript -->
+            </div>
+          </div>
+
         </div>
 
       </section>
 
       <!-- ====================================================================
-           COLUNA DIREITA: RELÓGIO DIGITAL & POMODORO TIMER
+           COLUNA DIREITA: RELÓGIO DUAL, POMODORO OPERACIONAL & MÉTRICAS
            ==================================================================== -->
       <aside class="right-sidebar">
 
-        <!-- Relógio Digital Minimalista -->
+        <!-- Relógio Digital Dual-Tile -->
         <div class="digital-clock-widget">
           <div class="clock-tiles">
-            <div class="clock-tile" id="clockHours">01</div>
-            <div class="clock-tile" id="clockMinutes">12</div>
+            <div class="clock-tile" id="clockHours">00</div>
+            <div class="clock-tile" id="clockMinutes">00</div>
           </div>
-          <div class="clock-date" id="clockFullDate">Carregando horário...</div>
+          <div class="clock-date" id="clockFullDate">--</div>
+          <div class="clock-countdown-pill" id="examCountdownDisplay">
+            <span>🚨</span>
+            <span id="countdownText">Carregando contagem...</span>
+          </div>
         </div>
 
-        <!-- Pomodoro Timer -->
+        <!-- Pomodoro Operacional -->
         <div class="pomodoro-widget" id="pomodoro">
-          <div class="pomodoro-modes">
-            <button class="pomo-chip active" id="pomoBtnFocus" onclick="setPomoMode('focus')">Foco</button>
-            <button class="pomo-chip" id="pomoBtnShort" onclick="setPomoMode('short')">Intervalo Curto</button>
-            <button class="pomo-chip" id="pomoBtnLong" onclick="setPomoMode('long')">Intervalo Longo</button>
+          <div class="section-title" style="width: 100%; margin-bottom: 0;">
+            <span>Foco Operacional</span>
+            <span style="font-size: 10px; color: var(--gold-primary);">Ciclo Tático</span>
           </div>
 
-          <div class="pomodoro-display" id="pomoTimerText">25:00</div>
+          <div class="pomodoro-modes">
+            <button class="pomo-chip active" onclick="setPomoMode(50, this)">Ciclo 50m</button>
+            <button class="pomo-chip" onclick="setPomoMode(10, this)">Pausa 10m</button>
+            <button class="pomo-chip" onclick="setPomoMode(20, this)">Pausa 20m</button>
+          </div>
+
+          <div class="pomodoro-display" id="pomodoroTimer">50:00</div>
 
           <div class="pomodoro-controls">
             <button class="btn-pomo-primary" id="btnPomoStart" onclick="togglePomodoro()">
-              <span id="pomoStartIcon">▶</span> <span id="pomoStartLabel">Começar</span>
+              Começar Ciclo
             </button>
-            <button class="btn-pomo-icon" onclick="resetPomodoro()" title="Reiniciar Cronômetro">
-              <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+            <button class="btn-pomo-icon" onclick="resetPomodoro()" title="Reiniciar">
+              ↺
             </button>
-            <button class="btn-pomo-icon" onclick="openModal('modalPomoSettings')" title="Configurações do Pomodoro">
-              <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            <button class="btn-pomo-icon" onclick="openPomoSettings()" title="Ajustar Minutos">
+              ⚙
             </button>
           </div>
         </div>
 
-        <!-- Card de Citação Noturna -->
-        <div class="section-box" style="border-left: 2px solid var(--bronze);">
-          <div style="font-size: 11px; font-weight: 600; color: var(--gold-primary); margin-bottom: 6px;">
-            🌙 NOTA DE COMPROMISSO
+        <!-- Métricas Rápidas Operacionais -->
+        <div class="metrics-widget">
+          <div class="section-title">
+            <span>Rendimento Semanal</span>
           </div>
-          <p style="font-size: 12px; color: var(--text-secondary); font-style: italic; line-height: 1.5;">
-            "A maestria não nasce em dias de inspiração fácil, mas nas noites silenciosas onde a disciplina supera qualquer desculpa."
-          </p>
-          <div style="font-size: 10px; color: var(--text-muted); margin-top: 6px; text-align: right;">
-            — Ultimate Student OS
+          <div class="metric-row">
+            <span class="metric-label">⏱️ Horas Estudadas:</span>
+            <span class="metric-value" id="weeklyHoursVal">28.5h</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">📝 Questões Feitas:</span>
+            <span class="metric-value" id="questionsDoneVal">342</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">🎯 Precisão em Simulados:</span>
+            <span class="metric-value" style="color: var(--accent-green);" id="accuracyVal">82.4%</span>
           </div>
         </div>
 
@@ -2008,145 +1871,151 @@
 
   </div>
 
-  <!-- ========================================================================
-       MODAIS INTERATIVOS
-       ======================================================================== -->
+  <!-- ==========================================================================
+       MODAIS DE CRIAÇÃO E ESTUDO
+       ========================================================================== -->
 
-  <!-- Modal Adicionar Tarefa -->
+  <!-- Modal Nova Missão / Tarefa -->
   <div class="modal-backdrop" id="modalAddTask">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Nova Tarefa de Estudo</h3>
-        <button class="modal-close-btn" onclick="closeModal('modalAddTask')">✕</button>
+        <h3>Nova Missão do Edital</h3>
+        <button class="modal-close-btn" onclick="closeModal('modalAddTask')">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label>Título da Tarefa</label>
-          <input type="text" class="form-control" id="inputTaskTitle" placeholder="Ex: Resolver lista de 20 questões...">
+          <label>Nome do Tópico / Missão:</label>
+          <input type="text" id="inputTaskName" class="form-control" placeholder="Ex: Inquérito Policial - Prazos e Instauração">
         </div>
         <div class="form-group">
-          <label>Disciplina</label>
-          <select class="form-control" id="inputTaskSubject">
-            <option value="Inglês">Inglês</option>
-            <option value="Biologia">Biologia</option>
-            <option value="Química">Química</option>
-            <option value="Matemática">Matemática</option>
-            <option value="Geral">Geral</option>
+          <label>Disciplina:</label>
+          <select id="inputTaskSubject" class="form-control">
+            <option value="Direito Penal">Direito Penal</option>
+            <option value="Direito Processual Penal">Direito Processual Penal</option>
+            <option value="Direito Constitucional">Direito Constitucional</option>
+            <option value="Direito Administrativo">Direito Administrativo</option>
+            <option value="Língua Portuguesa">Língua Portuguesa</option>
+            <option value="Legislação Especial">Legislação Especial</option>
+            <option value="Raciocínio Lógico">Raciocínio Lógico</option>
+            <option value="Informática">Informática</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Data de Entrega / Prazo</label>
-          <input type="date" class="form-control" id="inputTaskDate">
+          <label>Prioridade Tática (1 a 4 estrelas):</label>
+          <select id="inputTaskPriority" class="form-control">
+            <option value="4">★★★★ (Máxima - Cai em Toda Prova)</option>
+            <option value="3">★★★☆ (Alta Prioridade)</option>
+            <option value="2">★★☆☆ (Média Prioridade)</option>
+            <option value="1">★☆☆☆ (Básica)</option>
+          </select>
         </div>
         <div class="form-group">
-          <label>Prioridade</label>
-          <select class="form-control" id="inputTaskPriority">
-            <option value="★">Baixa (★)</option>
-            <option value="★★">Média (★★)</option>
-            <option value="★★★" selected>Alta (★★★)</option>
-            <option value="★★★★">Urgente (★★★★)</option>
-          </select>
+          <label>Data Alvo:</label>
+          <input type="date" id="inputTaskDate" class="form-control">
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn-secondary" onclick="closeModal('modalAddTask')">Cancelar</button>
-        <button class="btn-primary" onclick="saveNewTask()">Adicionar Tarefa</button>
+        <button class="btn-primary" onclick="saveNewTask()">Adicionar Missão</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal Adicionar Avaliação -->
+  <!-- Modal Novo Simulado / Avaliação -->
   <div class="modal-backdrop" id="modalAddAssessment">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Nova Avaliação / Prova</h3>
-        <button class="modal-close-btn" onclick="closeModal('modalAddAssessment')">✕</button>
+        <h3>Nova Meta / Simulado</h3>
+        <button class="modal-close-btn" onclick="closeModal('modalAddAssessment')">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label>Nome da Avaliação</label>
-          <input type="text" class="form-control" id="inputAssessTitle" placeholder="Ex: Prova Final de Química Orgânica">
+          <label>Título do Simulado ou Prova:</label>
+          <input type="text" id="inputAssessmentTitle" class="form-control" placeholder="Ex: Simulado Geral Polícia Civil #05">
         </div>
         <div class="form-group">
-          <label>Disciplina</label>
-          <select class="form-control" id="inputAssessSubject">
-            <option value="Biologia">Biologia</option>
-            <option value="Química">Química</option>
-            <option value="Matemática">Matemática</option>
-            <option value="Inglês">Inglês</option>
-          </select>
+          <label>Data:</label>
+          <input type="date" id="inputAssessmentDate" class="form-control">
         </div>
         <div class="form-group">
-          <label>Data da Avaliação</label>
-          <input type="date" class="form-control" id="inputAssessDate">
+          <label>Meta de Acertos:</label>
+          <input type="text" id="inputAssessmentTarget" class="form-control" placeholder="Ex: 85% de acertos (51/60 questões)">
         </div>
         <div class="form-group">
-          <label>Status Inicial</label>
-          <select class="form-control" id="inputAssessStatus">
-            <option value="not-started">Não iniciado</option>
-            <option value="in-progress">Em progresso</option>
-            <option value="completed">Revisado</option>
+          <label>Status:</label>
+          <select id="inputAssessmentStatus" class="form-control">
+            <option value="not_started">Agendado</option>
+            <option value="in_progress">Em Preparação</option>
+            <option value="completed">Concluído</option>
           </select>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn-secondary" onclick="closeModal('modalAddAssessment')">Cancelar</button>
-        <button class="btn-primary" onclick="saveNewAssessment()">Salvar Avaliação</button>
+        <button class="btn-primary" onclick="saveNewAssessment()">Salvar Meta</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal Nova Nota -->
+  <!-- Modal Novo Bizu / Anotação -->
   <div class="modal-backdrop" id="modalAddNote">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Nova Anotação de Estudo</h3>
-        <button class="modal-close-btn" onclick="closeModal('modalAddNote')">✕</button>
+        <h3>Novo Bizu Tático</h3>
+        <button class="modal-close-btn" onclick="closeModal('modalAddNote')">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label>Título do Tópico</label>
-          <input type="text" class="form-control" id="inputNoteTitle" placeholder="Ex: Fórmula de Bhaskara ou Lei de Newton">
-        </div>
-        <div class="form-group">
-          <label>Disciplina</label>
-          <select class="form-control" id="inputNoteSubject">
-            <option value="Biologia">Biologia</option>
-            <option value="Química">Química</option>
-            <option value="Matemática">Matemática</option>
-            <option value="Inglês">Inglês</option>
-            <option value="Geral">Geral</option>
+          <label>Disciplina:</label>
+          <select id="inputNoteSubject" class="form-control">
+            <option value="Direito Penal">Direito Penal</option>
+            <option value="Direito Processual Penal">Direito Processual Penal</option>
+            <option value="Direito Constitucional">Direito Constitucional</option>
+            <option value="Direito Administrativo">Direito Administrativo</option>
+            <option value="Língua Portuguesa">Língua Portuguesa</option>
+            <option value="Legislação Especial">Legislação Especial</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Conteúdo / Resumo</label>
-          <textarea class="form-control" id="inputNoteContent" rows="4" placeholder="Escreva os pontos-chave e insights..."></textarea>
+          <label>Bizu / Síntese Operacional:</label>
+          <textarea id="inputNoteText" class="form-control" rows="4" placeholder="Escreva a regra mnemônica, prazo ou distinção doutrinária..."></textarea>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn-secondary" onclick="closeModal('modalAddNote')">Cancelar</button>
-        <button class="btn-primary" onclick="saveNewNote()">Salvar Nota</button>
+        <button class="btn-primary" onclick="saveNewNote()">Salvar Bizu</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal Flashcard Interativo -->
-  <div class="modal-backdrop" id="modalFlashcard">
-    <div class="modal-card" style="text-align: center;">
+  <!-- Modal Interativo do Flashcard com Efeito 3D Flip -->
+  <div class="modal-backdrop" id="modalStudyFlashcard">
+    <div class="modal-card">
       <div class="modal-header">
-        <h3 id="flashcardDeckTitle">Revisão de Flashcard</h3>
-        <button class="modal-close-btn" onclick="closeModal('modalFlashcard')">✕</button>
+        <h3 id="fcModalDeckTitle">Revisão Tática</h3>
+        <button class="modal-close-btn" onclick="closeModal('modalStudyFlashcard')">&times;</button>
       </div>
-      <div class="modal-body" style="padding: 24px 12px; cursor: pointer;" onclick="flipFlashcard()">
-        <div id="flashcardSidePrompt" style="font-size: 11px; color: var(--bronze); margin-bottom: 8px;">(Toque para virar o cartão)</div>
-        <div id="flashcardContent" style="font-size: 16px; font-weight: 600; color: var(--text-main); min-height: 80px; display: flex; align-items: center; justify-content: center; line-height: 1.5;">
-          Carregando pergunta...
+      <div class="modal-body">
+        <div class="fc-flip-card" id="activeFlipCard" onclick="toggleCardFlip()">
+          <div class="fc-flip-inner">
+            <div class="fc-flip-front">
+              <span style="font-size: 11px; color: var(--gold-primary); text-transform: uppercase; font-weight: 700;">● Pergunta de Prova (Toque para ver a resposta)</span>
+              <p id="fcQuestionText" style="font-size: 14px; font-weight: 600; line-height: 1.5;">...</p>
+            </div>
+            <div class="fc-flip-back">
+              <span style="font-size: 11px; color: var(--accent-green); text-transform: uppercase; font-weight: 700;">✓ Bizu & Fundamentação</span>
+              <p id="fcAnswerText" style="font-size: 13.5px; line-height: 1.5;">...</p>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="modal-footer" style="justify-content: center; gap: 8px;">
-        <button class="btn-secondary" style="border-color: rgba(248, 113, 113, 0.4); color: #F87171;" onclick="nextFlashcard('diff')">Difícil</button>
-        <button class="btn-secondary" style="border-color: rgba(251, 191, 36, 0.4); color: #FBBF24;" onclick="nextFlashcard('med')">Médio</button>
-        <button class="btn-primary" style="background: var(--bronze); color: #0B0B0C;" onclick="nextFlashcard('easy')">Fácil</button>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button class="btn-secondary" onclick="prevFlashcard()">← Anterior</button>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-secondary" style="border-color: var(--accent-red); color: var(--accent-red);" onclick="nextFlashcard('diff')">Errei / Revisar</button>
+          <button class="btn-primary" style="background: var(--accent-green); color: #0B0E14;" onclick="nextFlashcard('easy')">Acertei ✓</button>
+        </div>
+        <button class="btn-secondary" onclick="nextFlashcard()">Próximo →</button>
       </div>
     </div>
   </div>
@@ -2154,565 +2023,760 @@
   <!-- Container de Toasts -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- ========================================================================
-       SCRIPTS: RELÓGIO, POMODORO, BROWN NOISE (WEB AUDIO) & PERSISTÊNCIA
-       ======================================================================== -->
+  <!-- ==========================================================================
+       LÓGICA JAVASCRIPT DO CRONOGRAMA TÁTICO OS
+       ========================================================================== -->
   <script>
-    // 1. RELÓGIO DIGITAL AO VIVO
+    /* ========================================================================
+       1. DADOS TÁTICOS BASE (COM INTEGRAÇÃO AO LOCALSTORAGE EXISTENTE)
+       ======================================================================== */
+    const DEFAULT_CONCURSO_CLASSES = [
+      { id: 'dp', name: 'Direito Penal', topics: 18, pending: 3, done: 65, color: '#EF4444', icon: '⚖️' },
+      { id: 'dpp', name: 'Proc. Penal', topics: 14, pending: 2, done: 52, color: '#F59E0B', icon: '🔍' },
+      { id: 'dc', name: 'Constitucional', topics: 16, pending: 1, done: 84, color: '#3B82F6', icon: '🏛️' },
+      { id: 'da', name: 'Administrativo', topics: 15, pending: 3, done: 45, color: '#10B981', icon: '📜' },
+      { id: 'lp', name: 'Português', topics: 22, pending: 4, done: 78, color: '#8B5CF6', icon: '📖' },
+      { id: 'leg', name: 'Legislação PCMG', topics: 12, pending: 2, done: 60, color: '#D4AF37', icon: '🛡️' }
+    ];
+
+    const DEFAULT_TIMETABLE = [
+      { shift: 'Manhã (08h - 10h)', seg: 'Português', ter: 'Constitucional', qua: 'Proc. Penal', qui: 'Leg. Especial', sex: 'D. Penal', sab: '100 Questões' },
+      { shift: 'Tarde (14h - 16h)', seg: 'D. Penal', ter: 'Administrativo', qua: 'RLM / Lógica', qui: 'Informática', sex: 'Proc. Penal', sab: 'Lei Seca' },
+      { shift: 'Noite (19h30 - 21h30)', seg: 'Revisão 24h', ter: 'Questões Banca', qua: 'Revisão 7d', qui: 'Redação / Peça', sex: 'Revisão Geral', sab: 'Simulado Tático' }
+    ];
+
+    const DEFAULT_ASSESSMENTS = [
+      { id: 'a1', title: 'Prova Oficial PCMG • Investigador', date: '2026-12-13', target: '85% acertos (51/60)', status: 'in_progress', badge: 'Meta Principal' },
+      { id: 'a2', title: 'Simulado Geral Tático #04', date: '2026-10-25', target: '60 questões estilo Banca', status: 'not_started', badge: 'Agendado' },
+      { id: 'a3', title: 'Revisão de Véspera • Súmulas Vinculantes', date: '2026-11-20', target: 'STF / STJ comentadas', status: 'completed', badge: 'Concluído' }
+    ];
+
+    const DEFAULT_TASKS = [
+      { id: 't1', title: 'Crimes contra a Vida - Homicídio simples, qualificado e feminicídio', date: '19 Out 2026', done: true, priority: 4, subject: 'Direito Penal' },
+      { id: 't2', title: 'Inquérito Policial - Prazos para réu preso e solto no CPP', date: '20 Out 2026', done: false, priority: 4, subject: 'Proc. Penal' },
+      { id: 't3', title: 'Art. 5º da CF/88 - Inviolabilidade de domicílio e flagrante', date: '21 Out 2026', done: false, priority: 3, subject: 'Constitucional' },
+      { id: 't4', title: 'Atos Administrativos - Atributos (PATI) e anulação/revogação', date: '22 Out 2026', done: false, priority: 3, subject: 'Administrativo' },
+      { id: 't5', title: 'Crase - Casos proibidos, obrigatórios e facultativos', date: '23 Out 2026', done: false, priority: 2, subject: 'Português' },
+      { id: 't6', title: 'Lei de Drogas (11.343/06) - Distinção entre posse (art. 28) e tráfico (art. 33)', date: '24 Out 2026', done: false, priority: 4, subject: 'Legislação PCMG' }
+    ];
+
+    const DEFAULT_FLASHCARDS = [
+      { id: 'fc1', tab: 'hoje', deck: 'Proc. Penal', q: 'Qual o prazo de conclusão do Inquérito Policial na Justiça Estadual para réu preso e réu solto (CPP)?', a: 'Preso: 10 dias (improrrogáveis). Solto: 30 dias (prorrogáveis pela autoridade judicial).' },
+      { id: 'fc2', tab: 'hoje', deck: 'Direito Penal', q: 'Qual a diferença fundamental entre Dolo Eventual e Culpa Consciente?', a: 'No dolo eventual o agente assume o risco do resultado ("tanto faz, não me importo"). Na culpa consciente ele prevê o resultado mas confia sinceramente em sua habilidade de evitá-lo.' },
+      { id: 'fc3', tab: '7d', deck: 'Constitucional', q: 'A casa é asilo inviolável. Quais as 4 exceções constitucionais para entrada sem consentimento?', a: '1) Flagrante delito; 2) Desastre; 3) Prestar socorro (qualquer hora do dia ou da noite); 4) Por determinação judicial (somente durante o dia).' },
+      { id: 'fc4', tab: '30d', deck: 'Administrativo', q: 'Quais são os 5 atributos do ato administrativo pelo mnemônico PATI?', a: 'Presunção de Legitimidade, Autoexecutoriedade, Tipicidade e Imperatividade.' }
+    ];
+
+    const DEFAULT_NOTES = [
+      { id: 'n1', title: 'Crimes Hediondos 3T', tag: 'D. Penal', color: '#EF4444', text: 'Inafiançáveis e insuscetíveis de graça ou anistia: Tortura, Tráfico Ilícito de Entorpecentes e Terrorismo (3T), além dos hediondos propriamente ditos.' },
+      { id: 'n2', title: 'Audiência de Custódia', tag: 'Proc. Penal', color: '#F59E0B', text: 'Prazo improrrogável de 24 horas após a realização da prisão em flagrante. Presença obrigatória de juiz, membro do MP e advogado/defensor.' },
+      { id: 'n3', title: 'Remédios Constitucionais', tag: 'Constitucional', color: '#3B82F6', text: 'HC: Liberdade de locomoção (gratuito). HD: Acesso/retificação a dados pessoais do impetrante (gratuito). MS: Direito líquido e certo não amparado por HC/HD.' },
+      { id: 'n4', title: 'Concordância com Partícula SE', tag: 'Português', color: '#8B5CF6', text: 'VTD + SE = Partícula Apassivadora (Alugam-se casas). VTI/VI + SE = Índice de Indeterminação do Sujeito (Precisa-se de operários - verbo no singular).' }
+    ];
+
+    /* ========================================================================
+       2. CARREGAMENTO E SINCRONIZAÇÃO DE DADOS
+       ======================================================================== */
+    let currentTasks = [];
+    let currentAssessments = [];
+    let currentNotes = [];
+    let currentFlashcards = DEFAULT_FLASHCARDS;
+    let activeCardIndex = 0;
+
+    function initData() {
+      // 1. Tentar ler do localStorage existente do app
+      const rawTasks = localStorage.getItem('tactical_os_tasks');
+      currentTasks = rawTasks ? JSON.parse(rawTasks) : DEFAULT_TASKS;
+
+      const rawAssessments = localStorage.getItem('tactical_os_assessments');
+      currentAssessments = rawAssessments ? JSON.parse(rawAssessments) : DEFAULT_ASSESSMENTS;
+
+      const rawNotes = localStorage.getItem('tactical_os_notes');
+      currentNotes = rawNotes ? JSON.parse(rawNotes) : DEFAULT_NOTES;
+
+      // Se houver concurso_exam_target no localStorage clássico, sincronizar
+      try {
+        const examTargetRaw = localStorage.getItem('concurso_exam_target');
+        if (examTargetRaw) {
+          const target = JSON.parse(examTargetRaw);
+          if (target && target.date) {
+            currentAssessments[0].title = target.title || 'Prova Oficial do Concurso';
+            currentAssessments[0].date = target.date;
+          }
+        }
+      } catch(e) {}
+
+      renderClasses();
+      renderTimetable();
+      renderAssessments();
+      renderTasks();
+      renderFlashcards('hoje');
+      renderNotes();
+      renderHabitJournal();
+      initCountdown();
+    }
+
+    /* ========================================================================
+       3. RENDERIZAÇÃO DOS COMPONENTES
+       ======================================================================== */
+
+    // Renderizar Disciplinas
+    function renderClasses() {
+      const container = document.getElementById('concursoClassesGrid');
+      if (!container) return;
+      
+      // Se houver matérias cadastradas pelo usuário no concurso_app_data clássico
+      let displayClasses = DEFAULT_CONCURSO_CLASSES;
+      try {
+        const appDataRaw = localStorage.getItem('concurso_app_data');
+        if (appDataRaw) {
+          const appData = JSON.parse(appDataRaw);
+          if (appData && Array.isArray(appData.materias) && appData.materias.length > 0) {
+            const colors = ['#EF4444', '#F59E0B', '#3B82F6', '#10B981', '#8B5CF6', '#D4AF37'];
+            const icons = ['⚖️', '🔍', '🏛️', '📜', '📖', '🛡️'];
+            displayClasses = appData.materias.map((m, idx) => {
+              const topicosCount = Array.isArray(m.topicos) ? m.topicos.length : 10;
+              return {
+                id: m.id || ('mat_' + idx),
+                name: m.nome || 'Disciplina',
+                topics: topicosCount,
+                pending: Math.max(1, Math.round(topicosCount * 0.3)),
+                done: Math.min(100, Math.max(20, Math.round(50 + (idx * 8)))),
+                color: colors[idx % colors.length],
+                icon: icons[idx % icons.length]
+              };
+            });
+            const badge = document.getElementById('totalDisciplinasBadge');
+            if (badge) badge.innerText = displayClasses.length + ' Disciplinas no Edital';
+          }
+        }
+      } catch(e) {}
+
+      container.innerHTML = displayClasses.map(c => 
+        '<div class="class-card" style="--card-accent: ' + c.color + ';" onclick="filterTasksBySubject(\'' + c.name + '\')">' +
+          '<div class="class-header">' +
+            '<span class="class-icon">' + c.icon + '</span>' +
+            '<h3 title="' + c.name + '">' + c.name + '</h3>' +
+          '</div>' +
+          '<div class="class-body">' +
+            '<div class="class-stat-row">' +
+              '<span>Tópicos do Edital:</span>' +
+              '<strong>' + c.topics + ' tópicos</strong>' +
+            '</div>' +
+            '<div class="class-stat-row">' +
+              '<span>Sessões Pendentes:</span>' +
+              '<strong style="color: var(--gold-light);">' + c.pending + ' sessões</strong>' +
+            '</div>' +
+            '<div class="class-progress-bg">' +
+              '<div class="class-progress-fill" style="width: ' + c.done + '%;"></div>' +
+            '</div>' +
+            '<div class="class-stat-row" style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">' +
+              '<span>Progresso</span>' +
+              '<span style="color: ' + c.color + '; font-weight: 700;">' + c.done + '%</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      ).join('');
+    }
+
+    // Renderizar Grade Tática
+    function renderTimetable() {
+      const tbody = document.getElementById('timetableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = DEFAULT_TIMETABLE.map(row => 
+        '<tr>' +
+          '<td><span class="time-slot-badge">' + row.shift + '</span></td>' +
+          '<td><span class="subject-pill-cell pill-blue" onclick="showSubjectToast(\'' + row.seg + '\')">' + row.seg + '</span></td>' +
+          '<td><span class="subject-pill-cell pill-purple" onclick="showSubjectToast(\'' + row.ter + '\')">' + row.ter + '</span></td>' +
+          '<td><span class="subject-pill-cell pill-green" onclick="showSubjectToast(\'' + row.qua + '\')">' + row.qua + '</span></td>' +
+          '<td><span class="subject-pill-cell pill-amber" onclick="showSubjectToast(\'' + row.qui + '\')">' + row.qui + '</span></td>' +
+          '<td><span class="subject-pill-cell pill-red" onclick="showSubjectToast(\'' + row.sex + '\')">' + row.sex + '</span></td>' +
+          '<td><span class="subject-pill-cell pill-blue" style="border-color: var(--gold-primary); color: var(--gold-light);" onclick="showSubjectToast(\'' + row.sab + '\')">' + row.sab + '</span></td>' +
+        '</tr>'
+      ).join('');
+    }
+
+    function showSubjectToast(name) {
+      showToast('Sessão Tática selecionada: ' + name, 'info');
+    }
+
+    // Renderizar Avaliações & Metas
+    function renderAssessments() {
+      const container = document.getElementById('assessmentsContainer');
+      if (!container) return;
+
+      container.innerHTML = currentAssessments.map(a => {
+        let statusClass = 'status-not-started';
+        let statusLabel = 'Agendado';
+        if (a.status === 'in_progress') {
+          statusClass = 'status-in-progress';
+          statusLabel = 'Em Preparação';
+        } else if (a.status === 'completed') {
+          statusClass = 'status-completed';
+          statusLabel = 'Concluído';
+        }
+
+        return (
+          '<div class="assessment-item" onclick="showToast(\'Meta selecionada: ' + a.title + '\', \'info\')">' +
+            '<div class="assessment-top">' +
+              '<span class="assessment-title">' +
+                '<span>🎯</span> ' + a.title +
+              '</span>' +
+              '<span class="status-badge ' + statusClass + '">' + statusLabel + '</span>' +
+            '</div>' +
+            '<div class="assessment-bottom">' +
+              '<span>Alvo: <strong style="color: var(--text-main);">' + a.target + '</strong></span>' +
+              '<span class="assessment-date">📅 ' + formatSimpleDate(a.date) + '</span>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    // Renderizar Missões / Tarefas
+    function renderTasks(filterSubject) {
+      const tbody = document.getElementById('tasksTableBody');
+      if (!tbody) return;
+
+      const filtered = filterSubject 
+        ? currentTasks.filter(t => t.subject === filterSubject) 
+        : currentTasks;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: var(--text-muted);">Nenhuma missão cadastrada para esta disciplina.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(t => {
+        const stars = '★'.repeat(t.priority) + '☆'.repeat(4 - t.priority);
+        return (
+          '<tr class="' + (t.done ? 'task-completed' : '') + '">' +
+            '<td class="task-check-cell">' +
+              '<input type="checkbox" class="task-checkbox" ' + (t.done ? 'checked' : '') + ' onchange="toggleTaskDone(\'' + t.id + '\')">' +
+            '</td>' +
+            '<td>' +
+              '<span class="task-title">' + t.title + '</span>' +
+            '</td>' +
+            '<td>' +
+              '<span style="font-family: \'JetBrains Mono\'; font-size: 11px; color: var(--text-gold);">' + t.date + '</span>' +
+            '</td>' +
+            '<td>' +
+              '<span class="status-badge ' + (t.done ? 'status-completed' : 'status-in-progress') + '">' +
+                (t.done ? 'Concluída' : 'Pendente') +
+              '</span>' +
+            '</td>' +
+            '<td>' +
+              '<span class="task-stars" onclick="cycleTaskPriority(\'' + t.id + '\')" title="Clique para alterar prioridade">' + stars + '</span>' +
+            '</td>' +
+            '<td>' +
+              '<span class="subject-pill-cell pill-blue">' + t.subject + '</span>' +
+            '</td>' +
+          '</tr>'
+        );
+      }).join('');
+    }
+
+    function toggleTaskDone(taskId) {
+      const task = currentTasks.find(t => t.id === taskId);
+      if (task) {
+        task.done = !task.done;
+        localStorage.setItem('tactical_os_tasks', JSON.stringify(currentTasks));
+        renderTasks();
+        showToast(task.done ? 'Missão cumprida! Foco mantido.' : 'Missão reaberta.', task.done ? 'success' : 'info');
+      }
+    }
+
+    function cycleTaskPriority(taskId) {
+      const task = currentTasks.find(t => t.id === taskId);
+      if (task) {
+        task.priority = task.priority >= 4 ? 1 : task.priority + 1;
+        localStorage.setItem('tactical_os_tasks', JSON.stringify(currentTasks));
+        renderTasks();
+        showToast('Prioridade tática alterada para ' + task.priority + ' estrela(s)', 'info');
+      }
+    }
+
+    function filterTasksBySubject(subjectName) {
+      renderTasks(subjectName);
+      showToast('Filtrando missões de: ' + subjectName, 'info');
+      document.getElementById('missoes')?.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Renderizar Flashcards
+    function renderFlashcards(tab) {
+      const container = document.getElementById('flashcardsListContainer');
+      if (!container) return;
+
+      const filtered = tab === 'todos' 
+        ? currentFlashcards 
+        : currentFlashcards.filter(f => f.tab === tab);
+
+      container.innerHTML = filtered.map((fc, idx) => 
+        '<div class="flashcard-item" onclick="openFlashcardDeck(\'' + fc.deck + '\', ' + idx + ')">' +
+          '<div style="display: flex; align-items: center; gap: 8px;">' +
+            '<span style="color: var(--gold-primary);">⚡</span>' +
+            '<span class="fc-title">' + (fc.q.length > 55 ? fc.q.slice(0, 55) + '...' : fc.q) + '</span>' +
+          '</div>' +
+          '<span class="fc-badge">' + fc.deck + '</span>' +
+        '</div>'
+      ).join('');
+    }
+
+    function switchFlashcardTab(tab, btn) {
+      document.querySelectorAll('.fc-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderFlashcards(tab);
+    }
+
+    function openFlashcardDeck(deckName, startIndex = 0) {
+      activeCardIndex = startIndex;
+      loadCardIntoModal();
+      openModal('modalStudyFlashcard');
+    }
+
+    function loadCardIntoModal() {
+      const card = currentFlashcards[activeCardIndex] || currentFlashcards[0];
+      document.getElementById('fcModalDeckTitle').innerText = 'Revisão: ' + card.deck + ' (' + (activeCardIndex + 1) + '/' + currentFlashcards.length + ')';
+      document.getElementById('fcQuestionText').innerText = card.q;
+      document.getElementById('fcAnswerText').innerText = card.a;
+      
+      const flipElem = document.getElementById('activeFlipCard');
+      if (flipElem) flipElem.classList.remove('flipped');
+    }
+
+    function toggleCardFlip() {
+      const flipElem = document.getElementById('activeFlipCard');
+      if (flipElem) flipElem.classList.toggle('flipped');
+    }
+
+    function nextFlashcard(feedback = null) {
+      if (feedback === 'easy') showToast('Marcado como dominado! Próxima revisão agendada.', 'success');
+      activeCardIndex = (activeCardIndex + 1) % currentFlashcards.length;
+      loadCardIntoModal();
+    }
+
+    function prevFlashcard() {
+      activeCardIndex = (activeCardIndex - 1 + currentFlashcards.length) % currentFlashcards.length;
+      loadCardIntoModal();
+    }
+
+    // Renderizar Bizus & Notas Táticas
+    function renderNotes() {
+      const container = document.getElementById('stickyNotesContainer');
+      if (!container) return;
+
+      container.innerHTML = currentNotes.map(n => 
+        '<div class="sticky-note" style="--note-accent: ' + n.color + ';" onclick="viewNoteFull(\'' + n.title + '\', \'' + encodeURIComponent(n.text) + '\')">' +
+          '<div>' +
+            '<strong style="font-size: 11.5px; color: var(--gold-light); display: block; margin-bottom: 4px;">' + n.title + '</strong>' +
+            '<p class="note-text">' + n.text + '</p>' +
+          '</div>' +
+          '<div class="note-footer">' +
+            '<span class="note-tag">' + n.tag + '</span>' +
+            '<span>Bizu de Prova</span>' +
+          '</div>' +
+        '</div>'
+      ).join('');
+    }
+
+    function viewNoteFull(title, textEncoded) {
+      const text = decodeURIComponent(textEncoded);
+      alert('📌 ' + title + '\n\n' + text);
+    }
+
+    // Diário de Hábitos
+    const HABIT_DAYS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+    function renderHabitJournal() {
+      const container = document.getElementById('habitDaysContainer');
+      if (!container) return;
+
+      const raw = localStorage.getItem('tactical_os_habits');
+      const habits = raw ? JSON.parse(raw) : [true, true, true, true, false, false, false];
+
+      container.innerHTML = HABIT_DAYS.map((d, i) => 
+        '<button class="habit-day-btn ' + (habits[i] ? 'done' : '') + '" onclick="toggleHabitDay(' + i + ')" title="Dia ' + d + '">' +
+          d +
+        '</button>'
+      ).join('');
+
+      const count = habits.filter(Boolean).length;
+      const pct = Math.round((count / 7) * 100);
+      document.getElementById('habitPercentText').innerText = pct + '%';
+      document.getElementById('habitProgressBar').style.width = pct + '%';
+    }
+
+    function toggleHabitDay(index) {
+      const raw = localStorage.getItem('tactical_os_habits');
+      const habits = raw ? JSON.parse(raw) : [true, true, true, true, false, false, false];
+      habits[index] = !habits[index];
+      localStorage.setItem('tactical_os_habits', JSON.stringify(habits));
+      renderHabitJournal();
+      showToast('Progresso semanal atualizado com sucesso.', 'info');
+    }
+
+    function toggleHabitToday() {
+      const day = (new Date().getDay() + 6) % 7; // Seg = 0
+      toggleHabitDay(day);
+    }
+
+    /* ========================================================================
+       4. RELÓGIO DIGITAL & CONTAGEM REGRESSIVA DA PROVA
+       ======================================================================== */
     function updateClock() {
       const now = new Date();
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
       
       const elH = document.getElementById('clockHours');
       const elM = document.getElementById('clockMinutes');
-      const elDate = document.getElementById('clockFullDate');
-      
-      if (elH) elH.textContent = hours;
-      if (elM) elM.textContent = minutes;
-      
-      if (elDate) {
-        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-        elDate.textContent = now.toLocaleDateString('pt-BR', options);
+      if (elH) elH.innerText = h;
+      if (elM) elM.innerText = m;
+
+      const dateStr = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+      const elD = document.getElementById('clockFullDate');
+      if (elD) elD.innerText = dateStr;
+    }
+
+    function initCountdown() {
+      let targetDateStr = '2026-12-13';
+      try {
+        const raw = localStorage.getItem('concurso_exam_target');
+        if (raw) {
+          const t = JSON.parse(raw);
+          if (t && t.date) targetDateStr = t.date;
+        }
+      } catch(e) {}
+
+      const target = new Date(targetDateStr + 'T08:00:00');
+      const now = new Date();
+      const diffMs = target - now;
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+      const el = document.getElementById('countdownText');
+      if (el) {
+        if (diffDays > 0) {
+          el.innerText = 'Faltam ' + diffDays + ' dias para a Prova!';
+        } else if (diffDays === 0) {
+          el.innerText = 'É HOJE! Boa prova operacional!';
+        } else {
+          el.innerText = 'Foco no próximo edital!';
+        }
       }
     }
-    setInterval(updateClock, 1000);
-    updateClock();
 
-    // 2. POMODORO TIMER
-    const POMO_CONFIGS = {
-      focus: 25 * 60,
-      short: 5 * 60,
-      long: 15 * 60
-    };
-    let pomoCurrentMode = 'focus';
-    let pomoTimeLeft = POMO_CONFIGS.focus;
-    let pomoTimerInterval = null;
+    /* ========================================================================
+       5. POMODORO OPERACIONAL (WEB AUDIO CHIME INTEGRADO)
+       ======================================================================== */
+    let pomoMinutes = 50;
+    let pomoSeconds = 0;
+    let pomoTimerId = null;
+    let pomoRunning = false;
 
-    function setPomoMode(mode) {
-      if (pomoTimerInterval) {
-        clearInterval(pomoTimerInterval);
-        pomoTimerInterval = null;
-        updatePomoButtonState(false);
-      }
-      pomoCurrentMode = mode;
-      pomoTimeLeft = POMO_CONFIGS[mode] || 25 * 60;
-      
+    function setPomoMode(minutes, btn) {
       document.querySelectorAll('.pomo-chip').forEach(c => c.classList.remove('active'));
-      if (mode === 'focus') document.getElementById('pomoBtnFocus').classList.add('active');
-      if (mode === 'short') document.getElementById('pomoBtnShort').classList.add('active');
-      if (mode === 'long') document.getElementById('pomoBtnLong').classList.add('active');
-      
-      renderPomoTime();
+      if (btn) btn.classList.add('active');
+      pomoMinutes = minutes;
+      pomoSeconds = 0;
+      updatePomoDisplay();
+      if (pomoRunning) {
+        clearInterval(pomoTimerId);
+        pomoRunning = false;
+        document.getElementById('btnPomoStart').innerText = 'Começar Ciclo';
+      }
     }
 
-    function renderPomoTime() {
-      const mins = String(Math.floor(pomoTimeLeft / 60)).padStart(2, '0');
-      const secs = String(pomoTimeLeft % 60).padStart(2, '0');
-      const display = document.getElementById('pomoTimerText');
-      if (display) display.textContent = `${mins}:${secs}`;
+    function updatePomoDisplay() {
+      const el = document.getElementById('pomodoroTimer');
+      if (el) {
+        el.innerText = String(pomoMinutes).padStart(2, '0') + ':' + String(pomoSeconds).padStart(2, '0');
+      }
     }
 
     function togglePomodoro() {
-      if (pomoTimerInterval) {
-        // Pausar
-        clearInterval(pomoTimerInterval);
-        pomoTimerInterval = null;
-        updatePomoButtonState(false);
-        showToast('Pomodoro pausado');
-      } else {
-        // Iniciar
-        pomoTimerInterval = setInterval(() => {
-          if (pomoTimeLeft > 0) {
-            pomoTimeLeft--;
-            renderPomoTime();
+      const btn = document.getElementById('btnPomoStart');
+      if (!pomoRunning) {
+        pomoRunning = true;
+        if (btn) btn.innerText = 'Pausar Foco';
+        pomoTimerId = setInterval(() => {
+          if (pomoSeconds === 0) {
+            if (pomoMinutes === 0) {
+              clearInterval(pomoTimerId);
+              pomoRunning = false;
+              if (btn) btn.innerText = 'Começar Ciclo';
+              playTacticalChime();
+              showToast('🏆 Ciclo Tático Concluído! Descanse a mente operacional.', 'success');
+              return;
+            }
+            pomoMinutes--;
+            pomoSeconds = 59;
           } else {
-            clearInterval(pomoTimerInterval);
-            pomoTimerInterval = null;
-            updatePomoButtonState(false);
-            playChime();
-            showToast('⏰ Sessão Pomodoro concluída! Parabéns pelo foco.', 'success');
+            pomoSeconds--;
           }
+          updatePomoDisplay();
         }, 1000);
-        updatePomoButtonState(true);
-        showToast('Sessão Pomodoro iniciada!');
+      } else {
+        pomoRunning = false;
+        clearInterval(pomoTimerId);
+        if (btn) btn.innerText = 'Continuar';
       }
     }
 
     function resetPomodoro() {
-      if (pomoTimerInterval) {
-        clearInterval(pomoTimerInterval);
-        pomoTimerInterval = null;
-      }
-      pomoTimeLeft = POMO_CONFIGS[pomoCurrentMode] || 25 * 60;
-      renderPomoTime();
-      updatePomoButtonState(false);
-      showToast('Cronômetro reiniciado.');
-    }
-
-    function updatePomoButtonState(isRunning) {
+      if (pomoTimerId) clearInterval(pomoTimerId);
+      pomoRunning = false;
+      pomoMinutes = 50;
+      pomoSeconds = 0;
+      updatePomoDisplay();
       const btn = document.getElementById('btnPomoStart');
-      const icon = document.getElementById('pomoStartIcon');
-      const label = document.getElementById('pomoStartLabel');
-      if (!btn) return;
-      if (isRunning) {
-        icon.textContent = '❚❚';
-        label.textContent = 'Pausar';
-        btn.style.background = '#FBBF24';
-      } else {
-        icon.textContent = '▶';
-        label.textContent = 'Começar';
-        btn.style.background = 'var(--gold-light)';
+      if (btn) btn.innerText = 'Começar Ciclo';
+    }
+
+    function openPomoSettings() {
+      const val = prompt('Defina o tempo de foco em minutos:', pomoMinutes);
+      if (val && !isNaN(val) && val > 0) {
+        setPomoMode(parseInt(val), null);
       }
     }
 
-    // Beep sutil de Pomodoro via Web Audio API (zero dependências)
-    function playChime() {
+    function playTacticalChime() {
       try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3); // A5
-        gain.gain.setValueAtTime(0.2, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.4); // A5
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
         osc.connect(gain);
-        gain.connect(ctx.destination);
+        gain.connect(audioCtx.destination);
         osc.start();
-        osc.stop(ctx.currentTime + 0.8);
+        osc.stop(audioCtx.currentTime + 1.2);
       } catch(e) {}
     }
 
-    // 3. DREAMY BROWN NOISE PLAYER (WEB AUDIO API SINTETIZADOR)
+    /* ========================================================================
+       6. SINTETIZADOR REAL DE RUÍDO MARROM (WEB AUDIO API)
+       ======================================================================== */
     let audioCtx = null;
-    let noiseNode = null;
+    let brownNoiseNode = null;
     let isNoisePlaying = false;
+    let noiseProgressTimer = null;
 
     function toggleBrownNoise() {
-      if (isNoisePlaying) {
-        stopBrownNoise();
-      } else {
-        startBrownNoise();
-      }
-    }
+      const widget = document.getElementById('brownNoiseWidget');
+      const icon = document.getElementById('playIcon');
+      const fill = document.getElementById('noiseProgress');
 
-    function startBrownNoise() {
-      try {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (!isNoisePlaying) {
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+
+          const bufferSize = audioCtx.sampleRate * 2;
+          const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+          const output = noiseBuffer.getChannelData(0);
+          let lastOut = 0.0;
+
+          for (let i = 0; i < bufferSize; i++) {
+            const white = Math.random() * 2 - 1;
+            output[i] = (lastOut + (0.02 * white)) / 1.02;
+            lastOut = output[i];
+            output[i] *= 3.5;
+          }
+
+          brownNoiseNode = audioCtx.createBufferSource();
+          brownNoiseNode.buffer = noiseBuffer;
+          brownNoiseNode.loop = true;
+
+          const gainNode = audioCtx.createGain();
+          gainNode.gain.value = 0.22;
+
+          brownNoiseNode.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          brownNoiseNode.start();
+
+          isNoisePlaying = true;
+          if (widget) widget.classList.add('playing');
+          if (icon) icon.innerText = '⏸';
+          
+          let p = 0;
+          noiseProgressTimer = setInterval(() => {
+            p = (p + 1) % 100;
+            if (fill) fill.style.width = p + '%';
+          }, 300);
+
+          showToast('Áudio de Foco Tático ativado (Ruído Marrom).', 'info');
+        } catch(e) {
+          showToast('Não foi possível iniciar o áudio.', 'warning');
         }
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-
-        const bufferSize = audioCtx.sampleRate * 2;
-        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        let lastOut = 0.0;
-
-        // Algoritmo de Brown Noise autêntico (filtro integrador sobre ruído branco)
-        for (let i = 0; i < bufferSize; i++) {
-          const white = Math.random() * 2 - 1;
-          output[i] = (lastOut + (0.02 * white)) / 1.02;
-          lastOut = output[i];
-          output[i] *= 3.5; // Ganho ideal suave
-        }
-
-        noiseNode = audioCtx.createBufferSource();
-        noiseNode.buffer = noiseBuffer;
-        noiseNode.loop = true;
-
-        const gainNode = audioCtx.createGain();
-        gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime); // Volume confortável
-
-        noiseNode.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        noiseNode.start();
-
-        isNoisePlaying = true;
-        updateNoiseUI(true);
-        showToast('🎧 Dreamy Brown Noise tocando (Modo Foco Profundo)');
-      } catch(e) {
-        console.error('AudioContext error:', e);
-        showToast('Não foi possível iniciar o áudio de foco neste navegador.', 'error');
-      }
-    }
-
-    function stopBrownNoise() {
-      if (noiseNode) {
-        try { noiseNode.stop(); } catch(e) {}
-        noiseNode = null;
-      }
-      isNoisePlaying = false;
-      updateNoiseUI(false);
-      showToast('Áudio de foco pausado');
-    }
-
-    function updateNoiseUI(playing) {
-      const pulse = document.getElementById('noisePulseDot');
-      const label = document.getElementById('noiseStatusLabel');
-      const iconSvg = document.getElementById('noiseIconSvg');
-      
-      if (playing) {
-        if (pulse) pulse.classList.add('playing');
-        if (label) label.textContent = 'Ouvindo (Foco Noturno)';
-        if (iconSvg) iconSvg.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
       } else {
-        if (pulse) pulse.classList.remove('playing');
-        if (label) label.textContent = 'Pausado (Onda Suave)';
-        if (iconSvg) iconSvg.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
-      }
-    }
-
-    // 4. GESTÃO DE TAREFAS (CHECKBOX & PERSISTÊNCIA)
-    function toggleTask(checkboxEl) {
-      checkboxEl.classList.toggle('checked');
-      const row = checkboxEl.closest('tr');
-      if (row) {
-        const text = row.querySelector('.task-title-text');
-        if (text) {
-          text.classList.toggle('done', checkboxEl.classList.contains('checked'));
+        if (brownNoiseNode) {
+          try { brownNoiseNode.stop(); } catch(e) {}
+          brownNoiseNode.disconnect();
         }
-      }
-      saveTasksToStorage();
-    }
-
-    function toggleTaskText(textEl) {
-      const row = textEl.closest('tr');
-      if (row) {
-        const checkbox = row.querySelector('.custom-checkbox');
-        if (checkbox) toggleTask(checkbox);
+        isNoisePlaying = false;
+        if (widget) widget.classList.remove('playing');
+        if (icon) icon.innerText = '▶';
+        if (noiseProgressTimer) clearInterval(noiseProgressTimer);
+        if (fill) fill.style.width = '0%';
+        showToast('Áudio de Foco pausado.', 'info');
       }
     }
 
-    function cycleStars(starsEl) {
-      const starsArr = ['★', '★★', '★★★', '★★★★'];
-      const current = starsEl.textContent.trim();
-      const idx = starsArr.indexOf(current);
-      const next = starsArr[(idx + 1) % starsArr.length];
-      starsEl.textContent = next;
-      saveTasksToStorage();
-    }
-
-    function saveNewTask() {
-      const title = document.getElementById('inputTaskTitle').value.trim();
-      const subject = document.getElementById('inputTaskSubject').value;
-      const dateVal = document.getElementById('inputTaskDate').value;
-      const priority = document.getElementById('inputTaskPriority').value;
-
-      if (!title) {
-        showToast('Por favor, informe o título da tarefa.');
-        return;
-      }
-
-      const tbody = document.getElementById('tasksTableBody');
-      const tr = document.createElement('tr');
-      
-      let formattedDate = 'Sem prazo';
-      if (dateVal) {
-        const parts = dateVal.split('-');
-        if (parts.length === 3) formattedDate = `${parts[2]}/${parts[1]}`;
-      }
-
-      tr.innerHTML = `
-        <td class="task-check-cell">
-          <span class="custom-checkbox" onclick="toggleTask(this)">✓</span>
-        </td>
-        <td>
-          <span class="task-title-text" onclick="toggleTaskText(this)">${escapeHtml(title)}</span>
-        </td>
-        <td style="color: var(--text-muted); font-size: 11px;">${formattedDate}</td>
-        <td><span class="task-stars" onclick="cycleStars(this)">${priority}</span></td>
-        <td><span class="status-pill subject-tag">${subject}</span></td>
-      `;
-
-      tbody.prepend(tr);
-      closeModal('modalAddTask');
-      document.getElementById('inputTaskTitle').value = '';
-      saveTasksToStorage();
-      showToast('Tarefa adicionada com sucesso!', 'success');
-    }
-
-    function saveTasksToStorage() {
-      const rows = document.querySelectorAll('#tasksTableBody tr');
-      const tasks = [];
-      rows.forEach(r => {
-        const checked = r.querySelector('.custom-checkbox')?.classList.contains('checked') || false;
-        const text = r.querySelector('.task-title-text')?.textContent || '';
-        const date = r.children[2]?.textContent || '';
-        const stars = r.querySelector('.task-stars')?.textContent || '★★';
-        const subject = r.querySelector('.status-pill')?.textContent || 'Geral';
-        tasks.push({ checked, text, date, stars, subject });
-      });
-      localStorage.setItem('student_os_tasks', JSON.stringify(tasks));
-    }
-
-    function loadTasksFromStorage() {
-      try {
-        const raw = localStorage.getItem('student_os_tasks');
-        if (!raw) return;
-        const tasks = JSON.parse(raw);
-        if (!Array.isArray(tasks) || tasks.length === 0) return;
-        
-        const tbody = document.getElementById('tasksTableBody');
-        tbody.innerHTML = '';
-        tasks.forEach(t => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td class="task-check-cell">
-              <span class="custom-checkbox ${t.checked ? 'checked' : ''}" onclick="toggleTask(this)">✓</span>
-            </td>
-            <td>
-              <span class="task-title-text ${t.checked ? 'done' : ''}" onclick="toggleTaskText(this)">${escapeHtml(t.text)}</span>
-            </td>
-            <td style="color: var(--text-muted); font-size: 11px;">${escapeHtml(t.date)}</td>
-            <td><span class="task-stars" onclick="cycleStars(this)">${escapeHtml(t.stars)}</span></td>
-            <td><span class="status-pill subject-tag">${escapeHtml(t.subject)}</span></td>
-          `;
-          tbody.appendChild(tr);
-        });
-      } catch(e) {}
-    }
-
-    // 5. GESTÃO DE AVALIAÇÕES
-    function saveNewAssessment() {
-      const title = document.getElementById('inputAssessTitle').value.trim();
-      const subject = document.getElementById('inputAssessSubject').value;
-      const dateVal = document.getElementById('inputAssessDate').value;
-      const status = document.getElementById('inputAssessStatus').value;
-
-      if (!title) {
-        showToast('Informe o nome da avaliação.');
-        return;
-      }
-
-      let dateFormatted = 'Data a definir';
-      if (dateVal) {
-        const d = new Date(dateVal + 'T00:00:00');
-        dateFormatted = d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
-      }
-
-      let statusLabel = 'Não iniciado';
-      let statusClass = 'not-started';
-      if (status === 'in-progress') {
-        statusLabel = 'Em progresso';
-        statusClass = 'in-progress';
-      } else if (status === 'completed') {
-        statusLabel = 'Revisado';
-        statusClass = 'completed';
-      }
-
-      const list = document.getElementById('assessmentsList');
-      const card = document.createElement('div');
-      card.className = 'assessment-card';
-      card.innerHTML = `
-        <div class="assessment-top">
-          <span class="assessment-title">${escapeHtml(title)}</span>
-          <span class="status-pill ${statusClass}">${statusLabel}</span>
-        </div>
-        <div class="assessment-details">
-          <span>📅 ${dateFormatted}</span>
-          <span>•</span>
-          <span class="status-pill subject-tag">${subject}</span>
-        </div>
-      `;
-      list.prepend(card);
-      closeModal('modalAddAssessment');
-      document.getElementById('inputAssessTitle').value = '';
-      showToast('Avaliação cadastrada com sucesso!', 'success');
-    }
-
-    // 6. GESTÃO DE NOTAS RÁPIDAS
-    function saveNewNote() {
-      const title = document.getElementById('inputNoteTitle').value.trim();
-      const subject = document.getElementById('inputNoteSubject').value;
-      const content = document.getElementById('inputNoteContent').value.trim();
-
-      if (!title || !content) {
-        showToast('Preencha título e conteúdo da anotação.');
-        return;
-      }
-
-      const grid = document.getElementById('notesGrid');
-      const card = document.createElement('div');
-      card.className = 'note-card';
-      card.onclick = function() { viewNote(this); };
-      card.innerHTML = `
-        <div class="note-title">${escapeHtml(title)}</div>
-        <div class="note-snippet">${escapeHtml(content)}</div>
-        <div class="note-footer">
-          <span class="status-pill subject-tag">${subject}</span>
-          <span>Hoje, ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
-        </div>
-      `;
-      grid.prepend(card);
-      closeModal('modalAddNote');
-      document.getElementById('inputNoteTitle').value = '';
-      document.getElementById('inputNoteContent').value = '';
-      showToast('Anotação salva no bloco!', 'success');
-    }
-
-    function viewNote(cardEl) {
-      const title = cardEl.querySelector('.note-title')?.textContent || '';
-      const content = cardEl.querySelector('.note-snippet')?.textContent || '';
-      alert(`📌 ${title}\n\n${content}`);
-    }
-
-    // 7. HABIT JOURNAL
-    function toggleHabitDay(btn, dayIdx) {
-      btn.classList.toggle('done');
-      updateHabitTotal();
-    }
-
-    function toggleHabitToday() {
-      const day = new Date().getDay(); // 0 = dom, 1 = seg...
-      const mapping = [6, 0, 1, 2, 3, 4, 5]; // mapeia para os botões S T Q Q S S D
-      const targetBtn = document.querySelectorAll('.habit-dot-btn')[mapping[day]];
-      if (targetBtn) {
-        targetBtn.classList.toggle('done');
-        updateHabitTotal();
-        showToast('Hábito de hoje atualizado!');
-      }
-    }
-
-    function updateHabitTotal() {
-      const buttons = document.querySelectorAll('.habit-dot-btn');
-      const doneCount = Array.from(buttons).filter(b => b.classList.contains('done')).length;
-      const pct = Math.round((doneCount / buttons.length) * 100);
-      
-      const pctEl = document.getElementById('habitPercentText');
-      const countEl = document.getElementById('habitDaysCount');
-      const barEl = document.getElementById('habitProgressBar');
-
-      if (pctEl) pctEl.textContent = `${pct}%`;
-      if (countEl) countEl.textContent = `${doneCount}/7 dias`;
-      if (barEl) barEl.style.width = `${pct}%`;
-    }
-
-    // 8. FLASHCARDS INTERATIVOS
-    const FLASHCARDS_DECK = {
-      'Vocabulário & Idiomas': [
-        { q: "What does 'serendipity' mean?", a: "The occurrence of events by chance in a happy or beneficial way." },
-        { q: "Translate: 'A duras penas'", a: "With great difficulty / against all odds." },
-        { q: "Difference between 'affect' and 'effect'?", a: "'Affect' is usually a verb (to influence), 'effect' is usually a noun (result)." }
-      ],
-      'Bioquímica & Fórmulas': [
-        { q: "Onde ocorre o ciclo de Krebs?", a: "Na matriz mitocondrial das células eucarióticas." },
-        { q: "Qual a função do RNA transportador?", a: "Transportar aminoácidos específicos até os ribossomos durante a tradução." }
-      ],
-      'Reações & Nomenclatura': [
-        { q: "O que caracteriza uma reação exotérmica?", a: "Liberação de calor para o ambiente (ΔH < 0)." },
-        { q: "Qual o pH de uma solução neutra a 25°C?", a: "pH = 7.0." }
-      ],
-      'Teoremas & Fórmulas': [
-        { q: "Qual a derivada de sin(x)?", a: "cos(x)." },
-        { q: "Qual a integral de 1/x dx?", a: "ln|x| + C." }
-      ]
-    };
-
-    let currentSessionDeck = [];
-    let currentCardIndex = 0;
-    let showingAnswer = false;
-
-    function openFlashcardSession(deckName, count) {
-      const deck = FLASHCARDS_DECK[deckName] || FLASHCARDS_DECK['Vocabulário & Idiomas'];
-      currentSessionDeck = deck;
-      currentCardIndex = 0;
-      showingAnswer = false;
-
-      document.getElementById('flashcardDeckTitle').textContent = deckName;
-      renderCurrentCard();
-      openModal('modalFlashcard');
-    }
-
-    function renderCurrentCard() {
-      const card = currentSessionDeck[currentCardIndex];
-      const contentEl = document.getElementById('flashcardContent');
-      const promptEl = document.getElementById('flashcardSidePrompt');
-
-      if (!card) {
-        contentEl.textContent = '🎉 Sessão de Flashcards concluída com excelência!';
-        promptEl.textContent = 'Todos os cartões revisados.';
-        return;
-      }
-
-      if (showingAnswer) {
-        contentEl.textContent = card.a;
-        contentEl.style.color = 'var(--gold-light)';
-        promptEl.textContent = 'RESPOSTA (Toque para voltar à pergunta)';
-      } else {
-        contentEl.textContent = card.q;
-        contentEl.style.color = 'var(--text-main)';
-        promptEl.textContent = `PERGUNTA ${currentCardIndex + 1} de ${currentSessionDeck.length} (Toque para ver resposta)`;
-      }
-    }
-
-    function flipFlashcard() {
-      showingAnswer = !showingAnswer;
-      renderCurrentCard();
-    }
-
-    function nextFlashcard(rating) {
-      currentCardIndex++;
-      showingAnswer = false;
-      if (currentCardIndex >= currentSessionDeck.length) {
-        showToast('Parabéns! Decks de hoje revisados com sucesso!', 'success');
-        closeModal('modalFlashcard');
-      } else {
-        renderCurrentCard();
-      }
-    }
-
-    // 9. CONTROLE DE MODAIS
+    /* ========================================================================
+       7. SALVAMENTO E MODAIS
+       ======================================================================== */
     function openModal(id) {
-      const el = document.getElementById(id);
-      if (el) el.classList.add('open');
+      document.getElementById(id)?.classList.add('open');
     }
 
     function closeModal(id) {
-      const el = document.getElementById(id);
-      if (el) el.classList.remove('open');
+      document.getElementById(id)?.classList.remove('open');
     }
 
-    // Fechar ao clicar fora
-    document.querySelectorAll('.modal-backdrop').forEach(modal => {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.classList.remove('open');
-        }
-      });
-    });
+    function saveNewTask() {
+      const title = document.getElementById('inputTaskName')?.value.trim();
+      const subject = document.getElementById('inputTaskSubject')?.value;
+      const priority = parseInt(document.getElementById('inputTaskPriority')?.value || '3');
+      const dateVal = document.getElementById('inputTaskDate')?.value;
 
-    // 10. TOAST NOTIFICATIONS
-    function showToast(msg, type = 'info') {
+      if (!title) {
+        alert('Digite o nome da missão ou tópico.');
+        return;
+      }
+
+      const newTask = {
+        id: 't_' + Date.now(),
+        title: title,
+        date: dateVal ? formatSimpleDate(dateVal) : 'Hoje',
+        done: false,
+        priority: priority,
+        subject: subject
+      };
+
+      currentTasks.unshift(newTask);
+      localStorage.setItem('tactical_os_tasks', JSON.stringify(currentTasks));
+      renderTasks();
+      closeModal('modalAddTask');
+      document.getElementById('inputTaskName').value = '';
+      showToast('Nova missão tática adicionada com sucesso!', 'success');
+    }
+
+    function saveNewAssessment() {
+      const title = document.getElementById('inputAssessmentTitle')?.value.trim();
+      const date = document.getElementById('inputAssessmentDate')?.value;
+      const target = document.getElementById('inputAssessmentTarget')?.value.trim() || 'Meta Oficial';
+      const status = document.getElementById('inputAssessmentStatus')?.value || 'not_started';
+
+      if (!title) {
+        alert('Digite o título da meta ou simulado.');
+        return;
+      }
+
+      const newAssessment = {
+        id: 'a_' + Date.now(),
+        title: title,
+        date: date || '2026-11-15',
+        target: target,
+        status: status,
+        badge: status === 'completed' ? 'Concluído' : 'Agendado'
+      };
+
+      currentAssessments.unshift(newAssessment);
+      localStorage.setItem('tactical_os_assessments', JSON.stringify(currentAssessments));
+      renderAssessments();
+      closeModal('modalAddAssessment');
+      document.getElementById('inputAssessmentTitle').value = '';
+      showToast('Meta ou simulado adicionado com sucesso!', 'success');
+    }
+
+    function saveNewNote() {
+      const subject = document.getElementById('inputNoteSubject')?.value;
+      const text = document.getElementById('inputNoteText')?.value.trim();
+
+      if (!text) {
+        alert('Digite o conteúdo do bizu tático.');
+        return;
+      }
+
+      const colors = {
+        'Direito Penal': '#EF4444',
+        'Direito Processual Penal': '#F59E0B',
+        'Direito Constitucional': '#3B82F6',
+        'Direito Administrativo': '#10B981',
+        'Língua Portuguesa': '#8B5CF6',
+        'Legislação Especial': '#D4AF37'
+      };
+
+      const newNote = {
+        id: 'n_' + Date.now(),
+        title: 'Bizu • ' + subject,
+        tag: subject,
+        color: colors[subject] || '#D4AF37',
+        text: text
+      };
+
+      currentNotes.unshift(newNote);
+      localStorage.setItem('tactical_os_notes', JSON.stringify(currentNotes));
+      renderNotes();
+      closeModal('modalAddNote');
+      document.getElementById('inputNoteText').value = '';
+      showToast('Bizu tático salvo com sucesso!', 'success');
+    }
+
+    function openStudyHoursQuickModal() {
+      const mins = prompt('Quantos minutos de estudo você deseja registrar agora? (Ex: 60):', '60');
+      if (mins && !isNaN(mins) && mins > 0) {
+        showToast('Registrado ' + mins + ' min de estudo operacional!', 'success');
+        const cur = parseFloat(document.getElementById('weeklyHoursVal')?.innerText || '28.5');
+        const addedHours = (parseInt(mins) / 60).toFixed(1);
+        const newTotal = (parseFloat(cur) + parseFloat(addedHours)).toFixed(1);
+        if (document.getElementById('weeklyHoursVal')) {
+          document.getElementById('weeklyHoursVal').innerText = newTotal + 'h';
+        }
+      }
+    }
+
+    function formatSimpleDate(dateStr) {
+      if (!dateStr) return 'Hoje';
+      try {
+        const parts = dateStr.split('-');
+        if (parts.length === 3) {
+          const mNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+          return parts[2] + ' ' + mNames[parseInt(parts[1]) - 1] + ' ' + parts[0];
+        }
+      } catch(e) {}
+      return dateStr;
+    }
+
+    function showToast(message, type = 'success') {
       const container = document.getElementById('toastContainer');
       if (!container) return;
+
       const toast = document.createElement('div');
       toast.className = 'toast-item';
-      const icon = type === 'success' ? '✅' : (type === 'error' ? '❌' : '💡');
-      toast.innerHTML = `<span>${icon}</span> <span>${escapeHtml(msg)}</span>`;
+      
+      let icon = '✅';
+      if (type === 'info') icon = 'ℹ️';
+      if (type === 'warning') icon = '⚠️';
+
+      toast.innerHTML = '<span>' + icon + '</span><span>' + message + '</span>';
       container.appendChild(toast);
+
       setTimeout(() => {
-        toast.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
         toast.style.opacity = '0';
-        toast.style.transform = 'translateY(10px)';
-        setTimeout(() => toast.remove(), 400);
-      }, 3200);
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
     }
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
-
-    // Inicialização
+    // Inicialização ao carregar
     window.addEventListener('DOMContentLoaded', () => {
-      loadTasksFromStorage();
+      initData();
+      updateClock();
+      setInterval(updateClock, 1000);
     });
   </script>
 </body>
