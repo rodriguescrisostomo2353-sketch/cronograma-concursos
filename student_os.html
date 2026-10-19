@@ -36,6 +36,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 
+  <!-- Supabase JS Client Oficial para Autenticação e Sincronização -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     :root {
       /* Identidade Tática da Polícia Civil / Concursos Policiais */
@@ -1987,11 +1990,347 @@
       align-items: center;
       gap: 10px;
       animation: slideIn 0.3s ease;
+    /* ==========================================================================
+       PAREDE DE AUTENTICAÇÃO TÁTICA & GESTÃO DE SESSÃO
+       ========================================================================== */
+    .auth-wall-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(11, 14, 20, 0.96);
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
 
-    @keyframes slideIn {
-      from { transform: translateX(40px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+    .auth-wall-card {
+      background: linear-gradient(160deg, #161D2B 0%, #0F141F 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 440px;
+      padding: 32px 28px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 35px var(--gold-glow);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: fadeInScale 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeInScale {
+      from { transform: scale(0.94); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .auth-wall-header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .auth-brand-badge {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.18) 0%, rgba(15, 20, 31, 0.8) 70%);
+      border: 1px solid var(--border-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px var(--gold-glow);
+      margin-bottom: 4px;
+    }
+
+    .auth-brand-badge img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+    }
+
+    .auth-wall-header h2 {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--gold-light);
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .auth-subtitle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--gold-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .auth-lock-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-red);
+      box-shadow: 0 0 8px var(--accent-red);
+    }
+
+    .auth-description {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin: 4px 0 0;
+    }
+
+    .auth-tabs {
+      display: flex;
+      background: rgba(11, 14, 20, 0.6);
+      padding: 3px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-tactical);
+      gap: 4px;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .auth-tab-btn.active {
+      background: var(--gold-primary);
+      color: #0B0E14;
+      box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+    }
+
+    .auth-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .auth-field-icon {
+      position: absolute;
+      left: 12px;
+      width: 15px;
+      height: 15px;
+      color: var(--gold-primary);
+      pointer-events: none;
+    }
+
+    .auth-input-wrapper .form-control {
+      padding-left: 38px;
+    }
+
+    .auth-submit-btn {
+      width: 100%;
+      padding: 11px;
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      justify-content: center;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    .auth-wall-feedback {
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      line-height: 1.4;
+      display: none;
+    }
+
+    .auth-wall-feedback.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #F87171;
+    }
+
+    .auth-wall-feedback.success {
+      display: block;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34D399;
+    }
+
+    .auth-wall-footer {
+      text-align: center;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-tactical);
+    }
+
+    .auth-back-link {
+      color: var(--text-muted);
+      font-size: 12px;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .auth-back-link:hover {
+      color: var(--gold-light);
+    }
+
+    /* Badges de Usuário no Topo */
+    .user-session-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(11, 14, 20, 0.85);
+      border: 1px solid var(--border-gold);
+      padding: 5px 12px 5px 10px;
+      border-radius: var(--radius-full);
+      font-size: 11.5px;
+    }
+
+    .user-agent-icon {
+      font-size: 13px;
+    }
+
+    .user-email-text {
+      color: var(--gold-light);
+      font-weight: 600;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #F87171;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: #EF4444;
+      color: #fff;
+    }
+
+    /* Estados Vazios Táticos */
+    .empty-tactical-banner {
+      background: rgba(14, 19, 28, 0.7);
+      border: 1px dashed var(--border-tactical);
+      border-radius: var(--radius-md);
+      padding: 32px 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .empty-icon-shield {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.08);
+      border: 1px solid var(--border-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold-primary);
+    }
+
+    .empty-text h4 {
+      font-size: 15px;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+    }
+
+    .empty-text p {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.5;
+      margin: 0 auto;
+    }
+
+    .empty-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 6px;
+    }
+
+    /* Modal de Configuração de Matérias */
+    .preset-pill-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .btn-preset {
+      background: rgba(11, 14, 20, 0.7);
+      border: 1px solid var(--border-tactical);
+      color: var(--text-muted);
+      font-size: 11.5px;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-preset:hover, .btn-preset.active {
+      border-color: var(--gold-primary);
+      color: var(--gold-light);
+      background: rgba(212, 175, 55, 0.1);
+    }
+
+    .subjects-checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px;
+      max-height: 240px;
+      overflow-y: auto;
+      padding: 8px 4px;
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-sm);
+      background: rgba(11, 14, 20, 0.4);
+    }
+
+    .subject-check-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(20, 26, 38, 0.6);
+      padding: 7px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text-main);
+      cursor: pointer;
+      border: 1px solid transparent;
+      user-select: none;
+    }
+
+    .subject-check-item:hover {
+      border-color: rgba(212, 175, 55, 0.3);
+    }
+
+    .subject-check-item input[type="checkbox"] {
+      accent-color: var(--gold-primary);
+      cursor: pointer;
     }
   </style>
 </head>
@@ -2023,6 +2362,10 @@
             <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             Tela Inicial
           </a>
+          <button class="banner-btn" onclick="openSubjectConfigModal()" title="Configurar as Disciplinas do Edital">
+            <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            Matérias
+          </button>
           <button class="banner-btn primary" onclick="openModal('modalAddTask')">
             <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             Nova Missão
@@ -2035,6 +2378,11 @@
             <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             Modo Clássico
           </a>
+          <div class="user-session-badge" id="userSessionBadge" style="display: none;">
+            <span class="user-agent-icon">👮‍♂️</span>
+            <span class="user-email-text" id="userEmailText">agente@pcmg</span>
+            <button class="btn-logout" onclick="logoutTactical()" title="Encerrar Sessão">Sair</button>
+          </div>
         </div>
       </div>
     </header>
@@ -2598,6 +2946,135 @@
           <button type="button" class="btn-primary" onclick="closeModal('modalViewBizu')">Fechar</button>
         </div>
       </div>
+  <!-- ==========================================================================
+       PAREDE DE AUTENTICAÇÃO TÁTICA (LOGIN / CADASTRO OBRIGATÓRIO)
+       ========================================================================== -->
+  <div id="tacticalAuthWall" class="auth-wall-overlay" style="display: none;">
+    <div class="auth-wall-card">
+      <div class="auth-wall-header">
+        <div class="auth-brand-badge">
+          <img src="assets/distintivo_policia_civil.png" alt="Distintivo PCMG" onerror="this.src='assets/logo_faca_caveira.png'">
+        </div>
+        <h2>CRONOGRAMA TÁTICO OS</h2>
+        <div class="auth-subtitle">
+          <span class="auth-lock-dot"></span>
+          <span>Acesso Restrito • Identificação Obrigatória</span>
+        </div>
+        <p class="auth-description">Acesso exclusivo para agentes e estudantes cadastrados. Faça login com sua conta para desbloquear seu ambiente tático.</p>
+      </div>
+
+      <!-- Abas: Entrar / Cadastrar -->
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab-btn active" id="authTabBtnLogin" onclick="switchTacticalAuthTab('login')">
+          Entrar (Login)
+        </button>
+        <button type="button" class="auth-tab-btn" id="authTabBtnRegister" onclick="switchTacticalAuthTab('register')">
+          Criar Nova Conta
+        </button>
+      </div>
+
+      <!-- Feedback de status -->
+      <div id="authWallFeedback" class="auth-wall-feedback"></div>
+
+      <!-- Formulário de Autenticação -->
+      <form id="tacticalAuthForm" onsubmit="handleTacticalAuthSubmit(event)">
+        <div class="form-group">
+          <label for="tacticalAuthEmail">E-mail Operacional:</label>
+          <div class="auth-input-wrapper">
+            <svg class="auth-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <input type="email" id="tacticalAuthEmail" class="form-control" placeholder="seu.email@concurso.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="tacticalAuthPassword">Senha:</label>
+          <div class="auth-input-wrapper">
+            <svg class="auth-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <input type="password" id="tacticalAuthPassword" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+          </div>
+        </div>
+
+        <div class="form-group" id="tacticalAuthPassConfirmRow" style="display: none;">
+          <label for="tacticalAuthPassConfirm">Confirmar Senha:</label>
+          <div class="auth-input-wrapper">
+            <svg class="auth-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <input type="password" id="tacticalAuthPassConfirm" class="form-control" placeholder="Repita sua senha" autocomplete="new-password">
+          </div>
+        </div>
+
+        <div class="auth-actions">
+          <button type="submit" class="btn-primary auth-submit-btn" id="btnTacticalAuthSubmit">
+            <span id="btnTacticalAuthText">Acessar Sistema Tático</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="auth-wall-footer">
+        <a href="landing.html" class="auth-back-link">
+          ← Voltar para a Tela Inicial
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Configuração de Matérias do Edital -->
+  <div class="modal-backdrop" id="modalConfigSubjects">
+    <div class="modal-card" style="max-width: 600px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg class="tactical-icon" style="color: var(--gold-primary); width: 20px; height: 20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          <h3 style="margin: 0; color: var(--gold-light);">Configurar Disciplinas do Edital</h3>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('modalConfigSubjects')">&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 14px;">
+        <p style="font-size: 12.5px; color: var(--text-muted); margin: 0; line-height: 1.5;">
+          Selecione um edital padrão ou marque apenas as disciplinas do seu concurso. Os flashcards, grade de estudo e missões serão gerados <strong>exclusivamente para as matérias configuradas</strong>.
+        </p>
+
+        <!-- Presets Rápidos -->
+        <div>
+          <span style="font-size: 11px; text-transform: uppercase; color: var(--gold-primary); font-weight: 700; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">
+            Edital Base / Predefinições:
+          </span>
+          <div class="preset-pill-group">
+            <button type="button" class="btn-preset active" id="presetBtnPcmg" onclick="applySubjectPreset('pcmg')">PCMG (Investigador/Escrivão)</button>
+            <button type="button" class="btn-preset" id="presetBtnPf" onclick="applySubjectPreset('pf')">Polícia Federal (PF)</button>
+            <button type="button" class="btn-preset" id="presetBtnPrf" onclick="applySubjectPreset('prf')">Polícia Rodoviária (PRF)</button>
+            <button type="button" class="btn-preset" id="presetBtnCustom" onclick="applySubjectPreset('custom')">Personalizado (Limpar)</button>
+          </div>
+        </div>
+
+        <!-- Grade de Checkboxes de Disciplinas -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--text-main); font-weight: 600;">
+              Disciplinas Ativas:
+            </span>
+            <span id="subjectSelectedCount" style="font-size: 11px; color: var(--gold-light);">0 selecionadas</span>
+          </div>
+          <div class="subjects-checkbox-grid" id="subjectsCheckboxesContainer">
+            <!-- Renderizado dinamicamente -->
+          </div>
+        </div>
+
+        <!-- Adicionar Disciplina Avulsa -->
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="inputCustomSubjectName" class="form-control" placeholder="Adicionar outra matéria (Ex: Medicina Legal, Criminologia...)" style="font-size: 12.5px;">
+          <button type="button" class="btn-secondary" onclick="addCustomSubjectItem()" style="flex-shrink: 0; font-size: 12px; padding: 0 14px;">
+            + Adicionar
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button type="button" class="btn-secondary" style="border-color: rgba(239, 68, 68, 0.4); color: #F87171;" onclick="clearAllConfiguredSubjects()">
+          Limpar Todas
+        </button>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalConfigSubjects')">Cancelar</button>
+          <button type="button" class="btn-primary" onclick="saveSubjectConfiguration()">Salvar e Gerar Ambiente</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2609,135 +3086,686 @@
        ========================================================================== -->
   <script>
     /* ========================================================================
-       1. DADOS TÁTICOS BASE (COM INTEGRAÇÃO AO LOCALSTORAGE EXISTENTE)
+       1. SISTEMA DE AUTENTICAÇÃO TÁTICA (SUPABASE & SESSÃO LOCAL)
        ======================================================================== */
-    const DEFAULT_CONCURSO_CLASSES = [
-      { id: 'dp', name: 'Direito Penal', topics: 18, pending: 3, done: 65, color: '#EF4444' },
-      { id: 'dpp', name: 'Proc. Penal', topics: 14, pending: 2, done: 52, color: '#F59E0B' },
-      { id: 'dc', name: 'Constitucional', topics: 16, pending: 1, done: 84, color: '#3B82F6' },
-      { id: 'da', name: 'Administrativo', topics: 15, pending: 3, done: 45, color: '#10B981' },
-      { id: 'lp', name: 'Português', topics: 22, pending: 4, done: 78, color: '#8B5CF6' },
-      { id: 'leg', name: 'Legislação PCMG', topics: 12, pending: 2, done: 60, color: '#D4AF37' }
+    const SUPABASE_CONFIG = {
+      url: 'https://arhhajxkmjpjwbrlcsqm.supabase.co',
+      anonKey: 'sb_publishable_zZUuqpP2FXG9am-Q7UY95g_musS2nA-'
+    };
+
+    let supabaseClient = null;
+    function getSupabaseClient() {
+      if (supabaseClient) return supabaseClient;
+      if (typeof supabase !== 'undefined' && supabase.createClient) {
+        try {
+          supabaseClient = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+        } catch(e) {
+          console.warn('[TacticalAuth] Erro ao instanciar Supabase client:', e);
+        }
+      }
+      return supabaseClient;
+    }
+
+    function getLoggedInUser() {
+      try {
+        // 1. Sessão dedicada do Student OS
+        const localUserRaw = localStorage.getItem('tactical_os_user');
+        if (localUserRaw) {
+          const u = JSON.parse(localUserRaw);
+          if (u && (u.email || u.id)) return u;
+        }
+
+        // 2. Token padrão do Supabase no LocalStorage
+        const sbTokenRaw = localStorage.getItem('sb-arhhajxkmjpjwbrlcsqm-auth-token') || localStorage.getItem('supabase.auth.token');
+        if (sbTokenRaw) {
+          const parsed = JSON.parse(sbTokenRaw);
+          const user = parsed.user || (parsed.currentSession && parsed.currentSession.user);
+          if (user && user.email) {
+            const u = { 
+              email: user.email, 
+              id: user.id || 'usr_sb', 
+              token: parsed.access_token || parsed.currentSession?.access_token 
+            };
+            localStorage.setItem('tactical_os_user', JSON.stringify(u));
+            return u;
+          }
+        }
+      } catch(e) {
+        console.warn('[TacticalAuth] Erro ao recuperar sessão:', e);
+      }
+      return null;
+    }
+
+    function checkAuth() {
+      const user = getLoggedInUser();
+      const authWall = document.getElementById('tacticalAuthWall');
+      const userBadge = document.getElementById('userSessionBadge');
+      const userEmailText = document.getElementById('userEmailText');
+
+      if (user && user.email) {
+        if (authWall) authWall.classList.remove('active');
+        document.body.classList.remove('auth-locked');
+        if (userBadge) userBadge.style.display = 'inline-flex';
+        if (userEmailText) userEmailText.innerText = user.email;
+        return true;
+      } else {
+        if (authWall) authWall.classList.add('active');
+        document.body.classList.add('auth-locked');
+        if (userBadge) userBadge.style.display = 'none';
+        return false;
+      }
+    }
+
+    let activeAuthTab = 'login';
+    function switchTacticalAuthTab(tab) {
+      activeAuthTab = tab;
+      const tabLogin = document.getElementById('tabTacticalLogin');
+      const tabRegister = document.getElementById('tabTacticalRegister');
+      const passConfirmRow = document.getElementById('tacticalAuthPassConfirmRow');
+      const submitText = document.getElementById('btnTacticalAuthText');
+      const feedback = document.getElementById('tacticalAuthFeedback');
+
+      if (feedback) {
+        feedback.className = 'auth-wall-feedback';
+        feedback.innerText = '';
+      }
+
+      if (tab === 'login') {
+        tabLogin?.classList.add('active');
+        tabRegister?.classList.remove('active');
+        if (passConfirmRow) passConfirmRow.style.display = 'none';
+        if (submitText) submitText.innerText = 'Acessar Sistema Tático';
+      } else {
+        tabLogin?.classList.remove('active');
+        tabRegister?.classList.add('active');
+        if (passConfirmRow) passConfirmRow.style.display = 'block';
+        if (submitText) submitText.innerText = 'Criar Minha Conta Tática';
+      }
+    }
+
+    function showAuthFeedback(msg, type = 'error') {
+      const feedback = document.getElementById('tacticalAuthFeedback');
+      if (!feedback) return;
+      feedback.className = 'auth-wall-feedback ' + type;
+      feedback.innerText = msg;
+    }
+
+    async function handleTacticalAuthSubmit(e) {
+      if (e) e.preventDefault();
+      const emailInput = document.getElementById('tacticalAuthEmail');
+      const passInput = document.getElementById('tacticalAuthPassword');
+      const passConfirmInput = document.getElementById('tacticalAuthPassConfirm');
+      const submitBtn = document.getElementById('btnTacticalAuthSubmit');
+      const submitText = document.getElementById('btnTacticalAuthText');
+
+      const email = (emailInput?.value || '').trim();
+      const password = passInput?.value || '';
+      const passConfirm = passConfirmInput?.value || '';
+
+      if (!email || !email.includes('@')) {
+        showAuthFeedback('Por favor, informe um endereço de e-mail válido.', 'error');
+        return;
+      }
+      if (!password || password.length < 6) {
+        showAuthFeedback('A senha deve ter pelo menos 6 caracteres.', 'error');
+        return;
+      }
+
+      if (activeAuthTab === 'register') {
+        if (password !== passConfirm) {
+          showAuthFeedback('As senhas não coincidem. Digite novamente.', 'error');
+          return;
+        }
+      }
+
+      if (submitBtn) submitBtn.disabled = true;
+      if (submitText) submitText.innerText = activeAuthTab === 'login' ? 'Autenticando...' : 'Criando Conta...';
+
+      try {
+        const client = getSupabaseClient();
+        let authUser = null;
+        let authToken = null;
+
+        if (client && client.auth) {
+          if (activeAuthTab === 'login') {
+            const { data, error } = await client.auth.signInWithPassword({ email, password });
+            if (error) {
+              if (error.message.includes('Invalid login credentials')) {
+                throw new Error('E-mail ou senha incorretos.');
+              }
+              throw error;
+            }
+            authUser = data.user;
+            authToken = data.session?.access_token;
+          } else {
+            const { data, error } = await client.auth.signUp({ email, password });
+            if (error) throw error;
+            authUser = data.user;
+            authToken = data.session?.access_token;
+          }
+        } else {
+          // Fallback via REST API do Supabase
+          const endpoint = activeAuthTab === 'login' 
+            ? `${SUPABASE_CONFIG.url}/auth/v1/token?grant_type=password` 
+            : `${SUPABASE_CONFIG.url}/auth/v1/signup`;
+          
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_CONFIG.anonKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+          });
+          const resData = await res.json();
+          if (!res.ok) {
+            if (resData.error_description?.includes('Invalid login credentials') || resData.msg?.includes('Invalid login credentials')) {
+              throw new Error('E-mail ou senha incorretos.');
+            }
+            throw new Error(resData.error_description || resData.msg || resData.message || 'Falha na autenticação.');
+          }
+          authUser = resData.user || { email, id: 'usr_' + Date.now() };
+          authToken = resData.access_token;
+        }
+
+        const userSession = {
+          email: authUser?.email || email,
+          id: authUser?.id || ('usr_' + Date.now()),
+          token: authToken || '',
+          loggedAt: new Date().toISOString()
+        };
+        localStorage.setItem('tactical_os_user', JSON.stringify(userSession));
+
+        showAuthFeedback('Acesso autorizado! Carregando sistema...', 'success');
+        showToast('Acesso tático liberado com sucesso! Bem-vindo, Operador.', 'success');
+
+        setTimeout(() => {
+          checkAuth();
+          initData();
+        }, 500);
+
+      } catch(err) {
+        console.warn('[TacticalAuth] Erro:', err);
+        showAuthFeedback(err.message || 'Erro ao conectar. Verifique seus dados.', 'error');
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+        if (submitText) submitText.innerText = activeAuthTab === 'login' ? 'Acessar Sistema Tático' : 'Criar Minha Conta Tática';
+      }
+    }
+
+    function logoutTactical() {
+      if (!confirm('Deseja realmente sair da sua sessão tática?')) return;
+      
+      localStorage.removeItem('tactical_os_user');
+      try {
+        const client = getSupabaseClient();
+        if (client && client.auth) client.auth.signOut().catch(() => {});
+      } catch(e) {}
+
+      checkAuth();
+      showToast('Você saiu da sua conta.', 'info');
+    }
+
+    /* ========================================================================
+       2. GESTÃO E CONFIGURAÇÃO DE MATÉRIAS (SEM DADOS FICTÍCIOS PRÉVIOS)
+       ======================================================================== */
+    const ALL_CANDIDATE_SUBJECTS = [
+      'Direito Penal',
+      'Direito Processual Penal',
+      'Direito Constitucional',
+      'Direito Administrativo',
+      'Língua Portuguesa',
+      'Legislação Especial / PCMG',
+      'Informática',
+      'Raciocínio Lógico / RLM',
+      'Direitos Humanos',
+      'Criminologia',
+      'Medicina Legal',
+      'Legislação de Trânsito',
+      'Contabilidade Geral',
+      'Estatística',
+      'Física Aplicada'
     ];
 
-    const DEFAULT_TIMETABLE = [
-      { shift: 'Manhã (08h - 10h)', seg: 'Português', ter: 'Constitucional', qua: 'Proc. Penal', qui: 'Leg. Especial', sex: 'D. Penal', sab: '100 Questões' },
-      { shift: 'Tarde (14h - 16h)', seg: 'D. Penal', ter: 'Administrativo', qua: 'RLM / Lógica', qui: 'Informática', sex: 'Proc. Penal', sab: 'Lei Seca' },
-      { shift: 'Noite (19h30 - 21h30)', seg: 'Revisão 24h', ter: 'Questões Banca', qua: 'Revisão 7d', qui: 'Redação / Peça', sex: 'Revisão Geral', sab: 'Simulado Tático' }
+    const SUBJECT_PRESETS = {
+      pcmg: ['Direito Penal', 'Direito Processual Penal', 'Direito Constitucional', 'Direito Administrativo', 'Língua Portuguesa', 'Legislação Especial / PCMG'],
+      pf: ['Língua Portuguesa', 'Informática', 'Contabilidade Geral', 'Estatística', 'Raciocínio Lógico / RLM', 'Direito Penal', 'Direito Processual Penal', 'Direito Administrativo', 'Direito Constitucional'],
+      prf: ['Língua Portuguesa', 'Legislação de Trânsito', 'Raciocínio Lógico / RLM', 'Informática', 'Física Aplicada', 'Direito Constitucional', 'Direito Administrativo', 'Direito Penal', 'Direitos Humanos'],
+      custom: []
+    };
+
+    // Lê matérias configuradas explicitamente pelo usuário
+    function getConfiguredMaterias() {
+      try {
+        const customRaw = localStorage.getItem('tactical_custom_materias');
+        if (customRaw) {
+          const parsed = JSON.parse(customRaw);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed.map((item, idx) => typeof item === 'string' ? { id: 'mat_' + idx, nome: item } : item);
+          }
+        }
+
+        const appDataRaw = localStorage.getItem('concurso_app_data');
+        if (appDataRaw) {
+          const appData = JSON.parse(appDataRaw);
+          if (appData && Array.isArray(appData.materias) && appData.materias.length > 0) {
+            return appData.materias;
+          }
+        }
+      } catch(e) {
+        console.warn('[ConfiguredMaterias] Erro:', e);
+      }
+
+      // REGRA: Sem matérias configuradas, NÃO gera dados pré-definidos!
+      return [];
+    }
+
+    let selectedPresetKey = 'custom';
+    function openSubjectConfigModal() {
+      renderSubjectsCheckboxes();
+      openModal('modalConfigSubjects');
+    }
+
+    function renderSubjectsCheckboxes(customCheckedList = null) {
+      const container = document.getElementById('subjectsCheckboxesContainer');
+      if (!container) return;
+
+      const configured = customCheckedList !== null 
+        ? customCheckedList 
+        : getConfiguredMaterias().map(m => m.nome || m);
+
+      // Unir matérias candidatas padrão com eventuais personalizadas
+      const allList = [...new Set([...ALL_CANDIDATE_SUBJECTS, ...configured])];
+
+      container.innerHTML = allList.map((sub, idx) => {
+        const isChecked = configured.includes(sub);
+        const inputId = 'subj_chk_' + idx;
+        return (
+          '<label class="subject-check-item ' + (isChecked ? 'selected' : '') + '" for="' + inputId + '">' +
+            '<input type="checkbox" id="' + inputId + '" value="' + sub + '" ' + (isChecked ? 'checked' : '') + ' onchange="onSubjectCheckboxChanged(this)">' +
+            '<span>' + sub + '</span>' +
+          '</label>'
+        );
+      }).join('');
+
+      updateSelectedSubjectsCount();
+    }
+
+    function onSubjectCheckboxChanged(chk) {
+      if (chk) {
+        chk.closest('.subject-check-item')?.classList.toggle('selected', chk.checked);
+      }
+      updateSelectedSubjectsCount();
+    }
+
+    function updateSelectedSubjectsCount() {
+      const container = document.getElementById('subjectsCheckboxesContainer');
+      if (!container) return;
+      const checked = container.querySelectorAll('input[type="checkbox"]:checked');
+      const counter = document.getElementById('subjectSelectedCount');
+      if (counter) counter.innerText = checked.length + ' selecionada(s)';
+    }
+
+    function applySubjectPreset(key) {
+      selectedPresetKey = key;
+      document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById('presetBtn' + key.charAt(0).toUpperCase() + key.slice(1));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const presetList = SUBJECT_PRESETS[key] || [];
+      renderSubjectsCheckboxes(presetList);
+      showToast('Predefinição "' + key.toUpperCase() + '" carregada. Clique em "Salvar" para aplicar.', 'info');
+    }
+
+    function addCustomSubjectItem() {
+      const input = document.getElementById('inputCustomSubjectName');
+      const name = (input?.value || '').trim();
+      if (!name) {
+        alert('Digite o nome da disciplina para adicionar.');
+        return;
+      }
+
+      const container = document.getElementById('subjectsCheckboxesContainer');
+      if (!container) return;
+
+      // Verificar se já existe
+      const existing = Array.from(container.querySelectorAll('input[type="checkbox"]')).map(i => i.value.toLowerCase());
+      if (existing.includes(name.toLowerCase())) {
+        alert('Esta disciplina já está na lista.');
+        return;
+      }
+
+      const idx = container.querySelectorAll('input[type="checkbox"]').length + 1;
+      const inputId = 'subj_chk_custom_' + idx;
+      const label = document.createElement('label');
+      label.className = 'subject-check-item selected';
+      label.htmlFor = inputId;
+      label.innerHTML = '<input type="checkbox" id="' + inputId + '" value="' + name + '" checked onchange="onSubjectCheckboxChanged(this)"><span>' + name + '</span>';
+      container.appendChild(label);
+
+      input.value = '';
+      updateSelectedSubjectsCount();
+      showToast('Disciplina "' + name + '" adicionada à seleção!', 'success');
+    }
+
+    function saveSubjectConfiguration() {
+      const container = document.getElementById('subjectsCheckboxesContainer');
+      if (!container) return;
+
+      const checkedInputs = Array.from(container.querySelectorAll('input[type="checkbox"]:checked'));
+      const selectedNames = checkedInputs.map(i => i.value);
+
+      if (selectedNames.length === 0) {
+        alert('Por favor, marque pelo menos uma disciplina para configurar o seu edital.');
+        return;
+      }
+
+      const colors = ['#EF4444', '#F59E0B', '#3B82F6', '#10B981', '#8B5CF6', '#D4AF37', '#06B6D4', '#EC4899'];
+      const materias = selectedNames.map((name, i) => ({
+        id: 'mat_' + i,
+        nome: name,
+        color: colors[i % colors.length],
+        topicos: []
+      }));
+
+      // Salvar em tactical_custom_materias e sincronizar no concurso_app_data
+      localStorage.setItem('tactical_custom_materias', JSON.stringify(materias));
+      try {
+        let appData = {};
+        const raw = localStorage.getItem('concurso_app_data');
+        if (raw) appData = JSON.parse(raw);
+        appData.materias = materias;
+        localStorage.setItem('concurso_app_data', JSON.stringify(appData));
+      } catch(e) {}
+
+      closeModal('modalConfigSubjects');
+      initData();
+      showToast('Ambiente tático gerado com sucesso para ' + materias.length + ' disciplinas!', 'success');
+    }
+
+    function clearAllConfiguredSubjects() {
+      if (!confirm('Deseja realmente limpar todas as matérias? O sistema voltará ao estado vazio e não gerará nada fictício.')) {
+        return;
+      }
+
+      localStorage.removeItem('tactical_custom_materias');
+      try {
+        let appData = {};
+        const raw = localStorage.getItem('concurso_app_data');
+        if (raw) appData = JSON.parse(raw);
+        appData.materias = [];
+        localStorage.setItem('concurso_app_data', JSON.stringify(appData));
+      } catch(e) {}
+
+      closeModal('modalConfigSubjects');
+      initData();
+      showToast('Matérias limpas. O sistema está aguardando nova configuração.', 'info');
+    }
+
+    function populateSubjectDropdowns() {
+      const materias = getConfiguredMaterias();
+      const taskSelect = document.getElementById('inputTaskSubject');
+      const noteSelect = document.getElementById('inputNoteSubject');
+
+      if (materias.length === 0) {
+        const emptyOption = '<option value="">Nenhuma matéria configurada (configure primeiro)</option>';
+        if (taskSelect) taskSelect.innerHTML = emptyOption;
+        if (noteSelect) noteSelect.innerHTML = emptyOption;
+        return;
+      }
+
+      const optionsHtml = materias.map(m => '<option value="' + (m.nome || m) + '">' + (m.nome || m) + '</option>').join('');
+      if (taskSelect) taskSelect.innerHTML = optionsHtml;
+      if (noteSelect) noteSelect.innerHTML = optionsHtml;
+    }
+
+    /* ========================================================================
+       3. REPOSITÓRIO MESTRE DE FLASHCARDS & BIZUS (GERADOS POR MATÉRIA)
+       ======================================================================== */
+    const MASTER_FLASHCARDS = [
+      // Direito Penal
+      { id: 'fc_penal_1', tab: 'hoje', deck: 'Direito Penal', q: 'Qual a diferença fundamental entre Dolo Eventual e Culpa Consciente?', a: 'Dolo Eventual: assume o risco do resultado ("tanto faz, não me importo"). Culpa Consciente: prevê o resultado, mas confia sinceramente na sua perícia para evitá-lo.' },
+      { id: 'fc_penal_2', tab: '7d', deck: 'Direito Penal', q: 'Quais crimes são inafiançáveis e insuscetíveis de graça e anistia pela CF/88?', a: 'O grupo "3T" (Tortura, Tráfico Ilícito de Entorpecentes e Terrorismo) e os definidos como crimes hediondos propriamente ditos.' },
+      { id: 'fc_penal_3', tab: '7d', deck: 'Direito Penal', q: 'Qual a consequência do Erro de Tipo Essencial Inevitável vs Evitável?', a: 'Inevitável (escusável): exclui tanto o dolo quanto a culpa (fato atípico). Evitável (inescusável): exclui o dolo, mas permite punição por culpa se prevista em lei.' },
+      { id: 'fc_penal_4', tab: '30d', deck: 'Direito Penal', q: 'Quais são as infrações que NÃO admitem tentativa pelo mnemônico "COUP-C"?', a: 'C - Culposos; O - Omissivos próprios; U - Unissubsistentes; P - Preterdolosos; C - Contravenções penais.' },
+
+      // Processo Penal
+      { id: 'fc_proc_1', tab: 'hoje', deck: 'Proc. Penal', q: 'Qual o prazo de conclusão do Inquérito Policial na Justiça Estadual para réu preso e réu solto (CPP)?', a: 'Preso: 10 dias (improrrogáveis). Solto: 30 dias (prorrogáveis pela autoridade judicial competente).' },
+      { id: 'fc_proc_2', tab: '7d', deck: 'Proc. Penal', q: 'A autoridade policial (Delegado de Polícia) pode mandar arquivar autos de Inquérito Policial?', a: 'NUNCA. O art. 17 do CPP veda expressamente: a autoridade policial não poderá mandar arquivar autos de inquérito (princípio da indisponibilidade).' },
+      { id: 'fc_proc_3', tab: '7d', deck: 'Proc. Penal', q: 'Qual o prazo da Prisão Temporária (Lei 7.960/89) em crimes comuns e em crimes hediondos?', a: 'Crimes comuns do rol taxativo: 5 dias + 5 dias. Crimes hediondos e equiparados: 30 dias + 30 dias. Cabível APENAS durante a fase de inquérito policial.' },
+      { id: 'fc_proc_4', tab: '30d', deck: 'Proc. Penal', q: 'Quais as 10 etapas legais da Cadeia de Custódia introduzidas pelo Pacote Anticrime (art. 158-B CPP)?', a: '1. Reconhecimento, 2. Isolamento, 3. Fixação, 4. Coleta, 5. Acondicionamento, 6. Transporte, 7. Recebimento, 8. Processamento, 9. Armazenamento, 10. Descarte.' },
+
+      // Constitucional
+      { id: 'fc_const_1', tab: 'hoje', deck: 'Constitucional', q: 'A casa é asilo inviolável. Quais as 4 exceções constitucionais para entrada sem consentimento?', a: '1) Flagrante delito; 2) Desastre; 3) Prestar socorro (qualquer hora do dia ou da noite); 4) Por determinação judicial (somente durante o dia).' },
+      { id: 'fc_const_2', tab: '30d', deck: 'Constitucional', q: 'Quais são as 4 Cláusulas Pétreas expressas no art. 60, § 4º da Constituição Federal?', a: '1) Forma federativa de Estado; 2) Voto direto, secreto, universal e periódico; 3) Separação dos Poderes; 4) Direitos e garantias individuais.' },
+
+      // Administrativo
+      { id: 'fc_adm_1', tab: 'hoje', deck: 'Administrativo', q: 'Quais são os 4 atributos do ato administrativo pelo mnemônico PATI?', a: 'Presunção de Legitimidade, Autoexecutoriedade, Tipicidade e Imperatividade.' },
+      { id: 'fc_adm_2', tab: '7d', deck: 'Administrativo', q: 'Quais requisitos do ato administrativo admitem CONVALIDAÇÃO (saneamento do vício)?', a: 'Apenas Competência (desde que não exclusiva) e Forma (desde que não essencial à validade do ato).' },
+      { id: 'fc_adm_3', tab: '30d', deck: 'Administrativo', q: 'Por que a cobrança de multa administrativa não possui o atributo da autoexecutoriedade?', a: 'Porque a administração não pode expropriar bens diretamente; se o infrator não pagar, deve ajuizar Ação de Execução Fiscal no Judiciário.' },
+
+      // Português
+      { id: 'fc_port_1', tab: 'hoje', deck: 'Português', q: 'Em "Alugam-se salas comerciais", qual a função da partícula "SE" e qual a concordância verbal?', a: 'Partícula Apassivadora (salas comerciais são alugadas). O verbo concorda com o sujeito paciente no plural.' },
+      { id: 'fc_port_2', tab: '7d', deck: 'Português', q: 'Em "Precisa-se de escrivães táticos", qual a função do "SE" e por que o verbo fica no singular?', a: 'Índice de Indeterminação do Sujeito (ligado a VTI com preposição). O verbo fica obrigatoriamente na 3ª pessoa do singular.' },
+      { id: 'fc_port_3', tab: '30d', deck: 'Português', q: 'Quais são os 3 casos facultativos de crase mais cobrados em concursos policiais?', a: '1) Antes de nomes próprios femininos; 2) Antes de pronomes possessivos femininos singulares ("à minha arma"); 3) Após a preposição "até".' },
+
+      // Legislação Especial / PCMG
+      { id: 'fc_leg_1', tab: 'hoje', deck: 'Legislação PCMG', q: 'A autoridade policial (Delegado) pode decretar medidas protetivas de urgência da Lei Maria da Penha?', a: 'Sim, se o município não for sede de comarca e não houver juiz disponível no momento, com comunicação judicial em até 24h.' },
+      { id: 'fc_leg_2', tab: '30d', deck: 'Legislação PCMG', q: 'Qual o elemento subjetivo especial indispensável para caracterizar crime de Abuso de Autoridade (Lei 13.869)?', a: 'Dolo específico: finalidade de prejudicar outrem, beneficiar a si/terceiro ou por mero capricho/satisfação pessoal. Veda-se crime de hermenêutica.' },
+
+      // Informática
+      { id: 'fc_info_1', tab: 'hoje', deck: 'Informática', q: 'Qual a diferença entre Malware Phishing e Ransomware em investigações de crimes cibernéticos?', a: 'Phishing: engenharia social para roubar credenciais. Ransomware: sequestro de dados criptografados mediante exigência de resgate financeiro.' },
+      { id: 'fc_info_2', tab: '7d', deck: 'Informática', q: 'O que diferencia a memória RAM da memória ROM em termos operacionais?', a: 'RAM: memória volátil de leitura e escrita (perde dados sem energia). ROM: memória não-volátil apenas de leitura (contém BIOS/firmware permanente).' },
+
+      // RLM / Lógica
+      { id: 'fc_rlm_1', tab: 'hoje', deck: 'RLM / Lógica', q: 'Qual é a negação lógica da proposição condicional "Se estudo com disciplina, sou aprovado" (P -> Q)?', a: 'Regra do "MANÉ": Mantém a primeira E Nega a segunda: "Estudo com disciplina E NÃO sou aprovado" (P ∧ ~Q).' },
+      { id: 'fc_rlm_2', tab: '7d', deck: 'RLM / Lógica', q: 'Qual a tabela-verdade da Conjunção (E) vs Disjunção (OU)?', a: 'Conjunção (∧): verdadeira APENAS se ambas forem verdadeiras. Disjunção (∨): falsa APENAS se ambas forem falsas.' },
+
+      // Direitos Humanos
+      { id: 'fc_dh_1', tab: 'hoje', deck: 'Direitos Humanos', q: 'Qual a natureza jurídica dos Tratados de Direitos Humanos aprovados pelo rito do art. 5º, § 3º da CF/88?', a: 'Possuem equivalência às Emendas Constitucionais (aprovados em 2 turnos por 3/5 dos votos de cada Casa).' },
+
+      // Legislação de Trânsito
+      { id: 'fc_ctb_1', tab: 'hoje', deck: 'Legislação de Trânsito', q: 'Quais os crimes de trânsito em que a embriaguez ao volante é de perigo abstrato no CTB?', a: 'Art. 306 do CTB: crime de perigo abstrato, consuma-se com a simples constatação de álcool igual ou superior a 0,6 g/L no sangue ou 0,34 mg/L no etilômetro.' }
     ];
 
-    const DEFAULT_ASSESSMENTS = [
-      { id: 'a1', title: 'Prova Oficial PCMG • Investigador & Escrivão', date: '2026-12-13', target: '85% acertos (51/60)', status: 'in_progress', badge: 'Meta Principal' },
-      { id: 'a2', title: 'Simulado Geral Tático #04', date: '2026-10-25', target: '60 questões estilo Banca', status: 'not_started', badge: 'Agendado' },
-      { id: 'a3', title: 'Revisão de Véspera • Súmulas Vinculantes', date: '2026-11-20', target: 'STF / STJ comentadas', status: 'completed', badge: 'Concluído' },
-      { id: 'a4', title: 'Treinamento Físico Operacional (TAF)', date: '2026-11-30', target: 'Barra Fixa + Cooper 2.400m', status: 'in_progress', badge: 'TAF PCMG' }
-    ];
-
-    const DEFAULT_TASKS = [
-      { id: 't1', title: 'Crimes contra a Vida - Homicídio simples, qualificado e feminicídio', date: '19 Out 2026', done: true, priority: 4, subject: 'Direito Penal' },
-      { id: 't2', title: 'Inquérito Policial - Prazos para réu preso e solto no CPP', date: '20 Out 2026', done: false, priority: 4, subject: 'Proc. Penal' },
-      { id: 't3', title: 'Art. 5º da CF/88 - Inviolabilidade de domicílio e flagrante', date: '21 Out 2026', done: false, priority: 3, subject: 'Constitucional' },
-      { id: 't4', title: 'Atos Administrativos - Atributos (PATI) e anulação/revogação', date: '22 Out 2026', done: false, priority: 3, subject: 'Administrativo' },
-      { id: 't5', title: 'Crase - Casos proibidos, obrigatórios e facultativos', date: '23 Out 2026', done: false, priority: 2, subject: 'Português' },
-      { id: 't6', title: 'Lei de Drogas (11.343/06) - Distinção entre posse (art. 28) e tráfico (art. 33)', date: '24 Out 2026', done: false, priority: 4, subject: 'Legislação PCMG' }
-    ];
-
-    const DEFAULT_FLASHCARDS = [
-      // Aba: Hoje (Pendentes)
-      { id: 'fc1', tab: 'hoje', deck: 'Proc. Penal', q: 'Qual o prazo de conclusão do Inquérito Policial na Justiça Estadual para réu preso e réu solto (CPP)?', a: 'Preso: 10 dias (improrrogáveis). Solto: 30 dias (prorrogáveis pela autoridade judicial competente).' },
-      { id: 'fc2', tab: 'hoje', deck: 'Direito Penal', q: 'Qual a diferença fundamental entre Dolo Eventual e Culpa Consciente?', a: 'Dolo Eventual: assume o risco do resultado ("tanto faz, não me importo"). Culpa Consciente: prevê o resultado, mas confia sinceramente na sua perícia para evitá-lo.' },
-      { id: 'fc3', tab: 'hoje', deck: 'Constitucional', q: 'A casa é asilo inviolável. Quais as 4 exceções constitucionais para entrada sem consentimento?', a: '1) Flagrante delito; 2) Desastre; 3) Prestar socorro (qualquer hora do dia ou da noite); 4) Por determinação judicial (somente durante o dia).' },
-      { id: 'fc4', tab: 'hoje', deck: 'Administrativo', q: 'Quais são os 4 atributos do ato administrativo pelo mnemônico PATI?', a: 'Presunção de Legitimidade, Autoexecutoriedade, Tipicidade e Imperatividade.' },
-      { id: 'fc5', tab: 'hoje', deck: 'Português', q: 'Em "Alugam-se salas comerciais", qual a função da partícula "SE" e qual a concordância verbal?', a: 'Partícula Apassivadora (salas comerciais são alugadas). O verbo concorda com o sujeito paciente no plural.' },
-      { id: 'fc6', tab: 'hoje', deck: 'Legislação PCMG', q: 'A autoridade policial (Delegado) pode decretar medidas protetivas de urgência da Lei Maria da Penha?', a: 'Sim, se o município não for sede de comarca e não houver juiz disponível no momento, com comunicação judicial em até 24h.' },
-
-      // Aba: 7 Dias
-      { id: 'fc7', tab: '7d', deck: 'Direito Penal', q: 'Quais crimes são inafiançáveis e insuscetíveis de graça e anistia pela CF/88?', a: 'O grupo "3T" (Tortura, Tráfico Ilícito de Entorpecentes e Terrorismo) e os definidos como crimes hediondos propriamente ditos.' },
-      { id: 'fc8', tab: '7d', deck: 'Proc. Penal', q: 'A autoridade policial (Delegado de Polícia) pode mandar arquivar autos de Inquérito Policial?', a: 'NUNCA. O art. 17 do CPP veda expressamente: a autoridade policial não poderá mandar arquivar autos de inquérito (princípio da indisponibilidade).' },
-      { id: 'fc9', tab: '7d', deck: 'Proc. Penal', q: 'Qual o prazo da Prisão Temporária (Lei 7.960/89) em crimes comuns e em crimes hediondos?', a: 'Crimes comuns do rol taxativo: 5 dias + 5 dias. Crimes hediondos e equiparados: 30 dias + 30 dias. Cabível APENAS durante a fase de inquérito policial.' },
-      { id: 'fc10', tab: '7d', deck: 'Administrativo', q: 'Quais requisitos do ato administrativo admitem CONVALIDAÇÃO (saneamento do vício)?', a: 'Apenas Competência (desde que não exclusiva) e Forma (desde que não essencial à validade do ato).' },
-      { id: 'fc11', tab: '7d', deck: 'Direito Penal', q: 'Qual a consequência do Erro de Tipo Essencial Inevitável vs Evitável?', a: 'Inevitável (escusável): exclui tanto o dolo quanto a culpa (fato atípico). Evitável (inescusável): exclui o dolo, mas permite punição por culpa se prevista em lei.' },
-      { id: 'fc12', tab: '7d', deck: 'Português', q: 'Em "Precisa-se de escrivães táticos", qual a função do "SE" e por que o verbo fica no singular?', a: 'Índice de Indeterminação do Sujeito (ligado a VTI com preposição). O verbo fica obrigatoriamente na 3ª pessoa do singular.' },
-
-      // Aba: 30 Dias
-      { id: 'fc13', tab: '30d', deck: 'Proc. Penal', q: 'Quais as 10 etapas legais da Cadeia de Custódia introduzidas pelo Pacote Anticrime (art. 158-B CPP)?', a: '1. Reconhecimento, 2. Isolamento, 3. Fixação, 4. Coleta, 5. Acondicionamento, 6. Transporte, 7. Recebimento, 8. Processamento, 9. Armazenamento, 10. Descarte.' },
-      { id: 'fc14', tab: '30d', deck: 'Constitucional', q: 'Quais são as 4 Cláusulas Pétreas expressas no art. 60, § 4º da Constituição Federal?', a: '1) Forma federativa de Estado; 2) Voto direto, secreto, universal e periódico; 3) Separação dos Poderes; 4) Direitos e garantias individuais.' },
-      { id: 'fc15', tab: '30d', deck: 'Direito Penal', q: 'Quais são as infrações que NÃO admitem tentativa pelo mnemônico "COUP-C"?', a: 'C - Culposos; O - Omissivos próprios; U - Unissubsistentes; P - Preterdolosos; C - Contravenções penais.' },
-      { id: 'fc16', tab: '30d', deck: 'Administrativo', q: 'Por que a cobrança de multa administrativa não possui o atributo da autoexecutoriedade?', a: 'Porque a administração não pode expropriar bens diretamente; se o infrator não pagar, a administração deve ajuizar Ação de Execução Fiscal no Judiciário.' },
-      { id: 'fc17', tab: '30d', deck: 'Legislação PCMG', q: 'Qual o elemento subjetivo especial indispensável para caracterizar crime de Abuso de Autoridade (Lei 13.869)?', a: 'Dolo específico: finalidade de prejudicar outrem, beneficiar a si/terceiro ou por mero capricho/satisfação pessoal. Veda-se expressamente o crime de hermenêutica.' },
-      { id: 'fc18', tab: '30d', deck: 'Português', q: 'Quais são os 3 casos facultativos de crase mais cobrados em concursos policiais?', a: '1) Antes de nomes próprios femininos (sem especificador); 2) Antes de pronomes possessivos femininos singulares ("à minha arma"); 3) Após a preposição "até".' }
-    ];
-
-    const DEFAULT_NOTES = [
+    const MASTER_NOTES = [
       { id: 'n1', title: 'Crimes Hediondos 3T', tag: 'D. Penal', color: '#EF4444', text: 'Inafiançáveis e insuscetíveis de graça ou anistia: Tortura, Tráfico Ilícito de Entorpecentes e Terrorismo (3T), além dos crimes hediondos propriamente ditos (Lei 8.072/90).\n\nOBS: O Pacote Anticrime vedou expressamente o livramento condicional para condenados por crime hediondo ou equiparado com resultado morte.' },
       { id: 'n2', title: 'Audiência de Custódia', tag: 'Proc. Penal', color: '#F59E0B', text: 'Prazo improrrogável de 24 horas após a realização da prisão em flagrante.\n\nPresença obrigatória de juiz, membro do Ministério Público e advogado ou defensor público constituído.\n\nFinalidade: aferir a legalidade da prisão e a ocorrência de maus-tratos ou tortura policial.' },
       { id: 'n3', title: 'Remédios Constitucionais', tag: 'Constitucional', color: '#3B82F6', text: 'HC: Liberdade de locomoção (gratuito).\nHD: Acesso ou retificação a dados pessoais do impetrante em bancos de dados governamentais (gratuito).\nMS: Direito líquido e certo não amparado por HC/HD.\nMI: Omissão normativa que inviabiliza exercício de direito constitucional.\nAP: Cidadão visa anular ato lesivo ao patrimônio público, moralidade ou meio ambiente.' },
       { id: 'n4', title: 'Concordância com Partícula SE', tag: 'Português', color: '#8B5CF6', text: 'VTD + SE = Partícula Apassivadora: Há sujeito paciente, o verbo concorda com ele ("Alugam-se viaturas táticas" = viaturas são alugadas).\n\nVTI / VI / VL + SE = Índice de Indeterminação do Sujeito: Sujeito indeterminado, o verbo fica OBRIGATORIAMENTE na 3ª pessoa do singular ("Precisa-se de novos investigadores").' },
-      { id: 'n5', title: 'Dolo Eventual vs Culpa Consciente', tag: 'D. Penal', color: '#EF4444', text: 'Dolo Eventual: O agente prevê o resultado e assume o risco de produzi-lo ("Tanto faz se acontecer, não me importo com as consequências").\n\nCulpa Consciente: O agente prevê o resultado danoso, mas confia sinceramente na sua própria perícia e habilidade para evitá-lo ("Eu sei que é perigoso, mas comigo não vai acontecer").' },
-      { id: 'n6', title: 'Prazos do Inquérito Policial', tag: 'Proc. Penal', color: '#F59E0B', text: 'Justiça Estadual (CPP):\n• Réu Preso: 10 dias (improrrogáveis)\n• Réu Solto: 30 dias (prorrogáveis pelo juiz)\n\nJustiça Federal (Lei 5.010/66):\n• Preso: 15 dias (+15 dias prorrogáveis)\n• Solto: 30 dias\n\nLei de Drogas (11.343/06):\n• Preso: 30 dias (+30 dias)\n• Solto: 90 dias (+90 dias)' },
-      { id: 'n7', title: 'Inviolabilidade Domiciliar (Art. 5º, XI)', tag: 'Constitucional', color: '#3B82F6', text: 'A casa é asilo inviolável do indivíduo.\n\nA QUALQUER HORA (Dia ou Noite):\n1) Flagrante delito\n2) Desastre\n3) Prestar socorro\n\nSOMENTE DURANTE O DIA:\n4) Por determinação judicial (critério temporal: das 05h às 21h nos termos da Lei de Abuso de Autoridade).' },
-      { id: 'n8', title: 'Atributos do Ato (PATI)', tag: 'Administrativo', color: '#10B981', text: 'P - Presunção de Legitimidade e Veracidade: presume-se legal e verdadeiro até prova em contrário.\nA - Autoexecutoriedade: administração executa diretamente sem ordem judicial prévia.\nT - Tipicidade: ato deve corresponder a figura previamente definida em lei.\nI - Imperatividade: impõe obrigações a terceiros independentemente de concordância.' },
-      { id: 'n9', title: 'Tentativa Inadmissível (COUP-C)', tag: 'D. Penal', color: '#EF4444', text: 'Infrações penais que NÃO admitem tentativa (COUP-C):\nC - Culposos (salvo culpa imprópria)\nO - Omissivos próprios / puros\nU - Unissubsistentes (conduta fracionada impossível)\nP - Preterdolosos (dolo no antecedente, culpa no consequente)\nC - Contravenções penais (art. 4º da LCP)' },
-      { id: 'n10', title: 'Cadeia de Custódia (10 Etapas CPP)', tag: 'Proc. Penal', color: '#F59E0B', text: 'Art. 158-B do CPP (Pacote Anticrime):\n1. Reconhecimento: identificar potencial vestígio\n2. Isolamento: preservar o local do crime\n3. Fixação: fotografar e descrever o estado\n4. Coleta: recolher o vestígio\n5. Acondicionamento: embalar individualmente\n6. Transporte: transferir com lacre\n7. Recebimento: conferência formal\n8. Processamento: exame pericial\n9. Armazenamento: guarda em central de custódia\n10. Descarte: liberação judicial formal' },
-      { id: 'n11', title: 'Prisão Temporária (Lei 7.960/89)', tag: 'Proc. Penal', color: '#F59E0B', text: 'Cabível EXCLUSIVAMENTE durante o Inquérito Policial (não cabe na instrução criminal!).\n\nPrazos:\n• 5 dias (+ 5 dias prorrogáveis) em crimes comuns taxativos.\n• 30 dias (+ 30 dias prorrogáveis) em crimes hediondos e equiparados.\n\nATENÇÃO: O juiz NUNCA pode decretar prisão temporária de ofício.' },
-      { id: 'n12', title: 'Cláusulas Pétreas (Art. 60, § 4º CF)', tag: 'Constitucional', color: '#3B82F6', text: 'Não será objeto de deliberação a proposta de emenda tendente a abolir:\n1) A forma federativa de Estado;\n2) O voto direto, secreto, universal e periódico;\n3) A separação dos Poderes;\n4) Os direitos e garantias individuais.\n\nOBS: A forma e sistema de governo (República/Presidencialismo) NÃO são cláusulas pétreas.' },
-      { id: 'n13', title: 'Requisitos do Ato (COMFIFOR)', tag: 'Administrativo', color: '#10B981', text: 'Requisitos: Competência, Finalidade, Forma, Motivo e Objeto.\n\nCONVALIDAÇÃO (Saneamento do Vício):\nAdmitida apenas quando houver defeito sanável de:\n1) Competência (desde que não seja privativa/exclusiva);\n2) Forma (desde que não essencial para a validade do ato).' },
-      { id: 'n14', title: 'Erro de Tipo vs Erro de Proibição', tag: 'D. Penal', color: '#EF4444', text: 'Erro de Tipo (recai sobre a realidade/fatos):\n• Inevitável: exclui dolo e culpa (fato atípico).\n• Evitável: exclui o dolo, mas pune por culpa se prevista.\n\nErro de Proibição (recai sobre a ilicitude):\n• Inevitável: isenta de pena (não há culpabilidade).\n• Evitável: não isenta, mas diminui a pena de 1/6 a 1/3.' },
-      { id: 'n15', title: 'Lei Maria da Penha (Lei 11.340/06)', tag: 'Legislação Especial', color: '#D4AF37', text: '• Veda expressamente a aplicação da Lei 9.099/95 (não cabe transação, composição nem sursis processual).\n• Violência não exige coabitação atual.\n• A autoridade policial pode conceder medidas protetivas de urgência se o município não for sede de comarca e não houver juiz disponível (comunicação em 24h).' },
-      { id: 'n16', title: 'Abuso de Autoridade (Lei 13.869/19)', tag: 'Legislação Especial', color: '#D4AF37', text: 'Exige elemento subjetivo especial (Dolo Específico):\nFinalidade específica de prejudicar outrem, beneficiar a si mesmo ou a terceiro, ou por mero capricho/satisfação pessoal.\n\nA divergência na interpretação de lei ou avaliação de fatos NÃO configura crime de abuso (veda-se crime de hermenêutica).' },
-      { id: 'n17', title: 'Segurança Pública (Art. 144 CF)', tag: 'Constitucional', color: '#3B82F6', text: 'Órgãos constitucionais do art. 144:\n1. Polícia Federal\n2. Polícia Rodoviária Federal\n3. Polícia Ferroviária Federal\n4. Polícias Civis\n5. Polícias Militares e Corpos de Bombeiros Militares\n6. Polícias Penais (federal, estaduais e distrital).\n\nGuardas Municipais NÃO constam no rol dos incisos, mas integram o SUSP.' },
-      { id: 'n18', title: 'Poder de Polícia - Atributos (DAC)', tag: 'Administrativo', color: '#10B981', text: 'D - Discricionariedade (juízo de oportunidade e conveniência)\nA - Autoexecutoriedade (execução imediata pela administração pública)\nC - Coercibilidade (imposição obrigatória e uso moderado da força)\n\nIMPORTANTE: A cobrança de multas NÃO é autoexecutória (se não paga, exige execução fiscal judicial).' },
-      { id: 'n19', title: 'Crase - Casos Proibidos (VAM-P)', tag: 'Português', color: '#8B5CF6', text: 'Casos PROIBIDOS de crase:\nV - Antes de VERBOS ("começou a estudar")\nA - Antes de palavras MASCULINAS ("andou a cavalo", "pagamento a prazo")\nM - Antes da maioria dos PRONOMES ("pediu a ela", "entregou a você")\nP - Entre palavras REPETIDAS ("face a face", "gota a gota")' },
-      { id: 'n20', title: 'Excludentes de Ilicitude (Art. 23 CP)', tag: 'D. Penal', color: '#EF4444', text: 'Causas de exclusão de ilicitude:\n1. Estado de Necessidade (perigo atual a direito próprio ou alheio)\n2. Legítima Defesa (repulsa moderada a agressão injusta, atual/iminente)\n3. Estrito Cumprimento do Dever Legal\n4. Exercício Regular de Direito\n\nO excesso doloso ou culposo é SEMPRE punível pelo Código Penal.' }
+      { id: 'n5', title: 'Dolo Eventual vs Culpa Consciente', tag: 'D. Penal', color: '#EF4444', text: 'Dolo Eventual: O agente prevê o resultado e assume o risco de produzi-lo ("Tanto faz se acontecer, não me importo com as consequências").\n\nCulpa Consciente: O agente prevê o resultado danoso, mas confia sinceramente na sua própria perícia e habilidade para evitá-lo.' },
+      { id: 'n6', title: 'Prazos do Inquérito Policial', tag: 'Proc. Penal', color: '#F59E0B', text: 'Justiça Estadual (CPP):\n• Réu Preso: 10 dias (improrrogáveis)\n• Réu Solto: 30 dias (prorrogáveis pelo juiz)\n\nJustiça Federal:\n• Preso: 15 dias (+15)\n• Solto: 30 dias\n\nLei de Drogas:\n• Preso: 30 dias (+30)\n• Solto: 90 dias (+90)' },
+      { id: 'n7', title: 'Inviolabilidade Domiciliar (Art. 5º, XI)', tag: 'Constitucional', color: '#3B82F6', text: 'A casa é asilo inviolável do indivíduo.\n\nA QUALQUER HORA:\n1) Flagrante delito\n2) Desastre\n3) Prestar socorro\n\nSOMENTE DURANTE O DIA:\n4) Por determinação judicial (critério temporal: das 05h às 21h nos termos da Lei 13.869).' },
+      { id: 'n8', title: 'Atributos do Ato (PATI)', tag: 'Administrativo', color: '#10B981', text: 'P - Presunção de Legitimidade e Veracidade\nA - Autoexecutoriedade\nT - Tipicidade\nI - Imperatividade\n\nIMPORTANTE: A cobrança de multas NÃO é autoexecutória.' },
+      { id: 'n9', title: 'Tentativa Inadmissível (COUP-C)', tag: 'D. Penal', color: '#EF4444', text: 'Infrações que NÃO admitem tentativa:\nC - Culposos (salvo culpa imprópria)\nO - Omissivos próprios\nU - Unissubsistentes\nP - Preterdolosos\nC - Contravenções penais' },
+      { id: 'n10', title: 'Cadeia de Custódia (10 Etapas CPP)', tag: 'Proc. Penal', color: '#F59E0B', text: 'Art. 158-B do CPP (Pacote Anticrime):\n1. Reconhecimento, 2. Isolamento, 3. Fixação, 4. Coleta, 5. Acondicionamento, 6. Transporte, 7. Recebimento, 8. Processamento, 9. Armazenamento, 10. Descarte.' },
+      { id: 'n11', title: 'Prisão Temporária (Lei 7.960/89)', tag: 'Proc. Penal', color: '#F59E0B', text: 'Cabível EXCLUSIVAMENTE durante o Inquérito Policial (não cabe na instrução judicial!).\n\nPrazos:\n• 5 + 5 dias em crimes comuns taxativos.\n• 30 + 30 dias em crimes hediondos/equiparados.\n\nVeda-se decretação de ofício pelo juiz.' },
+      { id: 'n12', title: 'Cláusulas Pétreas (Art. 60, § 4º CF)', tag: 'Constitucional', color: '#3B82F6', text: 'Não será objeto de deliberação a proposta de emenda tendente a abolir:\n1) A forma federativa de Estado;\n2) O voto direto, secreto, universal e periódico;\n3) A separação dos Poderes;\n4) Os direitos e garantias individuais.' },
+      { id: 'n13', title: 'Requisitos do Ato (COMFIFOR)', tag: 'Administrativo', color: '#10B981', text: 'Requisitos: Competência, Finalidade, Forma, Motivo e Objeto.\n\nCONVALIDAÇÃO permitida em vícios sanáveis de:\n1) Competência (não exclusiva);\n2) Forma (não essencial à validade).' },
+      { id: 'n14', title: 'Segurança da Informação e Criptografia', tag: 'Informática', color: '#06B6D4', text: 'Princípios Básicos (CIDAR):\nC - Confidencialidade (sigilo)\nI - Integridade (não alteração)\nD - Disponibilidade (acesso garantido)\nA - Autenticidade (identidade garantida)\nR - Não Repúdio (irretratabilidade)' },
+      { id: 'n15', title: 'Lei Maria da Penha (Lei 11.340/06)', tag: 'Legislação Especial', color: '#D4AF37', text: '• Veda expressamente a Lei 9.099/95 (sem transação nem sursis).\n• Violência doméstica independe de coabitação atual.\n• Delegado pode conceder medida protetiva se comarca sem juiz disponível (comunicação em 24h).' },
+      { id: 'n16', title: 'Abuso de Autoridade (Lei 13.869/19)', tag: 'Legislação Especial', color: '#D4AF37', text: 'Exige elemento subjetivo especial (Dolo Específico):\nPrejudicar outrem, beneficiar a si/terceiro ou mero capricho/satisfação pessoal.\nVeda-se crime de hermenêutica.' },
+      { id: 'n17', title: 'Equivalências Lógicas da Condicional', tag: 'RLM / Lógica', color: '#EC4899', text: 'Para a condicional P -> Q:\n1) Contrapositiva: ~Q -> ~P (equivalente perfeita)\n2) Silogismo disjuntivo (Regra do NEYMAR): ~P ∨ Q (Nega a primeira OU Mantém a segunda).' },
+      { id: 'n18', title: 'Poder de Polícia - Atributos (DAC)', tag: 'Administrativo', color: '#10B981', text: 'D - Discricionariedade\nA - Autoexecutoriedade\nC - Coercibilidade\n\nATENÇÃO: A cobrança de multas NÃO possui autoexecutoriedade.' },
+      { id: 'n19', title: 'Crase - Casos Proibidos (VAM-P)', tag: 'Português', color: '#8B5CF6', text: 'Casos PROIBIDOS de crase:\nV - Antes de VERBOS\nA - Antes de palavras MASCULINAS\nM - Antes da maioria dos PRONOMES\nP - Entre palavras REPETIDAS ("frente a frente")' },
+      { id: 'n20', title: 'Excludentes de Ilicitude (Art. 23 CP)', tag: 'D. Penal', color: '#EF4444', text: 'Causas que excluem o crime:\n1. Estado de Necessidade\n2. Legítima Defesa\n3. Estrito Cumprimento do Dever Legal\n4. Exercício Regular de Direito\n\nO excesso (doloso ou culposo) é SEMPRE punível.' }
     ];
 
+    function matchesSubjectName(tagOrDeck, configuredNames) {
+      if (!tagOrDeck || !configuredNames || configuredNames.length === 0) return false;
+      const td = tagOrDeck.toLowerCase();
+      return configuredNames.some(name => {
+        const n = name.toLowerCase();
+        if (td.includes(n) || n.includes(td)) return true;
+        if (n.includes('penal') && !n.includes('process') && td.includes('penal') && !td.includes('proc')) return true;
+        if (n.includes('process') && (td.includes('proc') || td.includes('processual'))) return true;
+        if (n.includes('constitucional') && td.includes('constitucional')) return true;
+        if (n.includes('administrativo') && td.includes('administrativo')) return true;
+        if (n.includes('português') && td.includes('português')) return true;
+        if (n.includes('legisla') && (td.includes('leg') || td.includes('especial') || td.includes('pcmg'))) return true;
+        if (n.includes('informát') && td.includes('informát')) return true;
+        if ((n.includes('lógic') || n.includes('rlm')) && (td.includes('lógic') || td.includes('rlm'))) return true;
+        if (n.includes('humanos') && td.includes('humanos')) return true;
+        if (n.includes('trânsito') && (td.includes('trânsito') || td.includes('ctb'))) return true;
+        return false;
+      });
+    }
+
+    function generateFlashcardsForSubjects(configuredList) {
+      if (!configuredList || configuredList.length === 0) return [];
+      const names = configuredList.map(m => m.nome || m);
+      return MASTER_FLASHCARDS.filter(fc => matchesSubjectName(fc.deck, names));
+    }
+
+    function generateNotesForSubjects(configuredList) {
+      if (!configuredList || configuredList.length === 0) return [];
+      const names = configuredList.map(m => m.nome || m);
+      const filteredDefaults = MASTER_NOTES.filter(n => matchesSubjectName(n.tag, names));
+
+      // Mesclar notas customizadas do usuário se existirem
+      try {
+        const raw = localStorage.getItem('tactical_os_notes');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const customUserNotes = parsed.filter(n => !MASTER_NOTES.some(d => d.id === n.id));
+          return [...filteredDefaults, ...customUserNotes];
+        }
+      } catch(e) {}
+
+      return filteredDefaults;
+    }
+
+    function generateTimetableForSubjects(configuredList) {
+      if (!configuredList || configuredList.length === 0) return [];
+      const names = configuredList.map(m => m.nome || m);
+      const getSub = (idx) => names[idx % names.length];
+
+      return [
+        { 
+          shift: 'Manhã (08h - 10h)', 
+          seg: getSub(0), 
+          ter: getSub(1 % names.length), 
+          qua: getSub(2 % names.length), 
+          qui: getSub(3 % names.length), 
+          sex: getSub(4 % names.length), 
+          sab: '100 Questões' 
+        },
+        { 
+          shift: 'Tarde (14h - 16h)', 
+          seg: getSub(1 % names.length), 
+          ter: getSub(2 % names.length), 
+          qua: getSub(3 % names.length), 
+          qui: getSub(4 % names.length), 
+          sex: getSub(5 % names.length), 
+          sab: 'Lei Seca' 
+        },
+        { 
+          shift: 'Noite (19h30 - 21h30)', 
+          seg: 'Revisão 24h', 
+          ter: 'Questões Banca', 
+          qua: 'Revisão 7d', 
+          qui: 'Redação / Peça', 
+          sex: 'Revisão Geral', 
+          sab: 'Simulado Tático' 
+        }
+      ];
+    }
+
+    function renderNotesFilterBar(configuredList) {
+      const bar = document.getElementById('notesFilterBar');
+      if (!bar) return;
+
+      if (!configuredList || configuredList.length === 0) {
+        bar.innerHTML = '<button class="note-filter-btn active" onclick="filterNotesByTag(\'todos\', this)">Todos</button>';
+        return;
+      }
+
+      const names = configuredList.map(m => m.nome || m);
+      bar.innerHTML = '<button class="note-filter-btn active" onclick="filterNotesByTag(\'todos\', this)">Todos</button>' +
+        names.map(name => {
+          let shortTag = name;
+          if (name.includes('Direito Penal')) shortTag = 'D. Penal';
+          else if (name.includes('Processual Penal')) shortTag = 'Proc. Penal';
+          else if (name.includes('Constitucional')) shortTag = 'Constitucional';
+          else if (name.includes('Administrativo')) shortTag = 'Administrativo';
+          else if (name.includes('Português')) shortTag = 'Português';
+          else if (name.includes('Legislação')) shortTag = 'Legislação';
+          else if (name.includes('Informática')) shortTag = 'Informática';
+          else if (name.includes('Lógico') || name.includes('RLM')) shortTag = 'RLM';
+          return '<button class="note-filter-btn" onclick="filterNotesByTag(\'' + shortTag + '\', this)">' + shortTag + '</button>';
+        }).join('');
+    }
+
     /* ========================================================================
-       2. CARREGAMENTO E SINCRONIZAÇÃO DE DADOS
+       4. CARREGAMENTO E SINCRONIZAÇÃO DE DADOS
        ======================================================================== */
     let currentTasks = [];
     let currentAssessments = [];
     let currentNotes = [];
-    let currentFlashcards = DEFAULT_FLASHCARDS;
+    let currentFlashcards = [];
     let currentFilteredFlashcards = [];
     let activeCardIndex = 0;
 
     function initData() {
-      // 1. Tentar ler do localStorage existente do app
-      const rawTasks = localStorage.getItem('tactical_os_tasks');
-      currentTasks = rawTasks ? JSON.parse(rawTasks) : DEFAULT_TASKS;
+      const configuredMaterias = getConfiguredMaterias();
 
+      // 1. Flashcards e Notas: Gerados estritamente com base nas matérias configuradas
+      if (configuredMaterias.length === 0) {
+        currentFlashcards = [];
+        currentNotes = [];
+        currentTasks = [];
+      } else {
+        currentFlashcards = generateFlashcardsForSubjects(configuredMaterias);
+        currentNotes = generateNotesForSubjects(configuredMaterias);
+        
+        // Tarefas: carregar salvas ou gerar tópicos para matérias configuradas
+        const rawTasks = localStorage.getItem('tactical_os_tasks');
+        if (rawTasks) {
+          try {
+            currentTasks = JSON.parse(rawTasks);
+          } catch(e) {
+            currentTasks = [];
+          }
+        } else {
+          // Starter missions para as matérias configuradas
+          currentTasks = configuredMaterias.slice(0, 5).map((m, idx) => ({
+            id: 't_init_' + idx,
+            title: 'Módulo 01: Introdução e Teoria Geral de ' + (m.nome || m),
+            date: 'Hoje',
+            done: false,
+            priority: 4,
+            subject: (m.nome || m)
+          }));
+          localStorage.setItem('tactical_os_tasks', JSON.stringify(currentTasks));
+        }
+      }
+
+      // 2. Metas & Simulados (Persistência real do usuário)
       const rawAssessments = localStorage.getItem('tactical_os_assessments');
-      currentAssessments = rawAssessments ? JSON.parse(rawAssessments) : DEFAULT_ASSESSMENTS;
-
-      // 2. Carregar notas táticas garantindo que os novos bizus oficiais sejam mesclados
-      const rawNotes = localStorage.getItem('tactical_os_notes');
-      if (rawNotes) {
+      if (rawAssessments) {
         try {
-          const parsed = JSON.parse(rawNotes);
-          // Se houver menos que o acervo oficial, mesclar preservando os customizados
-          const existingIds = new Set(parsed.map(n => n.id));
-          const missingDefaults = DEFAULT_NOTES.filter(d => !existingIds.has(d.id));
-          currentNotes = [...parsed, ...missingDefaults];
+          currentAssessments = JSON.parse(rawAssessments);
         } catch(e) {
-          currentNotes = DEFAULT_NOTES;
+          currentAssessments = [];
         }
       } else {
-        currentNotes = DEFAULT_NOTES;
-      }
-      localStorage.setItem('tactical_os_notes', JSON.stringify(currentNotes));
-
-      // 3. Sincronizar contagem de exames
-      try {
-        const examTargetRaw = localStorage.getItem('concurso_exam_target');
-        if (examTargetRaw) {
-          const target = JSON.parse(examTargetRaw);
-          if (target && target.date && currentAssessments[0]) {
-            currentAssessments[0].title = target.title || currentAssessments[0].title;
-            currentAssessments[0].date = target.date;
-          }
+        // Se usuário configurou matérias, criar meta inicial
+        if (configuredMaterias.length > 0) {
+          currentAssessments = [
+            { id: 'a1', title: 'Prova Oficial do Edital Configurado', date: '2026-12-13', target: '85% acertos (51/60)', status: 'in_progress', badge: 'Meta Principal' },
+            { id: 'a2', title: 'Simulado Geral Tático #01', date: '2026-10-25', target: '60 questões estilo Banca', status: 'not_started', badge: 'Agendado' }
+          ];
+          localStorage.setItem('tactical_os_assessments', JSON.stringify(currentAssessments));
+        } else {
+          currentAssessments = [];
         }
-      } catch(e) {}
+      }
 
+      // 3. Atualizar barra de filtros e selects de matérias nos modais
+      renderNotesFilterBar(configuredMaterias);
+      populateSubjectDropdowns();
+
+      // 4. Renderizar componentes
       renderClasses();
       renderTimetable();
       renderAssessments();
@@ -2749,63 +3777,44 @@
     }
 
     /* ========================================================================
-       3. RENDERIZAÇÃO DOS COMPONENTES
+       5. RENDERIZAÇÃO DOS COMPONENTES
        ======================================================================== */
 
     // Mapeamento autêntico de ícones vetoriais táticos por disciplina
     function getDisciplineIconSvg(name, index = 0) {
       const norm = (name || '').toLowerCase();
       
-      // Direito Penal
       if (norm.includes('penal') && !norm.includes('processual')) {
         return '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 12.5-8 8a2.119 2.119 0 0 1-3-3l8-8"/><path d="m16 16 6-6"/><path d="m8 8 6-6"/><path d="m9 7 8 8"/><path d="m21 11-8-8"/></svg>';
       }
-      // Processo Penal
       if (norm.includes('processual') || norm.includes('processo') || norm.includes('inquérito')) {
         return '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><path d="M11 8v6M8 11h6"/></svg>';
       }
-      // Constitucional
       if (norm.includes('constitucional') || norm.includes('cf/88')) {
         return '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"/></svg>';
       }
-      // Administrativo
       if (norm.includes('administrativo') || norm.includes('administração')) {
         return '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="21" x2="21" y2="21"></line><line x1="3" y1="10" x2="21" y2="10"></line><polyline points="5 6 12 3 19 6"></polyline><line x1="4" y1="10" x2="4" y2="21"></line><line x1="20" y1="10" x2="20" y2="21"></line><line x1="8" y1="14" x2="8" y2="17"></line><line x1="12" y1="14" x2="12" y2="17"></line><line x1="16" y1="14" x2="16" y2="17"></line></svg>';
       }
-      // Português
       if (norm.includes('português') || norm.includes('portuguesa') || norm.includes('redação') || norm.includes('texto')) {
         return '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path><line x1="9" y1="7" x2="16" y2="7"></line><line x1="9" y1="11" x2="14" y2="11"></line></svg>';
       }
-      // Informática
       if (norm.includes('informática') || norm.includes('computador') || norm.includes('computação') || norm.includes('tecnologia')) {
         return '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line><path d="m7 8 3 3-3 3"></path><line x1="13" y1="14" x2="17" y2="14"></line></svg>';
       }
-      // Raciocínio Lógico / Matemática
       if (norm.includes('lógico') || norm.includes('lógica') || norm.includes('matemática') || norm.includes('rlm')) {
         return '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="7" y1="12" x2="17" y2="12"></line><line x1="12" y1="7" x2="12" y2="17"></line></svg>';
       }
-      // Estatística
       if (norm.includes('estatística')) {
         return '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line><line x1="3" y1="20" x2="21" y2="20"></line></svg>';
       }
-      // Legislação Especial
       if (norm.includes('legislação') || norm.includes('lei') || norm.includes('estatuto')) {
         return '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>';
       }
-      // Direitos Humanos
       if (norm.includes('humanos')) {
         return '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
       }
-      // Conhecimentos Básicos
-      if (norm.includes('básicos') || norm.includes('básico') || norm.includes('gerais') || norm.includes('geral')) {
-        return '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
-      }
-      // Conhecimentos Específicos
-      if (norm.includes('específicos') || norm.includes('específico') || norm.includes('operacional')) {
-        return '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="22" y1="12" x2="18" y2="12"></line><line x1="6" y1="12" x2="2" y2="12"></line><line x1="12" y1="6" x2="12" y2="2"></line><line x1="12" y1="22" x2="12" y2="18"></line></svg>';
-      }
 
-      // Fallback tático autêntico
       const tacticalSVGs = [
         '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>',
         '<svg class="discipline-svg" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>',
@@ -2818,32 +3827,48 @@
     // Renderizar Disciplinas
     function renderClasses() {
       const container = document.getElementById('concursoClassesGrid');
+      const badge = document.getElementById('totalDisciplinasBadge');
       if (!container) return;
       
-      // Se houver matérias cadastradas pelo usuário no concurso_app_data clássico
-      let displayClasses = DEFAULT_CONCURSO_CLASSES;
-      try {
-        const appDataRaw = localStorage.getItem('concurso_app_data');
-        if (appDataRaw) {
-          const appData = JSON.parse(appDataRaw);
-          if (appData && Array.isArray(appData.materias) && appData.materias.length > 0) {
-            const colors = ['#EF4444', '#F59E0B', '#3B82F6', '#10B981', '#8B5CF6', '#D4AF37'];
-            displayClasses = appData.materias.map((m, idx) => {
-              const topicosCount = Array.isArray(m.topicos) ? m.topicos.length : 10;
-              return {
-                id: m.id || ('mat_' + idx),
-                name: m.nome || 'Disciplina',
-                topics: topicosCount,
-                pending: Math.max(1, Math.round(topicosCount * 0.3)),
-                done: Math.min(100, Math.max(20, Math.round(50 + (idx * 8)))),
-                color: colors[idx % colors.length]
-              };
-            });
-            const badge = document.getElementById('totalDisciplinasBadge');
-            if (badge) badge.innerText = displayClasses.length + ' Disciplinas no Edital';
-          }
-        }
-      } catch(e) {}
+      const configuredMaterias = getConfiguredMaterias();
+
+      // CASO: Nenhuma matéria configurada -> Exibir banner de configuração e NÃO gerar nada
+      if (configuredMaterias.length === 0) {
+        if (badge) badge.innerText = '0 Disciplinas no Edital';
+        container.innerHTML = (
+          '<div class="empty-tactical-banner">' +
+            '<div class="empty-icon-shield">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 32px; height: 32px; color: var(--gold-primary);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>' +
+            '</div>' +
+            '<h4 style="color: var(--gold-light); margin: 0 0 6px 0; font-size: 15px;">Nenhuma Matéria Configurada no Edital</h4>' +
+            '<p style="color: var(--text-muted); font-size: 12.5px; max-width: 480px; margin: 0 auto 16px auto; line-height: 1.5;">' +
+              'Para garantir que seus dados sejam 100% autênticos e personalizados, o Cronograma Tático não exibe informações pré-definidas. Clique abaixo para marcar as matérias do seu concurso ou selecionar uma predefinição.' +
+            '</p>' +
+            '<button type="button" class="btn-primary" onclick="openSubjectConfigModal()" style="padding: 9px 20px; font-size: 12.5px;">' +
+              '<svg class="tactical-icon" style="margin-right: 6px; width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>' +
+              'Configurar Minhas Matérias Agora' +
+            '</button>' +
+          '</div>'
+        );
+        return;
+      }
+
+      if (badge) badge.innerText = configuredMaterias.length + ' Disciplinas no Edital';
+
+      const colors = ['#EF4444', '#F59E0B', '#3B82F6', '#10B981', '#8B5CF6', '#D4AF37', '#06B6D4', '#EC4899'];
+      const displayClasses = configuredMaterias.map((m, idx) => {
+        const name = m.nome || m;
+        const topicosCount = Array.isArray(m.topicos) && m.topicos.length > 0 ? m.topicos.length : 12;
+        const color = m.color || colors[idx % colors.length];
+        return {
+          id: m.id || ('mat_' + idx),
+          name: name,
+          topics: topicosCount,
+          pending: Math.max(1, Math.round(topicosCount * 0.25)),
+          done: Math.min(100, Math.max(10, Math.round(40 + (idx * 9)))),
+          color: color
+        };
+      });
 
       container.innerHTML = displayClasses.map((c, idx) => {
         const iconSvg = getDisciplineIconSvg(c.name, idx);
@@ -2875,12 +3900,26 @@
       }).join('');
     }
 
-    // Renderizar Grade Tática
+    // Renderizar Grade Tática Semanal
     function renderTimetable() {
       const tbody = document.getElementById('timetableBody');
       if (!tbody) return;
 
-      tbody.innerHTML = DEFAULT_TIMETABLE.map(row => 
+      const configured = getConfiguredMaterias();
+      if (configured.length === 0) {
+        tbody.innerHTML = (
+          '<tr>' +
+            '<td colspan="7" style="text-align: center; padding: 28px 14px; color: var(--text-muted); font-size: 12.5px;">' +
+              'Grade Tática aguardando matérias. Configure as disciplinas para gerar a distribuição semanal de turnos.<br>' +
+              '<button class="btn-primary" style="margin-top: 10px; font-size: 11px; padding: 4px 12px;" onclick="openSubjectConfigModal()">+ Configurar Matérias</button>' +
+            '</td>' +
+          '</tr>'
+        );
+        return;
+      }
+
+      const timetable = generateTimetableForSubjects(configured);
+      tbody.innerHTML = timetable.map(row => 
         '<tr>' +
           '<td><span class="time-slot-badge">' + row.shift + '</span></td>' +
           '<td><span class="subject-pill-cell pill-blue" onclick="showSubjectToast(\'' + row.seg + '\')">' + row.seg + '</span></td>' +
@@ -2954,6 +3993,12 @@
       const tbody = document.getElementById('tasksTableBody');
       if (!tbody) return;
 
+      const configured = getConfiguredMaterias();
+      if (configured.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 12px;">Nenhuma disciplina configurada. Configure suas matérias para organizar seus tópicos e missões de estudo.<br><button class="btn-primary" style="margin-top: 10px; font-size: 11px; padding: 4px 12px;" onclick="openSubjectConfigModal()">+ Configurar Matérias</button></td></tr>';
+        return;
+      }
+
       const filtered = filterSubject 
         ? currentTasks.filter(t => t.subject === filterSubject) 
         : currentTasks;
@@ -3023,6 +4068,16 @@
     function renderFlashcards(tab) {
       const container = document.getElementById('flashcardsListContainer');
       if (!container) return;
+
+      const configured = getConfiguredMaterias();
+      if (configured.length === 0) {
+        container.innerHTML = '<div style="padding: 24px 14px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
+          'Nenhum flashcard gerado.<br>' +
+          'Configure as matérias do edital para gerar os flashcards com base nelas.<br>' +
+          '<button class="btn-primary" style="margin-top: 10px; font-size: 11px; padding: 4px 12px;" onclick="openSubjectConfigModal()">+ Configurar Matérias</button>' +
+        '</div>';
+        return;
+      }
 
       currentFilteredFlashcards = tab === 'todos' 
         ? currentFlashcards 
@@ -3101,8 +4156,20 @@
     function renderNotes() {
       const container = document.getElementById('stickyNotesContainer');
       const badge = document.getElementById('notesCountBadge');
-      if (badge) badge.innerText = currentNotes.length;
       if (!container) return;
+
+      const configured = getConfiguredMaterias();
+      if (configured.length === 0) {
+        if (badge) badge.innerText = '0';
+        container.innerHTML = '<div style="grid-column: 1 / -1; padding: 24px 10px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
+          'Nenhum bizu tático disponível.<br>' +
+          'Configure as matérias do seu concurso para liberar os bizus doutrinários correspondentes ou adicione novos bizus.<br>' +
+          '<button class="btn-primary" style="margin-top: 8px; font-size: 11px; padding: 3px 10px;" onclick="openSubjectConfigModal()">+ Configurar Matérias</button>' +
+        '</div>';
+        return;
+      }
+
+      if (badge) badge.innerText = currentNotes.length;
 
       const filtered = currentNoteFilter === 'todos' 
         ? currentNotes 
@@ -3249,8 +4316,14 @@
     }
 
     function initCountdown() {
+      const el = document.getElementById('countdownText');
+      if (!currentAssessments || currentAssessments.length === 0) {
+        if (el) el.innerText = 'Nenhuma data de concurso configurada.';
+        return;
+      }
+
       let targetDateStr = '2026-12-13';
-      let targetName = 'a Prova PCMG';
+      let targetName = 'a Prova';
       try {
         const raw = localStorage.getItem('concurso_exam_target');
         if (raw) {
@@ -3773,6 +4846,10 @@
 
     // Inicialização ao carregar
     window.addEventListener('DOMContentLoaded', () => {
+      // 1. Checagem mandatória de autenticação
+      checkAuth();
+
+      // 2. Carregar dados operacionais
       initData();
       updateClock();
       setInterval(updateClock, 1000);
