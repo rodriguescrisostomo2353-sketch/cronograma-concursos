@@ -1188,22 +1188,31 @@
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      padding-bottom: 4px;
+      white-space: nowrap;
+      flex-wrap: nowrap;
+      padding-bottom: 6px;
       border-bottom: 1px solid var(--border-tactical);
-      scrollbar-width: none;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
     }
 
     .notes-filter-bar::-webkit-scrollbar {
-      display: none;
+      height: 3px;
+    }
+
+    .notes-filter-bar::-webkit-scrollbar-thumb {
+      background: var(--border-gold);
+      border-radius: 4px;
     }
 
     .note-filter-btn {
+      flex-shrink: 0;
       background: transparent;
       border: 1px solid transparent;
       color: var(--text-muted);
       font-size: 11px;
       font-weight: 600;
-      padding: 3px 8px;
+      padding: 4px 10px;
       border-radius: var(--radius-sm);
       cursor: pointer;
       white-space: nowrap;
@@ -3334,22 +3343,22 @@
       custom: []
     };
 
-    // Lê matérias configuradas explicitamente pelo usuário
+    // Lê matérias configuradas explicitamente pelo usuário (prioriza o Modo Clássico concurso_app_data)
     function getConfiguredMaterias() {
       try {
-        const customRaw = localStorage.getItem('tactical_custom_materias');
-        if (customRaw) {
-          const parsed = JSON.parse(customRaw);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed.map((item, idx) => typeof item === 'string' ? { id: 'mat_' + idx, nome: item } : item);
-          }
-        }
-
         const appDataRaw = localStorage.getItem('concurso_app_data');
         if (appDataRaw) {
           const appData = JSON.parse(appDataRaw);
           if (appData && Array.isArray(appData.materias) && appData.materias.length > 0) {
             return appData.materias;
+          }
+        }
+
+        const customRaw = localStorage.getItem('tactical_custom_materias');
+        if (customRaw) {
+          const parsed = JSON.parse(customRaw);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed.map((item, idx) => typeof item === 'string' ? { id: 'mat_' + idx, nome: item, topicos: [] } : item);
           }
         }
       } catch(e) {
@@ -3460,20 +3469,31 @@
         return;
       }
 
+      let appData = {};
+      try {
+        const raw = localStorage.getItem('concurso_app_data');
+        if (raw) appData = JSON.parse(raw);
+      } catch(e) {}
+
       const colors = ['#EF4444', '#F59E0B', '#3B82F6', '#10B981', '#8B5CF6', '#D4AF37', '#06B6D4', '#EC4899'];
-      const materias = selectedNames.map((name, i) => ({
-        id: 'mat_' + i,
-        nome: name,
-        color: colors[i % colors.length],
-        topicos: []
-      }));
+      const materias = selectedNames.map((name, i) => {
+        // Preservar tópicos e IDs existentes do Modo Clássico
+        let existing = null;
+        if (appData && Array.isArray(appData.materias)) {
+          existing = appData.materias.find(m => (m.nome || m) === name);
+        }
+        return {
+          id: existing?.id || ('mat_' + i),
+          nome: name,
+          color: existing?.color || colors[i % colors.length],
+          paletteId: existing?.paletteId || 'blue',
+          topicos: existing?.topicos || []
+        };
+      });
 
       // Salvar em tactical_custom_materias e sincronizar no concurso_app_data
       localStorage.setItem('tactical_custom_materias', JSON.stringify(materias));
       try {
-        let appData = {};
-        const raw = localStorage.getItem('concurso_app_data');
-        if (raw) appData = JSON.parse(raw);
         appData.materias = materias;
         localStorage.setItem('concurso_app_data', JSON.stringify(appData));
       } catch(e) {}
@@ -3591,36 +3611,102 @@
       { id: 'n20', title: 'Excludentes de Ilicitude (Art. 23 CP)', tag: 'D. Penal', color: '#EF4444', text: 'Causas que excluem o crime:\n1. Estado de Necessidade\n2. Legítima Defesa\n3. Estrito Cumprimento do Dever Legal\n4. Exercício Regular de Direito\n\nO excesso (doloso ou culposo) é SEMPRE punível.' }
     ];
 
-    function matchesSubjectName(tagOrDeck, configuredNames) {
+    // Comparador estrito de matéria para evitar contaminação entre disciplinas do edital
+    function matchesStrictSubject(tagOrDeck, configuredNames) {
       if (!tagOrDeck || !configuredNames || configuredNames.length === 0) return false;
-      const td = tagOrDeck.toLowerCase();
+      const td = tagOrDeck.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+      
       return configuredNames.some(name => {
-        const n = name.toLowerCase();
-        if (td.includes(n) || n.includes(td)) return true;
-        if (n.includes('penal') && !n.includes('process') && td.includes('penal') && !td.includes('proc')) return true;
-        if (n.includes('process') && (td.includes('proc') || td.includes('processual'))) return true;
-        if (n.includes('constitucional') && td.includes('constitucional')) return true;
-        if (n.includes('administrativo') && td.includes('administrativo')) return true;
-        if (n.includes('português') && td.includes('português')) return true;
-        if (n.includes('legisla') && (td.includes('leg') || td.includes('especial') || td.includes('pcmg'))) return true;
-        if (n.includes('informát') && td.includes('informát')) return true;
-        if ((n.includes('lógic') || n.includes('rlm')) && (td.includes('lógic') || td.includes('rlm'))) return true;
-        if (n.includes('humanos') && td.includes('humanos')) return true;
-        if (n.includes('trânsito') && (td.includes('trânsito') || td.includes('ctb'))) return true;
-        return false;
+        const raw = typeof name === 'object' && name !== null ? (name.nome || '') : String(name || '');
+        const n = raw.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+        if (!n) return false;
+
+        // Trânsito / CTB: SÓ dá match se a matéria configurada tiver explicitamente "transito" ou "ctb"
+        if (td.includes('transito') || td.includes('ctb')) {
+          return n.includes('transito') || n.includes('ctb');
+        }
+
+        // Direitos Humanos: SÓ dá match se a matéria tiver "humanos"
+        if (td.includes('humanos')) {
+          return n.includes('humanos');
+        }
+
+        // Processo Penal: SÓ dá match se a matéria tiver "process" ou "cpp"
+        if (td.includes('proc') || td.includes('processual') || td.includes('cpp')) {
+          return n.includes('process') || n.includes('cpp');
+        }
+
+        // Direito Penal puro: NUNCA dá match se a matéria for Processo Penal
+        if (td.includes('penal')) {
+          return n.includes('penal') && !n.includes('process');
+        }
+
+        // Constitucional
+        if (td.includes('constitucional')) {
+          return n.includes('constitucional');
+        }
+
+        // Administrativo
+        if (td.includes('administrativo')) {
+          return n.includes('administrativo');
+        }
+
+        // Português
+        if (td.includes('portugues')) {
+          return n.includes('portugues');
+        }
+
+        // Legislação Especial / PCMG
+        if (td.includes('pcmg') || td.includes('especial')) {
+          return n.includes('pcmg') || n.includes('especial') || (n.includes('legisla') && !n.includes('transito'));
+        }
+
+        // Informática
+        if (td.includes('informat')) {
+          return n.includes('informat') || n.includes('comput');
+        }
+
+        // RLM / Lógica
+        if (td.includes('logic') || td.includes('rlm')) {
+          return n.includes('logic') || n.includes('rlm') || n.includes('matemat');
+        }
+
+        // Estatística
+        if (td.includes('estatist')) {
+          return n.includes('estatist');
+        }
+
+        // Contabilidade
+        if (td.includes('contabil')) {
+          return n.includes('contabil');
+        }
+
+        return td === n;
       });
+    }
+
+    // Lê revisões espaçadas programadas do Modo Clássico (concurso_spaced_reviews)
+    function getClassicSpacedReviews() {
+      try {
+        const raw = localStorage.getItem('concurso_spaced_reviews');
+        if (raw) {
+          const list = JSON.parse(raw);
+          if (Array.isArray(list)) return list;
+        }
+      } catch(e) {}
+      return [];
     }
 
     function generateFlashcardsForSubjects(configuredList) {
       if (!configuredList || configuredList.length === 0) return [];
       const names = configuredList.map(m => m.nome || m);
-      return MASTER_FLASHCARDS.filter(fc => matchesSubjectName(fc.deck, names));
+      return MASTER_FLASHCARDS.filter(fc => matchesStrictSubject(fc.deck, names));
     }
 
     function generateNotesForSubjects(configuredList) {
       if (!configuredList || configuredList.length === 0) return [];
       const names = configuredList.map(m => m.nome || m);
-      const filteredDefaults = MASTER_NOTES.filter(n => matchesSubjectName(n.tag, names));
+      const filteredDefaults = MASTER_NOTES.filter(n => matchesStrictSubject(n.tag, names));
 
       // Mesclar notas customizadas do usuário se existirem
       try {
@@ -3671,6 +3757,29 @@
       ];
     }
 
+    // Converte nome de matéria em tag curta legível e tática
+    function getShortSubjectTag(fullName) {
+      if (!fullName) return 'Geral';
+      const n = fullName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+      if (n.includes('conhecimentos basicos')) return 'Básicos';
+      if (n.includes('processual penal') || n.includes('proc. penal')) return 'Proc. Penal';
+      if (n.includes('penal')) return 'D. Penal';
+      if (n.includes('constitucional')) return 'Constitucional';
+      if (n.includes('administrativo')) return 'Administrativo';
+      if (n.includes('portugues') || n.includes('lingua portuguesa')) return 'Português';
+      if (n.includes('informat')) return 'Informática';
+      if (n.includes('raciocinio') || n.includes('logico') || n.includes('rlm')) return 'RLM';
+      if (n.includes('estatist')) return 'Estatística';
+      if (n.includes('contabil')) return 'Contabilidade';
+      if (n.includes('humanos')) return 'D. Humanos';
+      if (n.includes('transito') || n.includes('ctb')) return 'Trânsito';
+      if (n.includes('criminolog')) return 'Criminologia';
+      if (n.includes('medicina legal')) return 'Med. Legal';
+      if (n.includes('pcmg') || n.includes('especial')) return 'Legislação';
+      if (n.includes('lei')) return 'Legislação';
+      return fullName.length > 14 ? fullName.slice(0, 12) + '...' : fullName;
+    }
+
     function renderNotesFilterBar(configuredList) {
       const bar = document.getElementById('notesFilterBar');
       if (!bar) return;
@@ -3683,16 +3792,8 @@
       const names = configuredList.map(m => m.nome || m);
       bar.innerHTML = '<button class="note-filter-btn active" onclick="filterNotesByTag(\'todos\', this)">Todos</button>' +
         names.map(name => {
-          let shortTag = name;
-          if (name.includes('Direito Penal')) shortTag = 'D. Penal';
-          else if (name.includes('Processual Penal')) shortTag = 'Proc. Penal';
-          else if (name.includes('Constitucional')) shortTag = 'Constitucional';
-          else if (name.includes('Administrativo')) shortTag = 'Administrativo';
-          else if (name.includes('Português')) shortTag = 'Português';
-          else if (name.includes('Legislação')) shortTag = 'Legislação';
-          else if (name.includes('Informática')) shortTag = 'Informática';
-          else if (name.includes('Lógico') || name.includes('RLM')) shortTag = 'RLM';
-          return '<button class="note-filter-btn" onclick="filterNotesByTag(\'' + shortTag + '\', this)">' + shortTag + '</button>';
+          const shortTag = getShortSubjectTag(name);
+          return '<button class="note-filter-btn" onclick="filterNotesByTag(\'' + shortTag.replace(/'/g, "\\'") + '\', this)" title="' + String(name).replace(/"/g, '&quot;') + '">' + shortTag + '</button>';
         }).join('');
     }
 
@@ -3704,6 +3805,7 @@
     let currentNotes = [];
     let currentFlashcards = [];
     let currentFilteredFlashcards = [];
+    let currentFlashcardTab = 'hoje';
     let activeCardIndex = 0;
 
     function initData() {
@@ -3718,7 +3820,7 @@
         currentFlashcards = generateFlashcardsForSubjects(configuredMaterias);
         currentNotes = generateNotesForSubjects(configuredMaterias);
         
-        // Tarefas: carregar salvas ou manter limpo até o usuário registrar
+        // Tarefas manuais salvas pelo usuário
         const rawTasks = localStorage.getItem('tactical_os_tasks');
         if (rawTasks) {
           try {
@@ -3731,7 +3833,7 @@
         }
       }
 
-      // 2. Metas & Simulados (Persistência real do usuário - zero dados fictícios)
+      // 2. Metas & Simulados (Persistência real do usuário sincronizada com concurso_exam_target do Modo Clássico)
       const rawAssessments = localStorage.getItem('tactical_os_assessments');
       if (rawAssessments) {
         try {
@@ -3741,6 +3843,26 @@
         }
       } else {
         currentAssessments = [];
+      }
+
+      // Se não houver metas manuais salvas, sincronizar com a meta ativa do Modo Clássico
+      if (currentAssessments.length === 0) {
+        try {
+          const rawTarget = localStorage.getItem('concurso_exam_target');
+          if (rawTarget) {
+            const t = JSON.parse(rawTarget);
+            if (t && (t.date || t.name || t.title)) {
+              currentAssessments.push({
+                id: 'exam_classic_main',
+                title: t.name || t.title || 'Prova Oficial',
+                date: t.date || '2026-12-13',
+                target: 'Aprovação',
+                status: 'in_progress',
+                badge: 'Em Preparação'
+              });
+            }
+          }
+        } catch(e) {}
       }
 
       // 3. Atualizar barra de filtros e selects de matérias nos modais
@@ -3903,7 +4025,7 @@
       }).join('');
     }
 
-    // Renderizar Grade Tática Semanal
+    // Renderizar Grade Tática Semanal (Sincronizada com o cronograma real do Modo Clássico)
     function renderTimetable() {
       const tbody = document.getElementById('timetableBody');
       if (!tbody) return;
@@ -3921,6 +4043,85 @@
         return;
       }
 
+      // Verificar se existe cronograma real salvo no Modo Clássico
+      let classicSchedule = null;
+      let completedSlotsMap = {};
+      try {
+        const rawCompleted = localStorage.getItem('concurso_completed_slots');
+        if (rawCompleted) completedSlotsMap = JSON.parse(rawCompleted);
+
+        const rawSched = localStorage.getItem('concurso_schedule_data');
+        if (rawSched) {
+          classicSchedule = JSON.parse(rawSched);
+        } else {
+          const rawSchedList = localStorage.getItem('concurso_schedules_list');
+          const rawActiveId = localStorage.getItem('concurso_active_schedule_id');
+          if (rawSchedList) {
+            const list = JSON.parse(rawSchedList);
+            if (Array.isArray(list) && list.length > 0) {
+              classicSchedule = list.find(s => s.id === rawActiveId) || list[0];
+            }
+          }
+        }
+      } catch(e) {}
+
+      // Se existir cronograma real com colunas de dias e slots
+      if (classicSchedule && Array.isArray(classicSchedule.columns) && classicSchedule.columns.length > 0) {
+        const daysMap = {
+          seg: { name: 'Segunda', slots: [] },
+          ter: { name: 'Terça', slots: [] },
+          qua: { name: 'Quarta', slots: [] },
+          qui: { name: 'Quinta', slots: [] },
+          sex: { name: 'Sexta', slots: [] },
+          sab: { name: 'Sábado', slots: [] },
+          dom: { name: 'Domingo', slots: [] }
+        };
+
+        classicSchedule.columns.forEach(col => {
+          const dayKey = (col.day || col.dia || '').toLowerCase().slice(0, 3);
+          if (daysMap[dayKey] && Array.isArray(col.slots)) {
+            daysMap[dayKey].slots = col.slots;
+          }
+        });
+
+        const maxSlots = Math.max(
+          1,
+          daysMap.seg.slots.length,
+          daysMap.ter.slots.length,
+          daysMap.qua.slots.length,
+          daysMap.qui.slots.length,
+          daysMap.sex.slots.length,
+          daysMap.sab.slots.length
+        );
+
+        let rowsHtml = '';
+        const shiftLabels = ['Turno 1 (Manhã)', 'Turno 2 (Tarde)', 'Turno 3 (Noite)', 'Turno 4 (Extra)'];
+
+        for (let rowIdx = 0; rowIdx < maxSlots; rowIdx++) {
+          const shiftName = shiftLabels[rowIdx] || ('Sessão ' + (rowIdx + 1));
+          const dayKeys = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+          
+          let cellsHtml = dayKeys.map(k => {
+            const slot = daysMap[k].slots[rowIdx];
+            if (!slot) {
+              return '<td><span style="color: var(--text-muted); font-size: 11px;">—</span></td>';
+            }
+            const sName = slot.subjectName || slot.materia || 'Estudo';
+            const sTopic = slot.topic ? ' • ' + slot.topic : '';
+            const isDone = !!completedSlotsMap[slot.slotKey];
+            const badgeClass = isDone ? 'pill-green' : 'pill-blue';
+            const checkIcon = isDone ? '✓ ' : '';
+            return '<td><span class="subject-pill-cell ' + badgeClass + '" onclick="showSubjectToast(\'' + sName.replace(/'/g, "\\'") + '\')" title="' + sName + sTopic + '" style="cursor: pointer;">' + checkIcon + sName + '</span></td>';
+          }).join('');
+
+          rowsHtml += '<tr><td><span class="time-slot-badge">' + shiftName + '</span></td>' + cellsHtml + '</tr>';
+        }
+
+        tbody.innerHTML = rowsHtml;
+        return;
+      }
+
+      // Fallback: distribuição de matérias configuradas
       const timetable = generateTimetableForSubjects(configured);
       tbody.innerHTML = timetable.map(row => 
         '<tr>' +
@@ -3991,7 +4192,7 @@
       }).join('');
     }
 
-    // Renderizar Missões / Tarefas
+    // Renderizar Missões / Tarefas (Tópicos do Edital do Modo Clássico + Missões Manuais)
     function renderTasks(filterSubject) {
       const tbody = document.getElementById('tasksTableBody');
       if (!tbody) return;
@@ -4002,36 +4203,40 @@
         return;
       }
 
-      // Se filtrou por matéria, checar se tem tarefas customizadas ou listar os tópicos do edital da matéria
-      let listToRender = [];
-      if (filterSubject) {
-        const custom = currentTasks.filter(t => t.subject === filterSubject);
-        if (custom.length > 0) {
-          listToRender = custom;
-        } else {
-          // Buscar tópicos reais da matéria no edital
-          const mat = configured.find(m => (m.nome || m) === filterSubject);
-          if (mat && Array.isArray(mat.topicos) && mat.topicos.length > 0) {
-            listToRender = mat.topicos.map((top, tIdx) => {
-              const text = typeof top === 'object' && top !== null ? (top.texto || top.nome || 'Tópico ' + (tIdx + 1)) : top;
-              const isDone = typeof top === 'object' && top !== null ? (!!top.concluido || top.status === 'concluido') : false;
-              return {
-                id: 'top_' + (mat.id || 'm') + '_' + tIdx,
-                materiaId: mat.id,
-                topicIdx: tIdx,
-                isEditalTopic: true,
-                title: text,
-                date: 'Edital',
-                done: isDone,
-                priority: 3,
-                subject: filterSubject
-              };
+      // 1. Extrair os tópicos do edital de todas as matérias configuradas (ou da matéria filtrada)
+      let editalTasks = [];
+      const targets = filterSubject 
+        ? configured.filter(m => (m.nome || m) === filterSubject)
+        : configured;
+
+      targets.forEach(mat => {
+        const sName = mat.nome || mat;
+        if (Array.isArray(mat.topicos) && mat.topicos.length > 0) {
+          mat.topicos.forEach((top, tIdx) => {
+            const text = typeof top === 'object' && top !== null ? (top.texto || top.nome || 'Tópico ' + (tIdx + 1)) : top;
+            const isDone = typeof top === 'object' && top !== null ? (!!top.concluido || top.status === 'concluido' || top.status === 'done') : false;
+            editalTasks.push({
+              id: 'top_' + (mat.id || 'm') + '_' + tIdx,
+              materiaId: mat.id || sName,
+              topicIdx: tIdx,
+              isEditalTopic: true,
+              title: text,
+              date: 'Edital',
+              done: isDone,
+              priority: (typeof top === 'object' && top?.priority) ? top.priority : 3,
+              subject: sName
             });
-          }
+          });
         }
-      } else {
-        listToRender = currentTasks;
-      }
+      });
+
+      // 2. Mesclar tarefas manuais adicionadas pelo usuário (currentTasks)
+      let manualTasks = filterSubject 
+        ? currentTasks.filter(t => t.subject === filterSubject)
+        : currentTasks;
+
+      // Lista final combinada: tarefas manuais no topo, seguidas pelos tópicos do edital
+      const listToRender = [...manualTasks, ...editalTasks];
 
       if (listToRender.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 12.5px;">' +
@@ -4042,9 +4247,9 @@
       }
 
       tbody.innerHTML = listToRender.map(t => {
-        const stars = '★'.repeat(t.priority) + '☆'.repeat(4 - t.priority);
+        const stars = '★'.repeat(t.priority || 3) + '☆'.repeat(Math.max(0, 4 - (t.priority || 3)));
         const onChangeCall = t.isEditalTopic 
-          ? 'toggleEditalTopicDone(\'' + t.materiaId + '\', ' + t.topicIdx + ', \'' + t.subject + '\')' 
+          ? 'toggleEditalTopicDone(\'' + t.materiaId + '\', ' + t.topicIdx + ', \'' + t.subject.replace(/'/g, "\\'") + '\')' 
           : 'toggleTaskDone(\'' + t.id + '\')';
         return (
           '<tr class="' + (t.done ? 'task-completed' : '') + '">' +
@@ -4052,10 +4257,10 @@
               '<input type="checkbox" class="task-checkbox" ' + (t.done ? 'checked' : '') + ' onchange="' + onChangeCall + '">' +
             '</td>' +
             '<td>' +
-              '<span class="task-title">' + t.title + '</span>' +
+              '<span class="task-title" style="' + (t.done ? 'text-decoration: line-through; color: var(--text-muted);' : 'color: var(--text-main); font-weight: 500;') + '">' + t.title + '</span>' +
             '</td>' +
             '<td>' +
-              '<span style="font-family: \'JetBrains Mono\'; font-size: 11px; color: var(--text-gold);">' + t.date + '</span>' +
+              '<span style="font-family: \'JetBrains Mono\', monospace; font-size: 11px; color: var(--text-gold);">' + (t.date || 'Edital') + '</span>' +
             '</td>' +
             '<td>' +
               '<span class="status-badge ' + (t.done ? 'status-completed' : 'status-in-progress') + '">' +
@@ -4063,10 +4268,10 @@
               '</span>' +
             '</td>' +
             '<td>' +
-              '<span class="task-stars" onclick="cycleTaskPriority(\'' + t.id + '\')" title="Clique para alterar prioridade">' + stars + '</span>' +
+              '<span class="task-stars" onclick="' + (t.isEditalTopic ? '' : 'cycleTaskPriority(\'' + t.id + '\')') + '" title="' + (t.isEditalTopic ? 'Prioridade do Edital' : 'Clique para alterar prioridade') + '" style="cursor: pointer;">' + stars + '</span>' +
             '</td>' +
             '<td>' +
-              '<span class="subject-pill-cell pill-blue">' + t.subject + '</span>' +
+              '<span class="subject-pill-cell pill-blue" onclick="filterTasksBySubject(\'' + t.subject.replace(/'/g, "\\'") + '\')" style="cursor: pointer;" title="Filtrar por ' + t.subject + '">' + t.subject + '</span>' +
             '</td>' +
           '</tr>'
         );
@@ -4143,39 +4348,112 @@
       document.getElementById('missoes')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // Renderizar Flashcards
+    // Renderizar Ciclo de Revisões Espaçadas (Sincronizado com concurso_spaced_reviews do Modo Clássico)
     function renderFlashcards(tab) {
+      currentFlashcardTab = tab || 'hoje';
       const container = document.getElementById('flashcardsListContainer');
       if (!container) return;
 
       const configured = getConfiguredMaterias();
       if (configured.length === 0) {
         container.innerHTML = '<div style="padding: 24px 14px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
-          'Nenhum flashcard gerado.<br>' +
-          'Configure as matérias do edital para gerar os flashcards com base nelas.<br>' +
+          'Nenhum ciclo de revisão ativo.<br>' +
+          'Configure as matérias do seu concurso para ativar o cronograma e o ciclo de revisões.<br>' +
           '<button class="btn-primary" style="margin-top: 10px; font-size: 11px; padding: 4px 12px;" onclick="openSubjectConfigModal()">+ Configurar Matérias</button>' +
         '</div>';
         return;
       }
 
+      // 1. Tentar ler as revisões agendadas reais do Modo Clássico
+      const classicReviews = getClassicSpacedReviews();
+      const today = new Date();
+      const todayStr = today.toISOString().split('T')[0];
+      const next7Days = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+      let filteredReviews = [];
+      if (classicReviews.length > 0) {
+        if (tab === 'hoje') {
+          filteredReviews = classicReviews.filter(r => !r.completed && r.dueDate <= todayStr);
+        } else if (tab === '7d') {
+          filteredReviews = classicReviews.filter(r => !r.completed && (r.code === '7d' || (r.dueDate > todayStr && r.dueDate <= next7Days)));
+        } else if (tab === '30d') {
+          filteredReviews = classicReviews.filter(r => !r.completed && (r.code === '30d' || r.code === '15d' || r.dueDate > next7Days));
+        } else {
+          filteredReviews = classicReviews;
+        }
+      }
+
+      // Se houver revisões agendadas no Modo Clássico para esta aba, renderizá-las
+      if (filteredReviews.length > 0) {
+        container.innerHTML = filteredReviews.map(r => 
+          '<div class="flashcard-item review-spaced-item" onclick="openSpacedReviewDetail(\'' + r.id + '\')">' +
+            '<div style="display: flex; align-items: center; gap: 10px; overflow: hidden; flex: 1;">' +
+              '<input type="checkbox" class="task-checkbox" ' + (r.completed ? 'checked' : '') + ' onclick="event.stopPropagation(); toggleSpacedReviewCompleted(\'' + r.id + '\')" title="Marcar revisão como concluída">' +
+              '<div style="overflow: hidden;">' +
+                '<span class="fc-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; font-weight: 600; ' + (r.completed ? 'text-decoration: line-through; color: var(--text-muted);' : 'color: var(--text-main);') + '">' + 
+                  (r.topic || r.subjectName) + 
+                '</span>' +
+                '<span style="font-size: 10.5px; color: var(--gold-primary); font-family: \'JetBrains Mono\', monospace;">' + 
+                  (r.label || r.code || 'Revisão') + ' • Vencimento: ' + formatSimpleDate(r.dueDate) + 
+                '</span>' +
+              '</div>' +
+            '</div>' +
+            '<span class="fc-badge" style="flex-shrink: 0;">' + r.subjectName + '</span>' +
+          '</div>'
+        ).join('');
+        return;
+      }
+
+      // 2. Se não houver revisões de cronograma, carregar os flashcards teóricos estritamente das matérias configuradas
       currentFilteredFlashcards = tab === 'todos' 
         ? currentFlashcards 
         : currentFlashcards.filter(f => f.tab === tab);
 
-      if (currentFilteredFlashcards.length === 0) {
-        container.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 12px;">Nenhum bizu para esta aba no momento.</div>';
+      if (currentFilteredFlashcards.length > 0) {
+        container.innerHTML = currentFilteredFlashcards.map((fc, idx) => 
+          '<div class="flashcard-item" onclick="openFlashcardDeck(\'' + fc.id + '\')">' +
+            '<div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">' +
+              '<svg class="tactical-icon" style="color: var(--gold-primary); flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>' +
+              '<span class="fc-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + fc.q + '</span>' +
+            '</div>' +
+            '<span class="fc-badge" style="flex-shrink: 0;">' + fc.deck + '</span>' +
+          '</div>'
+        ).join('');
         return;
       }
 
-      container.innerHTML = currentFilteredFlashcards.map((fc, idx) => 
-        '<div class="flashcard-item" onclick="openFlashcardDeck(\'' + fc.id + '\')">' +
-          '<div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">' +
-            '<svg class="tactical-icon" style="color: var(--gold-primary); flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>' +
-            '<span class="fc-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + fc.q + '</span>' +
-          '</div>' +
-          '<span class="fc-badge" style="flex-shrink: 0;">' + fc.deck + '</span>' +
-        '</div>'
-      ).join('');
+      // Estado vazio limpo
+      const tabNames = { 'hoje': 'para hoje', '7d': 'para os próximos 7 dias', '30d': 'para os próximos 30 dias', 'todos': 'cadastrada' };
+      container.innerHTML = '<div style="padding: 22px 14px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
+        'Nenhuma revisão pendente ' + (tabNames[tab] || '') + '.<br>' +
+        '<span style="font-size: 11px; color: var(--text-secondary); display: block; margin-top: 4px;">Conforme você avança nas sessões do cronograma no Modo Clássico, os ciclos de 24h, 7d e 30d serão calculados aqui.</span>' +
+      '</div>';
+    }
+
+    function toggleSpacedReviewCompleted(revId) {
+      try {
+        const raw = localStorage.getItem('concurso_spaced_reviews');
+        if (raw) {
+          const list = JSON.parse(raw);
+          const item = list.find(r => r.id === revId);
+          if (item) {
+            item.completed = !item.completed;
+            item.completedAt = item.completed ? new Date().toISOString() : null;
+            localStorage.setItem('concurso_spaced_reviews', JSON.stringify(list));
+            renderFlashcards(currentFlashcardTab || 'hoje');
+            showToast(item.completed ? 'Revisão marcada como concluída! 🎯' : 'Revisão reaberta.', item.completed ? 'success' : 'info');
+          }
+        }
+      } catch(e) {
+        console.warn('Erro ao atualizar revisão espaçada:', e);
+      }
+    }
+
+    function openSpacedReviewDetail(revId) {
+      const list = getClassicSpacedReviews();
+      const r = list.find(item => item.id === revId);
+      if (!r) return;
+      showToast('Revisão: ' + (r.topic || r.subjectName) + ' (' + (r.label || r.code) + ')', 'info');
     }
 
     function switchFlashcardTab(tab, btn) {
@@ -4252,7 +4530,10 @@
 
       const filtered = currentNoteFilter === 'todos' 
         ? currentNotes 
-        : currentNotes.filter(n => n.tag === currentNoteFilter || (n.tag && n.tag.includes(currentNoteFilter)));
+        : currentNotes.filter(n => {
+            const shortTag = getShortSubjectTag(n.tag || n.title || '');
+            return n.tag === currentNoteFilter || shortTag === currentNoteFilter || (n.tag && n.tag.toLowerCase().includes(currentNoteFilter.toLowerCase()));
+          });
 
       if (filtered.length === 0) {
         container.innerHTML = '<div style="grid-column: 1 / -1; padding: 24px 10px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
@@ -4262,19 +4543,22 @@
         return;
       }
 
-      container.innerHTML = filtered.map(n => 
-        '<div class="sticky-note" style="--note-accent: ' + n.color + ';" onclick="viewNoteFull(\'' + n.id + '\')">' +
-          '<button class="btn-note-del" onclick="deleteNote(\'' + n.id + '\', event)" title="Excluir este bizu" aria-label="Excluir">&times;</button>' +
-          '<div>' +
-            '<strong style="font-size: 11.5px; color: var(--gold-light); display: block; margin-bottom: 4px; padding-right: 18px;">' + n.title + '</strong>' +
-            '<p class="note-text" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 11px; line-height: 1.45; color: var(--text-muted); margin: 0;">' + (n.text || '').replace(/\n/g, ' ') + '</p>' +
-          '</div>' +
-          '<div class="note-footer" style="margin-top: 8px;">' +
-            '<span class="note-tag">' + n.tag + '</span>' +
-            '<span style="font-size: 10px; color: var(--text-secondary);">Ver Bizu →</span>' +
-          '</div>' +
-        '</div>'
-      ).join('');
+      container.innerHTML = filtered.map(n => {
+        const shortTag = getShortSubjectTag(n.tag || 'Bizu');
+        return (
+          '<div class="sticky-note" style="--note-accent: ' + (n.color || '#D4AF37') + ';" onclick="viewNoteFull(\'' + n.id + '\')">' +
+            '<button class="btn-note-del" onclick="deleteNote(\'' + n.id + '\', event)" title="Excluir este bizu" aria-label="Excluir">&times;</button>' +
+            '<div>' +
+              '<strong style="font-size: 11.5px; color: var(--gold-light); display: block; margin-bottom: 4px; padding-right: 18px;">' + n.title + '</strong>' +
+              '<p class="note-text" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 11px; line-height: 1.45; color: var(--text-muted); margin: 0;">' + (n.text || '').replace(/\n/g, ' ') + '</p>' +
+            '</div>' +
+            '<div class="note-footer" style="margin-top: 8px;">' +
+              '<span class="note-tag">' + shortTag + '</span>' +
+              '<span style="font-size: 10px; color: var(--text-secondary);">Ver Bizu →</span>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
     }
 
     function viewNoteFull(id) {
@@ -4332,12 +4616,14 @@
     }
 
     function restoreDefaultNotes() {
-      if (confirm('Deseja recarregar o acervo completo de 20 bizus oficiais da PCMG? Suas notas customizadas serão preservadas.')) {
-        const existingCustom = currentNotes.filter(n => !DEFAULT_NOTES.some(d => d.id === n.id));
-        currentNotes = [...DEFAULT_NOTES, ...existingCustom];
+      const configured = getConfiguredMaterias();
+      if (confirm('Deseja recarregar o acervo de bizus correspondente às disciplinas do seu concurso? Suas notas customizadas serão preservadas.')) {
+        const defaults = generateNotesForSubjects(configured);
+        const existingCustom = currentNotes.filter(n => !MASTER_NOTES.some(d => d.id === n.id));
+        currentNotes = [...defaults, ...existingCustom];
         localStorage.setItem('tactical_os_notes', JSON.stringify(currentNotes));
         renderNotes();
-        showToast('Acervo completo de 20 bizus restaurado com sucesso!', 'success');
+        showToast('Acervo de bizus atualizado com sucesso!', 'success');
       }
     }
 
