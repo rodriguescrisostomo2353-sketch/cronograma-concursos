@@ -10071,7 +10071,16 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         } catch(e) { return 0; }
       })(),
       hasDedicatedResetEpochColumn: (function() {
-        try { return localStorage.getItem('concurso_sync_has_reset_epoch_col') !== 'false'; } catch(e) { return true; }
+        try { return localStorage.getItem('concurso_sync_has_reset_epoch_col') === 'true'; } catch(e) { return false; }
+      })(),
+      hasDedicatedContentHashColumn: (function() {
+        try { return localStorage.getItem('concurso_sync_has_content_hash_col') === 'true'; } catch(e) { return false; }
+      })(),
+      hasDedicatedDeviceIdColumn: (function() {
+        try { return localStorage.getItem('concurso_sync_has_device_id_col') === 'true'; } catch(e) { return false; }
+      })(),
+      hasDedicatedRevisionColumn: (function() {
+        try { return localStorage.getItem('concurso_sync_has_revision_col') === 'true'; } catch(e) { return false; }
       })(),
 
       handleServerResetEpoch(serverEpoch) {
@@ -10643,10 +10652,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         } catch (e) { autoConfigObj = {}; }
         if (!autoConfigObj || typeof autoConfigObj !== 'object') autoConfigObj = {};
 
-        // Sempre salva study_log dentro de auto_config para garantir persistência 100%
-        // funcional na nuvem mesmo que a tabela user_data não possua a coluna 'study_log' (PGRST204)
+        // Salva metadados e anti-eco dentro de auto_config para compatibilidade
+        // total e transparente com qualquer banco de dados Supabase sem necessidade de DDL
         autoConfigObj.study_log = App.studyLog || [];
         autoConfigObj.reset_epoch = this.resetEpoch || 0;
+        autoConfigObj.device_id = this.deviceId;
+        this.revision = (parseInt(this.revision, 10) || 1) + 1;
+        autoConfigObj.revision = this.revision;
 
         const payload = {
           materias: App.data ? (App.data.materias || []) : [],
@@ -10664,20 +10676,26 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           pdf_bookmarks: pdfData.bookmarks || []
         };
 
-        // Envia também na raiz se a coluna dedicada já existir ou estiver confirmada
+        const hash = this.computePayloadHash(payload);
+        autoConfigObj.content_hash = hash;
+        try { localStorage.setItem('concurso_data_revision', String(this.revision)); } catch(e) {}
+
+        // Envia na raiz APENAS se a respectiva coluna dedicada tiver sido confirmada no banco
         if (this.hasDedicatedStudyLogColumn === true) {
           payload.study_log = App.studyLog || [];
         }
         if (this.hasDedicatedResetEpochColumn === true) {
           payload.reset_epoch = this.resetEpoch || 0;
         }
-
-        // Anti-Eco e Controle de Versão por Revisão e Hash (Etapa 1.4)
-        payload.device_id = this.deviceId;
-        this.revision = (parseInt(this.revision, 10) || 1) + 1;
-        payload.revision = this.revision;
-        payload.content_hash = this.computePayloadHash(payload);
-        try { localStorage.setItem('concurso_data_revision', String(this.revision)); } catch(e) {}
+        if (this.hasDedicatedDeviceIdColumn === true) {
+          payload.device_id = this.deviceId;
+        }
+        if (this.hasDedicatedRevisionColumn === true) {
+          payload.revision = this.revision;
+        }
+        if (this.hasDedicatedContentHashColumn === true) {
+          payload.content_hash = hash;
+        }
 
         return payload;
       },
@@ -10687,44 +10705,100 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           throw new Error('Usuário não autenticado ou cliente Supabase indisponível.');
         }
 
-        // Tenta gravar com o payload atual
-        let res = await this.client
-          .from('user_data')
-          .upsert(payload, { onConflict: 'user_id' });
+        let retries = 0;
+        const maxRetries = 6;
+        let res = null;
 
-        // Se houver erro PGRST204 de coluna ausente (especificamente study_log ou reset_epoch)
-        if (res.error && (res.error.code === 'PGRST204' || (res.error.message && (res.error.message.includes('study_log') || res.error.message.includes('reset_epoch'))))) {
-          if (res.error.message && res.error.message.includes('study_log')) {
-            console.warn('[SyncManager] Coluna "study_log" não encontrada no Supabase (PGRST204). Ativando fallback em auto_config.study_log.');
-            this.hasDedicatedStudyLogColumn = false;
-            try { localStorage.setItem('concurso_sync_has_study_log_col', 'false'); } catch (e) {}
-            delete payload.study_log;
-          }
-          if (res.error.message && res.error.message.includes('reset_epoch')) {
-            console.warn('[SyncManager] Coluna "reset_epoch" não encontrada no Supabase (PGRST204). Ativando fallback em auto_config.reset_epoch.');
-            this.hasDedicatedResetEpochColumn = false;
-            try { localStorage.setItem('concurso_sync_has_reset_epoch_col', 'false'); } catch (e) {}
-            delete payload.reset_epoch;
-          }
-          if (!payload.auto_config || typeof payload.auto_config !== 'object') {
-            payload.auto_config = {};
-          }
-          payload.auto_config.study_log = App.studyLog || [];
-          payload.auto_config.reset_epoch = this.resetEpoch || 0;
-
-          // Tenta novamente sem as colunas que causaram o erro no schema cache
+        while (retries < maxRetries) {
           res = await this.client
             .from('user_data')
             .upsert(payload, { onConflict: 'user_id' });
-        } else if (!res.error) {
-          if (payload.study_log !== undefined && this.hasDedicatedStudyLogColumn !== true) {
-            this.hasDedicatedStudyLogColumn = true;
-            try { localStorage.setItem('concurso_sync_has_study_log_col', 'true'); } catch (e) {}
+
+          if (!res.error) {
+            // Sucesso! Confirma as colunas dedicadas presentes no payload enviado
+            if (payload.study_log !== undefined) {
+              this.hasDedicatedStudyLogColumn = true;
+              try { localStorage.setItem('concurso_sync_has_study_log_col', 'true'); } catch (e) {}
+            }
+            if (payload.reset_epoch !== undefined) {
+              this.hasDedicatedResetEpochColumn = true;
+              try { localStorage.setItem('concurso_sync_has_reset_epoch_col', 'true'); } catch (e) {}
+            }
+            if (payload.content_hash !== undefined) {
+              this.hasDedicatedContentHashColumn = true;
+              try { localStorage.setItem('concurso_sync_has_content_hash_col', 'true'); } catch (e) {}
+            }
+            if (payload.device_id !== undefined) {
+              this.hasDedicatedDeviceIdColumn = true;
+              try { localStorage.setItem('concurso_sync_has_device_id_col', 'true'); } catch (e) {}
+            }
+            if (payload.revision !== undefined) {
+              this.hasDedicatedRevisionColumn = true;
+              try { localStorage.setItem('concurso_sync_has_revision_col', 'true'); } catch (e) {}
+            }
+            return res;
           }
-          if (payload.reset_epoch !== undefined && this.hasDedicatedResetEpochColumn !== true) {
-            this.hasDedicatedResetEpochColumn = true;
-            try { localStorage.setItem('concurso_sync_has_reset_epoch_col', 'true'); } catch (e) {}
+
+          // Se houver erro PGRST204 de coluna ausente no schema cache do Supabase
+          if (res.error.code === 'PGRST204' || (res.error.message && (res.error.message.includes('schema cache') || res.error.message.includes('Could not find')))) {
+            const match = res.error.message ? res.error.message.match(/Could not find the '([^']+)' column/i) : null;
+            const missingCol = match ? match[1] : null;
+
+            if (!payload.auto_config || typeof payload.auto_config !== 'object') {
+              payload.auto_config = {};
+            }
+
+            if (missingCol && payload.hasOwnProperty(missingCol)) {
+              console.warn(`[SyncManager] Coluna "${missingCol}" ausente no Supabase (PGRST204). Removendo da raiz e preservando em auto_config.${missingCol}.`);
+              payload.auto_config[missingCol] = payload[missingCol];
+
+              if (missingCol === 'content_hash') {
+                this.hasDedicatedContentHashColumn = false;
+                try { localStorage.setItem('concurso_sync_has_content_hash_col', 'false'); } catch (e) {}
+              } else if (missingCol === 'device_id') {
+                this.hasDedicatedDeviceIdColumn = false;
+                try { localStorage.setItem('concurso_sync_has_device_id_col', 'false'); } catch (e) {}
+              } else if (missingCol === 'revision') {
+                this.hasDedicatedRevisionColumn = false;
+                try { localStorage.setItem('concurso_sync_has_revision_col', 'false'); } catch (e) {}
+              } else if (missingCol === 'reset_epoch') {
+                this.hasDedicatedResetEpochColumn = false;
+                try { localStorage.setItem('concurso_sync_has_reset_epoch_col', 'false'); } catch (e) {}
+              } else if (missingCol === 'study_log') {
+                this.hasDedicatedStudyLogColumn = false;
+                try { localStorage.setItem('concurso_sync_has_study_log_col', 'false'); } catch (e) {}
+              }
+
+              delete payload[missingCol];
+              retries++;
+              continue;
+            } else {
+              // Fallback amplo: se não identificou a coluna específica pelo regex, remove todas as opcionais
+              ['content_hash', 'device_id', 'revision', 'reset_epoch', 'study_log'].forEach(col => {
+                if (payload.hasOwnProperty(col)) {
+                  payload.auto_config[col] = payload[col];
+                  delete payload[col];
+                }
+              });
+              this.hasDedicatedContentHashColumn = false;
+              this.hasDedicatedDeviceIdColumn = false;
+              this.hasDedicatedRevisionColumn = false;
+              this.hasDedicatedResetEpochColumn = false;
+              this.hasDedicatedStudyLogColumn = false;
+              try {
+                localStorage.setItem('concurso_sync_has_content_hash_col', 'false');
+                localStorage.setItem('concurso_sync_has_device_id_col', 'false');
+                localStorage.setItem('concurso_sync_has_revision_col', 'false');
+                localStorage.setItem('concurso_sync_has_reset_epoch_col', 'false');
+                localStorage.setItem('concurso_sync_has_study_log_col', 'false');
+              } catch(e) {}
+              retries++;
+              continue;
+            }
           }
+
+          // Outro erro qualquer: interrompe o loop e retorna
+          break;
         }
 
         return res;
@@ -10894,34 +10968,60 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
         try {
           this.isSyncing = true;
-          // Checagem ultraleve: busca updated_at, device_id, revision, content_hash, reset_epoch
-          const { data: cloudStamp, error: stampErr } = await this.client
-            .from('user_data')
-            .select('updated_at, device_id, revision, content_hash, reset_epoch')
-            .eq('user_id', this.user.id)
-            .maybeSingle();
+          let cloudStamp = null;
+          let stampErr = null;
+
+          // Se colunas dedicadas foram confirmadas, tenta busca com elas
+          if (this.hasDedicatedContentHashColumn && this.hasDedicatedDeviceIdColumn) {
+            const res = await this.client
+              .from('user_data')
+              .select('updated_at, device_id, revision, content_hash, reset_epoch, auto_config')
+              .eq('user_id', this.user.id)
+              .maybeSingle();
+            cloudStamp = res.data;
+            stampErr = res.error;
+          }
+
+          // Fallback seguro: busca apenas updated_at e auto_config (100% garantidos em qualquer tabela Supabase)
+          if (!cloudStamp || (stampErr && (stampErr.code === 'PGRST204' || (stampErr.message && stampErr.message.includes('schema cache'))))) {
+            const res = await this.client
+              .from('user_data')
+              .select('updated_at, auto_config')
+              .eq('user_id', this.user.id)
+              .maybeSingle();
+            cloudStamp = res.data;
+            stampErr = res.error;
+          }
 
           if (stampErr || !cloudStamp) {
             this.isSyncing = false;
             return;
           }
 
+          const autoCfg = (cloudStamp.auto_config && typeof cloudStamp.auto_config === 'object') ? cloudStamp.auto_config : {};
+          const cloudEpoch = cloudStamp.reset_epoch !== undefined
+            ? (parseInt(cloudStamp.reset_epoch, 10) || 0)
+            : (parseInt(autoCfg.reset_epoch, 10) || 0);
+
+          const cloudDeviceId = cloudStamp.device_id || autoCfg.device_id || '';
+          const cloudHash = cloudStamp.content_hash || autoCfg.content_hash || '';
+
           // Prioridade Máxima: se houver nova geração de reset na nuvem, força syncDownAndMerge
-          if (cloudStamp.reset_epoch && cloudStamp.reset_epoch > this.resetEpoch) {
-            console.warn(`[SyncManager] Reset geracional detectado no sync incremental: ${cloudStamp.reset_epoch} > ${this.resetEpoch}`);
+          if (cloudEpoch && cloudEpoch > this.resetEpoch) {
+            console.warn(`[SyncManager] Reset geracional detectado no sync incremental: ${cloudEpoch} > ${this.resetEpoch}`);
             await this.syncDownAndMerge();
             return;
           }
 
           // Anti-eco: se a alteração na nuvem veio deste mesmo aparelho, ignora
-          if (cloudStamp.device_id && cloudStamp.device_id === this.deviceId) {
+          if (cloudDeviceId && cloudDeviceId === this.deviceId) {
             this.isSyncing = false;
             this.setSyncStatus('synced');
             return;
           }
 
           // Anti-eco: se o hash do conteúdo na nuvem é idêntico ao já aplicado, ignora
-          if (cloudStamp.content_hash && cloudStamp.content_hash === this.lastAppliedHash) {
+          if (cloudHash && cloudHash === this.lastAppliedHash) {
             this.isSyncing = false;
             this.setSyncStatus('synced');
             return;
@@ -11212,12 +11312,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
         // Verificação Anti-Eco (Etapa 1.4)
         if (!force) {
-          if (cloudData.device_id && cloudData.device_id === this.deviceId) {
+          const cloudDeviceId = cloudData.device_id || (cloudData.auto_config && cloudData.auto_config.device_id) || '';
+          if (cloudDeviceId && cloudDeviceId === this.deviceId) {
             console.log('[SyncManager] Ignorando payload da nuvem: eco detectado do proprio dispositivo (' + this.deviceId + ')');
             this.setSyncStatus('synced');
             return;
           }
-          const cloudHash = cloudData.content_hash || this.computePayloadHash(cloudData);
+          const cloudHash = cloudData.content_hash || (cloudData.auto_config && cloudData.auto_config.content_hash) || this.computePayloadHash(cloudData);
           if (cloudHash && cloudHash === this.lastAppliedHash) {
             console.log('[SyncManager] Ignorando payload da nuvem: hash identico ao ja aplicado (' + cloudHash + ')');
             this.setSyncStatus('synced');
@@ -11274,9 +11375,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
 
         if (cloudData.auto_config && typeof cloudData.auto_config === 'object') {
-          // Limpa study_log temporário para não interferir nas configurações do gerador de cronograma
+          // Limpa metadados de sincronização para não interferir nas configurações do gerador de cronograma
           const cleanAutoConfig = Object.assign({}, cloudData.auto_config);
           delete cleanAutoConfig.study_log;
+          delete cleanAutoConfig.reset_epoch;
+          delete cleanAutoConfig.content_hash;
+          delete cleanAutoConfig.device_id;
+          delete cleanAutoConfig.revision;
           if (Object.keys(cleanAutoConfig).length > 0) {
             localStorage.setItem('concurso_auto_config_last', JSON.stringify(cleanAutoConfig));
             App.loadAutoConfig();
@@ -11298,10 +11403,9 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           App.saveToStorage(false, false); // Salva localmente SEM disparar re-upload em loop para a nuvem
         }
 
-        this.lastAppliedHash = cloudData.content_hash || this.computePayloadHash(cloudData);
-        if (cloudData.revision) {
-          this.revision = Math.max(this.revision, parseInt(cloudData.revision, 10) || 1);
-        }
+        this.lastAppliedHash = cloudData.content_hash || (cloudData.auto_config && cloudData.auto_config.content_hash) || this.computePayloadHash(cloudData);
+        const cloudRevision = cloudData.revision || (cloudData.auto_config && cloudData.auto_config.revision) || 1;
+        this.revision = Math.max(this.revision, parseInt(cloudRevision, 10) || 1);
         const cloudEpoch = cloudData.reset_epoch !== undefined
           ? (parseInt(cloudData.reset_epoch, 10) || 0)
           : (cloudData.auto_config && cloudData.auto_config.reset_epoch !== undefined ? (parseInt(cloudData.auto_config.reset_epoch, 10) || 0) : 0);
@@ -12479,8 +12583,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.9.0";
-    const APP_BUILD_TIME = "16/10/2026 14:45:00";
+    const APP_VERSION = "1.9.1";
+    const APP_BUILD_TIME = "19/10/2026 10:00:00";
     window.APP_VERSION = APP_VERSION;
     window.APP_BUILD_TIME = APP_BUILD_TIME;
     const UPDATE_URL = "https://rodriguescrisostomo2353-sketch.github.io/cronograma-concursos/version.json";
