@@ -106,6 +106,9 @@ if ([string]::IsNullOrWhiteSpace($branch)) {
     $branch = "main"
 }
 
+Write-Host "Sincronizando com o repositorio remoto (git pull --rebase origin $branch)..." -ForegroundColor Cyan
+& git pull --rebase origin $branch
+
 Write-Host "`nEnviando alteracoes para o GitHub (git push origin $branch)..." -ForegroundColor Cyan
 & git push -u origin $branch
 

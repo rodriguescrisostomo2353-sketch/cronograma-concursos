@@ -30,6 +30,9 @@ if (-not [string]::IsNullOrWhiteSpace($staged)) {
     & git commit -m "$Mensagem"
 }
 
+Write-Host "Sincronizando com o repositorio remoto (git pull --rebase)..." -ForegroundColor Cyan
+& git pull --rebase origin main
+
 Write-Host "Enviando para o GitHub (git push origin main)..." -ForegroundColor Cyan
 & git push -u origin main
 
