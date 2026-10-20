@@ -1,526 +1,317 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useState, useRef, useEffect, useCallback } from "react"
-import {
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  RotateCw,
-  Sparkles,
-  CheckCircle2,
-  Layers,
-  LayoutGrid,
-  Zap,
-  Check
-} from "lucide-react"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-export interface FlashcardItem {
-  id: string
-  subject: string
-  color?: string
-  front: string
-  back: string
-  status?: "novo" | "dominado" | "revisar"
-  tag?: string
+/* ── the curved row ──────────────────────────────────────────────
+ * Scroll Tilted Grid turned on its side, with the tilt drawn as a curve.
+ * One row of images streams from right to left around the inside of a
+ * cylinder. The centre faces you flat, the ends bend toward you so each
+ * end image curves along its length, and the ends fade into the page.
+ *
+ * A CSS box can't bend, so every tile is cut into SLICES vertical strips,
+ * each a flat facet of the cylinder showing its share of the image. The
+ * strips sit still inside their tile, each turned its own few degrees
+ * round the cylinder's axis, and the tile (preserve-3d) is what moves: one
+ * rotateY about that same axis carries the whole tile along the arc. A
+ * tile is one animation, so its strips can never drift apart or show
+ * different images. Only a tile's delay differs, and that sets where on
+ * the arc it sits. The band is transform-only on the compositor; the fade
+ * is a static mask over it.
+ *
+ * The only JS is a ResizeObserver that sizes the loop, and a handler that
+ * hands a tile its next image each time it wraps, out of sight.
+ * ─────────────────────────────────────────────────────────────── */
+
+// Strips per tile. Each is a few degrees of arc, too little to read as a
+// facet; fewer starts to show corners along the top and bottom edges. A
+// tight curve wraps a tile round a wide arc, so it needs this many.
+const SLICES = 16;
+
+// Camera distance from the screen, as a multiple of the cylinder's radius.
+// Just past the axis, so the ends come right up to the lens and swell; much
+// further back and the row flattens out however tight the cylinder.
+const CAMERA = 1.6;
+
+/**
+ * Cylinder radius, as a share of the hero's width, that puts the frame's
+ * edge `bend` radians round the arc as seen through the camera:
+ * r·sinθ · CAMERA / (CAMERA − 1 + cosθ) = width / 2, solved for r.
+ */
+function arc(bend: number) {
+  return (CAMERA - 1 + Math.cos(bend)) / (2 * CAMERA * Math.sin(bend));
 }
 
-export interface TiltedGridHeroProps {
-  title?: string
-  subtitle?: string
-  flashcards?: FlashcardItem[]
-  onBack?: () => void
-  onGenerateAI?: () => void
-  onCardStatusChange?: (cardId: string, status: "dominado" | "revisar") => void
-  defaultViewMode?: "grid" | "cylinder"
-  bend?: number
-  className?: string
+// A tile is never wider than this share of the hero, so a phone still
+// shows its neighbours instead of one tile edge to edge.
+const MAX_WIDTH = 55;
+
+/**
+ * Lays the loop on the cylinder. The radius puts the frame's edge `bend`
+ * radians round the arc (see `arc`). Angles come back in degrees: `unit`
+ * is the arc one tile-height spans, `limit` how far round a tile's centre
+ * can go before the whole tile is off-screen, and `sweep` how far round
+ * the loop's ends sit. The loop reaches past `limit`, so a tile only ever
+ * wraps out of sight, and is rounded up to a whole number of tiles so the
+ * gap never stretches.
+ */
+function measure(
+  width: number,
+  height: number,
+  tile: number,
+  aspect: number,
+  gap: number,
+  bend: number,
+) {
+  const h = Math.min(
+    (tile / 100) * height,
+    ((MAX_WIDTH / 100) * width) / aspect,
+  );
+  const radius = width * arc(bend);
+  if (!(h > 0) || !(radius > 0))
+    return { columns: 2, sweep: 0, unit: 0, limit: 0 };
+  const deg = (rad: number) => (rad * 180) / Math.PI;
+  const unit = deg(h / radius);
+  const pitch = (aspect + gap / 100) * unit;
+  const limit = deg(bend) + (aspect * unit) / 2;
+  // Capped so a hero squeezed to a sliver can't mount thousands of tiles.
+  const columns = Math.min(60, Math.max(2, Math.ceil((2 * limit) / pitch)));
+  const round = (n: number) => +n.toFixed(4);
+  const sweep = round((columns * pitch) / 2);
+  return {
+    columns,
+    sweep,
+    unit: round(unit),
+    limit: round(Math.min(sweep, limit)),
+  };
 }
 
-const DEFAULT_FLASHCARDS: FlashcardItem[] = [
-  {
-    id: "fc-1",
-    subject: "Noções de Direito Penal",
-    color: "#EF4444",
-    front: "Quais são os 4 elementos da tipicidade formal segundo a teoria finalista?",
-    back: "Conduta (dolosa ou culposa), Resultado naturalístico, Nexo de causalidade e Tipicidade (subsunção do fato à norma).",
-    status: "novo"
-  },
-  {
-    id: "fc-2",
-    subject: "Noções de Direito Constitucional",
-    color: "#3B82F6",
-    front: "Mnemônico dos Fundamentos da República Federativa do Brasil (Art. 1º CF/88):",
-    back: "SO-CI-DI-VA-PLU: Soberania, Cidadania, Dignidade da pessoa humana, Valores sociais do trabalho e da livre iniciativa, Pluralismo político.",
-    status: "dominado"
-  },
-  {
-    id: "fc-3",
-    subject: "Direito Administrativo",
-    color: "#10B981",
-    front: "Quais os atributos dos atos administrativos segundo a doutrina clássica?",
-    back: "Mnemônico PATI: Presunção de legitimidade/veracidade, Autoexecutoriedade, Tipicidade e Imperatividade.",
-    status: "revisar"
-  },
-  {
-    id: "fc-4",
-    subject: "Língua Portuguesa",
-    color: "#8B5CF6",
-    front: "Casos em que o uso do acento grave indicador de crase é facultativo:",
-    back: "Mnemônico NOME DE MULHER / ATÉ / PRONOME POSSESSIVO: Diante de nomes próprios femininos, após a preposição 'até' e antes de pronomes possessivos femininos no singular.",
-    status: "novo"
-  },
-  {
-    id: "fc-5",
-    subject: "Legislação Penal Especial",
-    color: "#D4AF37",
-    front: "Lei de Drogas (Lei 11.343/06, Art. 28) - O porte de drogas para consumo pessoal foi descriminalizado?",
-    back: "NÃO. Houve despenalização (extinção das penas privativas de liberdade), mas o fato continua com natureza de crime de menor potencial ofensivo.",
-    status: "novo"
-  }
-]
+export type TiltedGridImage = {
+  src: string;
+  /** Only used if you drop the decorative treatment; the band is aria-hidden. */
+  alt?: string;
+};
+
+export type TiltedGridHeroProps = {
+  /**
+   * Images run along the row in order. A tile takes its next image each
+   * time it wraps off-screen, so the whole list plays through however
+   * few tiles the frame needs. Short lists simply repeat.
+   */
+  images: TiltedGridImage[];
+  /**
+   * Seconds for the row to advance by one tile. Speed is per tile, not per
+   * crossing, so a phone and an ultrawide move at the same pace.
+   * @default 4
+   */
+  speed?: number;
+  /** Tile height, as a percentage of the hero's height. @default 26 */
+  tileHeight?: number;
+  /** Tile width divided by tile height. @default 16 / 9 */
+  aspectRatio?: number;
+  /** Space between tiles, as a percentage of a tile's height. @default 6 */
+  gap?: number;
+  /** Vertical centre of the row, as a percentage of the hero's height. @default 56 */
+  axis?: number;
+  /**
+   * How far the row has bent round by the frame's edge, in degrees. Higher
+   * curls the ends harder toward the viewer. Clamped to 5–85.
+   * @default 80
+   */
+  curve?: number;
+  /** Width of the fade at each end, as a percentage of the hero's width. @default 12 */
+  fade?: number;
+  /** Content rendered above the band. */
+  children?: React.ReactNode;
+  className?: string;
+};
 
 export function TiltedGridHero({
-  title = "FLASHCARDS TÁTICOS POR IA",
-  subtitle = "Memorização Operacional Ativa",
-  flashcards = DEFAULT_FLASHCARDS,
-  onBack,
-  onGenerateAI,
-  onCardStatusChange,
-  defaultViewMode = "cylinder",
-  bend = 24,
-  className = ""
-}: TiltedGridHeroProps) {
-  const [viewMode, setViewMode] = useState<"grid" | "cylinder">(defaultViewMode)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({})
-  const [radius, setRadius] = useState(620)
-  const [isReducedMotion, setIsReducedMotion] = useState(false)
+  images,
+  speed = 4,
+  tileHeight = 26,
+  aspectRatio = 16 / 9,
+  gap = 6,
+  axis = 56,
+  curve = 80,
+  fade = 12,
+  children,
+  className,
+  ...props
+}: React.ComponentProps<"div"> & TiltedGridHeroProps) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const id = React.useId().replace(/[^a-zA-Z0-9]/g, "");
+  const orbit = `tgh-o-${id}`;
+  const tile = `tgh-t-${id}`;
+  const bend = (Math.min(85, Math.max(5, curve)) * Math.PI) / 180;
 
-  const containerRef = useRef<HTMLDivElement>(null)
-  const viewportRef = useRef<HTMLDivElement>(null)
+  // Null until the observer has measured the hero. The band stays hidden
+  // until then, so a first paint laid out for the wrong size never shows.
+  const [layout, setLayout] = React.useState<ReturnType<typeof measure> | null>(
+    null,
+  );
 
-  // Checagem de prefers-reduced-motion
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
-    setIsReducedMotion(mediaQuery.matches)
-    const handler = (e: MediaQueryListEvent) => setIsReducedMotion(e.matches)
-    mediaQuery.addEventListener("change", handler)
-    return () => mediaQuery.removeEventListener("change", handler)
-  }, [])
+  // The image each tile shows, as a position in the run of images. It
+  // only changes when the tile wraps, which is out of sight, so a resize
+  // never swaps an image on screen either.
+  const [shown, setShown] = React.useState<Record<number, number>>({});
 
-  // ResizeObserver para cálculo dinâmico do raio do cilindro (Tilted Grid Algorithm)
-  useEffect(() => {
-    if (!viewportRef.current) return
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      const next = measure(width, height, tileHeight, aspectRatio, gap, bend);
+      setLayout((prev) =>
+        prev?.columns === next.columns &&
+        prev.sweep === next.sweep &&
+        prev.unit === next.unit
+          ? prev
+          : next,
+      );
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [tileHeight, aspectRatio, gap, bend]);
 
-    const updateRadius = () => {
-      const width = viewportRef.current?.offsetWidth || 800
-      // R ajusta a curvatura em função da largura do container
-      const computedRadius = Math.max(460, Math.min(840, Math.round(width * 0.72)))
-      setRadius(computedRadius)
-    }
+  // Fetch every image up front. A tile picks up its next one just before
+  // it comes back into view, too late to start loading it then.
+  React.useEffect(() => {
+    for (const { src } of images) new Image().src = src;
+  }, [images]);
 
-    updateRadius()
-    const observer = new ResizeObserver(updateRadius)
-    observer.observe(viewportRef.current)
-    return () => observer.disconnect()
-  }, [])
+  const { columns, sweep, unit, limit } =
+    layout ?? measure(1200, 560, tileHeight, aspectRatio, gap, bend);
 
-  const toggleFlip = useCallback((id: string) => {
-    setFlippedCards(prev => ({ ...prev, [id]: !prev[id] }))
-  }, [])
+  // Every length is a multiple of the tile's height, which follows the
+  // hero's height until MAX_WIDTH caps it on narrow screens.
+  const u = (n: number) =>
+    `calc(${+n.toFixed(4)} * min(${tileHeight}cqh, ${+(
+      MAX_WIDTH / aspectRatio
+    ).toFixed(4)}cqw))`;
 
-  const nextCard = useCallback(() => {
-    if (flashcards.length === 0) return
-    setActiveIndex(prev => (prev + 1) % flashcards.length)
-  }, [flashcards.length])
+  const r = 100 * arc(bend);
+  const radius = `${+r.toFixed(3)}cqw`;
+  // Out to the axis, round it, back in: a box sits on the cylinder at the
+  // angle rotateY gives it.
+  const turn = (deg: number) =>
+    `translateZ(${radius}) rotateY(${+deg.toFixed(4)}deg) translateZ(-${radius})`;
 
-  const prevCard = useCallback(() => {
-    if (flashcards.length === 0) return
-    setActiveIndex(prev => (prev - 1 + flashcards.length) % flashcards.length)
-  }, [flashcards.length])
+  // Beyond `limit` a tile is wholly off-screen, so it is hidden there. The
+  // loop's ends, where it wraps, fall inside that stretch, and so do tiles
+  // swinging round behind the camera.
+  const hide = +(((sweep - limit) / (2 * sweep || 1)) * 100).toFixed(4);
+  const css =
+    `@keyframes ${orbit}{` +
+    `from{transform:${turn(-sweep)}}to{transform:${turn(sweep)}}` +
+    `0%,${hide}%,${100 - hide}%,100%{visibility:hidden}` +
+    `${hide + 0.001}%,${100 - hide - 0.001}%{visibility:visible}}` +
+    // Pausing rather than removing the motion keeps the band whole: every
+    // tile is already placed by its negative delay, so it freezes as a
+    // finished still.
+    `@media(prefers-reduced-motion:reduce){.${tile}{animation-play-state:paused}}`;
 
-  // Suporte a teclas de seta
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (viewMode !== "cylinder") return
-      if (e.key === "ArrowLeft") prevCard()
-      if (e.key === "ArrowRight") nextCard()
-    }
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [viewMode, nextCard, prevCard])
+  const share = aspectRatio / SLICES;
+  const duration = columns * speed;
+  const mask = `linear-gradient(90deg,transparent,#000 ${fade}%,#000 ${
+    100 - fade
+  }%,transparent)`;
 
   return (
     <div
-      ref={containerRef}
-      className={`relative w-full rounded-xl border border-[rgba(212,175,55,0.25)] bg-[#0E131E] p-4 text-[#F3F4F6] shadow-2xl overflow-hidden ${className}`}
-      style={{ perspective: "1200px" }}
+      ref={ref}
+      className={cn("relative overflow-hidden", className)}
+      {...props}
+      style={{ containerType: "size", ...props.style }}
     >
-      {/* ─────────────────────────────────────────────────────────────
-          1. HEADER TÁTICO COM BOTÃO VOLTAR E CONTROLES
-          ───────────────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[rgba(212,175,55,0.18)] pb-3.5">
-        <div className="flex items-center gap-3">
-          {/* Botão Animado "Voltar ao Painel" com ArrowLeft deslizante */}
-          {onBack && (
-            <button
-              type="button"
-              onClick={onBack}
-              title="Voltar para a tela anterior do Painel"
-              className="group relative inline-flex items-center gap-2 rounded-lg border border-[rgba(212,175,55,0.35)] bg-[rgba(15,20,30,0.85)] px-3 py-1.5 text-xs font-bold text-[#F1E5C8] shadow-sm backdrop-blur-md transition-all duration-200 ease-out hover:border-[#D4AF37] hover:bg-[rgba(26,34,49,0.95)] hover:text-white hover:shadow-[0_0_14px_rgba(212,175,55,0.28)] active:scale-95"
+      <style>{css}</style>
+
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 transition-opacity duration-500"
+        style={{
+          opacity: layout ? 1 : 0,
+          // A shared vanishing point on the row's centre line, so the ends
+          // grow evenly above and below it as they come toward the viewer.
+          perspective: `${+(r * CAMERA).toFixed(3)}cqw`,
+          perspectiveOrigin: `50% ${axis}%`,
+          maskImage: mask,
+          WebkitMaskImage: mask,
+        }}
+      >
+        {Array.from({ length: columns }, (_, t) => {
+          // Tile `columns - 1` starts nearest the exit and tile 0 furthest
+          // back, so this numbers tiles in the order they come on.
+          const first = columns - 1 - t;
+          const img = images[(shown[t] ?? first) % Math.max(images.length, 1)];
+          return (
+            <div
+              key={t}
+              className={cn(tile, "absolute")}
+              style={{
+                left: `calc(50% - ${u(aspectRatio / 2)})`,
+                top: `calc(${axis}% - ${u(0.5)})`,
+                width: u(aspectRatio),
+                height: u(1),
+                transformStyle: "preserve-3d",
+                // Tile t starts t tiles along the loop.
+                animation: `${orbit} ${duration}s linear ${-t * speed}s infinite`,
+              }}
+              onAnimationIteration={(e) => {
+                // elapsedTime counts whole loops, missed events included.
+                const lap = Math.round(e.elapsedTime / duration);
+                setShown((prev) => {
+                  const next = lap * columns + first;
+                  return prev[t] === next ? prev : { ...prev, [t]: next };
+                });
+              }}
             >
-              <ArrowLeft className="h-3.5 w-3.5 text-[#D4AF37] transition-transform duration-250 ease-out group-hover:-translate-x-1 group-hover:text-white" />
-              <span>Voltar ao Painel</span>
-            </button>
-          )}
-
-          <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1.5 text-sm font-bold tracking-wide text-[#F3F4F6]">
-              <Zap className="h-4 w-4 text-[#D4AF37]" />
-              {title}
-            </span>
-            <span className="rounded-full bg-[rgba(212,175,55,0.15)] px-2 py-0.5 text-[10px] font-bold text-[#D4AF37]">
-              {flashcards.length} CARDS
-            </span>
-          </div>
-        </div>
-
-        {/* Lado Direito: Alternador de Modo de Visualização & Ação de IA */}
-        <div className="flex items-center gap-2">
-          {/* Alternador Modo Grade vs Cilindro 3D */}
-          <div className="inline-flex rounded-lg border border-[rgba(212,175,55,0.2)] bg-[rgba(11,14,20,0.7)] p-0.5">
-            <button
-              type="button"
-              onClick={() => setViewMode("grid")}
-              className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-semibold transition-all ${
-                viewMode === "grid"
-                  ? "border border-[rgba(212,175,55,0.4)] bg-[linear-gradient(135deg,rgba(212,175,55,0.25)_0%,rgba(212,175,55,0.12)_100%)] text-[#F1E5C8] font-bold shadow-sm"
-                  : "text-gray-400 hover:text-gray-200"
-              }`}
-            >
-              <LayoutGrid className="h-3 w-3" />
-              <span>Grade</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode("cylinder")}
-              className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-semibold transition-all ${
-                viewMode === "cylinder"
-                  ? "border border-[rgba(212,175,55,0.4)] bg-[linear-gradient(135deg,rgba(212,175,55,0.25)_0%,rgba(212,175,55,0.12)_100%)] text-[#F1E5C8] font-bold shadow-sm"
-                  : "text-gray-400 hover:text-gray-200"
-              }`}
-            >
-              <Layers className="h-3 w-3" />
-              <span>Cilindro 3D</span>
-            </button>
-          </div>
-
-          {onGenerateAI && (
-            <button
-              type="button"
-              onClick={onGenerateAI}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[linear-gradient(135deg,#E5C07B_0%,#D4AF37_100%)] px-3 py-1.5 text-xs font-bold text-[#0B0E14] shadow-md transition-all hover:brightness-110 active:scale-95"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Gerar Flashcards com IA</span>
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* ─────────────────────────────────────────────────────────────
-          2. PALCO DO MODO CILÍNDRICO 3D (TILTED GRID HERO)
-          ───────────────────────────────────────────────────────────── */}
-      {viewMode === "cylinder" ? (
-        <div
-          className="relative flex flex-col items-center justify-center py-6 select-none"
-          style={{
-            maskImage: "linear-gradient(90deg, transparent 0%, #000 7%, #000 93%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(90deg, transparent 0%, #000 7%, #000 93%, transparent 100%)"
-          }}
-        >
-          <div
-            ref={viewportRef}
-            className="relative h-[250px] w-full max-w-[880px] overflow-visible"
-            style={{
-              perspective: "1000px",
-              transformStyle: "preserve-3d"
-            }}
-          >
-            {flashcards.map((card, idx) => {
-              const diff = idx - activeIndex
-              const absDiff = Math.abs(diff)
-              const angleDeg = diff * bend
-              const isCenter = diff === 0
-              const isVisible = absDiff <= 3
-              const isFlipped = !!flippedCards[card.id]
-
-              // Fórmula matemática exata: translateZ(radius) rotateY(deg) translateZ(-radius)
-              const transformStyle = isReducedMotion
-                ? `translate(calc(-50% + ${diff * 290}px), -50%)`
-                : `translate(-50%, -50%) translateZ(${radius}px) rotateY(${angleDeg}deg) translateZ(-${radius}px) ${
-                    isCenter ? "scale(1.03)" : "scale(0.96)"
-                  }`
-
-              const opacity = isCenter ? 1 : absDiff === 1 ? 0.78 : absDiff === 2 ? 0.42 : 0
-              const zIndex = 20 - absDiff
-
-              return (
+              {Array.from({ length: SLICES }, (_, k) => (
                 <div
-                  key={card.id}
-                  onClick={() => {
-                    if (!isCenter) {
-                      setActiveIndex(idx)
-                    } else {
-                      toggleFlip(card.id)
-                    }
-                  }}
-                  className={`absolute top-1/2 left-1/2 h-[225px] w-[295px] cursor-pointer transition-all duration-500 ease-out ${
-                    isVisible ? "pointer-events-auto" : "pointer-events-none"
-                  }`}
+                  key={k}
+                  className={cn(
+                    "absolute top-0 overflow-hidden bg-muted",
+                    k === 0 && "rounded-l-lg",
+                    k === SLICES - 1 && "rounded-r-lg",
+                  )}
                   style={{
-                    transform: transformStyle,
-                    opacity: opacity,
-                    zIndex: zIndex,
-                    transformStyle: "preserve-3d"
+                    // Every strip starts at the tile's centre and is turned
+                    // round the axis to its own place on the arc.
+                    left: u((aspectRatio - share) / 2),
+                    // A pixel wider than its share, so neighbouring facets
+                    // overlap and no hairline opens between them. The last
+                    // has no neighbour to cover.
+                    width:
+                      k === SLICES - 1 ? u(share) : `calc(${u(share)} + 1px)`,
+                    height: u(1),
+                    transform: turn(
+                      (aspectRatio / 2 - (k + 0.5) * share) * unit,
+                    ),
                   }}
                 >
-                  {/* Container 3D Flip do Card */}
-                  <div
-                    className="relative h-full w-full rounded-xl transition-transform duration-500"
-                    style={{
-                      transformStyle: "preserve-3d",
-                      transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
-                    }}
-                  >
-                    {/* FRENTE */}
-                    <div
-                      className="absolute inset-0 flex h-full w-full flex-col justify-between rounded-xl border border-[rgba(212,175,55,0.25)] bg-[linear-gradient(145deg,#17202F_0%,#111622_100%)] p-4 shadow-xl"
+                  {img ? (
+                    <img
+                      src={img.src}
+                      alt={k === 0 ? (img.alt ?? "") : ""}
+                      draggable={false}
+                      className="absolute top-0 max-w-none object-cover"
                       style={{
-                        backfaceVisibility: "hidden",
-                        WebkitBackfaceVisibility: "hidden",
-                        borderTop: `3px solid ${card.color || "#D4AF37"}`
+                        left: u(-k * share),
+                        width: u(aspectRatio),
+                        height: u(1),
                       }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span
-                          className="rounded px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider"
-                          style={{ backgroundColor: card.color || "#D4AF37" }}
-                        >
-                          {card.subject}
-                        </span>
-                        <span className="text-[10px] font-semibold text-gray-400">
-                          {card.status === "dominado" ? "✓ Dominado" : "● Novo"}
-                        </span>
-                      </div>
-
-                      <div className="my-2 flex flex-col justify-center">
-                        <span className="text-[10px] font-bold text-[#D4AF37] uppercase tracking-wider">
-                          Conceito-Chave / Artigo
-                        </span>
-                        <p className="mt-1 text-[13px] font-semibold text-gray-100 line-clamp-4 leading-relaxed">
-                          {card.front}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center justify-between border-t border-white/10 pt-2 text-[10.5px] text-gray-400">
-                        <span className="flex items-center gap-1 text-[#D4AF37]">
-                          <RotateCw className="h-3 w-3" /> Toque para o Bizu
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* VERSO (BIZU ORIGINAL) */}
-                    <div
-                      className="absolute inset-0 flex h-full w-full flex-col justify-between rounded-xl border border-[rgba(16,185,129,0.35)] bg-[linear-gradient(145deg,#192434_0%,#121824_100%)] p-4 shadow-xl"
-                      style={{
-                        backfaceVisibility: "hidden",
-                        WebkitBackfaceVisibility: "hidden",
-                        transform: "rotateY(180deg)",
-                        borderTop: "3px solid #10B981"
-                      }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="rounded bg-[#10B981] px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider">
-                          Bizu Tático
-                        </span>
-                        <span className="text-[10px] text-[#10B981] font-bold">✓ Verso</span>
-                      </div>
-
-                      <div className="my-2">
-                        <p className="text-[12px] leading-relaxed text-gray-200 line-clamp-5">
-                          {card.back}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-2 border-t border-white/10 pt-2">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onCardStatusChange?.(card.id, "dominado")
-                          }}
-                          className="flex-1 rounded border border-[#10B981]/40 bg-[#10B981]/15 py-1 text-center text-[10.5px] font-bold text-[#10B981] hover:bg-[#10B981]/25"
-                        >
-                          ✓ Dominado
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onCardStatusChange?.(card.id, "revisar")
-                          }}
-                          className="flex-1 rounded border-[#F59E0B]/40 bg-[#F59E0B]/15 py-1 text-center text-[10.5px] font-bold text-[#F59E0B] hover:bg-[#F59E0B]/25"
-                        >
-                          ↻ Revisar
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                    />
+                  ) : null}
                 </div>
-              )
-            })}
-          </div>
-
-          {/* Controles de Navegação do Cilindro */}
-          <div className="mt-4 flex items-center gap-4 z-10">
-            <button
-              type="button"
-              onClick={prevCard}
-              title="Card Anterior"
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(212,175,55,0.35)] bg-[rgba(15,20,30,0.85)] text-[#D4AF37] shadow-lg transition-all hover:scale-110 hover:border-[#D4AF37] hover:bg-[rgba(26,34,49,0.95)] hover:text-white"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-
-            {/* Dots */}
-            <div className="flex items-center gap-1.5">
-              {flashcards.map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setActiveIndex(i)}
-                  className={`h-1.5 rounded-full transition-all ${
-                    i === activeIndex ? "w-5 bg-[#D4AF37]" : "w-1.5 bg-white/20 hover:bg-white/40"
-                  }`}
-                />
               ))}
             </div>
+          );
+        })}
+      </div>
 
-            <button
-              type="button"
-              onClick={nextCard}
-              title="Próximo Card"
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(212,175,55,0.35)] bg-[rgba(15,20,30,0.85)] text-[#D4AF37] shadow-lg transition-all hover:scale-110 hover:border-[#D4AF37] hover:bg-[rgba(26,34,49,0.95)] hover:text-white"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      ) : (
-        /* ─────────────────────────────────────────────────────────────
-            3. PALCO DO MODO GRADE TRADICIONAL
-            ───────────────────────────────────────────────────────────── */
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {flashcards.map(card => {
-            const isFlipped = !!flippedCards[card.id]
-            return (
-              <div
-                key={card.id}
-                onClick={() => toggleFlip(card.id)}
-                className="relative h-[210px] w-full cursor-pointer"
-                style={{ perspective: "1000px" }}
-              >
-                <div
-                  className="relative h-full w-full rounded-xl transition-transform duration-500"
-                  style={{
-                    transformStyle: "preserve-3d",
-                    transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
-                  }}
-                >
-                  {/* FRENTE */}
-                  <div
-                    className="absolute inset-0 flex h-full w-full flex-col justify-between rounded-xl border border-[rgba(212,175,55,0.25)] bg-[linear-gradient(145deg,#17202F_0%,#111622_100%)] p-4 shadow-lg"
-                    style={{
-                      backfaceVisibility: "hidden",
-                      WebkitBackfaceVisibility: "hidden",
-                      borderTop: `3px solid ${card.color || "#D4AF37"}`
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span
-                        className="rounded px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider"
-                        style={{ backgroundColor: card.color || "#D4AF37" }}
-                      >
-                        {card.subject}
-                      </span>
-                      <span className="text-[10px] font-semibold text-gray-400">
-                        {card.status === "dominado" ? "✓ Dominado" : "● Novo"}
-                      </span>
-                    </div>
-
-                    <p className="my-1 text-[12.5px] font-semibold text-gray-100 line-clamp-4 leading-relaxed">
-                      {card.front}
-                    </p>
-
-                    <div className="flex items-center justify-between border-t border-white/10 pt-2 text-[10px] text-gray-400">
-                      <span className="flex items-center gap-1 text-[#D4AF37]">
-                        <RotateCw className="h-3 w-3" /> Toque para ver o Bizu
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* VERSO */}
-                  <div
-                    className="absolute inset-0 flex h-full w-full flex-col justify-between rounded-xl border border-[rgba(16,185,129,0.35)] bg-[linear-gradient(145deg,#192434_0%,#121824_100%)] p-4 shadow-lg"
-                    style={{
-                      backfaceVisibility: "hidden",
-                      WebkitBackfaceVisibility: "hidden",
-                      transform: "rotateY(180deg)",
-                      borderTop: "3px solid #10B981"
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="rounded bg-[#10B981] px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider">
-                        Bizu Tático
-                      </span>
-                      <span className="text-[10px] text-[#10B981] font-bold">✓ Verso</span>
-                    </div>
-
-                    <p className="my-1 text-[11.5px] leading-relaxed text-gray-200 line-clamp-5">
-                      {card.back}
-                    </p>
-
-                    <div className="flex items-center gap-2 border-t border-white/10 pt-2">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          onCardStatusChange?.(card.id, "dominado")
-                        }}
-                        className="flex-1 rounded border border-[#10B981]/40 bg-[#10B981]/15 py-1 text-center text-[10px] font-bold text-[#10B981] hover:bg-[#10B981]/25"
-                      >
-                        ✓ Dominado
-                      </button>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          onCardStatusChange?.(card.id, "revisar")
-                        }}
-                        className="flex-1 rounded border-[#F59E0B]/40 bg-[#F59E0B]/15 py-1 text-center text-[10px] font-bold text-[#F59E0B] hover:bg-[#F59E0B]/25"
-                      >
-                        ↻ Revisar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
+      {children}
     </div>
-  )
+  );
 }
+
+export default TiltedGridHero;
