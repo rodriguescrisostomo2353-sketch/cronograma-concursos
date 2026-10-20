@@ -1234,9 +1234,14 @@
 
     /* Sessão de Flashcards & Anotações / Bizus */
     .bottom-split-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 20px;
+    }
+
+    #bizus {
+      width: 100%;
+      box-sizing: border-box;
     }
 
     /* Flashcards / Ciclo de Revisões */
@@ -1797,75 +1802,75 @@
       box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
     }
 
-    /* 2. Palco 3D para Transição Cilíndrica na Troca de Telas */
+    /* 2. Palco para Transição Suave na Troca de Telas */
     .center-content {
-      perspective: 1200px;
-      perspective-origin: 50% 30%;
+      overflow-x: hidden;
+      position: relative;
     }
 
     .tilted-arc-out-forward {
-      animation: tiltedArcOutForward 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation: tiltedArcOutForward 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
       pointer-events: none;
-      transform-origin: center center;
+      transform-origin: center top;
       will-change: transform, opacity;
     }
     @keyframes tiltedArcOutForward {
       0% {
         opacity: 1;
-        transform: translateZ(0) rotateY(0deg);
+        transform: translateY(0) scale(1);
       }
       100% {
-        opacity: 0;
-        transform: translateZ(-80px) rotateY(-8deg);
+        opacity: 0.15;
+        transform: translateY(-16px) scale(0.985);
       }
     }
 
     .tilted-arc-in-forward {
-      animation: tiltedArcInForward 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      transform-origin: center center;
+      animation: tiltedArcInForward 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      transform-origin: center top;
       will-change: transform, opacity;
     }
     @keyframes tiltedArcInForward {
       0% {
-        opacity: 0;
-        transform: translateZ(-80px) rotateY(8deg);
+        opacity: 0.2;
+        transform: translateY(20px) scale(0.985);
       }
       100% {
         opacity: 1;
-        transform: translateZ(0) rotateY(0deg);
+        transform: translateY(0) scale(1);
       }
     }
 
     .tilted-arc-out-backward {
-      animation: tiltedArcOutBackward 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation: tiltedArcOutBackward 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
       pointer-events: none;
-      transform-origin: center center;
+      transform-origin: center top;
       will-change: transform, opacity;
     }
     @keyframes tiltedArcOutBackward {
       0% {
         opacity: 1;
-        transform: translateZ(0) rotateY(0deg);
+        transform: translateY(0) scale(1);
       }
       100% {
-        opacity: 0;
-        transform: translateZ(-80px) rotateY(8deg);
+        opacity: 0.15;
+        transform: translateY(16px) scale(0.985);
       }
     }
 
     .tilted-arc-in-backward {
-      animation: tiltedArcInBackward 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      transform-origin: center center;
+      animation: tiltedArcInBackward 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      transform-origin: center top;
       will-change: transform, opacity;
     }
     @keyframes tiltedArcInBackward {
       0% {
-        opacity: 0;
-        transform: translateZ(-80px) rotateY(-8deg);
+        opacity: 0.2;
+        transform: translateY(-20px) scale(0.985);
       }
       100% {
         opacity: 1;
-        transform: translateZ(0) rotateY(0deg);
+        transform: translateY(0) scale(1);
       }
     }
 
@@ -3180,7 +3185,7 @@
             <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
             Mini-Perguntas
           </button>
-          <button class="banner-btn" onclick="openAIFlashcardsModal()" title="Central de Flashcards Gerados por IA">
+          <button class="banner-btn" onclick="openAIFlashcardsSection(event)" title="Central de Flashcards Gerados por IA">
             <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
             Flashcards IA
           </button>
@@ -3229,7 +3234,7 @@
             <button class="btn-quick-action" onclick="openStudyHoursQuickModal()">
               <span class="plus-icon">+</span> Registrar Horas de Estudo
             </button>
-            <button class="btn-quick-action" onclick="openAIFlashcardsModal()">
+            <button class="btn-quick-action" onclick="openAIFlashcardsSection(event)">
               <span class="plus-icon">⚡</span> Flashcards por IA
             </button>
           </div>
@@ -3459,7 +3464,7 @@
             </div>
           </div>
 
-          <!-- Flashcards Táticos por IA (Substitui Bizus Manuais Soltos) -->
+          <!-- Flashcards Táticos por IA (Central de Bizus Táticos) -->
           <div class="notes-card" id="bizus">
             <div class="section-title">
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -3471,36 +3476,30 @@
                   <span>Voltar ao Painel</span>
                 </button>
                 <span style="display: flex; align-items: center; gap: 6px;">
-                  <svg class="tactical-icon" style="color: var(--gold-primary); width: 15px; height: 15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                  Bizus &amp; Flashcards Táticos
+                  <svg class="tactical-icon" style="color: var(--gold-primary); width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                  Flashcards Táticos por IA
                 </span>
-                <span class="badge-count" id="flashcardsCountBadge" style="font-size: 10px; background: rgba(212, 175, 55, 0.15); color: var(--gold-primary); padding: 2px 7px; border-radius: 999px; font-weight: 700;">--</span>
+                <span class="badge-count" id="flashcardsCountBadge" style="font-size: 10px; background: rgba(212, 175, 55, 0.15); color: var(--gold-primary); padding: 2px 7px; border-radius: 999px; font-weight: 700;">43 CARDS</span>
               </div>
               <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                <!-- Alternador de 3 Modos: Bizus Táticos | Flashcards 3D | Cilindro 3D (Tilted) -->
+                <!-- Alternador de Modos: Grade vs Cilindro 3D (Tilted) -->
                 <div class="fc-view-mode-toggle" id="flashcardsViewToggle">
-                  <button type="button" class="fc-toggle-btn active" id="btnViewBizus" onclick="setFlashcardsViewMode('bizus')" title="Visualização Clássica de Bizus &amp; Notas Táticas">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                    <span>Bizus Táticos</span>
-                  </button>
-                  <button type="button" class="fc-toggle-btn" id="btnViewGrid" onclick="setFlashcardsViewMode('grid')" title="Visualização em Grade de Flashcards 3D">
+                  <button type="button" class="fc-toggle-btn active" id="btnViewGrid" onclick="setFlashcardsViewMode('grid')" title="Visualização em Grade de Flashcards 3D">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    <span>Flashcards 3D</span>
+                    <span>Grade</span>
                   </button>
                   <button type="button" class="fc-toggle-btn" id="btnViewCylinder" onclick="setFlashcardsViewMode('cylinder')" title="Visualização em Cilindro Curvo 3D (Tilted Grid)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-                    <span>Cilindro 3D</span>
+                    <span>Cilindro 3D (Tilted)</span>
                   </button>
                 </div>
 
-                <button class="btn-quick-action" style="padding: 3px 8px; font-size: 10px; width: auto;" onclick="restoreDefaultNotes()" title="Restaurar todo o acervo completo de bizus táticos">
-                  ↻ Acervo
-                </button>
-                <button class="btn-quick-action" style="padding: 3px 8px; font-size: 10.5px; width: auto;" onclick="openModal('modalAddNote')" title="Adicionar novo bizu ou anotação tática">
-                  + Novo Bizu
-                </button>
-                <button class="btn-quick-action" style="padding: 3px 10px; font-size: 10.5px; width: auto; background: var(--gold-primary); color: #0B0E14; font-weight: 700;" onclick="generateAIFlashcardsAction()" title="Gerar novos Flashcards com Inteligência Artificial">
-                  ⚡ Gerar com IA
+                <select id="flashcardSubjectHeaderSelect" class="form-control" style="padding: 3px 6px; font-size: 10.5px; height: 28px; width: auto; max-width: 170px;" onchange="filterAIFlashcardsBySubject(this.value)">
+                  <!-- Opções dinâmicas de matérias cadastradas -->
+                </select>
+
+                <button class="btn-quick-action" style="padding: 4px 10px; font-size: 11px; width: auto; background: var(--gold-primary); color: #0B0E14; font-weight: 700;" onclick="generateAIFlashcardsAction()" title="Gerar novos Flashcards com Inteligência Artificial">
+                  ⚡ Gerar Flashcards com IA
                 </button>
               </div>
             </div>
@@ -3510,17 +3509,12 @@
               <!-- Gerado via JavaScript -->
             </div>
             
-            <!-- 1. Grade de Bizus & Notas Táticas (Post-its Dourados com Modal Completo) -->
-            <div class="sticky-notes-grid" id="stickyNotesContainer" style="display: grid;">
-              <!-- Renderizado dinamicamente via renderNotes() -->
-            </div>
-
-            <!-- 2. Grade de Flashcards 3D Interativos -->
-            <div class="sticky-notes-grid" id="aiFlashcardsGrid" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); max-height: 380px; display: none;">
+            <!-- 1. Grade de Flashcards 3D Interativos -->
+            <div class="sticky-notes-grid" id="aiFlashcardsGrid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); min-height: 280px; max-height: 520px; display: grid;">
               <!-- Renderizado dinamicamente via renderAIFlashcards() -->
             </div>
 
-            <!-- 3. Palco Cilíndrico 3D (TiltedGridHero) -->
+            <!-- 2. Palco Cilíndrico 3D (TiltedGridHero) -->
             <div class="tilted-cylinder-stage" id="aiFlashcardsCylinderContainer" style="display: none;">
               <div class="tilted-cylinder-viewport" id="tiltedCylinderViewport">
                 <!-- Cards posicionados dinamicamente no arco 3D -->
@@ -3535,6 +3529,8 @@
                 </button>
               </div>
             </div>
+
+            <div id="stickyNotesContainer" style="display: none;"></div>
           </div>
 
         </div>
@@ -3761,7 +3757,7 @@
       </div>
 
       <!-- Painel 2: Geração de Flashcards por IA -->
-      <div id="panelAddAIFlashcards" style="display: none;"
+      <div id="panelAddAIFlashcards" style="display: none;">
       <div class="modal-body" style="gap: 14px;">
         <div style="background: rgba(14, 19, 30, 0.7); border: 1px solid var(--border-tactical); border-radius: var(--radius-sm); padding: 12px; display: flex; flex-direction: column; gap: 10px;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
@@ -5035,6 +5031,32 @@
       return 'Noções de Direito Penal';
     }
 
+    /* ========================================================================
+       REPOSITÓRIO DOUTRINÁRIO TÁTICO E CATÁLOGO DE FLASHCARDS POR IA
+       ======================================================================== */
+    const MASTER_NOTES = [
+      { id: 'n1', title: 'Crimes Hediondos 3T', tag: 'D. Penal', color: '#EF4444', text: 'Inafiançáveis e insuscetíveis de graça ou anistia: Tortura, Tráfico Ilícito de Entorpecentes e Terrorismo (3T), além dos crimes hediondos propriamente ditos (Lei 8.072/90).\n\nOBS: O Pacote Anticrime vedou expressamente o livramento condicional para condenados por crime hediondo ou equiparado com resultado morte.' },
+      { id: 'n2', title: 'Audiência de Custódia', tag: 'Proc. Penal', color: '#F59E0B', text: 'Prazo improrrogável de 24 horas após a realização da prisão em flagrante.\n\nPresença obrigatória de juiz, membro do Ministério Público e advogado ou defensor público constituído.\n\nFinalidade: aferir a legalidade da prisão e a ocorrência de maus-tratos ou tortura policial.' },
+      { id: 'n3', title: 'Remédios Constitucionais', tag: 'Constitucional', color: '#3B82F6', text: 'HC: Liberdade de locomoção (gratuito).\nHD: Acesso ou retificação a dados pessoais do impetrante em bancos de dados governamentais (gratuito).\nMS: Direito líquido e certo não amparado por HC/HD.\nMI: Omissão normativa que inviabiliza exercício de direito constitucional.\nAP: Cidadão visa anular ato lesivo ao patrimônio público, moralidade ou meio ambiente.' },
+      { id: 'n4', title: 'Concordância com Partícula SE', tag: 'Português', color: '#8B5CF6', text: 'VTD + SE = Partícula Apassivadora: Há sujeito paciente, o verbo concorda com ele ("Alugam-se viaturas táticas" = viaturas são alugadas).\n\nVTI / VI / VL + SE = Índice de Indeterminação do Sujeito: Sujeito indeterminado, o verbo fica OBRIGATORIAMENTE na 3ª pessoa do singular ("Precisa-se de novos investigadores").' },
+      { id: 'n5', title: 'Dolo Eventual vs Culpa Consciente', tag: 'D. Penal', color: '#EF4444', text: 'Dolo Eventual: O agente prevê o resultado e assume o risco de produzi-lo ("Tanto faz se acontecer, não me importo com as consequências").\n\nCulpa Consciente: O agente prevê o resultado danoso, mas confia sinceramente na sua própria perícia e habilidade para evitá-lo.' },
+      { id: 'n6', title: 'Prazos do Inquérito Policial', tag: 'Proc. Penal', color: '#F59E0B', text: 'Justiça Estadual (CPP):\n• Réu Preso: 10 dias (improrrogáveis)\n• Réu Solto: 30 dias (prorrogáveis pelo juiz)\n\nJustiça Federal:\n• Preso: 15 dias (+15)\n• Solto: 30 dias\n\nLei de Drogas:\n• Preso: 30 dias (+30)\n• Solto: 90 dias (+90)' },
+      { id: 'n7', title: 'Inviolabilidade Domiciliar (Art. 5º, XI)', tag: 'Constitucional', color: '#3B82F6', text: 'A casa é asilo inviolável do indivíduo.\n\nA QUALQUER HORA:\n1) Flagrante delito\n2) Desastre\n3) Prestar socorro\n\nSOMENTE DURANTE O DIA:\n4) Por determinação judicial (critério temporal: das 05h às 21h nos termos da Lei 13.869).' },
+      { id: 'n8', title: 'Atributos do Ato (PATI)', tag: 'Administrativo', color: '#10B981', text: 'P - Presunção de Legitimidade e Veracidade\nA - Autoexecutoriedade\nT - Tipicidade\nI - Imperatividade\n\nIMPORTANTE: A cobrança de multas NÃO é autoexecutória.' },
+      { id: 'n9', title: 'Tentativa Inadmissível (COUP-C)', tag: 'D. Penal', color: '#EF4444', text: 'Infrações que NÃO admitem tentativa:\nC - Culposos (salvo culpa imprópria)\nO - Omissivos próprios\nU - Unissubsistentes\nP - Preterdolosos\nC - Contravenções penais' },
+      { id: 'n10', title: 'Cadeia de Custódia (10 Etapas CPP)', tag: 'Proc. Penal', color: '#F59E0B', text: 'Art. 158-B do CPP (Pacote Anticrime):\n1. Reconhecimento, 2. Isolamento, 3. Fixação, 4. Coleta, 5. Acondicionamento, 6. Transporte, 7. Recebimento, 8. Processamento, 9. Armazenamento, 10. Descarte.' },
+      { id: 'n11', title: 'Prisão Temporária (Lei 7.960/89)', tag: 'Proc. Penal', color: '#F59E0B', text: 'Cabível EXCLUSIVAMENTE durante o Inquérito Policial (não cabe na instrução judicial!).\n\nPrazos:\n• 5 + 5 dias em crimes comuns taxativos.\n• 30 + 30 dias em crimes hediondos/equiparados.\n\nVeda-se decretação de ofício pelo juiz.' },
+      { id: 'n12', title: 'Cláusulas Pétreas (Art. 60, § 4º CF)', tag: 'Constitucional', color: '#3B82F6', text: 'Não será objeto de deliberação a proposta de emenda tendente a abolir:\n1) A forma federativa de Estado;\n2) O voto direto, secreto, universal e periódico;\n3) A separação dos Poderes;\n4) Os direitos e garantias individuais.' },
+      { id: 'n13', title: 'Requisitos do Ato (COMFIFOR)', tag: 'Administrativo', color: '#10B981', text: 'Requisitos: Competência, Finalidade, Forma, Motivo e Objeto.\n\nCONVALIDAÇÃO permitida em vícios sanáveis de:\n1) Competência (não exclusiva);\n2) Forma (não essencial à validade).' },
+      { id: 'n14', title: 'Segurança da Informação e Criptografia', tag: 'Informática', color: '#06B6D4', text: 'Princípios Básicos (CIDAR):\nC - Confidencialidade (sigilo)\nI - Integridade (não alteração)\nD - Disponibilidade (acesso garantido)\nA - Autenticidade (identidade garantida)\nR - Não Repúdio (irretratabilidade)' },
+      { id: 'n15', title: 'Lei Maria da Penha (Lei 11.340/06)', tag: 'Legislação Especial', color: '#D4AF37', text: '• Veda expressamente a Lei 9.099/95 (sem transação nem sursis).\n• Violência doméstica independe de coabitação atual.\n• Delegado pode conceder medida protetiva se comarca sem juiz disponível (comunicação em 24h).' },
+      { id: 'n16', title: 'Abuso de Autoridade (Lei 13.869/19)', tag: 'Legislação Especial', color: '#D4AF37', text: 'Exige elemento subjetivo especial (Dolo Específico):\nPrejudicar outrem, beneficiar a si/terceiro ou mero capricho/satisfação pessoal.\nVeda-se crime de hermenêutica.' },
+      { id: 'n17', title: 'Equivalências Lógicas da Condicional', tag: 'RLM / Lógica', color: '#EC4899', text: 'Para a condicional P -> Q:\n1) Contrapositiva: ~Q -> ~P (equivalente perfeita)\n2) Silogismo disjuntivo (Regra do NEYMAR): ~P ∨ Q (Nega a primeira OU Mantém a segunda).' },
+      { id: 'n18', title: 'Poder de Polícia - Atributos (DAC)', tag: 'Administrativo', color: '#10B981', text: 'D - Discricionariedade\nA - Autoexecutoriedade\nC - Coercibilidade\n\nATENÇÃO: A cobrança de multas NÃO possui autoexecutoriedade.' },
+      { id: 'n19', title: 'Crase - Casos Proibidos (VAM-P)', tag: 'Português', color: '#8B5CF6', text: 'Casos PROIBIDOS de crase:\nV - Antes de VERBOS\nA - Antes de palavras MASCULINAS\nM - Antes da maioria dos PRONOMES\nP - Entre palavras REPETIDAS ("frente a frente")' },
+      { id: 'n20', title: 'Excludentes de Ilicitude (Art. 23 CP)', tag: 'D. Penal', color: '#EF4444', text: 'Causas que excluem o crime:\n1. Estado de Necessidade\n2. Legítima Defesa\n3. Estrito Cumprimento do Dever Legal\n4. Exercício Regular de Direito\n\nO excesso (doloso ou culposo) é SEMPRE punível.' }
+    ];
+
     /* ------------------------------------------------------------------------
        PERSISTÊNCIA E GERAÇÃO DE FLASHCARDS POR IA
        ------------------------------------------------------------------------ */
@@ -5052,26 +5074,11 @@
         console.warn('Erro ao carregar flashcards IA:', e);
       }
 
-      // Se tiver menos de 10 cards, mesclar com todos os MASTER_NOTES do acervo doutrinário
-      if (cards.length < 15 && typeof MASTER_NOTES !== 'undefined') {
+      // Se tiver menos de 15 cards, mesclar com todo o acervo doutrinário e templates da IA
+      if (cards.length < 15) {
         const existingIds = new Set(cards.map(c => c.id));
-        MASTER_NOTES.forEach((mn, idx) => {
-          const fcId = 'fc_mn_' + mn.id;
-          if (!existingIds.has(fcId)) {
-            cards.push({
-              id: fcId,
-              subject: mn.tag || 'Direito Penal',
-              canonicalKey: findCanonicalSubjectKey(mn.tag || 'Direito Penal'),
-              color: mn.color || '#D4AF37',
-              front: mn.title,
-              back: mn.text,
-              status: 'novo',
-              createdAt: new Date().toISOString()
-            });
-          }
-        });
 
-        // Adicionar também templates do catálogo de IA
+        // 1. Templates de todas as matérias cadastradas no edital
         const subjects = getRegisteredEditalSubjects();
         subjects.forEach((subj, sIdx) => {
           const canonicalKey = findCanonicalSubjectKey(subj);
@@ -5090,8 +5097,27 @@
                 quiz: tmpl.quiz,
                 createdAt: new Date().toISOString()
               });
+              existingIds.add(fcId);
             }
           });
+        });
+
+        // 2. Mesclar também com MASTER_NOTES doutrinários
+        MASTER_NOTES.forEach((mn, idx) => {
+          const fcId = 'fc_mn_' + mn.id;
+          if (!existingIds.has(fcId)) {
+            cards.push({
+              id: fcId,
+              subject: mn.tag || 'Direito Penal',
+              canonicalKey: findCanonicalSubjectKey(mn.tag || 'Direito Penal'),
+              color: mn.color || '#D4AF37',
+              front: mn.title,
+              back: mn.text,
+              status: 'novo',
+              createdAt: new Date().toISOString()
+            });
+            existingIds.add(fcId);
+          }
         });
 
         saveStoredAIFlashcards(cards);
@@ -5270,7 +5296,7 @@
       renderAIFlashcards(currentAIFlashcardFilter);
     }
 
-    let currentFlashcardsViewMode = 'bizus'; // 'bizus' | 'grid' | 'cylinder'
+    let currentFlashcardsViewMode = 'grid'; // 'grid' | 'cylinder'
     let tiltedCylinderState = {
       currentIndex: 0,
       totalCards: 0,
@@ -5282,31 +5308,21 @@
 
     function setFlashcardsViewMode(mode) {
       currentFlashcardsViewMode = mode;
-      const bizusBtn = document.getElementById('btnViewBizus');
       const gridBtn = document.getElementById('btnViewGrid');
       const cylinderBtn = document.getElementById('btnViewCylinder');
 
-      const bizusContainer = document.getElementById('stickyNotesContainer');
       const gridContainer = document.getElementById('aiFlashcardsGrid');
       const cylinderContainer = document.getElementById('aiFlashcardsCylinderContainer');
 
-      if (bizusBtn) bizusBtn.classList.toggle('active', mode === 'bizus');
       if (gridBtn) gridBtn.classList.toggle('active', mode === 'grid');
       if (cylinderBtn) cylinderBtn.classList.toggle('active', mode === 'cylinder');
 
-      if (bizusContainer && gridContainer && cylinderContainer) {
-        if (mode === 'bizus') {
-          bizusContainer.style.display = 'grid';
-          gridContainer.style.display = 'none';
-          cylinderContainer.style.display = 'none';
-          renderNotes();
-        } else if (mode === 'cylinder') {
-          bizusContainer.style.display = 'none';
+      if (gridContainer && cylinderContainer) {
+        if (mode === 'cylinder') {
           gridContainer.style.display = 'none';
           cylinderContainer.style.display = 'flex';
           renderTiltedCylinderFlashcards();
         } else {
-          bizusContainer.style.display = 'none';
           cylinderContainer.style.display = 'none';
           gridContainer.style.display = 'grid';
           renderAIFlashcards();
@@ -5624,10 +5640,7 @@
 
       let targetY = 0;
       if (targetEl.id === 'disciplinas') {
-        // Se for o painel principal, rola até o início da área de disciplinas suavemente
-        const offsetTop = targetEl.offsetTop || (rect.top + currentScrollY);
-        targetY = Math.max(0, offsetTop - 16);
-        if (targetY < 260) targetY = 0;
+        targetY = 0;
       } else {
         // Subtelas (Missões ou Flashcards)
         targetY = Math.max(0, rect.top + currentScrollY - 70);
@@ -5640,7 +5653,7 @@
       });
     }
 
-    // 2. Transição 3D Cilíndrica na Troca de Telas (TiltedGridHero Algorithm)
+    // 2. Transição Suave na Troca de Telas (TiltedGridHero Algorithm)
     function executeTiltedScreenTransition(fromId, toId, direction) {
       direction = direction || 'forward';
       const fromEl = document.getElementById(fromId);
@@ -5674,7 +5687,7 @@
         return;
       }
 
-      // Classes de arco cilíndrico 3D
+      // Classes de transição suave
       const outClass = direction === 'forward' ? 'tilted-arc-out-forward' : 'tilted-arc-out-backward';
       const inClass = direction === 'forward' ? 'tilted-arc-in-forward' : 'tilted-arc-in-backward';
 
@@ -5683,7 +5696,7 @@
 
       fromEl.classList.add(outClass);
 
-      // Garante visibilidade e animação de entrada em arco cilíndrico
+      // Garante visibilidade e animação de entrada
       toEl.style.display = '';
       toEl.classList.add(inClass);
 
@@ -5695,11 +5708,10 @@
       setTimeout(() => {
         fromEl.classList.remove(outClass);
         toEl.classList.remove(inClass);
-        // Garantir travamento absoluto no eixo X = 0 após animação
         window.scrollTo({ left: 0, top: window.scrollY, behavior: 'instant' });
         document.documentElement.scrollLeft = 0;
         document.body.scrollLeft = 0;
-      }, 460);
+      }, 400);
     }
 
     // Ação do Botão Tático "← Voltar ao Painel"
@@ -5720,12 +5732,6 @@
       const discLink = document.querySelector('.nav-list a[href="#disciplinas"]');
       if (discLink) {
         discLink.closest('.nav-item')?.classList.add('active');
-      }
-
-      // Scroll estritamente vertical até o topo do painel
-      const discEl = document.getElementById('disciplinas');
-      if (discEl) {
-        scrollToSectionTactical(discEl);
       }
     }
 
@@ -5814,7 +5820,9 @@
 
     function openAIFlashcardsSection(event) {
       if (event) event.preventDefault();
+      setFlashcardsViewMode('grid');
       executeTiltedScreenTransition('disciplinas', 'bizus', 'forward');
+      renderAIFlashcards();
     }
 
     /* ========================================================================
@@ -6352,28 +6360,7 @@
       { id: 'fc_ctb_1', tab: 'hoje', deck: 'Legislação de Trânsito', q: 'Quais os crimes de trânsito em que a embriaguez ao volante é de perigo abstrato no CTB?', a: 'Art. 306 do CTB: crime de perigo abstrato, consuma-se com a simples constatação de álcool igual ou superior a 0,6 g/L no sangue ou 0,34 mg/L no etilômetro.' }
     ];
 
-    const MASTER_NOTES = [
-      { id: 'n1', title: 'Crimes Hediondos 3T', tag: 'D. Penal', color: '#EF4444', text: 'Inafiançáveis e insuscetíveis de graça ou anistia: Tortura, Tráfico Ilícito de Entorpecentes e Terrorismo (3T), além dos crimes hediondos propriamente ditos (Lei 8.072/90).\n\nOBS: O Pacote Anticrime vedou expressamente o livramento condicional para condenados por crime hediondo ou equiparado com resultado morte.' },
-      { id: 'n2', title: 'Audiência de Custódia', tag: 'Proc. Penal', color: '#F59E0B', text: 'Prazo improrrogável de 24 horas após a realização da prisão em flagrante.\n\nPresença obrigatória de juiz, membro do Ministério Público e advogado ou defensor público constituído.\n\nFinalidade: aferir a legalidade da prisão e a ocorrência de maus-tratos ou tortura policial.' },
-      { id: 'n3', title: 'Remédios Constitucionais', tag: 'Constitucional', color: '#3B82F6', text: 'HC: Liberdade de locomoção (gratuito).\nHD: Acesso ou retificação a dados pessoais do impetrante em bancos de dados governamentais (gratuito).\nMS: Direito líquido e certo não amparado por HC/HD.\nMI: Omissão normativa que inviabiliza exercício de direito constitucional.\nAP: Cidadão visa anular ato lesivo ao patrimônio público, moralidade ou meio ambiente.' },
-      { id: 'n4', title: 'Concordância com Partícula SE', tag: 'Português', color: '#8B5CF6', text: 'VTD + SE = Partícula Apassivadora: Há sujeito paciente, o verbo concorda com ele ("Alugam-se viaturas táticas" = viaturas são alugadas).\n\nVTI / VI / VL + SE = Índice de Indeterminação do Sujeito: Sujeito indeterminado, o verbo fica OBRIGATORIAMENTE na 3ª pessoa do singular ("Precisa-se de novos investigadores").' },
-      { id: 'n5', title: 'Dolo Eventual vs Culpa Consciente', tag: 'D. Penal', color: '#EF4444', text: 'Dolo Eventual: O agente prevê o resultado e assume o risco de produzi-lo ("Tanto faz se acontecer, não me importo com as consequências").\n\nCulpa Consciente: O agente prevê o resultado danoso, mas confia sinceramente na sua própria perícia e habilidade para evitá-lo.' },
-      { id: 'n6', title: 'Prazos do Inquérito Policial', tag: 'Proc. Penal', color: '#F59E0B', text: 'Justiça Estadual (CPP):\n• Réu Preso: 10 dias (improrrogáveis)\n• Réu Solto: 30 dias (prorrogáveis pelo juiz)\n\nJustiça Federal:\n• Preso: 15 dias (+15)\n• Solto: 30 dias\n\nLei de Drogas:\n• Preso: 30 dias (+30)\n• Solto: 90 dias (+90)' },
-      { id: 'n7', title: 'Inviolabilidade Domiciliar (Art. 5º, XI)', tag: 'Constitucional', color: '#3B82F6', text: 'A casa é asilo inviolável do indivíduo.\n\nA QUALQUER HORA:\n1) Flagrante delito\n2) Desastre\n3) Prestar socorro\n\nSOMENTE DURANTE O DIA:\n4) Por determinação judicial (critério temporal: das 05h às 21h nos termos da Lei 13.869).' },
-      { id: 'n8', title: 'Atributos do Ato (PATI)', tag: 'Administrativo', color: '#10B981', text: 'P - Presunção de Legitimidade e Veracidade\nA - Autoexecutoriedade\nT - Tipicidade\nI - Imperatividade\n\nIMPORTANTE: A cobrança de multas NÃO é autoexecutória.' },
-      { id: 'n9', title: 'Tentativa Inadmissível (COUP-C)', tag: 'D. Penal', color: '#EF4444', text: 'Infrações que NÃO admitem tentativa:\nC - Culposos (salvo culpa imprópria)\nO - Omissivos próprios\nU - Unissubsistentes\nP - Preterdolosos\nC - Contravenções penais' },
-      { id: 'n10', title: 'Cadeia de Custódia (10 Etapas CPP)', tag: 'Proc. Penal', color: '#F59E0B', text: 'Art. 158-B do CPP (Pacote Anticrime):\n1. Reconhecimento, 2. Isolamento, 3. Fixação, 4. Coleta, 5. Acondicionamento, 6. Transporte, 7. Recebimento, 8. Processamento, 9. Armazenamento, 10. Descarte.' },
-      { id: 'n11', title: 'Prisão Temporária (Lei 7.960/89)', tag: 'Proc. Penal', color: '#F59E0B', text: 'Cabível EXCLUSIVAMENTE durante o Inquérito Policial (não cabe na instrução judicial!).\n\nPrazos:\n• 5 + 5 dias em crimes comuns taxativos.\n• 30 + 30 dias em crimes hediondos/equiparados.\n\nVeda-se decretação de ofício pelo juiz.' },
-      { id: 'n12', title: 'Cláusulas Pétreas (Art. 60, § 4º CF)', tag: 'Constitucional', color: '#3B82F6', text: 'Não será objeto de deliberação a proposta de emenda tendente a abolir:\n1) A forma federativa de Estado;\n2) O voto direto, secreto, universal e periódico;\n3) A separação dos Poderes;\n4) Os direitos e garantias individuais.' },
-      { id: 'n13', title: 'Requisitos do Ato (COMFIFOR)', tag: 'Administrativo', color: '#10B981', text: 'Requisitos: Competência, Finalidade, Forma, Motivo e Objeto.\n\nCONVALIDAÇÃO permitida em vícios sanáveis de:\n1) Competência (não exclusiva);\n2) Forma (não essencial à validade).' },
-      { id: 'n14', title: 'Segurança da Informação e Criptografia', tag: 'Informática', color: '#06B6D4', text: 'Princípios Básicos (CIDAR):\nC - Confidencialidade (sigilo)\nI - Integridade (não alteração)\nD - Disponibilidade (acesso garantido)\nA - Autenticidade (identidade garantida)\nR - Não Repúdio (irretratabilidade)' },
-      { id: 'n15', title: 'Lei Maria da Penha (Lei 11.340/06)', tag: 'Legislação Especial', color: '#D4AF37', text: '• Veda expressamente a Lei 9.099/95 (sem transação nem sursis).\n• Violência doméstica independe de coabitação atual.\n• Delegado pode conceder medida protetiva se comarca sem juiz disponível (comunicação em 24h).' },
-      { id: 'n16', title: 'Abuso de Autoridade (Lei 13.869/19)', tag: 'Legislação Especial', color: '#D4AF37', text: 'Exige elemento subjetivo especial (Dolo Específico):\nPrejudicar outrem, beneficiar a si/terceiro ou mero capricho/satisfação pessoal.\nVeda-se crime de hermenêutica.' },
-      { id: 'n17', title: 'Equivalências Lógicas da Condicional', tag: 'RLM / Lógica', color: '#EC4899', text: 'Para a condicional P -> Q:\n1) Contrapositiva: ~Q -> ~P (equivalente perfeita)\n2) Silogismo disjuntivo (Regra do NEYMAR): ~P ∨ Q (Nega a primeira OU Mantém a segunda).' },
-      { id: 'n18', title: 'Poder de Polícia - Atributos (DAC)', tag: 'Administrativo', color: '#10B981', text: 'D - Discricionariedade\nA - Autoexecutoriedade\nC - Coercibilidade\n\nATENÇÃO: A cobrança de multas NÃO possui autoexecutoriedade.' },
-      { id: 'n19', title: 'Crase - Casos Proibidos (VAM-P)', tag: 'Português', color: '#8B5CF6', text: 'Casos PROIBIDOS de crase:\nV - Antes de VERBOS\nA - Antes de palavras MASCULINAS\nM - Antes da maioria dos PRONOMES\nP - Entre palavras REPETIDAS ("frente a frente")' },
-      { id: 'n20', title: 'Excludentes de Ilicitude (Art. 23 CP)', tag: 'D. Penal', color: '#EF4444', text: 'Causas que excluem o crime:\n1. Estado de Necessidade\n2. Legítima Defesa\n3. Estrito Cumprimento do Dever Legal\n4. Exercício Regular de Direito\n\nO excesso (doloso ou culposo) é SEMPRE punível.' }
-    ];
+    // MASTER_NOTES já declarado acima no módulo de Flashcards & Bizus Táticos (linha ~5037)
 
     // Comparador estrito de matéria para evitar contaminação entre disciplinas do edital
     function matchesStrictSubject(tagOrDeck, configuredNames) {
@@ -6640,6 +6627,7 @@
       renderTasks();
       renderFlashcards('hoje');
       renderNotes();
+      renderAIFlashcards();
       renderHabitJournal();
       updateStudyMetrics();
       initCountdown();
@@ -7196,69 +7184,8 @@
     }
 
     function renderNotes() {
-      const container = document.getElementById('stickyNotesContainer');
-      const badge = document.getElementById('flashcardsCountBadge') || document.getElementById('notesCountBadge');
-      if (!container) return;
-
-      const configured = getConfiguredMaterias();
-      if (configured.length === 0) {
-        if (badge) badge.innerText = '0 Bizus';
-        container.innerHTML = '<div style="grid-column: 1 / -1; padding: 24px 10px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
-          'Nenhum bizu tático disponível.<br>' +
-          'Configure as matérias do seu concurso para liberar os bizus doutrinários correspondentes ou adicione novos bizus.<br>' +
-          '<button class="btn-primary" style="margin-top: 8px; font-size: 11px; padding: 5px 12px;" onclick="openSubjectConfigModal()">+ Configurar Matérias</button>' +
-        '</div>';
-        return;
-      }
-
-      // Se currentNotes estiver vazio, recarrega via generateNotesForSubjects
-      if (!currentNotes || currentNotes.length === 0) {
-        currentNotes = generateNotesForSubjects(configured);
-      }
-
-      const activeFilter = currentAIFlashcardFilter || currentNoteFilter || 'todos';
-
-      const filtered = (activeFilter === 'todos' || !activeFilter)
-        ? currentNotes
-        : currentNotes.filter(n => {
-            const shortTag = getShortSubjectTag(n.tag || n.title || '');
-            const canonicalFilter = findCanonicalSubjectKey(activeFilter);
-            const canonicalTag = findCanonicalSubjectKey(n.tag || '');
-            return n.tag === activeFilter || shortTag === activeFilter || canonicalTag === canonicalFilter || (n.tag && n.tag.toLowerCase().includes(activeFilter.toLowerCase()));
-          });
-
-      if (badge) {
-        badge.innerText = filtered.length + ' Bizus';
-      }
-
-      if (filtered.length === 0) {
-        container.innerHTML = '<div style="grid-column: 1 / -1; padding: 24px 10px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
-          'Nenhum bizu encontrado neste filtro de matéria.<br>' +
-          '<div style="margin-top: 10px; display: flex; gap: 8px; justify-content: center;">' +
-            '<button class="btn-primary" style="font-size: 11px; padding: 4px 12px;" onclick="openModal(\'modalAddNote\')">+ Adicionar Bizu</button>' +
-            '<button class="btn-secondary" style="font-size: 11px; padding: 4px 12px;" onclick="restoreDefaultNotes()">↻ Restaurar Acervo</button>' +
-          '</div>' +
-        '</div>';
-        return;
-      }
-
-      container.innerHTML = filtered.map(n => {
-        const shortTag = getShortSubjectTag(n.tag || 'Bizu');
-        const accentColor = n.color || '#D4AF37';
-        return (
-          '<div class="sticky-note" style="--note-accent: ' + accentColor + ';" onclick="viewNoteFull(\'' + n.id + '\')">' +
-            '<button type="button" class="btn-note-del" onclick="deleteNote(\'' + n.id + '\', event)" title="Excluir este bizu" aria-label="Excluir">&times;</button>' +
-            '<div>' +
-              '<strong style="font-size: 11.5px; color: var(--gold-light); display: block; margin-bottom: 5px; padding-right: 18px; font-weight: 700;">' + n.title + '</strong>' +
-              '<p class="note-text" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 11px; line-height: 1.5; color: var(--text-main); margin: 0; opacity: 0.88;">' + (n.text || '').replace(/\n/g, ' ') + '</p>' +
-            '</div>' +
-            '<div class="note-footer" style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">' +
-              '<span class="note-tag" style="background: rgba(212, 175, 55, 0.12); color: ' + accentColor + '; border: 1px solid rgba(212, 175, 55, 0.25); font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 600;">' + shortTag + '</span>' +
-              '<span style="font-size: 10.5px; color: var(--gold-primary); font-weight: 600;">Ver Bizu Completo →</span>' +
-            '</div>' +
-          '</div>'
-        );
-      }).join('');
+      // Sincroniza e renderiza diretamente a Central de Flashcards Táticos por IA
+      renderAIFlashcards(currentAIFlashcardFilter || 'todos');
     }
 
     function viewNoteFull(id) {
@@ -7938,6 +7865,7 @@
 
       // 2. Carregar dados operacionais
       initData();
+      renderAIFlashcards();
       updateClock();
       setInterval(updateClock, 1000);
 
