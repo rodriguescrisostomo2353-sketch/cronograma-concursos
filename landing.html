@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-  <title>PCMG Tático — Portal & Cronograma de Estudos</title>
+  <title>PROJETO ABA — Portal & Cronograma de Estudos</title>
 
   <!-- Configurações PWA e Ícones -->
   <link rel="manifest" href="manifest.json">
@@ -301,7 +301,7 @@
       font-weight: 700;
       line-height: 1.05;
       letter-spacing: -0.03em;
-      margin: 0 0 12px;
+      margin: 0 0 24px;
       color: var(--sh-fg);
     }
 
@@ -871,23 +871,12 @@
     <header class="sh-topbar">
       <div class="sh-brand">
         <span class="sh-brand-badge">
-          <img src="assets/logo_faca_caveira.png" alt="Distintivo PCMG">
+          <img src="assets/logo_faca_caveira.png" alt="PROJETO ABA">
         </span>
-        <span class="sh-brand-text">PCMG Tático<span style="color:var(--sh-acc)">®</span></span>
+        <span class="sh-brand-text">PROJETO ABA</span>
       </div>
 
       <div class="sh-topbar-actions">
-        <!-- Alternador 3D de Modos do Sistema (Works Wheel) -->
-        <button type="button" class="sh-pill-btn" onclick="openWorksWheelModal()" title="Alternador 3D de Modos do Sistema (Works Wheel)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 2a10 10 0 0 1 10 10" />
-            <path d="M12 12l7.07-7.07" />
-            <circle cx="12" cy="12" r="2" />
-          </svg>
-          <span>Modos 3D ⎈</span>
-        </button>
-
         <!-- Alternar Tema Claro/Escuro -->
         <button type="button" class="sh-theme-btn" id="themeToggleBtn" aria-label="Alternar Tema Claro/Escuro" title="Alternar Modo Escuro / Claro">
           <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -908,19 +897,15 @@
     <!-- Área Central: Somente o Fundo Animado com Mensagem Bem-Vindo e Opção de Login -->
     <main class="welcome-hero-wrapper">
       <div class="welcome-card" id="welcomeCard">
-        <!-- Emblema Tático PCMG -->
+        <!-- Emblema PROJETO ABA -->
         <div class="welcome-emblem">
-          <img src="assets/logo_faca_caveira.png" alt="PCMG Tático">
+          <img src="assets/logo_faca_caveira.png" alt="PROJETO ABA">
         </div>
 
-        <span class="welcome-kicker">SANTUÁRIO OPERACIONAL PCMG</span>
+        <span class="welcome-kicker">PROJETO ABA</span>
 
         <!-- Mensagem Solicitada: Bem-vindo -->
         <h1 class="welcome-title">Bem-vindo<span class="welcome-dot">.</span></h1>
-
-        <p class="welcome-subtitle">
-          Ambiente tático de estudos de alta intensidade. Faça login para sincronizar seu progresso ou continue no sistema.
-        </p>
 
         <!-- Estado 1: Não Logado (Opção Solicitando Login) -->
         <div id="welcomeUnloggedState" class="welcome-action-group">
@@ -977,7 +962,7 @@
       <div class="modal-tactical-header">
         <div style="display: flex; align-items: center; gap: 10px;">
           <div class="modal-emblem-badge">
-            <img src="assets/logo_faca_caveira.png" alt="PCMG">
+            <img src="assets/logo_faca_caveira.png" alt="PROJETO ABA">
           </div>
           <div>
             <h2 id="modalTacticalTitle" class="modal-tactical-title">Identificação do Operador</h2>
