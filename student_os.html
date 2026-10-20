@@ -2030,6 +2030,202 @@
       .tilted-cylinder-card-slot {
         transition: opacity 0.3s ease !important;
       }
+      .live-dot-ping::before {
+        animation: none !important;
+      }
+    }
+
+    /* ========================================================================
+       DRAGGABLE WIDGET GRID & OBSERVABILITY TELEMETRY ANIMATIONS
+       ======================================================================== */
+    .draggable-dashboard-hint {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: rgba(14, 19, 30, 0.75);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .draggable-dashboard-hint .hint-left {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .btn-restore-layout {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      color: var(--gold-primary);
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      user-select: none;
+    }
+
+    .btn-restore-layout:hover {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--gold-primary);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+    }
+
+    /* Tactical Draggable Widget */
+    .tactical-draggable-widget {
+      position: relative;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), 
+                  box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1), 
+                  opacity 0.25s ease, 
+                  border-color 0.25s ease;
+      will-change: transform, box-shadow;
+    }
+
+    .tactical-draggable-widget.is-dragging {
+      opacity: 0.72 !important;
+      transform: scale(1.018) rotate(0.6deg) !important;
+      box-shadow: 0 20px 42px rgba(0, 0, 0, 0.75), 0 0 26px rgba(212, 175, 55, 0.35) !important;
+      border-color: rgba(212, 175, 55, 0.6) !important;
+      z-index: 100 !important;
+      cursor: grabbing !important;
+    }
+
+    .tactical-draggable-widget.is-dragover {
+      outline: 2px dashed var(--gold-primary) !important;
+      outline-offset: 4px;
+      transform: scale(0.985) !important;
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.28) !important;
+    }
+
+    /* Drag Handle */
+    .widget-drag-handle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: grab;
+      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .widget-drag-handle:hover {
+      color: var(--gold-primary);
+      background: rgba(212, 175, 55, 0.12);
+      border-color: rgba(212, 175, 55, 0.3);
+      transform: scale(1.08);
+    }
+
+    .widget-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    /* Live Telemetry Pulse Dot */
+    .live-telemetry-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5.5px;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #10B981;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 2px 7.5px;
+      border-radius: 999px;
+      user-select: none;
+    }
+
+    .live-telemetry-badge.warn {
+      color: #F59E0B;
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.25);
+    }
+
+    .live-telemetry-badge.blue {
+      color: #60A5FA;
+      background: rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.25);
+    }
+
+    .live-telemetry-badge.purple {
+      color: #C084FC;
+      background: rgba(168, 85, 247, 0.1);
+      border-color: rgba(168, 85, 247, 0.25);
+    }
+
+    .live-telemetry-badge.gold {
+      color: var(--gold-primary);
+      background: rgba(212, 175, 55, 0.1);
+      border-color: rgba(212, 175, 55, 0.3);
+    }
+
+    .live-dot-ping {
+      position: relative;
+      display: inline-flex;
+      width: 6.5px;
+      height: 6.5px;
+    }
+
+    .live-dot-ping::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.8;
+      animation: liveDotPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    .live-dot-ping::after {
+      content: '';
+      position: relative;
+      display: inline-flex;
+      border-radius: 50%;
+      width: 6.5px;
+      height: 6.5px;
+      background: currentColor;
+    }
+
+    @keyframes liveDotPing {
+      75%, 100% {
+        transform: scale(2.4);
+        opacity: 0;
+      }
+    }
+
+    .telemetry-delta {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #10B981;
+    }
+
+    .telemetry-fluid-bar {
+      transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1), height 0.7s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
 
@@ -3353,24 +3549,50 @@
            ==================================================================== -->
       <section class="center-content">
 
-        <!-- 1. Disciplinas do Edital -->
-        <div id="disciplinas">
-          <div class="section-title" style="margin-bottom: 14px;">
-            <span>Disciplinas do Concurso</span>
-            <span style="font-size: 11px; color: var(--text-secondary);" id="totalDisciplinasBadge">6 Disciplinas no Edital</span>
+        <!-- Painel de Observabilidade Tática: Blocos Reorganizáveis -->
+        <div class="draggable-dashboard-hint" id="dashboardDraggableHint">
+          <div class="hint-left">
+            <span class="live-dot-ping"></span>
+            <span>Arraste e reorganize os blocos táticos para personalizar o layout do seu painel operacional.</span>
           </div>
-          <div class="classes-grid" id="concursoClassesGrid">
-            <!-- Preenchido dinamicamente via JavaScript -->
+          <button type="button" class="btn-restore-layout" onclick="restoreDefaultDashboardLayout()" title="Restaurar posições originais dos blocos">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            <span>Restaurar Ordem</span>
+          </button>
+        </div>
+
+        <!-- 1. Disciplinas do Edital -->
+        <div class="tactical-draggable-widget" id="blockDisciplinas" data-widget-id="blockDisciplinas">
+          <div id="disciplinas">
+            <div class="section-title" style="margin-bottom: 14px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="widget-drag-handle" title="Arraste para reposicionar o bloco de Disciplinas" aria-label="Arrastar bloco">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+                </div>
+                <span>Disciplinas do Concurso</span>
+                <span class="live-telemetry-badge" title="Matérias ativas e sincronizadas"><span class="live-dot-ping"></span><span>LIVE</span></span>
+              </div>
+              <span style="font-size: 11px; color: var(--text-secondary);" id="totalDisciplinasBadge">6 Disciplinas no Edital</span>
+            </div>
+            <div class="classes-grid" id="concursoClassesGrid">
+              <!-- Preenchido dinamicamente via JavaScript -->
+            </div>
           </div>
         </div>
 
         <!-- 2. Sub-grid de 2 Colunas: Grade Tática & Simulados/Metas -->
-        <div class="center-split-grid">
+        <div class="tactical-draggable-widget center-split-grid" id="blockCenterSplit" data-widget-id="blockCenterSplit">
           
           <!-- Grade Tática Semanal -->
-          <div class="timetable-card" id="cronograma">
+          <div class="timetable-card tactical-sub-widget" id="cronograma" data-subwidget-id="cronograma">
             <div class="section-title">
-              <span>Grade Tática Semanal</span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="widget-drag-handle" title="Arraste para reposicionar Grade Tática" aria-label="Arrastar">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+                </div>
+                <span>Grade Tática Semanal</span>
+                <span class="live-telemetry-badge blue"><span class="live-dot-ping"></span><span>CICLO</span></span>
+              </div>
               <span style="font-size: 10px; color: var(--gold-primary);">Turnos & Missões</span>
             </div>
             <div class="timetable-wrapper">
@@ -3394,9 +3616,15 @@
           </div>
 
           <!-- Próximas Provas & Simulados -->
-          <div class="assessments-card" id="simulados">
+          <div class="assessments-card tactical-sub-widget" id="simulados" data-subwidget-id="simulados">
             <div class="section-title">
-              <span>Próximas Provas & Metas</span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="widget-drag-handle" title="Arraste para reposicionar Metas" aria-label="Arrastar">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+                </div>
+                <span>Próximas Provas & Metas</span>
+                <span class="live-telemetry-badge warn"><span class="live-dot-ping"></span><span>ALVO</span></span>
+              </div>
               <button class="btn-quick-action" style="padding: 3px 8px; font-size: 10.5px; width: auto;" onclick="openAddAssessmentModal()" title="Adicionar nova meta ou simulado">
                 + Meta
               </button>
@@ -3409,9 +3637,12 @@
         </div>
 
         <!-- 3. Gerenciador de Missões: Treinamento de Mini-Perguntas Interativas -->
-        <div class="tasks-card" id="missoes">
+        <div class="tactical-draggable-widget tasks-card" id="missoes" data-widget-id="missoes">
           <div class="section-title">
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <div class="widget-drag-handle" title="Arraste para reposicionar Missões" aria-label="Arrastar">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+              </div>
               <button type="button" class="btn-tactical-back" onclick="navigateBackToDashboard(event)" title="Voltar para a tela anterior do Painel">
                 <svg class="back-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -3421,8 +3652,9 @@
               </button>
               <span style="display: flex; align-items: center; gap: 6px;">
                 <svg class="tactical-icon" style="color: var(--gold-primary); width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-                Missões Táticas • Mini-Perguntas dos Flashcards
+                Missões Táticas • Mini-Perguntas
               </span>
+              <span class="live-telemetry-badge purple" title="Reator Tático Interativo"><span class="live-dot-ping"></span><span>REATOR</span></span>
               <div class="quiz-scoreboard-box" id="quizMainScoreboard">
                 <span class="quiz-score-pill correct" id="quizScoreCorrect">✓ 0 Acertos</span>
                 <span class="quiz-score-pill wrong" id="quizScoreWrong">✕ 0 Erros</span>
@@ -3446,12 +3678,18 @@
         </div>
 
         <!-- 4. Sub-grid Inferior: Ciclo de Revisões & Bizus Táticos -->
-        <div class="bottom-split-grid">
+        <div class="tactical-draggable-widget bottom-split-grid" id="blockBottomSplit" data-widget-id="blockBottomSplit">
           
           <!-- Flashcards & Ciclo de Revisões -->
-          <div class="flashcards-card" id="revisoes">
+          <div class="flashcards-card tactical-sub-widget" id="revisoes" data-subwidget-id="revisoes">
             <div class="section-title">
-              <span>Ciclo de Revisões Espaçadas</span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="widget-drag-handle" title="Arraste para reposicionar Ciclo de Revisões" aria-label="Arrastar">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+                </div>
+                <span>Ciclo de Revisões Espaçadas</span>
+                <span class="live-telemetry-badge warn"><span class="live-dot-ping"></span><span>SPACED</span></span>
+              </div>
             </div>
             <div class="flashcards-tabs">
               <button class="fc-tab-btn active" onclick="switchFlashcardTab('hoje', this)">Hoje (Pendentes)</button>
@@ -3465,9 +3703,12 @@
           </div>
 
           <!-- Flashcards Táticos por IA (Central de Bizus Táticos) -->
-          <div class="notes-card" id="bizus">
+          <div class="notes-card tactical-sub-widget" id="bizus" data-subwidget-id="bizus">
             <div class="section-title">
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <div class="widget-drag-handle" title="Arraste para reposicionar Flashcards por IA" aria-label="Arrastar">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+                </div>
                 <button type="button" class="btn-tactical-back" onclick="navigateBackToDashboard(event)" title="Voltar para a tela anterior do Painel">
                   <svg class="back-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -3479,6 +3720,7 @@
                   <svg class="tactical-icon" style="color: var(--gold-primary); width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
                   Flashcards Táticos por IA
                 </span>
+                <span class="live-telemetry-badge gold" title="Inteligência Artificial Ativa"><span class="live-dot-ping"></span><span>IA 3D</span></span>
                 <span class="badge-count" id="flashcardsCountBadge" style="font-size: 10px; background: rgba(212, 175, 55, 0.15); color: var(--gold-primary); padding: 2px 7px; border-radius: 999px; font-weight: 700;">43 CARDS</span>
               </div>
               <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
@@ -7858,6 +8100,244 @@
       }, 3500);
     }
 
+    /* ==========================================================================
+       SISTEMA DE BLOCOS ARRASTÁVEIS (DRAGGABLE WIDGET GRID) & TELEMETRIA OPERACIONAL
+       ========================================================================== */
+    let draggedWidgetEl = null;
+    let dragSourceType = null; // 'main' | 'sub'
+
+    function initDraggableWidgets() {
+      const centerContent = document.querySelector('.center-content');
+      if (!centerContent) return;
+
+      // 1. Restaurar ordem salva do layout principal se existir
+      try {
+        const savedLayout = localStorage.getItem('tactical_student_os_layout');
+        if (savedLayout) {
+          const order = JSON.parse(savedLayout);
+          if (Array.isArray(order) && order.length > 0) {
+            order.forEach(id => {
+              const el = document.getElementById(id);
+              if (el && el.parentElement === centerContent) {
+                centerContent.appendChild(el);
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('Falha ao restaurar ordem de widgets:', err);
+      }
+
+      // 2. Restaurar ordem de sub-widgets (em split grids) se existir
+      try {
+        const savedSubLayout = localStorage.getItem('tactical_student_os_subwidgets');
+        if (savedSubLayout) {
+          const subMap = JSON.parse(savedSubLayout);
+          Object.keys(subMap).forEach(containerId => {
+            const container = document.getElementById(containerId);
+            if (container && Array.isArray(subMap[containerId])) {
+              subMap[containerId].forEach(subId => {
+                const subEl = document.getElementById(subId);
+                if (subEl && subEl.parentElement === container) {
+                  container.appendChild(subEl);
+                }
+              });
+            }
+          });
+        }
+      } catch (err) {
+        console.warn('Falha ao restaurar sub-widgets:', err);
+      }
+
+      // 3. Configurar eventos de Drag & Drop para widgets principais
+      const mainWidgets = centerContent.querySelectorAll(':scope > .tactical-draggable-widget');
+      mainWidgets.forEach(widget => {
+        const handle = widget.querySelector('.widget-drag-handle');
+        if (handle) {
+          handle.addEventListener('mousedown', () => {
+            widget.setAttribute('draggable', 'true');
+          });
+          handle.addEventListener('mouseup', () => {
+            widget.removeAttribute('draggable');
+          });
+        } else {
+          widget.setAttribute('draggable', 'true');
+        }
+
+        widget.addEventListener('dragstart', (e) => {
+          draggedWidgetEl = widget;
+          dragSourceType = 'main';
+          widget.classList.add('is-dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', widget.id);
+          if (typeof playTacticalBlip === 'function') {
+            playTacticalBlip(520, 0.04);
+          }
+        });
+
+        widget.addEventListener('dragover', (e) => {
+          if (!draggedWidgetEl || dragSourceType !== 'main' || draggedWidgetEl === widget) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          widget.classList.add('is-dragover');
+        });
+
+        widget.addEventListener('dragleave', () => {
+          widget.classList.remove('is-dragover');
+        });
+
+        widget.addEventListener('drop', (e) => {
+          if (!draggedWidgetEl || dragSourceType !== 'main' || draggedWidgetEl === widget) return;
+          e.preventDefault();
+          e.stopPropagation();
+          widget.classList.remove('is-dragover');
+
+          const rect = widget.getBoundingClientRect();
+          const nextSibling = (e.clientY < rect.top + rect.height / 2) ? widget : widget.nextSibling;
+          centerContent.insertBefore(draggedWidgetEl, nextSibling);
+
+          saveDashboardLayoutOrder();
+          if (typeof playTacticalBlip === 'function') {
+            playTacticalBlip(880, 0.05);
+          }
+          showToast('Painel Tático reorganizado!', 'info');
+        });
+
+        widget.addEventListener('dragend', () => {
+          widget.classList.remove('is-dragging');
+          widget.classList.remove('is-dragover');
+          mainWidgets.forEach(w => w.classList.remove('is-dragover'));
+          draggedWidgetEl = null;
+          dragSourceType = null;
+        });
+      });
+
+      // 4. Configurar eventos de Drag & Drop para subwidgets nas split grids
+      const splitContainers = centerContent.querySelectorAll('.center-split-grid, .bottom-split-grid');
+      splitContainers.forEach(container => {
+        const subWidgets = container.querySelectorAll('.tactical-sub-widget');
+        subWidgets.forEach(sub => {
+          const handle = sub.querySelector('.widget-drag-handle');
+          if (handle) {
+            handle.addEventListener('mousedown', () => {
+              sub.setAttribute('draggable', 'true');
+            });
+            handle.addEventListener('mouseup', () => {
+              sub.removeAttribute('draggable');
+            });
+          } else {
+            sub.setAttribute('draggable', 'true');
+          }
+
+          sub.addEventListener('dragstart', (e) => {
+            draggedWidgetEl = sub;
+            dragSourceType = 'sub';
+            sub.classList.add('is-dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', sub.id);
+            e.stopPropagation();
+            if (typeof playTacticalBlip === 'function') {
+              playTacticalBlip(560, 0.04);
+            }
+          });
+
+          sub.addEventListener('dragover', (e) => {
+            if (!draggedWidgetEl || dragSourceType !== 'sub' || draggedWidgetEl === sub) return;
+            if (draggedWidgetEl.parentElement !== container) return;
+            e.preventDefault();
+            e.stopPropagation();
+            e.dataTransfer.dropEffect = 'move';
+            sub.classList.add('is-dragover');
+          });
+
+          sub.addEventListener('dragleave', () => {
+            sub.classList.remove('is-dragover');
+          });
+
+          sub.addEventListener('drop', (e) => {
+            if (!draggedWidgetEl || dragSourceType !== 'sub' || draggedWidgetEl === sub) return;
+            if (draggedWidgetEl.parentElement !== container) return;
+            e.preventDefault();
+            e.stopPropagation();
+            sub.classList.remove('is-dragover');
+
+            const rect = sub.getBoundingClientRect();
+            const nextSibling = (e.clientX < rect.left + rect.width / 2) ? sub : sub.nextSibling;
+            container.insertBefore(draggedWidgetEl, nextSibling);
+
+            saveDashboardLayoutOrder();
+            if (typeof playTacticalBlip === 'function') {
+              playTacticalBlip(920, 0.05);
+            }
+            showToast('Bloco tático reposicionado!', 'info');
+          });
+
+          sub.addEventListener('dragend', (e) => {
+            sub.classList.remove('is-dragging');
+            sub.classList.remove('is-dragover');
+            subWidgets.forEach(s => s.classList.remove('is-dragover'));
+            draggedWidgetEl = null;
+            dragSourceType = null;
+            e.stopPropagation();
+          });
+        });
+      });
+    }
+
+    function saveDashboardLayoutOrder() {
+      const centerContent = document.querySelector('.center-content');
+      if (!centerContent) return;
+
+      const mainWidgets = centerContent.querySelectorAll(':scope > .tactical-draggable-widget');
+      const mainOrder = Array.from(mainWidgets).map(w => w.id).filter(Boolean);
+      localStorage.setItem('tactical_student_os_layout', JSON.stringify(mainOrder));
+
+      const splitContainers = centerContent.querySelectorAll('.center-split-grid, .bottom-split-grid');
+      const subMap = {};
+      splitContainers.forEach(c => {
+        if (c.id) {
+          const subs = c.querySelectorAll(':scope > .tactical-sub-widget');
+          subMap[c.id] = Array.from(subs).map(s => s.id).filter(Boolean);
+        }
+      });
+      localStorage.setItem('tactical_student_os_subwidgets', JSON.stringify(subMap));
+    }
+
+    function restoreDefaultDashboardLayout() {
+      localStorage.removeItem('tactical_student_os_layout');
+      localStorage.removeItem('tactical_student_os_subwidgets');
+
+      const centerContent = document.querySelector('.center-content');
+      if (!centerContent) return;
+
+      const defaultMain = ['blockDisciplinas', 'blockCenterSplit', 'missoes', 'blockBottomSplit'];
+      defaultMain.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) centerContent.appendChild(el);
+      });
+
+      const centerSplit = document.getElementById('blockCenterSplit');
+      if (centerSplit) {
+        const cron = document.getElementById('cronograma');
+        const sim = document.getElementById('simulados');
+        if (cron) centerSplit.appendChild(cron);
+        if (sim) centerSplit.appendChild(sim);
+      }
+
+      const bottomSplit = document.getElementById('blockBottomSplit');
+      if (bottomSplit) {
+        const rev = document.getElementById('revisoes');
+        const biz = document.getElementById('bizus');
+        if (rev) bottomSplit.appendChild(rev);
+        if (biz) bottomSplit.appendChild(biz);
+      }
+
+      if (typeof playTacticalBlip === 'function') {
+        playTacticalBlip(780, 0.08);
+      }
+      showToast('Ordem padrão dos blocos restaurada!', 'success');
+    }
+
     // Inicialização ao carregar
     window.addEventListener('DOMContentLoaded', () => {
       // 1. Checagem mandatória de autenticação
@@ -7866,6 +8346,7 @@
       // 2. Carregar dados operacionais
       initData();
       renderAIFlashcards();
+      initDraggableWidgets();
       updateClock();
       setInterval(updateClock, 1000);
 
