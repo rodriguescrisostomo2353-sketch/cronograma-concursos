@@ -2228,6 +2228,71 @@
       transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1), height 0.7s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
+    /* Pomodoro & Metric Progress Tracks */
+    .pomo-progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(11, 14, 20, 0.85);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .pomo-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #D4AF37, #22C55E);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
+      border-radius: 999px;
+      transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .metric-fluid-track {
+      width: 100%;
+      height: 4.5px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 3px;
+    }
+
+    .metric-fluid-fill {
+      height: 100%;
+      background: var(--gold-primary);
+      border-radius: 999px;
+      transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Discipline Card Draggable Enhancements */
+    .class-card.tactical-draggable-widget {
+      cursor: pointer;
+    }
+
+    .class-card .class-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .class-card .card-top-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+    }
+
+    .class-card .widget-drag-handle {
+      width: 18px;
+      height: 18px;
+      opacity: 0.45;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .class-card:hover .widget-drag-handle {
+      opacity: 1;
+    }
+
 
     .note-text {
       font-size: 11px;
@@ -3497,7 +3562,16 @@
         </section>
 
         <!-- Rastreador de Foco / Ambient Player -->
-        <div class="brown-noise-player" id="brownNoiseWidget">
+        <div class="brown-noise-player tactical-draggable-widget" id="brownNoiseWidget" data-widget-id="brownNoiseWidget">
+          <div class="section-title" style="margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <div class="widget-drag-handle" title="Arraste para reposicionar Ruído Marrom" aria-label="Arrastar">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+              </div>
+              <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--gold-light);">Ruído Marrom</span>
+            </div>
+            <span class="live-telemetry-badge purple"><span class="live-dot-ping"></span><span>ÁUDIO</span></span>
+          </div>
           <div class="player-header">
             <div class="player-thumb">
               <img src="assets/student_os_banner.jpg" alt="Ambient">
@@ -3526,9 +3600,15 @@
         </div>
 
         <!-- Diário de Hábitos Operacionais -->
-        <div class="habit-journal">
-          <div class="section-title">
-            <span>Hábitos Operacionais</span>
+        <div class="habit-journal tactical-draggable-widget" id="blockHabits" data-widget-id="blockHabits">
+          <div class="section-title" style="margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <div class="widget-drag-handle" title="Arraste para reposicionar Hábitos" aria-label="Arrastar">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+              </div>
+              <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--gold-light);">Hábitos Operacionais</span>
+            </div>
+            <span class="live-telemetry-badge gold"><span class="live-dot-ping"></span><span>DIÁRIO</span></span>
           </div>
           <div class="habit-meta">
             <span>Disciplina Diária</span>
@@ -3785,7 +3865,16 @@
       <aside class="right-sidebar">
 
         <!-- Relógio Digital Dual-Tile -->
-        <div class="digital-clock-widget">
+        <div class="digital-clock-widget tactical-draggable-widget" id="blockClock" data-widget-id="blockClock">
+          <div class="section-title" style="width: 100%; margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 7px;">
+              <div class="widget-drag-handle" title="Arraste para reposicionar Relógio" aria-label="Arrastar">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+              </div>
+              <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold-light);">Horário Operacional</span>
+            </div>
+            <span class="live-telemetry-badge blue"><span class="live-dot-ping"></span><span>TEMPO REAL</span></span>
+          </div>
           <div class="clock-tiles">
             <div class="clock-tile" id="clockHours">00</div>
             <div class="clock-tile" id="clockMinutes">00</div>
@@ -3798,10 +3887,15 @@
         </div>
 
         <!-- Pomodoro Operacional -->
-        <div class="pomodoro-widget" id="pomodoro">
+        <div class="pomodoro-widget tactical-draggable-widget" id="pomodoro" data-widget-id="pomodoro">
           <div class="section-title" style="width: 100%; margin-bottom: 0;">
-            <span>Foco Operacional</span>
-            <span style="font-size: 10px; color: var(--gold-primary);">Ciclo Tático</span>
+            <div style="display: flex; align-items: center; gap: 7px;">
+              <div class="widget-drag-handle" title="Arraste para reposicionar Pomodoro" aria-label="Arrastar">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+              </div>
+              <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gold-light);">Foco Operacional</span>
+            </div>
+            <span class="live-telemetry-badge warn" id="pomoLiveBadge"><span class="live-dot-ping"></span><span id="pomoLiveStateText">PAUSADO</span></span>
           </div>
 
           <div class="pomodoro-modes">
@@ -3810,7 +3904,12 @@
             <button class="pomo-chip" onclick="setPomoMode(20, this)">Pausa 20m</button>
           </div>
 
-          <div class="pomodoro-display" id="pomodoroTimer">50:00</div>
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%; gap: 6px;">
+            <div class="pomodoro-display" id="pomodoroTimer">50:00</div>
+            <div class="pomo-progress-track" title="Progresso do Ciclo">
+              <div class="pomo-progress-bar telemetry-fluid-bar" id="pomoProgressBar" style="width: 0%;"></div>
+            </div>
+          </div>
 
           <div class="pomodoro-controls">
             <button class="btn-pomo-primary" id="btnPomoStart" onclick="togglePomodoro()">
@@ -3826,30 +3925,54 @@
         </div>
 
         <!-- Métricas Rápidas Operacionais -->
-        <div class="metrics-widget">
-          <div class="section-title">
-            <span>Rendimento Semanal</span>
+        <div class="metrics-widget tactical-draggable-widget" id="blockMetrics" data-widget-id="blockMetrics">
+          <div class="section-title" style="width: 100%; margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 7px;">
+              <div class="widget-drag-handle" title="Arraste para reposicionar Rendimento Semanal" aria-label="Arrastar">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+              </div>
+              <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gold-light);">Rendimento Semanal</span>
+            </div>
+            <span class="live-telemetry-badge gold"><span class="live-dot-ping"></span><span>MÉTRICAS</span></span>
           </div>
-          <div class="metric-row">
-            <span class="metric-label">
-              <svg class="tactical-icon" style="color: var(--gold-primary); margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="14" r="8"></circle><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="14" x2="12" y2="10"></line></svg>
-              Horas Estudadas:
-            </span>
-            <span class="metric-value" id="weeklyHoursVal">0.0h</span>
+
+          <div class="metric-row" style="flex-direction: column; align-items: stretch; gap: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="metric-label">
+                <svg class="tactical-icon" style="color: var(--gold-primary); margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="14" r="8"></circle><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="14" x2="12" y2="10"></line></svg>
+                Horas Estudadas:
+              </span>
+              <span class="metric-value" id="weeklyHoursVal">0.0h</span>
+            </div>
+            <div class="metric-fluid-track">
+              <div class="metric-fluid-fill telemetry-fluid-bar" id="weeklyHoursBar" style="width: 35%;"></div>
+            </div>
           </div>
-          <div class="metric-row">
-            <span class="metric-label">
-              <svg class="tactical-icon" style="color: var(--gold-primary); margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><polyline points="9 14 11 16 15 11"></polyline></svg>
-              Questões Feitas:
-            </span>
-            <span class="metric-value" id="questionsDoneVal">0</span>
+
+          <div class="metric-row" style="flex-direction: column; align-items: stretch; gap: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="metric-label">
+                <svg class="tactical-icon" style="color: var(--gold-primary); margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><polyline points="9 14 11 16 15 11"></polyline></svg>
+                Questões Feitas:
+              </span>
+              <span class="metric-value" id="questionsDoneVal">0</span>
+            </div>
+            <div class="metric-fluid-track">
+              <div class="metric-fluid-fill telemetry-fluid-bar" id="questionsDoneBar" style="width: 25%; background: #60A5FA;"></div>
+            </div>
           </div>
-          <div class="metric-row">
-            <span class="metric-label">
-              <svg class="tactical-icon" style="color: var(--accent-green); margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle><line x1="12" y1="2" x2="12" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line></svg>
-              Precisão em Simulados:
-            </span>
-            <span class="metric-value" style="color: var(--accent-green);" id="accuracyVal">0.0%</span>
+
+          <div class="metric-row" style="flex-direction: column; align-items: stretch; gap: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="metric-label">
+                <svg class="tactical-icon" style="color: var(--accent-green); margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle><line x1="12" y1="2" x2="12" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line></svg>
+                Precisão em Simulados:
+              </span>
+              <span class="metric-value" style="color: var(--accent-green);" id="accuracyVal">0.0%</span>
+            </div>
+            <div class="metric-fluid-track">
+              <div class="metric-fluid-fill telemetry-fluid-bar" id="accuracyBar" style="width: 50%; background: #10B981;"></div>
+            </div>
           </div>
         </div>
 
@@ -6955,7 +7078,7 @@
       if (badge) badge.innerText = configuredMaterias.length + ' Disciplinas no Edital';
 
       const colors = ['#EF4444', '#F59E0B', '#3B82F6', '#10B981', '#8B5CF6', '#D4AF37', '#06B6D4', '#EC4899'];
-      const displayClasses = configuredMaterias.map((m, idx) => {
+      let displayClasses = configuredMaterias.map((m, idx) => {
         const name = m.nome || m;
         // Total de tópicos reais da matéria (0 se não tiver, sem fallbacks fictícios)
         const topicosCount = Array.isArray(m.topicos) ? m.topicos.length : 0;
@@ -6989,13 +7112,50 @@
         };
       });
 
+      // Se houver ordem personalizada salva pelo usuário no layout, aplicá-la
+      try {
+        const savedOrder = localStorage.getItem('tactical_student_os_classes_order');
+        if (savedOrder) {
+          const orderArr = JSON.parse(savedOrder);
+          if (Array.isArray(orderArr) && orderArr.length > 0) {
+            displayClasses.sort((a, b) => {
+              const idxA = orderArr.indexOf(a.name);
+              const idxB = orderArr.indexOf(b.name);
+              if (idxA === -1 && idxB === -1) return 0;
+              if (idxA === -1) return 1;
+              if (idxB === -1) return -1;
+              return idxA - idxB;
+            });
+          }
+        }
+      } catch (e) {}
+
       container.innerHTML = displayClasses.map((c, idx) => {
         const iconSvg = getDisciplineIconSvg(c.name, idx);
+
+        let statusBadgeHtml = '';
+        if (c.done >= 100) {
+          statusBadgeHtml = '<span class="live-telemetry-badge" style="font-size: 8.5px; padding: 1.5px 5.5px;" title="Matéria dominada (100% dos tópicos concluídos)"><span class="live-dot-ping"></span><span>DOMINADO</span></span>';
+        } else if (c.done > 0) {
+          statusBadgeHtml = '<span class="live-telemetry-badge blue" style="font-size: 8.5px; padding: 1.5px 5.5px;" title="Em andamento operacional"><span class="live-dot-ping"></span><span>' + c.done + '% FOCO</span></span>';
+        } else {
+          statusBadgeHtml = '<span class="live-telemetry-badge" style="font-size: 8.5px; padding: 1.5px 5.5px; background: rgba(255,255,255,0.04); color: var(--text-muted); border-color: rgba(255,255,255,0.08);"><span style="width: 5px; height: 5px; border-radius: 50%; background: var(--text-muted); display: inline-block;"></span><span>INICIAR</span></span>';
+        }
+
+        const safeSubjectAttr = c.name.replace(/"/g, '&quot;');
+        const safeSubjectArg = c.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
         return (
-          '<div class="class-card" style="--card-accent: ' + c.color + ';" onclick="filterTasksBySubject(\'' + c.name + '\')">' +
+          '<div class="class-card tactical-draggable-widget" data-subject-name="' + safeSubjectAttr + '" style="--card-accent: ' + c.color + ';" onclick="filterTasksBySubject(\'' + safeSubjectArg + '\')">' +
             '<div class="class-header">' +
               '<span class="class-icon">' + iconSvg + '</span>' +
               '<h3 title="' + c.name + '">' + c.name + '</h3>' +
+              '<div class="card-top-actions">' +
+                statusBadgeHtml +
+                '<div class="widget-drag-handle" title="Arraste para reorganizar disciplina" aria-label="Arrastar disciplina" onclick="event.stopPropagation()">' +
+                  '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>' +
+                '</div>' +
+              '</div>' +
             '</div>' +
             '<div class="class-body">' +
               '<div class="class-stat-row">' +
@@ -7019,6 +7179,79 @@
           '</div>'
         );
       }).join('');
+
+      initDraggableClasses();
+    }
+
+    // Gerenciador de Drag & Drop para os Cards de Disciplinas
+    let draggedClassCard = null;
+    function initDraggableClasses() {
+      const container = document.getElementById('concursoClassesGrid');
+      if (!container) return;
+
+      const cards = container.querySelectorAll('.class-card');
+      cards.forEach(card => {
+        const handle = card.querySelector('.widget-drag-handle');
+        if (handle) {
+          handle.addEventListener('mousedown', () => {
+            card.setAttribute('draggable', 'true');
+          });
+          handle.addEventListener('mouseup', () => {
+            card.removeAttribute('draggable');
+          });
+        } else {
+          card.setAttribute('draggable', 'true');
+        }
+
+        card.addEventListener('dragstart', (e) => {
+          draggedClassCard = card;
+          card.classList.add('is-dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', card.getAttribute('data-subject-name') || '');
+          if (typeof playTacticalBlip === 'function') {
+            playTacticalBlip(540, 0.04);
+          }
+        });
+
+        card.addEventListener('dragover', (e) => {
+          if (!draggedClassCard || draggedClassCard === card) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          card.classList.add('is-dragover');
+        });
+
+        card.addEventListener('dragleave', () => {
+          card.classList.remove('is-dragover');
+        });
+
+        card.addEventListener('drop', (e) => {
+          if (!draggedClassCard || draggedClassCard === card) return;
+          e.preventDefault();
+          e.stopPropagation();
+          card.classList.remove('is-dragover');
+
+          const rect = card.getBoundingClientRect();
+          const nextSibling = (e.clientX < rect.left + rect.width / 2) ? card : card.nextSibling;
+          container.insertBefore(draggedClassCard, nextSibling);
+
+          // Salvar ordem atualizada das disciplinas
+          const updatedCards = container.querySelectorAll('.class-card');
+          const updatedNames = Array.from(updatedCards).map(c => c.getAttribute('data-subject-name')).filter(Boolean);
+          localStorage.setItem('tactical_student_os_classes_order', JSON.stringify(updatedNames));
+
+          if (typeof playTacticalBlip === 'function') {
+            playTacticalBlip(920, 0.05);
+          }
+          showToast('Ordem das disciplinas atualizada!', 'info');
+        });
+
+        card.addEventListener('dragend', () => {
+          card.classList.remove('is-dragging');
+          card.classList.remove('is-dragover');
+          cards.forEach(c => c.classList.remove('is-dragover'));
+          draggedClassCard = null;
+        });
+      });
     }
 
     // Renderizar Grade Tática Semanal (Sincronizada com o cronograma real do Modo Clássico)
@@ -7570,6 +7803,26 @@
       if (elHours) { elHours.textContent = hoursStr; elHours.innerText = hoursStr; }
       if (elQuestoes) { elQuestoes.textContent = totalQuestoes.toString(); elQuestoes.innerText = totalQuestoes.toString(); }
       if (elAccuracy) { elAccuracy.textContent = accuracyStr; elAccuracy.innerText = accuracyStr; }
+
+      // Atualizar barras de telemetria fluidas
+      const hoursVal = totalMinutos / 60;
+      const barHours = document.getElementById('weeklyHoursBar');
+      if (barHours) {
+        const pctHours = Math.min(100, Math.max(hoursVal > 0 ? 8 : 0, (hoursVal / 20) * 100));
+        barHours.style.width = pctHours.toFixed(0) + '%';
+      }
+
+      const barQuestoes = document.getElementById('questionsDoneBar');
+      if (barQuestoes) {
+        const pctQ = Math.min(100, Math.max(totalQuestoes > 0 ? 8 : 0, (totalQuestoes / 100) * 100));
+        barQuestoes.style.width = pctQ.toFixed(0) + '%';
+      }
+
+      const barAccuracy = document.getElementById('accuracyBar');
+      if (barAccuracy) {
+        const pctAcc = totalQuestoes > 0 ? (totalAcertos / totalQuestoes) * 100 : 0;
+        barAccuracy.style.width = pctAcc.toFixed(0) + '%';
+      }
     }
 
     /* ========================================================================
@@ -7655,6 +7908,7 @@
        ======================================================================== */
     let pomoMinutes = 50;
     let pomoSeconds = 0;
+    let pomoInitialSeconds = 50 * 60;
     let pomoTimerId = null;
     let pomoRunning = false;
 
@@ -7690,6 +7944,7 @@
       if (btn) btn.classList.add('active');
       pomoMinutes = minutes;
       pomoSeconds = 0;
+      pomoInitialSeconds = minutes * 60;
       updatePomoDisplay();
       playTacticalBlip(680, 0.04);
       if (pomoRunning) {
@@ -7698,6 +7953,12 @@
         document.getElementById('btnPomoStart').innerText = 'Começar Ciclo';
         document.getElementById('pomodoro')?.classList.remove('running');
       }
+      const badge = document.getElementById('pomoLiveBadge');
+      const badgeText = document.getElementById('pomoLiveStateText');
+      if (badge) badge.className = 'live-telemetry-badge warn';
+      if (badgeText) badgeText.innerText = 'PAUSADO';
+      const bar = document.getElementById('pomoProgressBar');
+      if (bar) bar.style.width = '0%';
     }
 
     function updatePomoDisplay() {
@@ -7705,16 +7966,30 @@
       if (el) {
         el.innerText = String(pomoMinutes).padStart(2, '0') + ':' + String(pomoSeconds).padStart(2, '0');
       }
+      const bar = document.getElementById('pomoProgressBar');
+      if (bar && pomoInitialSeconds > 0) {
+        const remaining = (pomoMinutes * 60) + pomoSeconds;
+        const elapsed = Math.max(0, pomoInitialSeconds - remaining);
+        const pct = Math.min(100, Math.max(0, (elapsed / pomoInitialSeconds) * 100));
+        bar.style.width = pct.toFixed(1) + '%';
+      }
     }
 
     function togglePomodoro() {
       const btn = document.getElementById('btnPomoStart');
       const widget = document.getElementById('pomodoro');
+      const badge = document.getElementById('pomoLiveBadge');
+      const badgeText = document.getElementById('pomoLiveStateText');
+      const bar = document.getElementById('pomoProgressBar');
+
       if (!pomoRunning) {
         pomoRunning = true;
         if (btn) btn.innerText = 'Pausar Foco';
         if (widget) widget.classList.add('running');
+        if (badge) badge.className = 'live-telemetry-badge';
+        if (badgeText) badgeText.innerText = 'EM FOCO';
         playTacticalBlip(560, 0.08);
+
         pomoTimerId = setInterval(() => {
           if (pomoSeconds === 0) {
             if (pomoMinutes === 0) {
@@ -7722,6 +7997,9 @@
               pomoRunning = false;
               if (btn) btn.innerText = 'Começar Ciclo';
               if (widget) widget.classList.remove('running');
+              if (badge) badge.className = 'live-telemetry-badge gold';
+              if (badgeText) badgeText.innerText = 'CONCLUÍDO';
+              if (bar) bar.style.width = '100%';
               playTacticalChime();
               showToast('Ciclo Tático Concluído com Sucesso! Descanse a mente operacional.', 'success');
               return;
@@ -7738,6 +8016,8 @@
         clearInterval(pomoTimerId);
         if (btn) btn.innerText = 'Continuar';
         if (widget) widget.classList.remove('running');
+        if (badge) badge.className = 'live-telemetry-badge warn';
+        if (badgeText) badgeText.innerText = 'PAUSADO';
         playTacticalBlip(420, 0.06);
       }
     }
@@ -7747,11 +8027,18 @@
       pomoRunning = false;
       pomoMinutes = 50;
       pomoSeconds = 0;
+      pomoInitialSeconds = 50 * 60;
       updatePomoDisplay();
       const btn = document.getElementById('btnPomoStart');
       if (btn) btn.innerText = 'Começar Ciclo';
       const widget = document.getElementById('pomodoro');
       if (widget) widget.classList.remove('running');
+      const badge = document.getElementById('pomoLiveBadge');
+      const badgeText = document.getElementById('pomoLiveStateText');
+      if (badge) badge.className = 'live-telemetry-badge warn';
+      if (badgeText) badgeText.innerText = 'PAUSADO';
+      const bar = document.getElementById('pomoProgressBar');
+      if (bar) bar.style.width = '0%';
       playTacticalBlip(320, 0.08);
     }
 
@@ -8282,6 +8569,168 @@
           });
         });
       });
+
+      // 5. Configurar eventos de Drag & Drop para widgets da barra lateral direita (Relógio, Pomodoro, Rendimento)
+      const rightSidebar = document.querySelector('.right-sidebar');
+      if (rightSidebar) {
+        try {
+          const savedSidebar = localStorage.getItem('tactical_student_os_sidebar_layout');
+          if (savedSidebar) {
+            const sideOrder = JSON.parse(savedSidebar);
+            if (Array.isArray(sideOrder) && sideOrder.length > 0) {
+              sideOrder.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.parentElement === rightSidebar) {
+                  rightSidebar.appendChild(el);
+                }
+              });
+            }
+          }
+        } catch (e) {}
+
+        const sideWidgets = rightSidebar.querySelectorAll(':scope > .tactical-draggable-widget');
+        sideWidgets.forEach(widget => {
+          const handle = widget.querySelector('.widget-drag-handle');
+          if (handle) {
+            handle.addEventListener('mousedown', () => {
+              widget.setAttribute('draggable', 'true');
+            });
+            handle.addEventListener('mouseup', () => {
+              widget.removeAttribute('draggable');
+            });
+          } else {
+            widget.setAttribute('draggable', 'true');
+          }
+
+          widget.addEventListener('dragstart', (e) => {
+            draggedWidgetEl = widget;
+            dragSourceType = 'sidebar';
+            widget.classList.add('is-dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', widget.id);
+            if (typeof playTacticalBlip === 'function') {
+              playTacticalBlip(510, 0.04);
+            }
+          });
+
+          widget.addEventListener('dragover', (e) => {
+            if (!draggedWidgetEl || dragSourceType !== 'sidebar' || draggedWidgetEl === widget) return;
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            widget.classList.add('is-dragover');
+          });
+
+          widget.addEventListener('dragleave', () => {
+            widget.classList.remove('is-dragover');
+          });
+
+          widget.addEventListener('drop', (e) => {
+            if (!draggedWidgetEl || dragSourceType !== 'sidebar' || draggedWidgetEl === widget) return;
+            e.preventDefault();
+            e.stopPropagation();
+            widget.classList.remove('is-dragover');
+
+            const rect = widget.getBoundingClientRect();
+            const nextSibling = (e.clientY < rect.top + rect.height / 2) ? widget : widget.nextSibling;
+            rightSidebar.insertBefore(draggedWidgetEl, nextSibling);
+
+            saveSidebarLayoutOrder();
+            if (typeof playTacticalBlip === 'function') {
+              playTacticalBlip(860, 0.05);
+            }
+            showToast('Barra lateral reorganizada!', 'info');
+          });
+
+          widget.addEventListener('dragend', () => {
+            widget.classList.remove('is-dragging');
+            widget.classList.remove('is-dragover');
+            sideWidgets.forEach(w => w.classList.remove('is-dragover'));
+            draggedWidgetEl = null;
+            dragSourceType = null;
+          });
+        });
+      }
+
+      // 6. Configurar eventos de Drag & Drop para widgets da barra lateral esquerda (Ruído Marrom & Hábitos)
+      const leftSidebar = document.querySelector('.sidebar');
+      if (leftSidebar) {
+        try {
+          const savedLeft = localStorage.getItem('tactical_student_os_left_sidebar_layout');
+          if (savedLeft) {
+            const leftOrder = JSON.parse(savedLeft);
+            if (Array.isArray(leftOrder) && leftOrder.length > 0) {
+              leftOrder.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.parentElement === leftSidebar) {
+                  leftSidebar.appendChild(el);
+                }
+              });
+            }
+          }
+        } catch (e) {}
+
+        const leftWidgets = leftSidebar.querySelectorAll(':scope > .tactical-draggable-widget');
+        leftWidgets.forEach(widget => {
+          const handle = widget.querySelector('.widget-drag-handle');
+          if (handle) {
+            handle.addEventListener('mousedown', () => {
+              widget.setAttribute('draggable', 'true');
+            });
+            handle.addEventListener('mouseup', () => {
+              widget.removeAttribute('draggable');
+            });
+          } else {
+            widget.setAttribute('draggable', 'true');
+          }
+
+          widget.addEventListener('dragstart', (e) => {
+            draggedWidgetEl = widget;
+            dragSourceType = 'left-sidebar';
+            widget.classList.add('is-dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', widget.id);
+            if (typeof playTacticalBlip === 'function') {
+              playTacticalBlip(490, 0.04);
+            }
+          });
+
+          widget.addEventListener('dragover', (e) => {
+            if (!draggedWidgetEl || dragSourceType !== 'left-sidebar' || draggedWidgetEl === widget) return;
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            widget.classList.add('is-dragover');
+          });
+
+          widget.addEventListener('dragleave', () => {
+            widget.classList.remove('is-dragover');
+          });
+
+          widget.addEventListener('drop', (e) => {
+            if (!draggedWidgetEl || dragSourceType !== 'left-sidebar' || draggedWidgetEl === widget) return;
+            e.preventDefault();
+            e.stopPropagation();
+            widget.classList.remove('is-dragover');
+
+            const rect = widget.getBoundingClientRect();
+            const nextSibling = (e.clientY < rect.top + rect.height / 2) ? widget : widget.nextSibling;
+            leftSidebar.insertBefore(draggedWidgetEl, nextSibling);
+
+            saveLeftSidebarLayoutOrder();
+            if (typeof playTacticalBlip === 'function') {
+              playTacticalBlip(840, 0.05);
+            }
+            showToast('Painel operacional reorganizado!', 'info');
+          });
+
+          widget.addEventListener('dragend', () => {
+            widget.classList.remove('is-dragging');
+            widget.classList.remove('is-dragover');
+            leftWidgets.forEach(w => w.classList.remove('is-dragover'));
+            draggedWidgetEl = null;
+            dragSourceType = null;
+          });
+        });
+      }
     }
 
     function saveDashboardLayoutOrder() {
@@ -8303,34 +8752,71 @@
       localStorage.setItem('tactical_student_os_subwidgets', JSON.stringify(subMap));
     }
 
+    function saveSidebarLayoutOrder() {
+      const rightSidebar = document.querySelector('.right-sidebar');
+      if (!rightSidebar) return;
+      const widgets = rightSidebar.querySelectorAll(':scope > .tactical-draggable-widget');
+      const order = Array.from(widgets).map(w => w.id).filter(Boolean);
+      localStorage.setItem('tactical_student_os_sidebar_layout', JSON.stringify(order));
+    }
+
+    function saveLeftSidebarLayoutOrder() {
+      const leftSidebar = document.querySelector('.sidebar');
+      if (!leftSidebar) return;
+      const widgets = leftSidebar.querySelectorAll(':scope > .tactical-draggable-widget');
+      const order = Array.from(widgets).map(w => w.id).filter(Boolean);
+      localStorage.setItem('tactical_student_os_left_sidebar_layout', JSON.stringify(order));
+    }
+
     function restoreDefaultDashboardLayout() {
       localStorage.removeItem('tactical_student_os_layout');
       localStorage.removeItem('tactical_student_os_subwidgets');
+      localStorage.removeItem('tactical_student_os_sidebar_layout');
+      localStorage.removeItem('tactical_student_os_left_sidebar_layout');
+      localStorage.removeItem('tactical_student_os_classes_order');
 
       const centerContent = document.querySelector('.center-content');
-      if (!centerContent) return;
+      if (centerContent) {
+        const defaultMain = ['blockDisciplinas', 'blockCenterSplit', 'missoes', 'blockBottomSplit'];
+        defaultMain.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) centerContent.appendChild(el);
+        });
 
-      const defaultMain = ['blockDisciplinas', 'blockCenterSplit', 'missoes', 'blockBottomSplit'];
-      defaultMain.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) centerContent.appendChild(el);
-      });
+        const centerSplit = document.getElementById('blockCenterSplit');
+        if (centerSplit) {
+          const cron = document.getElementById('cronograma');
+          const sim = document.getElementById('simulados');
+          if (cron) centerSplit.appendChild(cron);
+          if (sim) centerSplit.appendChild(sim);
+        }
 
-      const centerSplit = document.getElementById('blockCenterSplit');
-      if (centerSplit) {
-        const cron = document.getElementById('cronograma');
-        const sim = document.getElementById('simulados');
-        if (cron) centerSplit.appendChild(cron);
-        if (sim) centerSplit.appendChild(sim);
+        const bottomSplit = document.getElementById('blockBottomSplit');
+        if (bottomSplit) {
+          const rev = document.getElementById('revisoes');
+          const biz = document.getElementById('bizus');
+          if (rev) bottomSplit.appendChild(rev);
+          if (biz) bottomSplit.appendChild(biz);
+        }
       }
 
-      const bottomSplit = document.getElementById('blockBottomSplit');
-      if (bottomSplit) {
-        const rev = document.getElementById('revisoes');
-        const biz = document.getElementById('bizus');
-        if (rev) bottomSplit.appendChild(rev);
-        if (biz) bottomSplit.appendChild(biz);
+      const rightSidebar = document.querySelector('.right-sidebar');
+      if (rightSidebar) {
+        ['blockClock', 'pomodoro', 'blockMetrics'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) rightSidebar.appendChild(el);
+        });
       }
+
+      const leftSidebar = document.querySelector('.sidebar');
+      if (leftSidebar) {
+        ['brownNoiseWidget', 'blockHabits'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) leftSidebar.appendChild(el);
+        });
+      }
+
+      renderClasses();
 
       if (typeof playTacticalBlip === 'function') {
         playTacticalBlip(780, 0.08);
