@@ -95,12 +95,21 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    html {
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+      width: 100% !important;
+    }
+
     body {
       background-color: var(--bg-base);
       color: var(--text-main);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
-      overflow-x: hidden;
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+      width: 100% !important;
+      position: relative;
       line-height: 1.5;
       background-image: 
         radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
@@ -124,11 +133,14 @@
 
     .app-container {
       max-width: 1720px;
+      width: 100%;
       margin: 0 auto;
       padding: 20px 24px 60px 24px;
       display: flex;
       flex-direction: column;
       gap: 24px;
+      overflow-x: clip;
+      box-sizing: border-box;
     }
 
     /* ==========================================================================
@@ -325,6 +337,7 @@
       align-items: start;
       width: 100%;
       box-sizing: border-box;
+      overflow-x: clip;
     }
 
     /* Animações de Entrada Suave */
@@ -1787,12 +1800,14 @@
     /* 2. Palco 3D para Transição Cilíndrica na Troca de Telas */
     .center-content {
       perspective: 1200px;
-      transform-style: preserve-3d;
+      perspective-origin: 50% 30%;
     }
 
     .tilted-arc-out-forward {
       animation: tiltedArcOutForward 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
       pointer-events: none;
+      transform-origin: center center;
+      will-change: transform, opacity;
     }
     @keyframes tiltedArcOutForward {
       0% {
@@ -1807,6 +1822,8 @@
 
     .tilted-arc-in-forward {
       animation: tiltedArcInForward 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      transform-origin: center center;
+      will-change: transform, opacity;
     }
     @keyframes tiltedArcInForward {
       0% {
@@ -1822,6 +1839,8 @@
     .tilted-arc-out-backward {
       animation: tiltedArcOutBackward 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
       pointer-events: none;
+      transform-origin: center center;
+      will-change: transform, opacity;
     }
     @keyframes tiltedArcOutBackward {
       0% {
@@ -1836,6 +1855,8 @@
 
     .tilted-arc-in-backward {
       animation: tiltedArcInBackward 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      transform-origin: center center;
+      will-change: transform, opacity;
     }
     @keyframes tiltedArcInBackward {
       0% {
@@ -5424,11 +5445,46 @@
       }
     });
 
+    // Função de Rolagem Estritamente Vertical (Zero Deslocamento Horizontal)
+    function scrollToSectionTactical(targetEl) {
+      if (!targetEl) return;
+
+      // Trava imediata do scroll horizontal em zero
+      window.scrollTo({ left: 0, top: window.scrollY, behavior: 'instant' });
+      document.documentElement.scrollLeft = 0;
+      document.body.scrollLeft = 0;
+
+      const rect = targetEl.getBoundingClientRect();
+      const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+      let targetY = 0;
+      if (targetEl.id === 'disciplinas') {
+        // Se for o painel principal, rola até o início da área de disciplinas suavemente
+        const offsetTop = targetEl.offsetTop || (rect.top + currentScrollY);
+        targetY = Math.max(0, offsetTop - 16);
+        if (targetY < 260) targetY = 0;
+      } else {
+        // Subtelas (Missões ou Flashcards)
+        targetY = Math.max(0, rect.top + currentScrollY - 70);
+      }
+
+      window.scrollTo({
+        top: targetY,
+        left: 0,
+        behavior: 'smooth'
+      });
+    }
+
     // 2. Transição 3D Cilíndrica na Troca de Telas (TiltedGridHero Algorithm)
     function executeTiltedScreenTransition(fromId, toId, direction) {
       direction = direction || 'forward';
       const fromEl = document.getElementById(fromId);
       const toEl = document.getElementById(toId);
+
+      // Trava estrita no eixo horizontal
+      window.scrollTo({ left: 0, top: window.scrollY, behavior: 'instant' });
+      document.documentElement.scrollLeft = 0;
+      document.body.scrollLeft = 0;
 
       if (!toEl) {
         if (toId) highlightSection(toId);
@@ -5449,7 +5505,7 @@
       // Se o elemento de origem não for encontrado ou já for o mesmo, foca diretamente
       if (!fromEl || fromEl === toEl) {
         highlightSection(toId);
-        toEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        scrollToSectionTactical(toEl);
         return;
       }
 
@@ -5462,22 +5518,33 @@
 
       fromEl.classList.add(outClass);
 
-      // Garante que o elemento destino esteja visível antes da animação de entrada
+      // Garante visibilidade e animação de entrada em arco cilíndrico
       toEl.style.display = '';
       toEl.classList.add(inClass);
-      toEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      // Rolagem estritamente vertical com travamento horizontal
+      scrollToSectionTactical(toEl);
 
       highlightSection(toId);
 
       setTimeout(() => {
         fromEl.classList.remove(outClass);
         toEl.classList.remove(inClass);
+        // Garantir travamento absoluto no eixo X = 0 após animação
+        window.scrollTo({ left: 0, top: window.scrollY, behavior: 'instant' });
+        document.documentElement.scrollLeft = 0;
+        document.body.scrollLeft = 0;
       }, 460);
     }
 
     // Ação do Botão Tático "← Voltar ao Painel"
     function navigateBackToDashboard(event) {
       if (event) event.preventDefault();
+
+      // Trava preventiva de scroll horizontal
+      window.scrollTo({ left: 0, top: window.scrollY, behavior: 'instant' });
+      document.documentElement.scrollLeft = 0;
+      document.body.scrollLeft = 0;
 
       // Identifica a subtela atual (seja Flashcards ou Missões)
       const currentActive = document.querySelector('.nav-item.active a')?.getAttribute('href')?.replace('#', '') || 'bizus';
@@ -5490,12 +5557,21 @@
         discLink.closest('.nav-item')?.classList.add('active');
       }
 
-      // Scroll suave até o topo da grade de disciplinas
+      // Scroll estritamente vertical até o topo do painel
       const discEl = document.getElementById('disciplinas');
       if (discEl) {
-        discEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        scrollToSectionTactical(discEl);
       }
     }
+
+    // Listener global permanente para assegurar que a janela nunca sofra desvio no eixo X
+    window.addEventListener('scroll', () => {
+      if (window.scrollX !== 0 || document.documentElement.scrollLeft !== 0 || document.body.scrollLeft !== 0) {
+        window.scrollTo({ left: 0, top: window.scrollY, behavior: 'instant' });
+        document.documentElement.scrollLeft = 0;
+        document.body.scrollLeft = 0;
+      }
+    }, { passive: true });
 
     function openAIFlashcardsModal(targetSubject) {
       populateSubjectDropdowns();
@@ -6789,7 +6865,10 @@
       renderTasks(subjectName);
       showToast('Filtrando tópicos de: ' + subjectName, 'info');
       highlightSection('missoes');
-      document.getElementById('missoes')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      const missoesEl = document.getElementById('missoes');
+      if (missoesEl && typeof scrollToSectionTactical === 'function') {
+        scrollToSectionTactical(missoesEl);
+      }
     }
 
     // Renderizar Ciclo de Revisões Espaçadas (Sincronizado com concurso_spaced_reviews do Modo Clássico)
