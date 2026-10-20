@@ -129,9 +129,13 @@
   <!-- Script imediato: previne flash branco (FOUC) aplicando o tema antes de renderizar -->
   <script>
     (function() {
-      const savedTheme = localStorage.getItem('concurso_theme_preference');
-      const theme = savedTheme || 'dark';
-      document.documentElement.setAttribute('data-theme', theme);
+      const userSelected = localStorage.getItem('concurso_theme_user_selected') === 'true';
+      let savedTheme = localStorage.getItem('concurso_theme_preference');
+      if (!userSelected || !savedTheme) {
+        savedTheme = 'dark';
+        localStorage.setItem('concurso_theme_preference', 'dark');
+      }
+      document.documentElement.setAttribute('data-theme', savedTheme);
     })();
   </script>
 
@@ -10926,6 +10930,19 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }, 1200);
       },
 
+      async updateRemoteTheme(theme) {
+        if (!this.user || !this.client) return;
+        try {
+          const target = (theme === 'light') ? 'light' : 'dark';
+          await this.client
+            .from('user_data')
+            .update({ theme: target, updated_at: new Date().toISOString() })
+            .eq('user_id', this.user.id);
+        } catch(e) {
+          console.warn('[SyncManager] Erro ao atualizar tema remoto:', e);
+        }
+      },
+
       async gatherPayload() {
         const pdfData = await PdfStorage.exportAllAnnotationsAndBookmarks();
         let autoConfigObj = {};
@@ -10954,7 +10971,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           exam_date: App.examDate || null,
           exam_title: App.examTitle || null,
           spaced_reviews: App.spacedReviews || [],
-          theme: App.theme || 'light',
+          theme: App.theme || localStorage.getItem('concurso_theme_preference') || 'dark',
           pdf_annotations: pdfData.annotations || [],
           pdf_bookmarks: pdfData.bookmarks || []
         };
@@ -11671,8 +11688,26 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           }
         }
 
-        if (cloudData.theme && (cloudData.theme === 'dark' || cloudData.theme === 'light')) {
-          App.setTheme(cloudData.theme, false);
+        // Tema: o padrão do app é escuro ('dark'). Só aceita tema 'light' da nuvem
+        // se o usuário tiver explicitamente escolhido tema claro neste dispositivo.
+        // Se a nuvem tiver 'light' mas o usuário não escolheu explicitamente, mantém escuro e auto-corrige a nuvem.
+        const userSelectedTheme = localStorage.getItem('concurso_theme_user_selected') === 'true';
+        const localThemePref = localStorage.getItem('concurso_theme_preference');
+        if (cloudData.theme === 'light') {
+          if (userSelectedTheme && localThemePref === 'light') {
+            App.setTheme('light', false);
+          } else {
+            App.setTheme('dark', false);
+            localStorage.setItem('concurso_theme_preference', 'dark');
+            this.updateRemoteTheme('dark');
+          }
+        } else if (cloudData.theme === 'dark') {
+          App.setTheme('dark', false);
+          localStorage.setItem('concurso_theme_preference', 'dark');
+        } else {
+          App.setTheme('dark', false);
+          localStorage.setItem('concurso_theme_preference', 'dark');
+          this.updateRemoteTheme('dark');
         }
 
         if (cloudData.pdf_annotations || cloudData.pdf_bookmarks) {
@@ -11917,7 +11952,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           exam_date: localData.exam_date || cloudData.exam_date,
           exam_title: localData.exam_title || cloudData.exam_title,
           spaced_reviews: mergedReviews,
-          theme: localData.theme || cloudData.theme || 'light',
+          theme: (localStorage.getItem('concurso_theme_user_selected') === 'true' && (localData.theme || cloudData.theme)) ? (localData.theme || cloudData.theme) : 'dark',
           pdf_annotations: mergedPdfAnnotations,
           pdf_bookmarks: mergedPdfBookmarks,
           study_log: mergedStudyLogs
@@ -11996,7 +12031,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           if (rawAuto) autoConfig = JSON.parse(rawAuto);
         } catch (_) {}
 
-        const theme = document.documentElement.getAttribute('data-theme') || 'light';
+        const theme = document.documentElement.getAttribute('data-theme') || 'dark';
         const studyDefaultMin = (typeof StudyHoursManager !== 'undefined') ? StudyHoursManager.defaultMinutes : 30;
         const studyAutoQuickMark = (typeof StudyHoursManager !== 'undefined') ? StudyHoursManager.autoQuickMark : false;
 
@@ -12361,7 +12396,12 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             StudyHoursManager.setAutoQuickMark(incoming.studyAutoQuickMark);
           }
           if (incoming.theme && typeof App !== 'undefined' && App.setTheme) {
-            App.setTheme(incoming.theme, true);
+            const userSelectedTheme = localStorage.getItem('concurso_theme_user_selected') === 'true';
+            if (incoming.theme === 'light' && !userSelectedTheme) {
+              App.setTheme('dark', true);
+            } else {
+              App.setTheme(incoming.theme, true);
+            }
           }
 
           // Importa anotações e favoritos do PDF se houverem
@@ -14759,31 +14799,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
       /* Gestão de Tema (Claro / Escuro) */
       initTheme() {
-        const saved = localStorage.getItem('concurso_theme_preference');
-        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = saved || (prefersDark ? 'dark' : 'light');
-        this.setTheme(theme, false);
-
-        // Ouve preferências do sistema com fallback seguro para navegadores antigos e WebViews
-        if (window.matchMedia) {
-          try {
-            const mq = window.matchMedia('(prefers-color-scheme: dark)');
-            if (mq) {
-              const handler = (e) => {
-                if (!localStorage.getItem('concurso_theme_preference')) {
-                  this.setTheme(e.matches ? 'dark' : 'light', false);
-                }
-              };
-              if (typeof mq.addEventListener === 'function') {
-                mq.addEventListener('change', handler);
-              } else if (typeof mq.addListener === 'function') {
-                mq.addListener(handler);
-              }
-            }
-          } catch (errMq) {
-            console.warn('[initTheme] Aviso ao monitorar tema do sistema:', errMq);
-          }
+        const userSelected = localStorage.getItem('concurso_theme_user_selected') === 'true';
+        let theme = localStorage.getItem('concurso_theme_preference');
+        if (!userSelected || !theme) {
+          theme = 'dark';
+          localStorage.setItem('concurso_theme_preference', 'dark');
         }
+        this.setTheme(theme, false);
       },
 
       setTheme(theme, save = true) {
@@ -14823,9 +14845,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
       },
 
       toggleTheme() {
-        const current = document.documentElement.getAttribute('data-theme') || 'light';
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
         const next = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('concurso_theme_user_selected', 'true');
         this.setTheme(next, true);
+        if (typeof SyncManager !== 'undefined' && SyncManager.updateRemoteTheme) {
+          SyncManager.updateRemoteTheme(next);
+        }
         this.showToast(next === 'dark' ? 'Tema escuro ativado 🌙' : 'Tema claro ativado ☀️', 'info');
       },
 

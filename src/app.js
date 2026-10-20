@@ -30,21 +30,31 @@ export class AppCore {
     static aplicarTemaSalvo() {
         if (typeof localStorage === 'undefined' || typeof document === 'undefined')
             return;
-        const salvo = localStorage.getItem('concurso_theme') || 'light';
-        this.definirTema(salvo);
+        const userSelected = localStorage.getItem('concurso_theme_user_selected') === 'true';
+        let salvo = localStorage.getItem('concurso_theme_preference') || localStorage.getItem('concurso_theme');
+        if (!userSelected || !salvo) {
+            salvo = 'dark';
+            localStorage.setItem('concurso_theme_preference', 'dark');
+            localStorage.setItem('concurso_theme', 'dark');
+        }
+        this.definirTema(salvo, false);
     }
-    static definirTema(tema) {
+    static definirTema(tema, userAction = false) {
         if (typeof document === 'undefined')
             return;
         const t = tema === 'dark' ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', t);
         localStorage.setItem('concurso_theme', t);
+        localStorage.setItem('concurso_theme_preference', t);
+        if (userAction) {
+            localStorage.setItem('concurso_theme_user_selected', 'true');
+        }
         eventBus.emit('theme:changed', t);
     }
     static alternarTema() {
-        const atual = localStorage.getItem('concurso_theme') || 'light';
+        const atual = localStorage.getItem('concurso_theme_preference') || localStorage.getItem('concurso_theme') || 'dark';
         const novo = atual === 'dark' ? 'light' : 'dark';
-        this.definirTema(novo);
+        this.definirTema(novo, true);
         return novo;
     }
     /**
