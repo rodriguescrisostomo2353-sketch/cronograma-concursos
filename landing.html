@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>PCMG Tático — Portal & Cronograma de Estudos</title>
-  
+
   <!-- Configurações PWA e Ícones -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b0e14">
@@ -15,7 +16,9 @@
   <!-- Tipografia de Elite: Geist + Instrument Serif -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
 
   <style>
     :root {
@@ -45,25 +48,24 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-    }
-
-    body {
+       body {
       background-color: var(--sh-bg);
       color: var(--sh-fg);
       font-family: var(--sh-body);
-      overflow-x: hidden;
-      overflow-y: auto;
+      overflow: hidden;
+      height: 100vh;
+      height: 100svh;
+      width: 100vw;
       -webkit-font-smoothing: antialiased;
       transition: background-color 0.5s ease, color 0.5s ease;
-      min-height: 100vh;
     }
 
     /* ── SCULPTURE HERO ENGINE CSS ── */
     .sh-root {
       position: relative;
       width: 100%;
-      height: var(--sh-h);
-      min-height: 640px;
+      height: 100vh;
+      height: 100svh;
       overflow: hidden;
       isolation: isolate;
       background: var(--sh-bg);
@@ -98,41 +100,37 @@
       user-select: none;
       -webkit-user-drag: none;
       transition: opacity .5s ease;
-      filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
     }
 
-    .sh-root[data-gl="on"] .sh-canvas { opacity: 1; }
-    .sh-root[data-gl="on"] .sh-fallback { opacity: 0; }
-    .sh-root[data-swap="1"] .sh-canvas { opacity: 0; transition-duration: .25s; }
-    .sh-root[data-swap="1"] .sh-fallback { opacity: 0; transition-duration: .25s; }
-
-    .sh-backdrop {
-      position: absolute;
-      left: 50%;
-      z-index: 0;
-      transform: translate(-50%, -50%);
-      white-space: nowrap;
-      pointer-events: none;
-      user-select: none;
-      font-family: var(--sh-head);
-      font-weight: 800;
-      letter-spacing: -0.06em;
-      line-height: .8;
-      color: color-mix(in srgb, var(--sh-fg) 4%, transparent);
-      text-transform: uppercase;
-      font-size: clamp(60px, 18vw, 240px);
-      text-align: center;
+    .sh-root[data-gl="on"] .sh-canvas {
+      opacity: 1;
     }
 
-    /* ── NAV BAR ── */
-    .sh-nav {
+    .sh-root[data-gl="on"] .sh-fallback {
+      opacity: 0;
+    }
+
+    .sh-root[data-swap="1"] .sh-canvas {
+      opacity: 0;
+      transition-duration: .25s;
+    }
+
+    .sh-root[data-swap="1"] .sh-fallback {
+      opacity: 0;
+      transition-duration: .25s;
+    }
+
+    /* ── BARRA SUPERIOR MINIMALISTA ── */
+    .sh-topbar {
       position: relative;
-      z-index: 10;
+      z-index: 20;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
-      padding: 24px clamp(20px, 4vw, 56px) 0;
+      gap: 16px;
+      padding: clamp(16px, 2.5vh, 28px) clamp(20px, 4vw, 56px) 0;
+      pointer-events: auto;
     }
 
     .sh-brand {
@@ -141,400 +139,536 @@
       gap: 12px;
       font-family: var(--sh-head);
       font-weight: 700;
-      font-size: 18px;
+      font-size: 17px;
       letter-spacing: -0.02em;
       color: inherit;
       text-decoration: none;
+      user-select: none;
     }
 
     .sh-brand-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #1e1e24 0%, #111114 100%);
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      box-shadow: 0 0 14px var(--gold-glow);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #222228 0%, #111114 100%);
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      box-shadow: 0 0 16px var(--gold-glow);
     }
 
     .sh-brand-badge img {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       object-fit: contain;
     }
 
-    .sh-links {
-      display: flex;
-      align-items: center;
-      gap: clamp(16px, 2.5vw, 36px);
-      list-style: none;
-    }
-
-    .sh-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      color: inherit;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: -0.01em;
-      opacity: .75;
-      transition: opacity .2s, color .2s;
-    }
-
-    .sh-link:hover {
-      opacity: 1;
-      color: var(--sh-acc);
-    }
-
-    .sh-theme-btn {
-      display: inline-grid;
-      place-items: center;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      cursor: pointer;
-      color: inherit;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid color-mix(in srgb, var(--sh-fg) 18%, transparent);
-      transition: all .25s ease;
-    }
-
-    .sh-theme-btn:hover {
-      background: var(--sh-fg);
-      color: var(--sh-bg);
-      transform: scale(1.05);
-    }
-
-    .sh-navcta {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: inherit;
-      text-decoration: none;
-      font-size: 13.5px;
-      font-weight: 600;
-      padding: 9px 18px;
-      border: 1px solid color-mix(in srgb, var(--sh-fg) 25%, transparent);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(10px);
-      transition: all .25s ease;
-    }
-
-    .sh-navcta:hover {
-      background: var(--sh-acc);
-      color: #0b0b0c;
-      border-color: var(--sh-acc);
-      box-shadow: 0 0 20px var(--gold-glow);
-      transform: translateY(-1px);
-    }
-
-    /* ── INTERACTIVE HINT ── */
-    .sh-hint {
-      position: absolute;
-      z-index: 5;
-      transform: translate(-50%, 0);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      white-space: nowrap;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      opacity: .6;
-      pointer-events: none;
-      transition: opacity .8s ease;
-      color: var(--sh-acc);
-      background: rgba(11, 11, 12, 0.6);
-      padding: 6px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(212, 175, 55, 0.2);
-      backdrop-filter: blur(8px);
-    }
-
-    .sh-hint::before {
-      content: "";
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--sh-acc);
-      box-shadow: 0 0 8px var(--sh-acc);
-      animation: sh-pulse 2.2s ease-in-out infinite;
-    }
-
-    .sh-root[data-touched="1"] .sh-hint { opacity: 0; }
-
-    @keyframes sh-pulse {
-      0%, 100% { transform: scale(.7); opacity: .5; }
-      50% { transform: scale(1.2); opacity: 1; }
-    }
-
-    .sh-spacer {
-      flex: 1 1 auto;
-      min-height: 40px;
-    }
-
-    /* ── HERO CONTENT GRID ── */
-    .sh-content {
-      position: relative;
-      z-index: 10;
-      display: grid;
-      grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);
-      align-items: end;
-      gap: clamp(24px, 4vw, 72px);
-      padding: 0 clamp(20px, 4vw, 56px) clamp(32px, 4.5vw, 64px);
-    }
-
-    .sh-eyebrow {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--sh-acc);
-      margin: 0 0 16px;
+    .sh-topbar-actions {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .sh-eyebrow::before {
-      content: "";
-      width: 32px;
-      height: 2px;
-      background: var(--sh-acc);
-      box-shadow: 0 0 10px var(--gold-glow);
-    }
-
-    .sh-h1 {
-      font-family: var(--sh-head);
-      font-weight: 600;
-      font-size: clamp(38px, min(6.4vw, 11vh), 108px);
-      line-height: .94;
-      letter-spacing: -0.04em;
-      margin: 0;
-      text-wrap: balance;
-    }
-
-    .sh-h1 .sh-line {
-      display: block;
-    }
-
-    .sh-accent {
-      font-family: var(--sh-accent);
-      font-style: italic;
-      font-weight: 400;
-      letter-spacing: -0.02em;
+    .sh-pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      border-radius: 999px;
+      padding: 7px 14px;
+      cursor: pointer;
       color: var(--sh-acc);
-      display: inline-block;
-      text-shadow: 0 0 30px var(--gold-glow);
-    }
-
-    .sh-aside {
-      max-width: 440px;
-      justify-self: end;
-      padding-bottom: .8em;
-    }
-
-    .sh-body {
-      font-size: clamp(14.5px, 1.1vw, 17px);
-      line-height: 1.6;
-      letter-spacing: -0.01em;
-      margin: 0 0 28px;
-      opacity: .82;
-      text-wrap: pretty;
-    }
-
-    .sh-ctas {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 18px;
-    }
-
-    .sh-btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      height: 50px;
-      padding: 0 26px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #d4af37 0%, #aa841c 100%);
-      color: #0b0b0c;
-      text-decoration: none;
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 700;
-      letter-spacing: -0.01em;
-      box-shadow: 0 8px 24px rgba(212, 175, 55, 0.35);
-      transition: all .3s cubic-bezier(.2, .7, .2, 1);
-    }
-
-    .sh-btn-primary:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 12px 30px rgba(212, 175, 55, 0.5);
-    }
-
-    .sh-btn-primary svg {
-      transition: transform .3s ease;
-    }
-
-    .sh-btn-primary:hover svg {
-      transform: translateX(4px);
-    }
-
-    .sh-btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      height: 50px;
-      padding: 0 22px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid color-mix(in srgb, var(--sh-fg) 25%, transparent);
-      color: inherit;
-      text-decoration: none;
-      font-size: 14.5px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
+      transition: all .2s ease;
       backdrop-filter: blur(10px);
-      transition: all .25s ease;
     }
 
-    .sh-btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: var(--sh-fg);
+    .sh-pill-btn:hover {
+      background: rgba(212, 175, 55, 0.22);
+      border-color: var(--sh-acc);
+      box-shadow: 0 0 15px var(--gold-glow);
       transform: translateY(-1px);
     }
 
-    /* ── QUICK CARDS STRIP ── */
-    .quick-strip {
+    .sh-theme-btn {
+      display: inline-grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      color: inherit;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid color-mix(in srgb, var(--sh-fg) 18%, transparent);
+      transition: all .25s ease;
+      backdrop-filter: blur(8px);
+    }
+
+    .sh-theme-btn:hover {
+      background: var(--sh-fg);
+      color: var(--sh-bg);
+      transform: scale(1.06);
+    }
+
+    /* ── ÁREA CENTRAL: CARD BEM-VINDO COM FUNDO ANIMADO ── */
+    .welcome-hero-wrapper {
       position: relative;
       z-index: 10;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-      padding: 0 clamp(20px, 4vw, 56px) 48px;
-    }
-
-    .quick-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 22px;
-      backdrop-filter: blur(16px);
-      transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .quick-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(212, 175, 55, 0.4);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-    }
-
-    .quick-card-head {
+      flex: 1;
+      width: 100%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      padding: 20px clamp(16px, 3vw, 40px);
+      pointer-events: none; /* Deixa cliques e toques passarem para o WebGL ao redor */
     }
 
-    .quick-card-icon {
-      width: 38px;
-      height: 38px;
+    .welcome-card {
+      pointer-events: auto; /* Reativa interação dentro do card */
+      width: 100%;
+      max-width: 460px;
+      padding: clamp(32px, 5vh, 46px) clamp(24px, 4vw, 38px);
+      border-radius: 26px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.75), 0 0 45px rgba(212, 175, 55, 0.12);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: welcomeFloatIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+    }
+
+    .welcome-card:hover {
+      border-color: rgba(212, 175, 55, 0.38);
+      box-shadow: 0 35px 90px rgba(0, 0, 0, 0.82), 0 0 55px rgba(212, 175, 55, 0.2);
+    }
+
+    @keyframes welcomeFloatIn {
+      0% {
+        opacity: 0;
+        transform: translateY(22px) scale(0.96);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .welcome-emblem {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, #1f2026 0%, #0d0e12 100%);
+      border: 1.5px solid rgba(212, 175, 55, 0.5);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border-radius: 9px;
-      background: rgba(212, 175, 55, 0.08);
-      border: 1px solid rgba(212, 175, 55, 0.25);
-      color: var(--sh-gold);
-      transition: all .25s ease;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 24px var(--gold-glow);
+      margin-bottom: 18px;
+      transition: transform .3s ease;
     }
 
-    .quick-card:hover .quick-card-icon {
-      background: rgba(212, 175, 55, 0.16);
-      border-color: rgba(212, 175, 55, 0.55);
-      transform: scale(1.08);
+    .welcome-emblem:hover {
+      transform: scale(1.06);
     }
 
-    .quick-card-icon svg {
-      width: 20px;
-      height: 20px;
+    .welcome-emblem img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
     }
 
-    .quick-card-badge {
-      font-family: var(--sh-mono);
+    .welcome-kicker {
       font-size: 11px;
-      padding: 4px 8px;
-      border-radius: 6px;
-      background: rgba(212, 175, 55, 0.12);
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--sh-acc);
+      margin-bottom: 8px;
+    }
+
+    .welcome-title {
+      font-family: var(--sh-head);
+      font-size: clamp(36px, 5.2vw, 48px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin: 0 0 12px;
+      color: var(--sh-fg);
+    }
+
+    .welcome-dot {
+      color: var(--sh-acc);
+      text-shadow: 0 0 15px var(--gold-glow);
+    }
+
+    .welcome-subtitle {
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: var(--sh-fg);
+      opacity: 0.78;
+      margin: 0 0 28px;
+      max-width: 380px;
+      text-wrap: pretty;
+    }
+
+    /* ── GRUPO DE AÇÃO DE LOGIN ── */
+    .welcome-action-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .welcome-login-btn {
+      width: 100%;
+      height: 52px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #e6c55c 0%, #d4af37 50%, #a88118 100%);
+      color: #0c0d10;
+      border: none;
+      cursor: pointer;
+      font-size: 15.5px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      transition: all .25s cubic-bezier(0.16, 1, 0.3, 1);
+      text-decoration: none;
+    }
+
+    .welcome-login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(212, 175, 55, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      filter: brightness(1.05);
+    }
+
+    .welcome-login-btn:active {
+      transform: translateY(0);
+    }
+
+    .welcome-secondary-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .welcome-link-btn {
+      background: transparent;
+      border: none;
+      color: var(--sh-fg);
+      opacity: 0.72;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .2s ease;
+      padding: 4px 6px;
+    }
+
+    .welcome-link-btn:hover {
+      opacity: 1;
+      color: var(--sh-acc);
+    }
+
+    .welcome-dot-sep {
+      opacity: 0.35;
+      font-size: 12px;
+    }
+
+    .welcome-guest-link {
       color: var(--sh-acc);
       font-weight: 600;
     }
 
-    .quick-card-title {
-      font-size: 16px;
+    /* ── ESTADO LOGADO ── */
+    .welcome-logged-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .welcome-user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      margin-bottom: 6px;
+    }
+
+    .user-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+    }
+
+    .user-status-label {
+      opacity: 0.65;
+    }
+
+    .user-status-email {
+      color: var(--sh-acc);
       font-weight: 600;
-      letter-spacing: -0.01em;
     }
 
-    .quick-card-desc {
-      font-size: 13px;
-      opacity: .7;
-      line-height: 1.45;
+    /* ── MODAL TÁTICO DE AUTENTICAÇÃO (LOGIN / REGISTRO) ── */
+    .modal-tactical-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(4, 6, 10, 0.85);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      animation: modalFadeIn 0.25s ease forwards;
     }
 
-    /* ── CONTROLS DRAWER / FOOTER ── */
-    .sh-footer {
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-tactical-card {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+      background: #0f121a;
+      background: radial-gradient(circle at 50% 0%, #161c28 0%, #0b0e14 100%);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 20px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9), 0 0 40px rgba(212, 175, 55, 0.15);
+      padding: 28px 24px;
+      color: #f1f5f9;
+      animation: modalScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes modalScaleIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-tactical-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px clamp(20px, 4vw, 56px);
-      border-top: 1px solid var(--card-border);
+      margin-bottom: 20px;
+    }
+
+    .modal-emblem-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-emblem-badge img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+
+    .modal-tactical-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+
+    .modal-tactical-sub {
       font-size: 12px;
-      opacity: .6;
+      color: #94a3b8;
+      margin: 2px 0 0;
     }
 
-    .sh-footer a {
-      color: inherit;
-      text-decoration: underline;
+    .modal-tactical-close {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
     }
 
-    /* ── RESPONSIVO ── */
-    @media (max-width: 1024px) {
-      .sh-content {
-        grid-template-columns: 1fr;
-        gap: 28px;
-      }
-      .sh-aside {
-        justify-self: start;
-        max-width: 560px;
-      }
-      .sh-h1 {
-        font-size: clamp(36px, 8vw, 76px);
-      }
+    .modal-tactical-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
     }
 
-    @media (max-width: 768px) {
-      .sh-links {
-        display: none;
-      }
-      .sh-h1 {
-        font-size: clamp(32px, 9vw, 54px);
-      }
-      .sh-root {
-        --sh-h: auto;
-        min-height: 100svh;
-      }
+    .modal-tactical-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 20px;
+    }
+
+    .modal-tactical-tab {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      padding: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .modal-tactical-tab.active {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(212, 175, 55, 0.12) 100%);
+      color: #d4af37;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .modal-tactical-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      text-align: left;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 42px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 0 14px;
+      font-size: 14px;
+      color: #fff;
+      transition: all .2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #d4af37;
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .input-with-action {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-with-action .form-input {
+      padding-right: 44px;
+    }
+
+    .input-eye-btn {
+      position: absolute;
+      right: 8px;
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 6px;
+      font-size: 14px;
+    }
+
+    .form-submit-btn {
+      margin-top: 8px;
+      height: 48px;
+      width: 100%;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+      color: #0b0e14;
+      border: none;
+      cursor: pointer;
+      font-size: 14.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+      transition: all .2s;
+    }
+
+    .form-submit-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .form-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .landing-auth-feedback {
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .landing-auth-feedback.error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+
+    .landing-auth-feedback.success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #86efac;
     }
 
     /* ==========================================================================
@@ -551,6 +685,7 @@
       justify-content: center;
       padding: 16px;
     }
+
     #modalWorksWheel.open {
       display: flex !important;
     }
@@ -571,6 +706,7 @@
       user-select: none;
       overflow: hidden;
     }
+
     .works-wheel-stage:active {
       cursor: grabbing;
     }
@@ -642,11 +778,13 @@
       border-radius: 6px;
       display: inline-block;
     }
+
     .works-wheel-index-btn:hover {
       color: var(--gold-light, #f7e7ce);
       background: rgba(212, 175, 55, 0.08);
       border-color: rgba(212, 175, 55, 0.2);
     }
+
     .works-wheel-index-btn.active {
       color: var(--gold-primary, #d4af37);
       font-weight: 700;
@@ -707,7 +845,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
       opacity: 0;
       transform: translateY(4px);
       transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
@@ -719,60 +857,38 @@
     }
   </style>
 </head>
+
 <body>
 
   <section class="sh-root" id="heroRoot" data-gl="off">
-    <!-- Fundo tipográfico gigante -->
-    <div class="sh-backdrop" id="shBackdrop" aria-hidden="true">PCMG TÁTICO</div>
-
-    <!-- Camada WebGL2 / Fallback Image -->
+    <!-- Camada WebGL2 / Fallback Image (Fundo Animado Interativo) -->
     <div class="sh-stage" id="shStage" aria-hidden="true">
-      <img id="shFallbackImg" class="sh-fallback" src="assets/sculpture_dark.webp" alt="Escultura Líquida Tática" draggable="false">
+      <img id="shFallbackImg" class="sh-fallback" src="assets/sculpture_dark.webp" alt="Escultura Líquida Tática"
+        draggable="false">
     </div>
 
-    <!-- Barra de Navegação Superior -->
-    <nav class="sh-nav" aria-label="Navegação Principal">
-      <a class="sh-brand" href="landing.html">
+    <!-- Barra Superior Minimalista -->
+    <header class="sh-topbar">
+      <div class="sh-brand">
         <span class="sh-brand-badge">
           <img src="assets/logo_faca_caveira.png" alt="Distintivo PCMG">
         </span>
-        <span>PCMG Tático<span style="color:var(--sh-acc)">®</span></span>
-      </a>
+        <span class="sh-brand-text">PCMG Tático<span style="color:var(--sh-acc)">®</span></span>
+      </div>
 
-      <ul class="sh-links">
-        <li>
-          <button type="button" class="sh-link" onclick="openWorksWheelModal()" title="Alternador 3D de Modos do Sistema (Works Wheel)" style="background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.45); border-radius: 999px; padding: 4px 12px; cursor: pointer; color: var(--sh-acc); font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 12l7.07-7.07"/><circle cx="12" cy="12" r="2"/></svg>
-            <span>Modos 3D ⎈</span>
-          </button>
-        </li>
-        <li>
-          <a class="sh-link" href="student_os.html">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--sh-gold);"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-            <span>Student OS</span>
-          </a>
-        </li>
-        <li>
-          <a class="sh-link" href="index.html?view=mobile">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--sh-gold);"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            <span>Cronograma</span>
-          </a>
-        </li>
-        <li>
-          <a class="sh-link" href="student_os.html#subjects">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--sh-gold);"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-            <span>14 Matérias</span>
-          </a>
-        </li>
-        <li>
-          <a class="sh-link" href="student_os.html#pomodoro">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--sh-gold);"><circle cx="12" cy="13" r="8"></circle><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="2" x2="12" y2="5"></line><line x1="10" y1="2" x2="14" y2="2"></line></svg>
-            <span>Pomodoro</span>
-          </a>
-        </li>
-      </ul>
+      <div class="sh-topbar-actions">
+        <!-- Alternador 3D de Modos do Sistema (Works Wheel) -->
+        <button type="button" class="sh-pill-btn" onclick="openWorksWheelModal()" title="Alternador 3D de Modos do Sistema (Works Wheel)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a10 10 0 0 1 10 10" />
+            <path d="M12 12l7.07-7.07" />
+            <circle cx="12" cy="12" r="2" />
+          </svg>
+          <span>Modos 3D ⎈</span>
+        </button>
 
-      <div style="display:flex;align-items:center;gap:12px">
+        <!-- Alternar Tema Claro/Escuro -->
         <button type="button" class="sh-theme-btn" id="themeToggleBtn" aria-label="Alternar Tema Claro/Escuro" title="Alternar Modo Escuro / Claro">
           <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"></circle>
@@ -786,112 +902,161 @@
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
         </button>
-
-        <a class="sh-navcta" href="student_os.html">
-          <span>Acessar Student OS</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </a>
       </div>
-    </nav>
+    </header>
 
-    <!-- Indicador Interativo Fluido -->
-    <div class="sh-hint" id="shHint" aria-hidden="true">
-      Passe o cursor sobre a escultura líquida
-    </div>
+    <!-- Área Central: Somente o Fundo Animado com Mensagem Bem-Vindo e Opção de Login -->
+    <main class="welcome-hero-wrapper">
+      <div class="welcome-card" id="welcomeCard">
+        <!-- Emblema Tático PCMG -->
+        <div class="welcome-emblem">
+          <img src="assets/logo_faca_caveira.png" alt="PCMG Tático">
+        </div>
 
-    <div class="sh-spacer"></div>
+        <span class="welcome-kicker">SANTUÁRIO OPERACIONAL PCMG</span>
 
-    <!-- Conteúdo Hero -->
-    <div class="sh-content" id="shContent">
-      <div>
-        <p class="sh-eyebrow">POLÍCIA CIVIL DE MINAS GERAIS • ESCRIVÃO &amp; INVESTIGADOR</p>
-        <h1 class="sh-h1">
-          <span class="sh-line">Disciplina que</span>
-          <span class="sh-line"><span class="sh-accent">forja a aprovação.</span></span>
-        </h1>
-      </div>
+        <!-- Mensagem Solicitada: Bem-vindo -->
+        <h1 class="welcome-title">Bem-vindo<span class="welcome-dot">.</span></h1>
 
-      <div class="sh-aside">
-        <p class="sh-body">
-          Ambiente tático de estudos com inteligência analítica, ciclo dinâmico de matérias, cronograma de alta intensidade e simulados integrados. Desenvolvido para futuros policiais.
+        <p class="welcome-subtitle">
+          Ambiente tático de estudos de alta intensidade. Faça login para sincronizar seu progresso ou continue no sistema.
         </p>
 
-        <div class="sh-ctas">
-          <a class="sh-btn-primary" href="student_os.html">
+        <!-- Estado 1: Não Logado (Opção Solicitando Login) -->
+        <div id="welcomeUnloggedState" class="welcome-action-group">
+          <button type="button" class="welcome-login-btn" onclick="openTacticalLoginModal('login')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            <span>Fazer Login</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7;">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+
+          <div class="welcome-secondary-links">
+            <button type="button" class="welcome-link-btn" onclick="openTacticalLoginModal('register')">
+              Criar Conta Tática
+            </button>
+            <span class="welcome-dot-sep">•</span>
+            <a href="student_os.html" class="welcome-link-btn welcome-guest-link">
+              Continuar sem login &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Estado 2: Logado (Identificado) -->
+        <div id="welcomeLoggedState" class="welcome-logged-group" style="display: none;">
+          <div class="welcome-user-pill">
+            <span class="user-status-dot"></span>
+            <span class="user-status-label">Operador conectado:</span>
+            <strong id="welcomeUserEmail" class="user-status-email">...</strong>
+          </div>
+
+          <a href="student_os.html" class="welcome-login-btn">
             <span>Acessar Student OS</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
           </a>
 
-          <a class="sh-btn-secondary" href="index.html?view=mobile">
-            <span>Modo Concurso Tático</span>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </a>
+          <button type="button" class="welcome-link-btn" onclick="logoutFromLanding()">
+            Trocar de Conta / Sair
+          </button>
         </div>
       </div>
+    </main>
+  </section>
+
+  <!-- Modal Tático de Autenticação (Login / Cadastro) -->
+  <div class="modal-tactical-backdrop" id="modalTacticalLogin" style="display: none;" aria-hidden="true">
+    <div class="modal-tactical-card" role="dialog" aria-modal="true" aria-labelledby="modalTacticalTitle">
+      <div class="modal-tactical-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="modal-emblem-badge">
+            <img src="assets/logo_faca_caveira.png" alt="PCMG">
+          </div>
+          <div>
+            <h2 id="modalTacticalTitle" class="modal-tactical-title">Identificação do Operador</h2>
+            <p class="modal-tactical-sub">Acesso seguro ao Student OS e Banco de Dados</p>
+          </div>
+        </div>
+        <button type="button" class="modal-tactical-close" onclick="closeTacticalLoginModal()" aria-label="Fechar modal">&times;</button>
+      </div>
+
+      <!-- Abas de Modo: Entrar / Cadastrar -->
+      <div class="modal-tactical-tabs">
+        <button type="button" class="modal-tactical-tab active" id="tabLandingLogin" onclick="switchLandingAuthTab('login')">
+          Fazer Login
+        </button>
+        <button type="button" class="modal-tactical-tab" id="tabLandingRegister" onclick="switchLandingAuthTab('register')">
+          Criar Nova Conta
+        </button>
+      </div>
+
+      <!-- Feedback de status (sucesso / erro) -->
+      <div id="landingAuthFeedback" class="landing-auth-feedback" style="display: none;"></div>
+
+      <form class="modal-tactical-form" onsubmit="handleLandingAuthSubmit(event)">
+        <!-- Campo Nome (visível apenas no cadastro) -->
+        <div class="form-row" id="rowLandingName" style="display: none;">
+          <label for="landingAuthName" class="form-label">Nome de Guerra / Nome Completo</label>
+          <input type="text" id="landingAuthName" class="form-input" placeholder="Ex: Investigador Silva" autocomplete="name">
+        </div>
+
+        <!-- Campo E-mail -->
+        <div class="form-row">
+          <label for="landingAuthEmail" class="form-label">E-mail Operacional *</label>
+          <input type="email" id="landingAuthEmail" class="form-input" placeholder="seu-email@dominio.com" required autocomplete="email">
+        </div>
+
+        <!-- Campo Senha -->
+        <div class="form-row">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label for="landingAuthPassword" class="form-label">Senha *</label>
+            <span style="font-size: 11px; opacity: 0.6;">Mínimo 6 dígitos</span>
+          </div>
+          <div class="input-with-action">
+            <input type="password" id="landingAuthPassword" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+            <button type="button" class="input-eye-btn" onclick="togglePassVisibility('landingAuthPassword', this)" title="Exibir/Ocultar Senha">👁️</button>
+          </div>
+        </div>
+
+        <!-- Campo Confirmar Senha (visível apenas no cadastro) -->
+        <div class="form-row" id="rowLandingPassConfirm" style="display: none;">
+          <label for="landingAuthPassConfirm" class="form-label">Confirmar Senha *</label>
+          <div class="input-with-action">
+            <input type="password" id="landingAuthPassConfirm" class="form-input" placeholder="••••••••" autocomplete="new-password">
+            <button type="button" class="input-eye-btn" onclick="togglePassVisibility('landingAuthPassConfirm', this)" title="Exibir/Ocultar Senha">👁️</button>
+          </div>
+        </div>
+
+        <!-- Botão Principal de Submissão -->
+        <button type="submit" id="btnLandingAuthSubmit" class="form-submit-btn">
+          <span id="btnLandingAuthText">Acessar Sistema</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+
+        <div style="text-align: center; margin-top: 12px;">
+          <a href="student_os.html" class="welcome-link-btn" style="font-size: 12px; opacity: 0.7;">
+            Continuar sem autenticação (Modo Convidado) &rarr;
+          </a>
+        </div>
+      </form>
     </div>
-  </section>
-
-  <!-- Grade de Acesso Rápido -->
-  <section class="quick-strip">
-    <a class="quick-card" href="student_os.html#subjects">
-      <div class="quick-card-head">
-        <span class="quick-card-icon" title="Edital Verticalizado">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3v18"></path>
-            <path d="M5 6h14"></path>
-            <path d="M5 6l-3 7h6l-3-7z"></path>
-            <path d="M19 6l-3 7h6l-3-7z"></path>
-            <circle cx="12" cy="3" r="1"></circle>
-            <path d="M9 21h6"></path>
-          </svg>
-        </span>
-        <span class="quick-card-badge">14 Matérias</span>
-      </div>
-      <h3 class="quick-card-title">Edital Verticalizado PCMG</h3>
-      <p class="quick-card-desc">Direito Penal, Proc. Penal, Legislação Especial, Constitucional, Administrativo, Português, RLM e Direitos Humanos.</p>
-    </a>
-
-    <a class="quick-card" href="student_os.html#pomodoro">
-      <div class="quick-card-head">
-        <span class="quick-card-icon" title="Pomodoro Tático">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="13" r="8"></circle>
-            <line x1="12" y1="9" x2="12" y2="13"></line>
-            <line x1="12" y1="2" x2="12" y2="5"></line>
-            <line x1="10" y1="2" x2="14" y2="2"></line>
-          </svg>
-        </span>
-        <span class="quick-card-badge">Foco Máximo</span>
-      </div>
-      <h3 class="quick-card-title">Pomodoro Tático &amp; Horas</h3>
-      <p class="quick-card-desc">Temporizador com ciclos de 25 min, descanso programado e som de alarme para maximizar retenção e disciplina.</p>
-    </a>
-
-    <a class="quick-card" href="student_os.html">
-      <div class="quick-card-head">
-        <span class="quick-card-icon" title="Sincronização em Nuvem">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
-            <polyline points="13 11 10 14 12 14 11 17 14 13 12 13 13 11"></polyline>
-          </svg>
-        </span>
-        <span class="quick-card-badge">Nuvem Ativa</span>
-      </div>
-      <h3 class="quick-card-title">Sincronização em Nuvem</h3>
-      <p class="quick-card-desc">Persistência transparente no Supabase com sincronização automática entre seu PC e celular.</p>
-    </a>
-  </section>
-
-  <footer class="sh-footer">
-    <div>PCMG Tático — Sistema Operacional de Estudos para Concursos Policiais</div>
-    <div>WebGL2 Liquid GPU Particles — Inspirado em guglielmogiannattasio.it</div>
-  </footer>
+  </div>
 
   <!-- ════════════════════════════════════════════════════════════════════
        MOTOR WEBGL2 GPGPU DE PARTÍCULAS LÍQUIDAS (100K GPU PARTICLES)
        ════════════════════════════════════════════════════════════════════ -->
   <script>
-    (function() {
+    (function () {
       // Shaders GLSL ES 3.0 idênticos ao componente liquid-sculpture-hero
       const NOISE = `
       float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
@@ -1652,7 +1817,7 @@
         engine = new LiquidEngine(canvas, opts, () => {
           root.dataset.gl = "off";
         });
-      } catch(err) {
+      } catch (err) {
         console.warn("WebGL2 indisponível ou falhou:", err);
         root.dataset.gl = "off";
       }
@@ -1770,41 +1935,259 @@
   </script>
 
   <!-- Modal Navegação de Modos via Works Wheel 3D -->
-  <div class="modal-backdrop" id="modalWorksWheel" style="z-index: 99999; backdrop-filter: blur(20px); background: rgba(4, 6, 10, 0.88);">
-    <div class="modal-card works-wheel-modal-card" style="max-width: 1040px; width: 95vw; height: 85vh; max-height: 720px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
-      
+  <div class="modal-backdrop" id="modalWorksWheel"
+    style="z-index: 99999; backdrop-filter: blur(20px); background: rgba(4, 6, 10, 0.88);">
+    <div class="modal-card works-wheel-modal-card"
+      style="max-width: 1040px; width: 95vw; height: 85vh; max-height: 720px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
+
       <!-- Top header bar of modal -->
-      <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); background: rgba(15, 20, 30, 0.7); z-index: 20;">
+      <div
+        style="display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); background: rgba(15, 20, 30, 0.7); z-index: 20;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="display: inline-flex; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 8px #10B981;"></span>
-          <span style="font-size: 11px; font-family: monospace; letter-spacing: 0.1em; color: #d4af37; text-transform: uppercase; font-weight: 700;">Navegador 3D de Modos • Works Wheel</span>
-          <span style="font-size: 10px; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 2px 7px; border-radius: 999px;">Use o scroll do mouse ou arraste</span>
+          <span
+            style="display: inline-flex; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 8px #10B981;"></span>
+          <span
+            style="font-size: 11px; font-family: monospace; letter-spacing: 0.1em; color: #d4af37; text-transform: uppercase; font-weight: 700;">Navegador
+            3D de Modos • Works Wheel</span>
+          <span
+            style="font-size: 10px; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 2px 7px; border-radius: 999px;">Use
+            o scroll do mouse ou arraste</span>
         </div>
-        <button class="modal-close-btn" onclick="closeWorksWheelModal()" style="font-size: 22px; color: #94a3b8; background: transparent; border: none; cursor: pointer; padding: 2px 8px; line-height: 1;" title="Fechar Roda 3D (ESC)">&times;</button>
+        <button class="modal-close-btn" onclick="closeWorksWheelModal()"
+          style="font-size: 22px; color: #94a3b8; background: transparent; border: none; cursor: pointer; padding: 2px 8px; line-height: 1;"
+          title="Fechar Roda 3D (ESC)">&times;</button>
       </div>
 
       <!-- Works Wheel Stage Container -->
-      <div id="worksWheelStage" style="flex: 1; position: relative; width: 100%; height: 100%; overflow: hidden; user-select: none;">
+      <div id="worksWheelStage"
+        style="flex: 1; position: relative; width: 100%; height: 100%; overflow: hidden; user-select: none;">
         <!-- Preenchido e animado via JavaScript -->
       </div>
 
       <!-- Bottom bar of modal with direct action and status -->
-      <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); background: rgba(12, 16, 24, 0.95); z-index: 20;">
+      <div
+        style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); background: rgba(12, 16, 24, 0.95); z-index: 20;">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span style="font-size: 11px; color: #94a3b8;">Modo Selecionado:</span>
-          <span id="worksWheelActiveTag" style="font-size: 12.5px; font-weight: 700; color: #f7e7ce;">Tela de Início</span>
+          <span id="worksWheelActiveTag" style="font-size: 12.5px; font-weight: 700; color: #f7e7ce;">Tela de
+            Início</span>
         </div>
         <div style="display: flex; align-items: center; gap: 10px;">
-          <button type="button" class="btn btn-secondary btn-sm" onclick="closeWorksWheelModal()" style="padding: 7px 16px; font-size: 12px; cursor: pointer; border-radius: 8px; background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.15);">Fechar</button>
-          <button type="button" id="worksWheelConfirmBtn" onclick="navigateToActiveMode()" style="padding: 7px 20px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%); color: #0b0e14; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeWorksWheelModal()"
+            style="padding: 7px 16px; font-size: 12px; cursor: pointer; border-radius: 8px; background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.15);">Fechar</button>
+          <button type="button" id="worksWheelConfirmBtn" onclick="navigateToActiveMode()"
+            style="padding: 7px 20px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%); color: #0b0e14; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);">
             <span>Acessar Modo</span>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
           </button>
         </div>
       </div>
 
     </div>
   </div>
+
+  <!-- Script de Autenticação Tática & Gestão de Sessão -->
+  <script>
+    const SUPABASE_CONFIG = {
+      url: 'https://arhhajxkmjpjwbrlcsqm.supabase.co',
+      anonKey: 'sb_publishable_zZUuqpP2FXG9am-Q7UY95g_musS2nA-'
+    };
+
+    let activeLandingAuthTab = 'login';
+
+    function openTacticalLoginModal(tab = 'login') {
+      const modal = document.getElementById('modalTacticalLogin');
+      if (!modal) return;
+      modal.style.display = 'flex';
+      switchLandingAuthTab(tab);
+      const emailInput = document.getElementById('landingAuthEmail');
+      if (emailInput) setTimeout(() => emailInput.focus(), 60);
+    }
+
+    function closeTacticalLoginModal() {
+      const modal = document.getElementById('modalTacticalLogin');
+      if (modal) modal.style.display = 'none';
+      const feedback = document.getElementById('landingAuthFeedback');
+      if (feedback) {
+        feedback.style.display = 'none';
+        feedback.innerText = '';
+      }
+    }
+
+    function switchLandingAuthTab(tab) {
+      activeLandingAuthTab = tab;
+      const tabLogin = document.getElementById('tabLandingLogin');
+      const tabRegister = document.getElementById('tabLandingRegister');
+      const rowName = document.getElementById('rowLandingName');
+      const rowPassConfirm = document.getElementById('rowLandingPassConfirm');
+      const submitText = document.getElementById('btnLandingAuthText');
+      const feedback = document.getElementById('landingAuthFeedback');
+
+      if (feedback) {
+        feedback.style.display = 'none';
+        feedback.innerText = '';
+      }
+
+      if (tab === 'login') {
+        tabLogin?.classList.add('active');
+        tabRegister?.classList.remove('active');
+        if (rowName) rowName.style.display = 'none';
+        if (rowPassConfirm) rowPassConfirm.style.display = 'none';
+        if (submitText) submitText.innerText = 'Acessar Sistema';
+      } else {
+        tabLogin?.classList.remove('active');
+        tabRegister?.classList.add('active');
+        if (rowName) rowName.style.display = 'block';
+        if (rowPassConfirm) rowPassConfirm.style.display = 'block';
+        if (submitText) submitText.innerText = 'Criar Conta Tática';
+      }
+    }
+
+    function showLandingFeedback(msg, type = 'error') {
+      const feedback = document.getElementById('landingAuthFeedback');
+      if (!feedback) return;
+      feedback.className = 'landing-auth-feedback ' + type;
+      feedback.style.display = 'block';
+      feedback.innerText = msg;
+    }
+
+    function togglePassVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerText = '🔒';
+      } else {
+        input.type = 'password';
+        btn.innerText = '👁️';
+      }
+    }
+
+    async function handleLandingAuthSubmit(e) {
+      if (e) e.preventDefault();
+      const email = (document.getElementById('landingAuthEmail')?.value || '').trim();
+      const password = document.getElementById('landingAuthPassword')?.value || '';
+      const passConfirm = document.getElementById('landingAuthPassConfirm')?.value || '';
+      const agentName = (document.getElementById('landingAuthName')?.value || '').trim();
+      const submitBtn = document.getElementById('btnLandingAuthSubmit');
+      const submitText = document.getElementById('btnLandingAuthText');
+
+      if (!email || !email.includes('@')) {
+        showLandingFeedback('Por favor, informe um endereço de e-mail válido.', 'error');
+        return;
+      }
+      if (!password || password.length < 6) {
+        showLandingFeedback('A senha deve ter no mínimo 6 caracteres.', 'error');
+        return;
+      }
+      if (activeLandingAuthTab === 'register' && password !== passConfirm) {
+        showLandingFeedback('As senhas digitadas não coincidem.', 'error');
+        return;
+      }
+
+      if (submitBtn) submitBtn.disabled = true;
+      if (submitText) submitText.innerText = activeLandingAuthTab === 'login' ? 'Autenticando...' : 'Criando Conta...';
+
+      try {
+        const endpoint = activeLandingAuthTab === 'login'
+          ? `${SUPABASE_CONFIG.url}/auth/v1/token?grant_type=password`
+          : `${SUPABASE_CONFIG.url}/auth/v1/signup`;
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_CONFIG.anonKey,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+        const resData = await res.json();
+        if (!res.ok) {
+          if (resData.error_description?.includes('Invalid login credentials') || resData.msg?.includes('Invalid login credentials')) {
+            throw new Error('E-mail ou senha incorretos.');
+          }
+          throw new Error(resData.error_description || resData.msg || resData.message || 'Falha ao autenticar.');
+        }
+
+        const authUser = resData.user || { email, id: 'usr_' + Date.now() };
+        const authToken = resData.access_token || '';
+
+        const userSession = {
+          email: authUser.email || email,
+          name: agentName || (authUser.email ? authUser.email.split('@')[0] : 'Operador'),
+          id: authUser.id || ('usr_' + Date.now()),
+          token: authToken,
+          loggedAt: new Date().toISOString()
+        };
+
+        localStorage.setItem('tactical_os_user', JSON.stringify(userSession));
+        localStorage.setItem('concurso_user', JSON.stringify(userSession));
+
+        showLandingFeedback('Identificação confirmada! Acessando sistema...', 'success');
+
+        setTimeout(() => {
+          window.location.href = 'student_os.html';
+        }, 500);
+
+      } catch(err) {
+        console.warn('[LandingAuth] Erro:', err);
+        showLandingFeedback(err.message || 'Erro de conexão.', 'error');
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+        if (submitText) submitText.innerText = activeLandingAuthTab === 'login' ? 'Acessar Sistema' : 'Criar Conta Tática';
+      }
+    }
+
+    function checkLandingUser() {
+      try {
+        const raw = localStorage.getItem('tactical_os_user') || localStorage.getItem('concurso_user');
+        let user = null;
+        if (raw) user = JSON.parse(raw);
+
+        const unloggedBox = document.getElementById('welcomeUnloggedState');
+        const loggedBox = document.getElementById('welcomeLoggedState');
+        const emailSpan = document.getElementById('welcomeUserEmail');
+
+        if (user && user.email) {
+          if (unloggedBox) unloggedBox.style.display = 'none';
+          if (loggedBox) loggedBox.style.display = 'flex';
+          if (emailSpan) emailSpan.innerText = user.email;
+        } else {
+          if (unloggedBox) unloggedBox.style.display = 'block';
+          if (loggedBox) loggedBox.style.display = 'none';
+        }
+      } catch(e) {}
+    }
+
+    function logoutFromLanding() {
+      localStorage.removeItem('tactical_os_user');
+      localStorage.removeItem('concurso_user');
+      checkLandingUser();
+    }
+
+    function continueAsGuest() {
+      window.location.href = 'student_os.html';
+    }
+
+    // Fechar ao clicar no backdrop do modal de login
+    const loginBackdrop = document.getElementById('modalTacticalLogin');
+    if (loginBackdrop) {
+      loginBackdrop.addEventListener('click', (e) => {
+        if (e.target === loginBackdrop) closeTacticalLoginModal();
+      });
+    }
+
+    // Tecla Escape para fechar modal
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeTacticalLoginModal();
+    });
+
+    // Checar sessão ao carregar
+    window.addEventListener('DOMContentLoaded', checkLandingUser);
+    setTimeout(checkLandingUser, 100);
+  </script>
 
   <script src="src/ui/works-wheel-modal.js"></script>
 </body>
