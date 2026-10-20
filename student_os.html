@@ -2322,6 +2322,21 @@
     /* ==========================================================================
        WORKS WHEEL 3D - NAVEGADOR DE MODOS (PERSPECTIVE DRUM & RING)
        ========================================================================== */
+    #modalWorksWheel {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(4, 6, 10, 0.92);
+      backdrop-filter: blur(20px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #modalWorksWheel.open {
+      display: flex !important;
+    }
+
     .works-wheel-modal-card {
       position: relative;
       background: radial-gradient(circle at 50% 50%, #0d121c 0%, #05070b 100%) !important;
@@ -4324,6 +4339,7 @@
           </div>
         </div>
       </div>
+      </div>
       <div class="modal-footer" style="justify-content: space-between;">
         <button type="button" class="btn-secondary" onclick="openQuizTrainingModal(); closeModal('modalAddNote');">
           🎯 Ir para Treinamento de Mini-Perguntas ➔
@@ -4399,6 +4415,8 @@
         </div>
       </div>
     </div>
+  </div>
+
   <!-- Modal Navegação de Modos via Works Wheel 3D -->
   <div class="modal-backdrop" id="modalWorksWheel" style="z-index: 99999; backdrop-filter: blur(20px); background: rgba(4, 6, 10, 0.88);">
     <div class="modal-card works-wheel-modal-card" style="max-width: 1040px; width: 95vw; height: 85vh; max-height: 720px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
@@ -4416,6 +4434,21 @@
       <!-- Works Wheel Stage Container -->
       <div id="worksWheelStage" style="flex: 1; position: relative; width: 100%; height: 100%; overflow: hidden; user-select: none;">
         <!-- Preenchido e animado via JavaScript -->
+      </div>
+
+      <!-- Bottom bar of modal with direct action and status -->
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); background: rgba(12, 16, 24, 0.95); z-index: 20;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 11px; color: var(--text-muted);">Modo Selecionado:</span>
+          <span id="worksWheelActiveTag" style="font-size: 12.5px; font-weight: 700; color: var(--gold-light);">Student OS</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button type="button" class="btn-secondary" onclick="closeWorksWheelModal()" style="padding: 7px 16px; font-size: 12px; cursor: pointer; border-radius: 8px;">Fechar</button>
+          <button type="button" id="worksWheelConfirmBtn" onclick="navigateToActiveMode()" style="padding: 7px 20px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%); color: #0b0e14; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);">
+            <span>Acessar Modo</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
       </div>
 
     </div>
@@ -9040,7 +9073,7 @@
       }
     ];
 
-    let worksWheelState = {
+    window.worksWheelState = {
       isOpen: false,
       turn: 0,
       target: 0,
@@ -9049,12 +9082,21 @@
       dragStart: null,
       settleTimeout: null
     };
+    var worksWheelState = window.worksWheelState;
 
     function openWorksWheelModal() {
       const modal = document.getElementById('modalWorksWheel');
       if (!modal) return;
       modal.classList.add('open');
+      modal.style.display = 'flex';
       worksWheelState.isOpen = true;
+
+      modal.onclick = function(e) {
+        if (e.target === modal) {
+          closeWorksWheelModal();
+        }
+      };
+
       if (typeof playTacticalBlip === 'function') {
         playTacticalBlip(720, 0.08);
       }
@@ -9065,6 +9107,7 @@
       const modal = document.getElementById('modalWorksWheel');
       if (!modal) return;
       modal.classList.remove('open');
+      modal.style.display = 'none';
       worksWheelState.isOpen = false;
       if (worksWheelState.animFrameId) {
         cancelAnimationFrame(worksWheelState.animFrameId);
@@ -9075,7 +9118,29 @@
       }
     }
 
+    function navigateToActiveMode() {
+      const items = TACTICAL_WHEEL_MODES;
+      const activeItem = items[worksWheelState.active];
+      if (activeItem && activeItem.href) {
+        if (activeItem.href.indexOf('student_os') !== -1) {
+          localStorage.setItem('preferred_desktop_view', 'student_os');
+        } else if (activeItem.href.indexOf('concurso') !== -1 || activeItem.href.indexOf('index') !== -1) {
+          localStorage.setItem('preferred_desktop_view', 'concursos');
+        } else {
+          localStorage.removeItem('preferred_desktop_view');
+        }
+        if (typeof playTacticalBlip === 'function') {
+          playTacticalBlip(880, 0.09);
+        }
+        window.location.href = activeItem.href;
+      }
+    }
+    window.openWorksWheelModal = openWorksWheelModal;
+    window.closeWorksWheelModal = closeWorksWheelModal;
+    window.navigateToActiveMode = navigateToActiveMode;
+
     function initWorksWheelStage() {
+      window.initWorksWheelStage = initWorksWheelStage;
       const stage = document.getElementById('worksWheelStage');
       if (!stage) return;
 
@@ -9099,7 +9164,7 @@
       const interactiveArea = document.getElementById('worksWheelInteractionArea');
 
       drum.innerHTML = items.map((item, i) => (
-        '<a id="worksWheelCard_' + i + '" class="works-wheel-card" href="' + item.href + '" onclick="event.preventDefault(); window.location.href=\'' + item.href + '\'">' +
+        '<div id="worksWheelCard_' + i + '" class="works-wheel-card" role="button" tabindex="0" onclick="handleWorksWheelCardClick(' + i + ', event)">' +
           '<span class="works-wheel-card-inner">' +
             '<img src="' + item.image + '" alt="' + item.title + '" draggable="false">' +
             '<span class="works-wheel-action-badge">' +
@@ -9107,7 +9172,7 @@
               'Acessar Modo' +
             '</span>' +
           '</span>' +
-        '</a>'
+        '</div>'
       )).join('');
 
       indexList.innerHTML = items.map((item, i) => (
@@ -9188,6 +9253,20 @@
         }
       };
 
+      let pointerMoved = 0;
+      let startY = 0;
+      let startX = 0;
+
+      window.handleWorksWheelCardClick = function(index, e) {
+        if (pointerMoved > 8) return;
+        const targetTurn = index + 1;
+        if (worksWheelState.active === index || Math.abs(worksWheelState.target - targetTurn) < 0.2) {
+          navigateToActiveMode();
+        } else {
+          setWorksWheelTarget(targetTurn);
+        }
+      };
+
       interactiveArea.onwheel = function(e) {
         const next = worksWheelState.target + (e.deltaY / WHEEL_UNITS);
         if (next > 0 && next < last + 1) e.preventDefault();
@@ -9201,15 +9280,28 @@
 
       interactiveArea.onpointerdown = function(e) {
         worksWheelState.dragStart = e.clientY;
-        interactiveArea.setPointerCapture(e.pointerId);
+        startY = e.clientY;
+        startX = e.clientX;
+        pointerMoved = 0;
       };
+
       interactiveArea.onpointermove = function(e) {
         if (worksWheelState.dragStart === null) return;
-        const delta = (worksWheelState.dragStart - e.clientY) / DRAG_UNITS;
+        const dy = worksWheelState.dragStart - e.clientY;
+        pointerMoved += Math.abs(dy) + Math.abs(startX - e.clientX);
+        if (pointerMoved > 6 && !interactiveArea.hasPointerCapture(e.pointerId)) {
+          try { interactiveArea.setPointerCapture(e.pointerId); } catch(err) {}
+        }
+        const delta = dy / DRAG_UNITS;
         worksWheelState.target = clamp(worksWheelState.target + delta, 0, last + 1);
         worksWheelState.dragStart = e.clientY;
+        startX = e.clientX;
       };
-      interactiveArea.onpointerup = function() {
+
+      interactiveArea.onpointerup = function(e) {
+        if (interactiveArea.hasPointerCapture && interactiveArea.hasPointerCapture(e.pointerId)) {
+          try { interactiveArea.releasePointerCapture(e.pointerId); } catch(err) {}
+        }
         worksWheelState.dragStart = null;
         if (worksWheelState.target > 1) {
           worksWheelState.target = clamp(Math.round(worksWheelState.target), 0, last + 1);
@@ -9227,12 +9319,27 @@
           closeWorksWheelModal();
           e.preventDefault();
         } else if (e.key === 'Enter') {
-          const activeItem = items[worksWheelState.active];
-          if (activeItem && activeItem.href) {
-            window.location.href = activeItem.href;
-          }
+          navigateToActiveMode();
+          e.preventDefault();
         }
       };
+
+      function updateActiveDisplay(index) {
+        if (activeTitle && items[index]) {
+          activeTitle.innerText = items[index].title;
+        }
+        const activeTag = document.getElementById('worksWheelActiveTag');
+        if (activeTag && items[index]) {
+          activeTag.innerText = items[index].title;
+        }
+        items.forEach((_, i) => {
+          const btn = document.getElementById('worksWheelIdxBtn_' + i);
+          if (btn) {
+            if (i === index) btn.classList.add('active');
+            else btn.classList.remove('active');
+          }
+        });
+      }
 
       function drawFrame() {
         if (!worksWheelState.isOpen) return;
@@ -9273,34 +9380,15 @@
         const near = clamp(Math.round(pos), 0, last);
         if (worksWheelState.active !== near) {
           worksWheelState.active = near;
-          if (activeTitle && items[near]) {
-            activeTitle.innerText = items[near].title;
-          }
-          items.forEach((_, i) => {
-            const btn = document.getElementById('worksWheelIdxBtn_' + i);
-            if (btn) {
-              if (i === near) btn.classList.add('active');
-              else btn.classList.remove('active');
-            }
-          });
+          updateActiveDisplay(near);
         }
 
         worksWheelState.animFrameId = requestAnimationFrame(drawFrame);
       }
 
-      if (activeTitle && items[worksWheelState.active]) {
-        activeTitle.innerText = items[worksWheelState.active].title;
-      }
-      items.forEach((_, i) => {
-        const btn = document.getElementById('worksWheelIdxBtn_' + i);
-        if (btn) {
-          if (i === worksWheelState.active) btn.classList.add('active');
-          else btn.classList.remove('active');
-        }
-      });
-
+      updateActiveDisplay(worksWheelState.active);
       worksWheelState.animFrameId = requestAnimationFrame(drawFrame);
-      interactiveArea.focus();
+      try { interactiveArea.focus(); } catch(err) {}
     }
 
     // Inicialização ao carregar

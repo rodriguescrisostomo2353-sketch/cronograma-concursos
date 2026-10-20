@@ -536,6 +536,186 @@
         min-height: 100svh;
       }
     }
+
+    /* ==========================================================================
+       WORKS WHEEL 3D - NAVEGADOR DE MODOS (PERSPECTIVE DRUM & RING)
+       ========================================================================== */
+    #modalWorksWheel {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(4, 6, 10, 0.92);
+      backdrop-filter: blur(20px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #modalWorksWheel.open {
+      display: flex !important;
+    }
+
+    .works-wheel-modal-card {
+      position: relative;
+      background: radial-gradient(circle at 50% 50%, #0d121c 0%, #05070b 100%) !important;
+      border: 1px solid rgba(212, 175, 55, 0.35) !important;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95), 0 0 45px rgba(212, 175, 55, 0.15) !important;
+    }
+
+    .works-wheel-stage {
+      position: absolute;
+      inset: 0;
+      cursor: grab;
+      touch-action: pan-x;
+      outline: none;
+      user-select: none;
+      overflow: hidden;
+    }
+    .works-wheel-stage:active {
+      cursor: grabbing;
+    }
+
+    .works-wheel-drum {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .works-wheel-center-label {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-family: inherit;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: rgba(212, 175, 55, 0.85);
+      text-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+      transition: opacity 0.15s ease;
+      user-select: none;
+      z-index: 10;
+    }
+
+    .works-wheel-active-title {
+      pointer-events: none;
+      position: absolute;
+      top: 50%;
+      left: 7%;
+      transform: translateY(-50%);
+      font-family: inherit;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #FFFFFF;
+      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.9), 0 0 20px rgba(212, 175, 55, 0.4);
+      max-width: 320px;
+      line-height: 1.1;
+      transition: opacity 0.15s ease;
+      user-select: none;
+      z-index: 10;
+    }
+
+    .works-wheel-index {
+      position: absolute;
+      top: 8%;
+      right: 3%;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      text-align: right;
+      line-height: 1.85;
+      z-index: 30;
+      user-select: none;
+    }
+
+    .works-wheel-index-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted, #94a3b8);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: inherit;
+      transition: all 0.2s ease;
+      padding: 5px 12px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .works-wheel-index-btn:hover {
+      color: var(--gold-light, #f7e7ce);
+      background: rgba(212, 175, 55, 0.08);
+      border-color: rgba(212, 175, 55, 0.2);
+    }
+    .works-wheel-index-btn.active {
+      color: var(--gold-primary, #d4af37);
+      font-weight: 700;
+      background: rgba(212, 175, 55, 0.14);
+      border-color: rgba(212, 175, 55, 0.4);
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
+    }
+
+    .works-wheel-card {
+      position: absolute;
+      backface-visibility: hidden;
+      transition: opacity 0.2s ease;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+    }
+
+    .works-wheel-card-inner {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #111622;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.15);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      transform-origin: center center;
+    }
+
+    .works-wheel-card:hover .works-wheel-card-inner {
+      border-color: var(--gold-primary, #d4af37);
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.9), 0 0 35px rgba(212, 175, 55, 0.4);
+    }
+
+    .works-wheel-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    .works-wheel-action-badge {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      background: rgba(7, 9, 14, 0.88);
+      color: var(--gold-primary, #d4af37);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      backdrop-filter: blur(8px);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .works-wheel-card:hover .works-wheel-action-badge {
+      opacity: 1;
+      transform: translateY(0);
+    }
   </style>
 </head>
 <body>
@@ -559,6 +739,12 @@
       </a>
 
       <ul class="sh-links">
+        <li>
+          <button type="button" class="sh-link" onclick="openWorksWheelModal()" title="Alternador 3D de Modos do Sistema (Works Wheel)" style="background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.45); border-radius: 999px; padding: 4px 12px; cursor: pointer; color: var(--sh-acc); font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 12l7.07-7.07"/><circle cx="12" cy="12" r="2"/></svg>
+            <span>Modos 3D ⎈</span>
+          </button>
+        </li>
         <li>
           <a class="sh-link" href="student_os.html">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--sh-gold);"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
@@ -1581,5 +1767,44 @@
       });
     })();
   </script>
+
+  <!-- Modal Navegação de Modos via Works Wheel 3D -->
+  <div class="modal-backdrop" id="modalWorksWheel" style="z-index: 99999; backdrop-filter: blur(20px); background: rgba(4, 6, 10, 0.88);">
+    <div class="modal-card works-wheel-modal-card" style="max-width: 1040px; width: 95vw; height: 85vh; max-height: 720px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
+      
+      <!-- Top header bar of modal -->
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); background: rgba(15, 20, 30, 0.7); z-index: 20;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="display: inline-flex; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 8px #10B981;"></span>
+          <span style="font-size: 11px; font-family: monospace; letter-spacing: 0.1em; color: #d4af37; text-transform: uppercase; font-weight: 700;">Navegador 3D de Modos • Works Wheel</span>
+          <span style="font-size: 10px; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 2px 7px; border-radius: 999px;">Use o scroll do mouse ou arraste</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeWorksWheelModal()" style="font-size: 22px; color: #94a3b8; background: transparent; border: none; cursor: pointer; padding: 2px 8px; line-height: 1;" title="Fechar Roda 3D (ESC)">&times;</button>
+      </div>
+
+      <!-- Works Wheel Stage Container -->
+      <div id="worksWheelStage" style="flex: 1; position: relative; width: 100%; height: 100%; overflow: hidden; user-select: none;">
+        <!-- Preenchido e animado via JavaScript -->
+      </div>
+
+      <!-- Bottom bar of modal with direct action and status -->
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); background: rgba(12, 16, 24, 0.95); z-index: 20;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 11px; color: #94a3b8;">Modo Selecionado:</span>
+          <span id="worksWheelActiveTag" style="font-size: 12.5px; font-weight: 700; color: #f7e7ce;">Tela de Início</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeWorksWheelModal()" style="padding: 7px 16px; font-size: 12px; cursor: pointer; border-radius: 8px; background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.15);">Fechar</button>
+          <button type="button" id="worksWheelConfirmBtn" onclick="navigateToActiveMode()" style="padding: 7px 20px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%); color: #0b0e14; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);">
+            <span>Acessar Modo</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="src/ui/works-wheel-modal.js"></script>
 </body>
 </html>
