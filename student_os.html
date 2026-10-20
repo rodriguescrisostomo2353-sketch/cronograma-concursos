@@ -1435,6 +1435,307 @@
       z-index: 2;
     }
 
+    /* ==========================================================================
+       SISTEMA EXCLUSIVO DE FLASHCARDS GERADOS POR IA & MINI-PERGUNTAS (REATOR TÁTICO)
+       ========================================================================== */
+    /* 1. Flashcards 3D com Efeito Flip */
+    .fc-card-wrapper {
+      perspective: 1000px;
+      min-height: 200px;
+      display: flex;
+    }
+
+    .fc-card-3d {
+      position: relative;
+      width: 100%;
+      min-height: 200px;
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+    }
+
+    .fc-card-3d.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .fc-card-face {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: var(--radius-sm);
+      padding: 14px 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-tactical);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .fc-card-3d:hover .fc-card-face {
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55), 0 0 14px rgba(212, 175, 55, 0.15);
+    }
+
+    .fc-card-front {
+      background: linear-gradient(145deg, #17202F 0%, #111622 100%);
+      border-top: 3px solid var(--fc-subject-color, var(--gold-primary));
+    }
+
+    .fc-card-back {
+      background: linear-gradient(145deg, #192434 0%, #121824 100%);
+      transform: rotateY(180deg);
+      border-top: 3px solid var(--accent-green);
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    .fc-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .fc-tag-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--fc-subject-color, var(--gold-primary));
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
+    }
+
+    .fc-status-pill {
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border-tactical);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .fc-status-pill.dominado {
+      color: var(--accent-green);
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.12);
+    }
+
+    .fc-status-pill.revisar {
+      color: var(--gold-primary);
+      border-color: rgba(212, 175, 55, 0.4);
+      background: rgba(212, 175, 55, 0.12);
+    }
+
+    .fc-card-body-text {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-main);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6px 0;
+    }
+
+    .fc-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .fc-flip-hint {
+      font-size: 10px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .fc-action-btn-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .fc-action-btn {
+      background: transparent;
+      border: 1px solid var(--border-tactical);
+      color: var(--text-secondary);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .fc-action-btn.btn-dominado:hover, .fc-action-btn.btn-dominado.active {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent-green);
+      border-color: var(--accent-green);
+    }
+
+    .fc-action-btn.btn-revisar:hover, .fc-action-btn.btn-revisar.active {
+      background: rgba(212, 175, 55, 0.2);
+      color: var(--gold-primary);
+      border-color: var(--gold-primary);
+    }
+
+    /* 2. Mini-Perguntas / Quiz Interativo */
+    .quiz-scoreboard-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .quiz-score-pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+    }
+
+    .quiz-score-pill.correct {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .quiz-score-pill.wrong {
+      background: rgba(239, 68, 68, 0.15);
+      color: #F87171;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+
+    .quiz-score-pill.rate {
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--gold-primary);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+    }
+
+    .quiz-card-interactive {
+      background: linear-gradient(145deg, #151D2A 0%, #0F1420 100%);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .quiz-meta-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .quiz-q-statement {
+      font-size: 13.5px;
+      font-weight: 600;
+      line-height: 1.55;
+      color: var(--text-main);
+    }
+
+    .quiz-options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .quiz-opt-btn {
+      background: #0E131E;
+      border: 1px solid var(--border-tactical);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      text-align: left;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .quiz-opt-btn:hover:not(:disabled) {
+      border-color: var(--gold-primary);
+      background: rgba(212, 175, 55, 0.06);
+      transform: translateX(3px);
+    }
+
+    .quiz-opt-btn.correct-pick {
+      background: rgba(16, 185, 129, 0.22) !important;
+      border-color: var(--accent-green) !important;
+      color: #fff !important;
+      font-weight: 600;
+    }
+
+    .quiz-opt-btn.wrong-pick {
+      background: rgba(239, 68, 68, 0.22) !important;
+      border-color: #EF4444 !important;
+      color: #FCA5A5 !important;
+    }
+
+    .quiz-opt-letter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold-primary);
+      background: rgba(212, 175, 55, 0.12);
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .quiz-feedback-box {
+      background: rgba(11, 14, 20, 0.85);
+      border: 1px solid var(--border-tactical);
+      border-left: 3px solid var(--gold-primary);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      animation: fadeIn 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    @keyframes rotateForever {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .rotating {
+      animation: rotateForever 1s linear infinite;
+    }
+
+
     .note-text {
       font-size: 11px;
       color: var(--text-secondary);
@@ -2583,13 +2884,13 @@
             <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
             Matérias
           </button>
-          <button class="banner-btn primary" onclick="openModal('modalAddTask')">
-            <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Nova Missão
+          <button class="banner-btn primary" onclick="openQuizTrainingModal()" title="Treinamento de Mini-Perguntas baseado nos Flashcards">
+            <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+            Mini-Perguntas
           </button>
-          <button class="banner-btn" onclick="openModal('modalAddNote')">
-            <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-            Novo Bizu
+          <button class="banner-btn" onclick="openAIFlashcardsModal()" title="Central de Flashcards Gerados por IA">
+            <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            Flashcards IA
           </button>
           <a href="index.html?view=mobile" onclick="localStorage.setItem('preferred_desktop_view', 'concursos');" class="banner-btn" title="Alternar para a visualização original de Concursos">
             <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
@@ -2627,8 +2928,8 @@
             <button class="btn-quick-action" onclick="openModal('modalAddAssessment')">
               <span class="plus-icon">+</span> Novo Simulado / Meta
             </button>
-            <button class="btn-quick-action" onclick="openModal('modalAddTask')">
-              <span class="plus-icon">+</span> Nova Missão do Edital
+            <button class="btn-quick-action" onclick="openQuizTrainingModal()">
+              <span class="plus-icon">⚡</span> Treino de Mini-Perguntas
             </button>
             <button class="btn-quick-action" onclick="toggleHabitToday()">
               <span class="plus-icon">+</span> Registrar Hábito do Dia
@@ -2636,8 +2937,8 @@
             <button class="btn-quick-action" onclick="openStudyHoursQuickModal()">
               <span class="plus-icon">+</span> Registrar Horas de Estudo
             </button>
-            <button class="btn-quick-action" onclick="openModal('modalAddNote')">
-              <span class="plus-icon">+</span> Anotar Bizu Tático
+            <button class="btn-quick-action" onclick="openAIFlashcardsModal()">
+              <span class="plus-icon">⚡</span> Flashcards por IA
             </button>
           </div>
         </section>
@@ -2667,13 +2968,13 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#missoes">
+              <a href="#missoes" onclick="openQuizTrainingSection(event)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                 Missões & Tópicos
               </a>
             </li>
             <li class="nav-item">
-              <a href="#bizus">
+              <a href="#bizus" onclick="openAIFlashcardsSection(event)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                 Bizus & Notas
               </a>
@@ -2810,32 +3111,33 @@
 
         </div>
 
-        <!-- 3. Gerenciador de Missões & Tópicos de Estudo -->
+        <!-- 3. Gerenciador de Missões: Treinamento de Mini-Perguntas Interativas -->
         <div class="tasks-card" id="missoes">
           <div class="section-title">
-            <span>Missões & Tópicos de Estudo</span>
-            <div style="display: flex; gap: 8px;">
-              <button class="btn-quick-action" style="padding: 4px 10px; font-size: 11px; width: auto;" onclick="openModal('modalAddTask')">
-                + Nova Missão
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span style="display: flex; align-items: center; gap: 6px;">
+                <svg class="tactical-icon" style="color: var(--gold-primary); width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                Missões Táticas • Mini-Perguntas dos Flashcards
+              </span>
+              <div class="quiz-scoreboard-box" id="quizMainScoreboard">
+                <span class="quiz-score-pill correct" id="quizScoreCorrect">✓ 0 Acertos</span>
+                <span class="quiz-score-pill wrong" id="quizScoreWrong">✕ 0 Erros</span>
+                <span class="quiz-score-pill rate" id="quizScoreAccuracy">0%</span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <select id="quizSubjectFilterSelect" class="form-control" style="padding: 3px 8px; font-size: 11px; height: 28px; width: auto; max-width: 190px;" onchange="onQuizFilterChanged(this.value)">
+                <!-- Opções dinâmicas de matérias cadastradas + Missão Geral -->
+              </select>
+              <button class="btn-quick-action" style="padding: 4px 10px; font-size: 11px; width: auto;" onclick="openQuizTrainingModal()" title="Abrir modo imersivo de treinamento">
+                ⛶ Modo Foco
               </button>
             </div>
           </div>
-          <div style="overflow-x: auto;">
-            <table class="tasks-table">
-              <thead>
-                <tr>
-                  <th class="task-check-cell"></th>
-                  <th>Missão / Tópico</th>
-                  <th>Data Alvo</th>
-                  <th>Status</th>
-                  <th>Prioridade</th>
-                  <th>Disciplina</th>
-                </tr>
-              </thead>
-              <tbody id="tasksTableBody">
-                <!-- Gerado via JavaScript -->
-              </tbody>
-            </table>
+          
+          <!-- Contêiner do Quiz Interativo Rápido -->
+          <div id="interactiveQuizContainer" style="min-height: 190px;">
+            <!-- Renderizado dinamicamente via JavaScript -->
           </div>
         </div>
 
@@ -2858,33 +3160,34 @@
             </div>
           </div>
 
-          <!-- Bizus & Notas Táticas -->
+          <!-- Flashcards Táticos por IA (Substitui Bizus Manuais Soltos) -->
           <div class="notes-card" id="bizus">
             <div class="section-title">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span>Bizus & Notas Táticas</span>
-                <span class="badge-count" id="notesCountBadge" style="font-size: 10px; background: rgba(212, 175, 55, 0.15); color: var(--gold-primary); padding: 2px 7px; border-radius: 999px; font-weight: 700;">--</span>
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="display: flex; align-items: center; gap: 6px;">
+                  <svg class="tactical-icon" style="color: var(--gold-primary); width: 15px; height: 15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                  Flashcards Táticos por IA
+                </span>
+                <span class="badge-count" id="flashcardsCountBadge" style="font-size: 10px; background: rgba(212, 175, 55, 0.15); color: var(--gold-primary); padding: 2px 7px; border-radius: 999px; font-weight: 700;">--</span>
               </div>
-              <div style="display: flex; gap: 6px;">
-                <button class="btn-quick-action" style="padding: 3px 8px; font-size: 10px; width: auto;" onclick="restoreDefaultNotes()" title="Restaurar todo o acervo completo de bizus táticos">
-                  ↻ Acervo
-                </button>
-                <button class="btn-quick-action" style="padding: 3px 8px; font-size: 10.5px; width: auto;" onclick="openModal('modalAddNote')">
-                  + Novo Bizu
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <select id="flashcardSubjectHeaderSelect" class="form-control" style="padding: 3px 6px; font-size: 10.5px; height: 28px; width: auto; max-width: 150px;" onchange="filterAIFlashcardsBySubject(this.value)">
+                  <!-- Opções dinâmicas de matérias cadastradas -->
+                </select>
+                <button class="btn-quick-action" style="padding: 3px 10px; font-size: 10.5px; width: auto; background: var(--gold-primary); color: #0B0E14; font-weight: 700;" onclick="generateAIFlashcardsAction()" title="Gerar novos Flashcards com Inteligência Artificial">
+                  ⚡ Gerar Flashcards com IA
                 </button>
               </div>
             </div>
-            <div class="notes-filter-bar" id="notesFilterBar">
-              <button class="note-filter-btn active" onclick="filterNotesByTag('todos', this)">Todos</button>
-              <button class="note-filter-btn" onclick="filterNotesByTag('D. Penal', this)">D. Penal</button>
-              <button class="note-filter-btn" onclick="filterNotesByTag('Proc. Penal', this)">Proc. Penal</button>
-              <button class="note-filter-btn" onclick="filterNotesByTag('Constitucional', this)">Constitucional</button>
-              <button class="note-filter-btn" onclick="filterNotesByTag('Administrativo', this)">Administrativo</button>
-              <button class="note-filter-btn" onclick="filterNotesByTag('Legislação Especial', this)">Legislação</button>
-              <button class="note-filter-btn" onclick="filterNotesByTag('Português', this)">Português</button>
-            </div>
-            <div class="sticky-notes-grid" id="stickyNotesContainer">
+            
+            <!-- Barra de Chips de Matérias Cadastradas -->
+            <div class="notes-filter-bar" id="flashcardsChipsBar">
               <!-- Gerado via JavaScript -->
+            </div>
+            
+            <!-- Grade de Flashcards 3D -->
+            <div class="sticky-notes-grid" id="aiFlashcardsGrid" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); max-height: 380px;">
+              <!-- Renderizado dinamicamente via JavaScript -->
             </div>
           </div>
 
@@ -2976,48 +3279,39 @@
        MODAIS DE CRIAÇÃO E ESTUDO
        ========================================================================== -->
 
-  <!-- Modal Nova Missão / Tarefa -->
+  <!-- Modal Treinamento de Mini-Perguntas dos Flashcards (Substitui Nova Missão manual) -->
   <div class="modal-backdrop" id="modalAddTask">
-    <div class="modal-card">
+    <div class="modal-card" style="max-width: 620px;">
       <div class="modal-header">
-        <h3>Nova Missão do Edital</h3>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg class="tactical-icon" style="color: var(--gold-primary); width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          <h3 style="font-size: 15px; margin: 0; color: var(--gold-light);">Missão Tática: Treinamento de Mini-Perguntas</h3>
+        </div>
         <button class="modal-close-btn" onclick="closeModal('modalAddTask')">&times;</button>
       </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>Nome do Tópico / Missão:</label>
-          <input type="text" id="inputTaskName" class="form-control" placeholder="Ex: Inquérito Policial - Prazos e Instauração">
+      <div class="modal-body" style="gap: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--border-tactical); padding-bottom: 10px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="font-size: 11px; color: var(--text-muted); font-weight: 600;">MATÉRIA:</label>
+            <select id="modalQuizSubjectSelect" class="form-control" style="padding: 4px 8px; font-size: 11.5px; height: 32px; width: auto; max-width: 220px;" onchange="onModalQuizSubjectChanged(this.value)">
+              <!-- Preenchido dinamicamente com matérias cadastradas e Missão Geral -->
+            </select>
+          </div>
+          <div class="quiz-scoreboard-box" id="modalQuizScoreboard">
+            <span class="quiz-score-pill correct" id="modalQuizScoreCorrect">✓ 0 Acertos</span>
+            <span class="quiz-score-pill wrong" id="modalQuizScoreWrong">✕ 0 Erros</span>
+            <span class="quiz-score-pill rate" id="modalQuizScoreRate">0%</span>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Disciplina:</label>
-          <select id="inputTaskSubject" class="form-control">
-            <option value="Direito Penal">Direito Penal</option>
-            <option value="Direito Processual Penal">Direito Processual Penal</option>
-            <option value="Direito Constitucional">Direito Constitucional</option>
-            <option value="Direito Administrativo">Direito Administrativo</option>
-            <option value="Língua Portuguesa">Língua Portuguesa</option>
-            <option value="Legislação Especial">Legislação Especial</option>
-            <option value="Raciocínio Lógico">Raciocínio Lógico</option>
-            <option value="Informática">Informática</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Prioridade Tática (1 a 4 estrelas):</label>
-          <select id="inputTaskPriority" class="form-control">
-            <option value="4">★★★★ (Máxima - Cai em Toda Prova)</option>
-            <option value="3">★★★☆ (Alta Prioridade)</option>
-            <option value="2">★★☆☆ (Média Prioridade)</option>
-            <option value="1">★☆☆☆ (Básica)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Data Alvo:</label>
-          <input type="date" id="inputTaskDate" class="form-control">
+
+        <!-- Área Dinâmica da Pergunta / Quiz Interativo no Modal -->
+        <div id="modalQuizInteractiveBody">
+          <!-- Gerado via JavaScript -->
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" onclick="closeModal('modalAddTask')">Cancelar</button>
-        <button class="btn-primary" onclick="saveNewTask()">Adicionar Missão</button>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button class="btn-secondary" onclick="restartModalQuizBattery()">↻ Reiniciar Rodada</button>
+        <button class="btn-primary" onclick="closeModal('modalAddTask')">Concluir Sessão</button>
       </div>
     </div>
   </div>
@@ -3070,33 +3364,53 @@
     </div>
   </div>
 
-  <!-- Modal Novo Bizu / Anotação -->
+  <!-- Modal Central de Flashcards por IA (Substitui Anotação Manual Solta) -->
   <div class="modal-backdrop" id="modalAddNote">
-    <div class="modal-card">
+    <div class="modal-card" style="max-width: 640px;">
       <div class="modal-header">
-        <h3>Novo Bizu Tático</h3>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg class="tactical-icon" style="color: var(--gold-primary); width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          <h3 style="font-size: 15px; margin: 0; color: var(--gold-light);">Central de Flashcards Táticos Gerados por IA</h3>
+        </div>
         <button class="modal-close-btn" onclick="closeModal('modalAddNote')">&times;</button>
       </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>Disciplina:</label>
-          <select id="inputNoteSubject" class="form-control">
-            <option value="Direito Penal">Direito Penal</option>
-            <option value="Direito Processual Penal">Direito Processual Penal</option>
-            <option value="Direito Constitucional">Direito Constitucional</option>
-            <option value="Direito Administrativo">Direito Administrativo</option>
-            <option value="Língua Portuguesa">Língua Portuguesa</option>
-            <option value="Legislação Especial">Legislação Especial</option>
-          </select>
+      <div class="modal-body" style="gap: 14px;">
+        <div style="background: rgba(14, 19, 30, 0.7); border: 1px solid var(--border-tactical); border-radius: var(--radius-sm); padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 200px;">
+              <label style="font-size: 11px; font-weight: 700; color: var(--gold-light); text-transform: uppercase;">1. Selecione a Matéria Cadastrada no Edital:</label>
+              <select id="modalAIFlashcardSubjectSelect" class="form-control" style="font-size: 12.5px; padding: 6px 10px; height: 36px;" onchange="onModalAIFlashcardSubjectChanged(this.value)">
+                <!-- Opções dinâmicas das matérias cadastradas -->
+              </select>
+            </div>
+            <div style="display: flex; align-items: flex-end; padding-top: 16px;">
+              <button type="button" class="btn-primary" id="btnModalGenerateAI" style="height: 36px; display: flex; align-items: center; gap: 6px; font-weight: 700; padding: 0 16px; background: linear-gradient(135deg, #E5C07B 0%, #D4AF37 100%); color: #0B0E14;" onclick="triggerGenerateFlashcardsFromModal()">
+                <span>⚡ Gerar Flashcards com IA</span>
+              </button>
+            </div>
+          </div>
+          <div id="modalAIGeneratingIndicator" style="display: none; align-items: center; gap: 8px; font-size: 11px; color: var(--gold-primary); padding: 6px 0;">
+            <svg class="tactical-icon rotating" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
+            <span>Processando edital e doutrina policial com Inteligência Artificial...</span>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Bizu / Síntese Operacional:</label>
-          <textarea id="inputNoteText" class="form-control" rows="4" placeholder="Escreva a regra mnemônica, prazo ou distinção doutrinária..."></textarea>
+
+        <!-- Visualizador Interativo 3D dos Flashcards Gerados no Modal -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Flashcards Disponíveis nesta Disciplina (<span id="modalFCCount">0</span>):</span>
+            <span style="font-size: 10.5px; color: var(--text-secondary);">Toque no card para girar em 3D</span>
+          </div>
+          <div id="modalFCViewerContainer">
+            <!-- Gerado via JavaScript -->
+          </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" onclick="closeModal('modalAddNote')">Cancelar</button>
-        <button class="btn-primary" onclick="saveNewNote()">Salvar Bizu</button>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button type="button" class="btn-secondary" onclick="openQuizTrainingModal(); closeModal('modalAddNote');">
+          🎯 Ir para Treinamento de Mini-Perguntas ➔
+        </button>
+        <button type="button" class="btn-primary" onclick="closeModal('modalAddNote')">Fechar</button>
       </div>
     </div>
   </div>
@@ -3789,21 +4103,1398 @@
       showToast('Matérias limpas. O sistema está aguardando nova configuração.', 'info');
     }
 
-    function populateSubjectDropdowns() {
-      const materias = getConfiguredMaterias();
-      const taskSelect = document.getElementById('inputTaskSubject');
-      const noteSelect = document.getElementById('inputNoteSubject');
 
-      if (materias.length === 0) {
-        const emptyOption = '<option value="">Nenhuma matéria configurada (configure primeiro)</option>';
-        if (taskSelect) taskSelect.innerHTML = emptyOption;
-        if (noteSelect) noteSelect.innerHTML = emptyOption;
+    /* ========================================================================
+       REATOR TÁTICO: FLASHCARDS GERADOS POR IA & MINI-PERGUNTAS INTERATIVAS
+       ======================================================================== */
+    const DEFAULT_POLICE_SUBJECTS = [
+      'Conhecimentos Básicos',
+      'Língua Portuguesa',
+      'Raciocínio Lógico-Matemático',
+      'Estatística',
+      'Informática Básica',
+      'Conhecimentos Específicos',
+      'Noções de Direito Administrativo',
+      'Noções de Direito Constitucional',
+      'Noções de Direito Penal',
+      'Noções de Direito Processual Penal',
+      'Legislação Penal Especial',
+      'Direitos Humanos'
+    ];
+
+    const SUBJECT_COLOR_PALETTE = {
+      'Noções de Direito Penal': '#EF4444',
+      'Direito Penal': '#EF4444',
+      'Noções de Direito Processual Penal': '#F59E0B',
+      'Direito Processual Penal': '#F59E0B',
+      'Noções de Direito Constitucional': '#3B82F6',
+      'Direito Constitucional': '#3B82F6',
+      'Noções de Direito Administrativo': '#10B981',
+      'Direito Administrativo': '#10B981',
+      'Língua Portuguesa': '#8B5CF6',
+      'Legislação Penal Especial': '#D4AF37',
+      'Legislação Penal': '#D4AF37',
+      'Legislação Especial': '#D4AF37',
+      'Legislação Especial / PCMG': '#D4AF37',
+      'Informática Básica': '#06B6D4',
+      'Informática': '#06B6D4',
+      'Raciocínio Lógico-Matemático': '#EC4899',
+      'Raciocínio Lógico': '#EC4899',
+      'Raciocínio Lógico / RLM': '#EC4899',
+      'Estatística': '#14B8A6',
+      'Direitos Humanos': '#EAB308',
+      'Conhecimentos Básicos': '#6366F1',
+      'Conhecimentos Específicos': '#F97316'
+    };
+
+    function getSubjectColor(subjName, idx = 0) {
+      if (SUBJECT_COLOR_PALETTE[subjName]) return SUBJECT_COLOR_PALETTE[subjName];
+      const norm = (subjName || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      for (const [key, val] of Object.entries(SUBJECT_COLOR_PALETTE)) {
+        const kNorm = key.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (norm.includes(kNorm) || kNorm.includes(norm)) return val;
+      }
+      const fallbackList = ['#EF4444', '#F59E0B', '#3B82F6', '#10B981', '#8B5CF6', '#D4AF37', '#06B6D4', '#EC4899', '#14B8A6', '#EAB308', '#6366F1', '#F97316'];
+      return fallbackList[idx % fallbackList.length];
+    }
+
+    function getRegisteredEditalSubjects() {
+      const configured = getConfiguredMaterias();
+      if (configured && configured.length > 0) {
+        return configured.map(m => m.nome || m);
+      }
+      return DEFAULT_POLICE_SUBJECTS;
+    }
+
+    // CATÁLOGO MESTRE TÉCNICO DE FLASHCARDS & MINI-PERGUNTAS POR DISCIPLINA
+    const AI_FLASHCARDS_CATALOG = {
+      'Língua Portuguesa': [
+        {
+          id: 'fc_port_1',
+          front: 'Em "Alugam-se salas comerciais", qual a função da partícula "SE" e a regra de concordância verbal?',
+          back: 'Partícula Apassivadora (PA). O verbo é Transitivo Direto (VTD) e concorda obrigatoriamente com o sujeito paciente ("salas comerciais são alugadas"). Se o sujeito for plural, o verbo flexiona no plural.',
+          quiz: {
+            statement: 'Na oração "Trata-se de ocorrências graves", a partícula "SE" atua como apassivadora, devendo o verbo ir para o plural caso o substantivo seguinte esteja no plural.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. O verbo "tratar-se" rege preposição ("de"), sendo VTI; o "SE" atua como Índice de Indeterminação do Sujeito e o verbo é OBRIGATORIAMENTE singular ("Trata-se de...").'
+          }
+        },
+        {
+          id: 'fc_port_2',
+          front: 'Quais são os 3 casos clássicos de CRASE FACULTATIVA mais cobrados em concursos policiais?',
+          back: 'Regra mnemônica "Até a Maria": 1) Antes de nomes próprios femininos; 2) Antes de pronomes possessivos femininos singulares ("à minha arma"); 3) Após a preposição "até".',
+          quiz: {
+            statement: 'O acento indicativo de crase é facultativo em qual das opções abaixo?',
+            type: 'multiple_choice',
+            options: [
+              'A viatura deslocou-se até à delegacia plantonista.',
+              'O mandado foi entregue à uma testemunha protegida.',
+              'Os investigadores compareceram à audiências públicas.'
+            ],
+            correctIndex: 0,
+            comment: 'Gabarito A. Após a preposição "até", o uso do acento grave é facultativo ("até a" ou "até à"). Antes de "uma" ou palavra no plural sem artigo definido ("a audiências"), a crase é proibida.'
+          }
+        },
+        {
+          id: 'fc_port_3',
+          front: 'Qual a distinção sintática entre Complemento Nominal (CN) e Adjunto Adnominal (AA) com preposição "de"?',
+          back: 'CN: Liga-se a substantivo abstrato, adjetivo ou advérbio e tem sentido PACIENTE (alvo da ação). AA: Liga-se apenas a substantivos e tem sentido AGENTE (posse ou autor da ação).',
+          quiz: {
+            statement: 'Na frase "A perícia concluiu a apreensão do armamento clandestino", o termo "do armamento clandestino" exerce a função sintática de Adjunto Adnominal.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. O termo possui sentido paciente (o armamento foi apreendido), caracterizando Complemento Nominal e não Adjunto Adnominal.'
+          }
+        }
+      ],
+      'Raciocínio Lógico-Matemático': [
+        {
+          id: 'fc_rlm_1',
+          front: 'Qual a regra de ouro para negar a proposição condicional "Se P, então Q" (P → Q)?',
+          back: 'Regra do MANÉ: Mantém a primeira E Nega a segunda: ~(P → Q) ≡ P ∧ ~Q. Alerta de prova: a negação lógica de uma condicional NUNCA é outra condicional!',
+          quiz: {
+            statement: 'A negação lógica de "Se o agente estuda com disciplina, então ele é aprovado" é "Se o agente não estuda, então não é aprovado".',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. A negação de uma condicional nunca é condicional. Pela regra do MANÉ, a negação é: "O agente estuda com disciplina E NÃO é aprovado".'
+          }
+        },
+        {
+          id: 'fc_rlm_2',
+          front: 'Quais são as duas principais equivalências lógicas da proposição condicional (P → Q)?',
+          back: '1) Contrapositiva: ~Q → ~P (inverte e nega tudo); 2) Silogismo disjuntivo (Regra do NEYMAR): ~P ∨ Q (Nega a primeira OU Mantém a segunda).',
+          quiz: {
+            statement: 'A proposição "Se o investigado confessa, a pena é atenuada" é logicamente equivalente a:',
+            type: 'multiple_choice',
+            options: [
+              'O investigado não confessa ou a pena é atenuada.',
+              'Se a pena é atenuada, o investigado confessou.',
+              'O investigado confessa e a pena não é atenuada.'
+            ],
+            correctIndex: 0,
+            comment: 'Gabarito A. Pela equivalência do NEYMAR (~P ∨ Q), nega-se a primeira ("O investigado não confessa") OU mantém-se a segunda ("a pena é atenuada").'
+          }
+        },
+        {
+          id: 'fc_rlm_3',
+          front: 'Como negar proposições quantificadoras universais ("Todo A é B")?',
+          back: 'Mnemônico "PEA + NÃO": Pelo menos um, Existe um ou Algum A NÃO é B. Jamais negue "Todo" utilizando "Nenhum"!',
+          quiz: {
+            statement: 'A negação lógica de "Todo policial civil porta arma de fogo" é "Nenhum policial civil porta arma de fogo".',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. Negar "Todo" exige apenas quebrar a regra: "Pelo menos um policial civil NÃO porta arma" (ou "Algum/Existe policial que não porta").'
+          }
+        }
+      ],
+      'Estatística': [
+        {
+          id: 'fc_est_1',
+          front: 'Qual a relação entre Média, Mediana e Moda em uma distribuição com Assimetria Positiva (à direita)?',
+          back: 'Moda < Mediana < Média. A cauda longa da distribuição estende-se para a direita, puxando a média aritmética para valores mais altos.',
+          quiz: {
+            statement: 'Em uma distribuição com assimetria positiva (à direita), verifica-se que a média é superior à mediana e esta é superior à moda.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 0,
+            comment: 'Gabarito Certo. Na assimetria à direita, a cauda alongada puxa a média para cima, resultando na ordenação: Moda < Mediana < Média.'
+          }
+        },
+        {
+          id: 'fc_est_2',
+          front: 'O que mede o Coeficiente de Variação (CV) de Pearson e qual a sua vantagem?',
+          back: 'CV = (Desvio Padrão / Média) × 100%. Mede a dispersão relativa e é uma medida adimensional (sem unidade de medida), ideal para comparar amostras de escalas diferentes.',
+          quiz: {
+            statement: 'O Coeficiente de Variação (CV) de Pearson caracteriza-se fundamentalmente por ser:',
+            type: 'multiple_choice',
+            options: [
+              'Uma medida de dispersão relativa expressa em porcentagem adimensional.',
+              'Uma medida de tendência central calculada pela raiz quadrada da variância.',
+              'Um teste de hipóteses paramétrico invariante no intervalo de -1 a +1.'
+            ],
+            correctIndex: 0,
+            comment: 'Gabarito A. O CV é a razão percentual do desvio padrão pela média, sendo adimensional e medindo a dispersão relativa.'
+          }
+        },
+        {
+          id: 'fc_est_3',
+          front: 'Qual a diferença entre Amostragem Estratificada e Amostragem por Conglomerados?',
+          back: 'Estratificada: divide em grupos homogêneos internamente (estratos); sorteia indivíduos de TODOS os estratos. Conglomerados: divide em grupos heterogêneos internamente; sorteia ALGUNS grupos por inteiro.',
+          quiz: {
+            statement: 'Na amostragem estratificada, a população é dividida em grupos heterogêneos internamente e sorteiam-se alguns grupos inteiros.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. Essa definição descreve a amostragem por CONGLOMERADOS. Na estratificada, os grupos são internamente homogêneos e sorteia-se de todos.'
+          }
+        }
+      ],
+      'Informática Básica': [
+        {
+          id: 'fc_inf_1',
+          front: 'Qual a diferença essencial entre Phishing, Ransomware e Spyware (Keylogger)?',
+          back: 'Phishing: engenharia social para roubar credenciais. Ransomware: sequestro e cifragem de arquivos exigindo resgate financeiro. Keylogger: spyware que grava as teclas digitadas.',
+          quiz: {
+            statement: 'O malware que sequestra arquivos do computador por meio de criptografia forte e exige pagamento de resgate é denominado:',
+            type: 'multiple_choice',
+            options: [
+              'Ransomware',
+              'Phishing Scam',
+              'Spyware Adware'
+            ],
+            correctIndex: 0,
+            comment: 'Gabarito A. O Ransomware sequestra dados criptografando o disco e cobra resgate (geralmente em criptomoedas) para fornecer a chave de descriptografia.'
+          }
+        },
+        {
+          id: 'fc_inf_2',
+          front: 'Quais são os 5 Princípios Fundamentais da Segurança da Informação (CIDAR)?',
+          back: 'C - Confidencialidade (sigilo); I - Integridade (sem alteração indevida); D - Disponibilidade (acesso garantido aos autorizados); A - Autenticidade (identidade real do autor); R - Não Repúdio (irretratabilidade).',
+          quiz: {
+            statement: 'O princípio do Não Repúdio (irretratabilidade) impede que o autor de um documento ou mensagem assinada digitalmente negue a sua autoria.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 0,
+            comment: 'Gabarito Certo. O Não Repúdio garante validade jurídica e impede a negação do ato praticado pelo emissor.'
+          }
+        },
+        {
+          id: 'fc_inf_3',
+          front: 'Qual a distinção técnica entre Criptografia Simétrica e Criptografia Assimétrica?',
+          back: 'Simétrica: usa uma única chave secreta compartilhada para cifrar e decifrar (AES, DES - alta velocidade). Assimétrica: usa um par de chaves, pública para cifrar e privada para decifrar (RSA - assinaturas digitais).',
+          quiz: {
+            statement: 'Na criptografia simétrica são empregadas duas chaves matematicamente interligadas: a chave pública para cifragem e a privada para decifragem.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. O par de chaves pública e privada é exclusivo da criptografia ASSIMÉTRICA. A simétrica utiliza apenas uma única chave secreta.'
+          }
+        }
+      ],
+      'Noções de Direito Penal': [
+        {
+          id: 'fc_pen_1',
+          front: 'Qual a distinção dogmática entre Dolo Eventual e Culpa Consciente no Código Penal?',
+          back: 'Dolo Eventual: assume o risco do resultado com indiferença ("tanto faz, não me importo"). Culpa Consciente: prevê o resultado danoso, mas confia sinceramente na sua perícia para evitá-lo ("sei do perigo, mas nada vai acontecer").',
+          quiz: {
+            statement: 'Na culpa consciente, o agente prevê o resultado lesivo e assume o risco de sua produção com total indiferença psicológica.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. A aceitação indiferente do risco caracteriza o DOLO EVENTUAL. Na culpa consciente, o agente NÃO aceita o resultado e acredita sinceramente que o evitará.'
+          }
+        },
+        {
+          id: 'fc_pen_2',
+          front: 'Quais são as 4 excludentes de ilicitude do art. 23 do CP e como é tratado o excesso?',
+          back: '1) Estado de necessidade; 2) Legítima defesa; 3) Estrito cumprimento do dever legal; 4) Exercício regular de direito. O excesso (doloso ou culposo) é SEMPRE punível!',
+          quiz: {
+            statement: 'Segundo o art. 23 do Código Penal, o agente que em qualquer das causas de exclusão da ilicitude exceder os limites legais:',
+            type: 'multiple_choice',
+            options: [
+              'Responderá pelo excesso praticado a título de dolo ou culpa.',
+              'Ficará isento de pena caso comprove motivo de relevante valor moral.',
+              'Terá a pena atenuada em dois terços sem responder por crime culposo.'
+            ],
+            correctIndex: 0,
+            comment: 'Gabarito A. O parágrafo único do art. 23 prevê expressamente a responsabilização pelo excesso doloso ou culposo.'
+          }
+        },
+        {
+          id: 'fc_pen_3',
+          front: 'Quais infrações penais NÃO admitem a figura da TENTATIVA (mnemônico COUP-C)?',
+          back: 'C - Crimes Culposos (salvo culpa imprópria); O - Omissivos próprios; U - Unissubsistentes (ato único); P - Preterdolosos; C - Contravenções Penais (art. 4º da LCP).',
+          quiz: {
+            statement: 'As contravenções penais e os crimes omissivos próprios admitem tentativa caso a ação do agente seja interrompida por terceiro.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. Pelo art. 4º da Lei das Contravenções Penais e pela doutrina clássica (COUP-C), contravenções penais e crimes omissivos próprios NÃO admitem tentativa.'
+          }
+        }
+      ],
+      'Noções de Direito Processual Penal': [
+        {
+          id: 'fc_pro_1',
+          front: 'Quais os prazos do Inquérito Policial na Justiça Estadual (CPP) e a autoridade policial pode arquivá-lo?',
+          back: 'Preso: 10 dias (improrrogáveis no CPP comum). Solto: 30 dias (prorrogáveis). A autoridade policial NUNCA pode mandar arquivar autos de inquérito (art. 17 CPP - Princípio da Indisponibilidade).',
+          quiz: {
+            statement: 'Constatando de pronto a manifesta atipicidade da conduta investigada, o Delegado de Polícia pode determinar o arquivamento do inquérito policial.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. O art. 17 do CPP veda expressamente: a autoridade policial não poderá mandar arquivar autos de inquérito (Princípio da Indisponibilidade).'
+          }
+        },
+        {
+          id: 'fc_pro_2',
+          front: 'Qual o prazo da Prisão Temporária (Lei 7.960/89) em crimes comuns e em crimes hediondos?',
+          back: 'Crimes comuns do rol taxativo: 5 dias + 5 dias. Crimes hediondos e equiparados (3T): 30 dias + 30 dias. Cabível EXCLUSIVAMENTE durante a fase de inquérito policial (não cabe em juízo).',
+          quiz: {
+            statement: 'O prazo legal da prisão temporária para apuração de crime hediondo ou equiparado é de:',
+            type: 'multiple_choice',
+            options: [
+              '30 dias, prorrogável por mais 30 dias mediante comprovada necessidade.',
+              '5 dias, prorrogável uma única vez por mais 5 dias pelo juiz.',
+              '15 dias improrrogáveis, vedada a decretação durante a instrução processual.'
+            ],
+            correctIndex: 0,
+            comment: 'Gabarito A. Nos crimes hediondos e equiparados (Lei 8.072/90), a prisão temporária tem prazo de 30 dias, prorrogável por igual período em caso de extrema necessidade.'
+          }
+        },
+        {
+          id: 'fc_pro_3',
+          front: 'Quais as 10 etapas legais da Cadeia de Custódia introduzidas no art. 158-B do CPP pelo Pacote Anticrime?',
+          back: '1. Reconhecimento, 2. Isolamento, 3. Fixação, 4. Coleta, 5. Acondicionamento, 6. Transporte, 7. Recebimento, 8. Processamento, 9. Armazenamento, 10. Descarte.',
+          quiz: {
+            statement: 'O isolamento e a fixação do vestígio constituem etapas obrigatórias da cadeia de custódia da prova pericial previstas no CPP.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 0,
+            comment: 'Gabarito Certo. O art. 158-B do CPP estabelece isolamento (2ª etapa) e fixação (3ª etapa) como procedimentos legais essenciais para preservar vestígios.'
+          }
+        }
+      ],
+      'Noções de Direito Constitucional': [
+        {
+          id: 'fc_cst_1',
+          front: 'A casa é asilo inviolável (Art. 5º, XI CF). Quais são as 4 exceções para entrada sem consentimento?',
+          back: 'A qualquer hora (dia ou noite): 1) Flagrante delito; 2) Desastre; 3) Prestar socorro. Somente durante o dia: 4) Por determinação judicial (critério legal: 05h às 21h nos termos da Lei 13.869).',
+          quiz: {
+            statement: 'Munidos de mandado de busca e apreensão judicial, policiais civis podem penetrar no domicílio do suspeito às 22h30min sem o seu consentimento.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. Por determinação judicial a entrada só pode ocorrer DURANTE O DIA (das 05h às 21h). À noite, apenas com flagrante delito, desastre ou socorro.'
+          }
+        },
+        {
+          id: 'fc_cst_2',
+          front: 'Quais são as 4 Cláusulas Pétreas expressas no art. 60, § 4º da Constituição Federal?',
+          back: 'Mnemônico FOVOSEDI: 1) FOrma federativa de Estado; 2) Voto direto, secreto, universal e periódico; 3) SEparação dos Poderes; 4) DIreitos e garantias individuais.',
+          quiz: {
+            statement: 'Segundo o art. 60, § 4º da CF/88, NÃO será objeto de deliberação a proposta de emenda constitucional tendente a abolir:',
+            type: 'multiple_choice',
+            options: [
+              'A separação dos Poderes e os direitos e garantias individuais.',
+              'O sistema de governo presidencialista e a forma republicana.',
+              'O bicameralismo do Congresso Nacional e a imunidade parlamentar.'
+            ],
+            correctIndex: 0,
+            comment: 'Gabarito A. As cláusulas pétreas expressas do art. 60, § 4º abrangem forma federativa, voto direto/secreto/universal/periódico, separação dos poderes e direitos/garantias individuais.'
+          }
+        },
+        {
+          id: 'fc_cst_3',
+          front: 'Qual a atribuição constitucional expressa da Polícia Civil no art. 144, § 4º da CF/88?',
+          back: 'Às polícias civis, dirigidas por delegados de carreira, incumbem as funções de polícia judiciária e a apuração de infrações penais, exceto as militares.',
+          quiz: {
+            statement: 'A apuração de infrações penais militares praticadas por policiais militares em serviço é de competência constitucional da Polícia Civil.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. O art. 144, § 4º da CF excetua expressamente as infrações penais militares da apuração da Polícia Civil.'
+          }
+        }
+      ],
+      'Noções de Direito Administrativo': [
+        {
+          id: 'fc_adm_1',
+          front: 'Quais são os 4 atributos do Ato Administrativo pelo mnemônico PATI e a exceção da multa?',
+          back: 'P - Presunção de Legitimidade e Veracidade; A - Autoexecutoriedade; T - Tipicidade; I - Imperatividade. ATENÇÃO: A cobrança de multa pecuniária NÃO é autoexecutória (exige execução fiscal judicial).',
+          quiz: {
+            statement: 'A Administração Pública pode executar diretamente e expropriar bens para satisfazer a cobrança de multa administrativa não quitada, dispensando o Poder Judiciário.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. A cobrança de multas administrativas não possui autoexecutoriedade; exige o ajuizamento de Execução Fiscal no Poder Judiciário.'
+          }
+        },
+        {
+          id: 'fc_adm_2',
+          front: 'Quais requisitos do ato administrativo (COMFIFOR) admitem CONVALIDAÇÃO (saneamento do vício)?',
+          back: 'Apenas dois: Competência (desde que não exclusiva) e Forma (desde que não essencial à validade). Motivo, Finalidade e Objeto NUNCA admitem convalidação.',
+          quiz: {
+            statement: 'No regime dos atos administrativos, é passível de convalidação o vício sanável relativo a:',
+            type: 'multiple_choice',
+            options: [
+              'Competência quanto à pessoa, desde que não seja privativa ou exclusiva.',
+              'Finalidade desviada para beneficiar parente da autoridade pública.',
+              'Motivo inexistente comprovado por prova documental irrefutável.'
+            ],
+            correctIndex: 0,
+            comment: 'Gabarito A. A convalidação somente é cabível em vícios sanáveis de Competência (não exclusiva) e Forma (não essencial à validade do ato).'
+          }
+        },
+        {
+          id: 'fc_adm_3',
+          front: 'Qual a diferença entre Desconcentração e Descentralização administrativa?',
+          back: 'DesCOncentração = cria Órgãos (mesma pessoa jurídica, há hierarquia e subordinação). DesCENtralização = cria ENTes (outra pessoa jurídica: autarquias, fundações; não há subordinação, apenas tutela).',
+          quiz: {
+            statement: 'A criação de uma delegacia especializada no âmbito da própria Polícia Civil constitui exemplo típico de desconcentração administrativa.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 0,
+            comment: 'Gabarito Certo. A divisão interna de atribuições dentro da mesma pessoa jurídica (órgãos públicos) caracteriza a Desconcentração.'
+          }
+        }
+      ],
+      'Legislação Penal Especial': [
+        {
+          id: 'fc_leg_1',
+          front: 'Quais crimes são inafiançáveis e insuscetíveis de graça ou anistia pela CF/88 e Lei 8.072/90?',
+          back: 'O grupo "3T": Tortura, Tráfico Ilícito de Entorpecentes e Terrorismo, além dos Crimes Hediondos. ATENÇÃO: são crimes PRESRITÍVEIS! Apenas racismo e ação de grupos armados são imprescritíveis.',
+          quiz: {
+            statement: 'Os crimes hediondos e o tráfico ilícito de drogas são inafiançáveis, insuscetíveis de graça/anistia e imprescritíveis segundo a Constituição Federal.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. São inafiançáveis e insuscetíveis de anistia/graça, mas PRESCREVEM normalmente segundo as regras do Código Penal.'
+          }
+        },
+        {
+          id: 'fc_leg_2',
+          front: 'Na Lei de Abuso de Autoridade (Lei 13.869/19), qual elemento subjetivo especial (dolo específico) é exigido?',
+          back: 'Finalidade específica de: 1) prejudicar outrem; 2) beneficiar a si mesmo ou a terceiro; ou 3) por mero capricho ou satisfação pessoal. A lei veda expressamente o crime de hermenêutica.',
+          quiz: {
+            statement: 'Segundo a Lei 13.869/2019, a divergência na interpretação de lei ou na avaliação de fatos e provas:',
+            type: 'multiple_choice',
+            options: [
+              'Não configura crime de abuso de autoridade (vedação ao crime de hermenêutica).',
+              'Configura abuso de autoridade culposo se comprovada negligência grave.',
+              'Gera afastamento cautelar automático da autoridade sem remuneração.'
+            ],
+            correctIndex: 0,
+            comment: 'Gabarito A. O art. 1º, § 2º da Lei 13.869 veda o crime de hermenêutica: a divergência na interpretação de lei não configura abuso de autoridade.'
+          }
+        },
+        {
+          id: 'fc_leg_3',
+          front: 'A autoridade policial (Delegado de Polícia) pode deferir medida protetiva de urgência na Lei Maria da Penha?',
+          back: 'Sim! Se o município não for sede de comarca e não houver juiz disponível no momento, o Delegado pode conceder medida de afastamento do agressor, comunicando o juiz em até 24 horas.',
+          quiz: {
+            statement: 'A autoridade policial pode afastar o agressor do lar quando o município não for sede de comarca e não houver juiz disponível, comunicando em até 24h.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 0,
+            comment: 'Gabarito Certo. Trata-se da permissão expressa do art. 12-C da Lei 11.340/2006 para resguardar a integridade física da vítima.'
+          }
+        }
+      ],
+      'Direitos Humanos': [
+        {
+          id: 'fc_dh_1',
+          front: 'Qual o status dos tratados de DH aprovados pelo rito do art. 5º, § 3º da CF/88 vs demais tratados de DH?',
+          back: 'Rito do Art. 5º, § 3º (2 turnos, 3/5 de cada Casa): status de Emenda Constitucional. Demais tratados de DH (rito comum ou anteriores à EC 45): status SUPRALEGAL (acima das leis ordinárias, abaixo da CF).',
+          quiz: {
+            statement: 'Os tratados de direitos humanos aprovados em dois turnos por três quintos dos membros de cada Casa do Congresso Nacional equivalem a emendas constitucionais.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 0,
+            comment: 'Gabarito Certo. Essa é a previsão textual do art. 5º, § 3º da CF/88, introduzida pela Emenda Constitucional nº 45/2004.'
+          }
+        },
+        {
+          id: 'fc_dh_2',
+          front: 'Quais são as principais características dogmáticas inerentes aos Direitos Humanos?',
+          back: 'Universalidade (a todos), Inalienabilidade (não comercializáveis), Imprescritibilidade (não se perdem com o tempo), Irrenunciabilidade (não se pode renunciar) e Indivisibilidade.',
+          quiz: {
+            statement: 'O atributo segundo o qual os direitos humanos não se perdem pelo simples decurso do tempo sem o seu exercício é a:',
+            type: 'multiple_choice',
+            options: [
+              'Imprescritibilidade',
+              'Inalienabilidade',
+              'Complementaridade'
+            ],
+            correctIndex: 0,
+            comment: 'Gabarito A. A Imprescritibilidade assegura que os direitos fundamentais podem ser exigidos a qualquer tempo, não prescrevendo com o decurso dos anos.'
+          }
+        },
+        {
+          id: 'fc_dh_3',
+          front: 'Qual a única hipótese admitida de prisão civil por dívida no Brasil à luz do Pacto de San José da Costa Rica?',
+          back: 'Apenas do devedor inescusável de alimentos (pensão alimentícia). A prisão do depositário infiel é ILÍCITA nos termos da Súmula Vinculante 25 do STF e da CADH.',
+          quiz: {
+            statement: 'No Brasil, é lícita a prisão civil do depositário infiel nos casos de alienação fiduciária em garantia.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. A Súmula Vinculante 25 do STF estabelece que é ilícita a prisão civil de depositário infiel, qualquer que seja a modalidade do depósito.'
+          }
+        }
+      ],
+      'Conhecimentos Básicos': [
+        {
+          id: 'fc_bas_1',
+          front: 'Quais são os 5 princípios constitucionais expressos da administração pública no art. 37 da CF/88?',
+          back: 'Mnemônico LIMPE: Legalidade, Impessoalidade, Moralidade, Publicidade e Eficiência (Eficiência introduzida pela EC 19/98).',
+          quiz: {
+            statement: 'O princípio da eficiência constava na redação original da Constituição de 1988 como princípio expresso da administração pública.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. O princípio da eficiência foi incluído no caput do art. 37 pela Emenda Constitucional nº 19/1998.'
+          }
+        }
+      ],
+      'Conhecimentos Específicos': [
+        {
+          id: 'fc_esp_1',
+          front: 'Qual a natureza jurídica do Inquérito Policial e suas características fundamentais?',
+          back: 'Procedimento administrativo informativo, inquisitório, preparatório para a ação penal, escrito, oficial e sigiloso, conduzido pela polícia judiciária.',
+          quiz: {
+            statement: 'O inquérito policial caracteriza-se juridicamente como um processo jurisdicional contencioso sob o crivo do contraditório judicial.',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 1,
+            comment: 'Gabarito Errado. O inquérito policial é procedimento administrativo de natureza inquisitiva e informativa, não sendo processo judicial contencioso.'
+          }
+        }
+      ]
+    };
+
+    // Obter nome canônico ou mais próximo
+    function findCanonicalSubjectKey(rawName) {
+      if (!rawName) return 'Noções de Direito Penal';
+      const norm = rawName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+      if (norm.includes('processual') || norm.includes('processo') || norm.includes('cpp')) return 'Noções de Direito Processual Penal';
+      if (norm.includes('penal') && !norm.includes('especial')) return 'Noções de Direito Penal';
+      if (norm.includes('constitucional') || norm.includes('cf/88')) return 'Noções de Direito Constitucional';
+      if (norm.includes('administrativo')) return 'Noções de Direito Administrativo';
+      if (norm.includes('portugues') || norm.includes('redacao')) return 'Língua Portuguesa';
+      if (norm.includes('especial') || norm.includes('pcmg') || norm.includes('legislacao')) return 'Legislação Penal Especial';
+      if (norm.includes('logic') || norm.includes('rlm') || norm.includes('matemat')) return 'Raciocínio Lógico-Matemático';
+      if (norm.includes('estatist')) return 'Estatística';
+      if (norm.includes('informat') || norm.includes('comput')) return 'Informática Básica';
+      if (norm.includes('humano')) return 'Direitos Humanos';
+      if (norm.includes('especifico')) return 'Conhecimentos Específicos';
+      if (norm.includes('basico')) return 'Conhecimentos Básicos';
+
+      const keys = Object.keys(AI_FLASHCARDS_CATALOG);
+      for (const k of keys) {
+        const kNorm = k.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (norm.includes(kNorm) || kNorm.includes(norm)) return k;
+      }
+      return 'Noções de Direito Penal';
+    }
+
+    /* ------------------------------------------------------------------------
+       PERSISTÊNCIA E GERAÇÃO DE FLASHCARDS POR IA
+       ------------------------------------------------------------------------ */
+    function getStoredAIFlashcards() {
+      try {
+        const raw = localStorage.getItem('tactical_ai_flashcards');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch(e) {
+        console.warn('Erro ao carregar flashcards IA:', e);
+      }
+
+      const initialCards = [];
+      const subjects = getRegisteredEditalSubjects();
+      subjects.forEach((subj, sIdx) => {
+        const canonicalKey = findCanonicalSubjectKey(subj);
+        const templateList = AI_FLASHCARDS_CATALOG[canonicalKey] || AI_FLASHCARDS_CATALOG['Noções de Direito Penal'];
+        templateList.forEach((tmpl, cIdx) => {
+          initialCards.push({
+            id: 'fc_ai_' + sIdx + '_' + cIdx + '_' + Date.now(),
+            subject: subj,
+            canonicalKey: canonicalKey,
+            color: getSubjectColor(subj, sIdx),
+            front: tmpl.front,
+            back: tmpl.back,
+            status: 'novo',
+            quiz: tmpl.quiz,
+            createdAt: new Date().toISOString()
+          });
+        });
+      });
+
+      saveStoredAIFlashcards(initialCards);
+      return initialCards;
+    }
+
+    function saveStoredAIFlashcards(cards) {
+      try {
+        localStorage.setItem('tactical_ai_flashcards', JSON.stringify(cards));
+      } catch(e) {
+        console.warn('Erro ao salvar flashcards IA:', e);
+      }
+    }
+
+    function toggleCard3DFlip(cardId, element) {
+      if (element) {
+        element.classList.toggle('flipped');
+        playTacticalBlip(840, 0.04);
+      } else {
+        const el = document.getElementById('card3d_' + cardId) || document.getElementById('modalCard3d_' + cardId);
+        if (el) {
+          el.classList.toggle('flipped');
+          playTacticalBlip(840, 0.04);
+        }
+      }
+    }
+
+    function markFlashcardStatus(cardId, newStatus, event) {
+      if (event) event.stopPropagation();
+      const allCards = getStoredAIFlashcards();
+      const card = allCards.find(c => c.id === cardId);
+      if (!card) return;
+
+      card.status = newStatus;
+      card.lastReviewed = new Date().toISOString();
+      saveStoredAIFlashcards(allCards);
+
+      playTacticalBlip(newStatus === 'dominado' ? 980 : 620, 0.06);
+      showToast(newStatus === 'dominado' ? 'Flashcard marcado como DOMINADO! 🎯' : 'Flashcard agendado para REVISÃO! ↻', 'success');
+
+      renderAIFlashcards(currentAIFlashcardFilter);
+      updateModalFCViewer();
+    }
+
+    function deleteAIFlashcard(cardId, event) {
+      if (event) event.stopPropagation();
+      if (!confirm('Deseja realmente excluir este flashcard tático?')) return;
+
+      let allCards = getStoredAIFlashcards();
+      allCards = allCards.filter(c => c.id !== cardId);
+      saveStoredAIFlashcards(allCards);
+
+      showToast('Flashcard removido com sucesso.', 'info');
+      renderAIFlashcards(currentAIFlashcardFilter);
+      updateModalFCViewer();
+    }
+
+    let isGeneratingAIFlashcards = false;
+
+    function generateAIFlashcards(targetSubject, callback) {
+      if (isGeneratingAIFlashcards) return;
+      isGeneratingAIFlashcards = true;
+
+      const canonicalKey = findCanonicalSubjectKey(targetSubject);
+      const catalogTemplates = AI_FLASHCARDS_CATALOG[canonicalKey] || AI_FLASHCARDS_CATALOG['Noções de Direito Penal'];
+
+      setTimeout(() => {
+        const allCards = getStoredAIFlashcards();
+        const existingFronts = new Set(allCards.map(c => c.front.trim().toLowerCase()));
+
+        let addedCount = 0;
+        catalogTemplates.forEach((tmpl, i) => {
+          if (!existingFronts.has(tmpl.front.trim().toLowerCase())) {
+            allCards.unshift({
+              id: 'fc_ai_' + Date.now() + '_' + i,
+              subject: targetSubject,
+              canonicalKey: canonicalKey,
+              color: getSubjectColor(targetSubject),
+              front: tmpl.front,
+              back: tmpl.back,
+              status: 'novo',
+              quiz: tmpl.quiz,
+              createdAt: new Date().toISOString()
+            });
+            addedCount++;
+          }
+        });
+
+        if (addedCount === 0) {
+          const extraVariations = [
+            {
+              front: 'Jurisprudência / Súmula relevante em ' + targetSubject + ': Regra geral vs Exceção.',
+              back: 'Bizu Tático de Prova: Fique atento aos termos "salvo", "vedado" e "improrrogável", pois a banca examinadora costuma inverter a regra com a exceção.',
+              quiz: {
+                statement: 'Em matéria de ' + targetSubject + ', a jurisprudência dominante veda a interpretação extensiva prejudicial ao investigado.',
+                type: 'true_false',
+                options: ['Certo', 'Errado'],
+                correctIndex: 0,
+                comment: 'Gabarito Certo. Veda-se a analogia in malam partem e a interpretação que restrinja garantias fundamentais sem base legal estrita.'
+              }
+            },
+            {
+              front: 'Situação-Problema Operacional de Simulado em ' + targetSubject + ': Tomada de decisão fundamentada.',
+              back: 'Bizu Operacional: Identifique de pronto a capitulação exata e o procedimento legal aplicável antes de qualquer ato decisório.',
+              quiz: {
+                statement: 'Na atuação prática em ' + targetSubject + ', a motivação expressa dos atos da autoridade constitui requisito indeclinável de validade.',
+                type: 'true_false',
+                options: ['Certo', 'Errado'],
+                correctIndex: 0,
+                comment: 'Gabarito Certo. A motivação dos atos administrativos e policiais é requisito indeclinável de validade sob a ordem constitucional.'
+              }
+            }
+          ];
+
+          extraVariations.forEach((tmpl, i) => {
+            allCards.unshift({
+              id: 'fc_ai_synth_' + Date.now() + '_' + i,
+              subject: targetSubject,
+              canonicalKey: canonicalKey,
+              color: getSubjectColor(targetSubject),
+              front: tmpl.front,
+              back: tmpl.back,
+              status: 'novo',
+              quiz: tmpl.quiz,
+              createdAt: new Date().toISOString()
+            });
+            addedCount++;
+          });
+        }
+
+        saveStoredAIFlashcards(allCards);
+        isGeneratingAIFlashcards = false;
+
+        playTacticalBlip(1040, 0.08);
+        showToast('⚡ IA gerou ' + addedCount + ' novos Flashcards táticos para: ' + targetSubject + '!', 'success');
+
+        renderAIFlashcards(targetSubject);
+        if (typeof callback === 'function') callback(addedCount);
+      }, 700);
+    }
+
+    function generateAIFlashcardsAction() {
+      const select = document.getElementById('flashcardSubjectHeaderSelect');
+      const subject = select?.value || getRegisteredEditalSubjects()[0] || 'Noções de Direito Penal';
+      generateAIFlashcards(subject);
+    }
+
+    function triggerGenerateFlashcardsFromModal() {
+      const select = document.getElementById('modalAIFlashcardSubjectSelect');
+      const subject = select?.value || getRegisteredEditalSubjects()[0] || 'Noções de Direito Penal';
+      const ind = document.getElementById('modalAIGeneratingIndicator');
+      const btn = document.getElementById('btnModalGenerateAI');
+
+      if (ind) ind.style.display = 'flex';
+      if (btn) btn.disabled = true;
+
+      generateAIFlashcards(subject, (count) => {
+        if (ind) ind.style.display = 'none';
+        if (btn) btn.disabled = false;
+        updateModalFCViewer();
+      });
+    }
+
+    /* ------------------------------------------------------------------------
+       RENDERIZAÇÃO DOS FLASHCARDS 3D NA CENTRAL #bizus
+       ------------------------------------------------------------------------ */
+    let currentAIFlashcardFilter = 'todos';
+
+    function filterAIFlashcardsBySubject(subj) {
+      currentAIFlashcardFilter = subj || 'todos';
+      document.querySelectorAll('.fc-chip-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-subject') === currentAIFlashcardFilter);
+      });
+      renderAIFlashcards(currentAIFlashcardFilter);
+    }
+
+    function renderAIFlashcards(filterSubject) {
+      const container = document.getElementById('aiFlashcardsGrid');
+      const countBadge = document.getElementById('flashcardsCountBadge');
+      if (!container) return;
+
+      currentAIFlashcardFilter = filterSubject || currentAIFlashcardFilter || 'todos';
+
+      const allCards = getStoredAIFlashcards();
+      const filtered = (currentAIFlashcardFilter === 'todos' || !currentAIFlashcardFilter)
+        ? allCards
+        : allCards.filter(c => c.subject === currentAIFlashcardFilter || findCanonicalSubjectKey(c.subject) === findCanonicalSubjectKey(currentAIFlashcardFilter));
+
+      if (countBadge) {
+        countBadge.innerText = filtered.length + ' Cards';
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1 / -1; padding: 26px 14px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
+          'Nenhum Flashcard cadastrado para esta disciplina.<br>' +
+          '<span style="font-size: 11px; color: var(--text-secondary); margin: 6px 0; display: block;">Gere flashcards automaticamente com inteligência artificial para iniciar seus ciclos de memorização.</span>' +
+          '<button class="btn-primary" style="margin-top: 8px; font-size: 11px; padding: 5px 14px; font-weight: 700;" onclick="generateAIFlashcardsAction()">⚡ Gerar Flashcards com IA Agora</button>' +
+        '</div>';
         return;
       }
 
-      const optionsHtml = materias.map(m => '<option value="' + (m.nome || m) + '">' + (m.nome || m) + '</option>').join('');
-      if (taskSelect) taskSelect.innerHTML = optionsHtml;
-      if (noteSelect) noteSelect.innerHTML = optionsHtml;
+      container.innerHTML = filtered.map(c => {
+        const color = c.color || getSubjectColor(c.subject);
+        const statusLabel = c.status === 'dominado' ? 'Dominado' : (c.status === 'revisar' ? 'Revisar' : 'Novo');
+        const statusClass = c.status || 'novo';
+
+        return (
+          '<div class="fc-card-wrapper">' +
+            '<div class="fc-card-3d" id="card3d_' + c.id + '" style="--fc-subject-color: ' + color + ';" onclick="toggleCard3DFlip(\'' + c.id + '\', this)">' +
+              '<!-- Frente do Card -->' +
+              '<div class="fc-card-face fc-card-front">' +
+                '<div class="fc-card-header">' +
+                  '<span class="fc-tag-badge" title="' + c.subject + '">' + c.subject + '</span>' +
+                  '<span class="fc-status-pill ' + statusClass + '">' + statusLabel + '</span>' +
+                '</div>' +
+                '<div class="fc-card-body-text">' +
+                  '<span style="font-size: 10.5px; color: var(--gold-primary); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Conceito-Chave / Artigo</span>' +
+                  '<p style="margin: 0; font-size: 12.5px; font-weight: 600; line-height: 1.5; color: var(--text-main);">' + c.front + '</p>' +
+                '</div>' +
+                '<div class="fc-card-footer">' +
+                  '<span class="fc-flip-hint">↻ Toque para ver o Bizu</span>' +
+                  '<button type="button" class="fc-action-btn" onclick="deleteAIFlashcard(\'' + c.id + '\', event)" title="Excluir card" style="color: #F87171; border-color: rgba(239, 68, 68, 0.3);">' +
+                    '✕' +
+                  '</button>' +
+                '</div>' +
+              '</div>' +
+              '<!-- Verso do Card (Bizu) -->' +
+              '<div class="fc-card-face fc-card-back">' +
+                '<div class="fc-card-header">' +
+                  '<span class="fc-tag-badge" style="background: var(--accent-green);">Bizu Tático</span>' +
+                  '<span class="fc-flip-hint" style="color: var(--accent-green);">✓ Verso</span>' +
+                '</div>' +
+                '<div class="fc-card-body-text">' +
+                  '<p style="margin: 0; font-size: 12px; line-height: 1.55; color: var(--text-main); white-space: pre-line;">' + c.back + '</p>' +
+                '</div>' +
+                '<div class="fc-card-footer">' +
+                  '<div class="fc-action-btn-group">' +
+                    '<button type="button" class="fc-action-btn btn-dominado ' + (c.status === 'dominado' ? 'active' : '') + '" onclick="markFlashcardStatus(\'' + c.id + '\', \'dominado\', event)">' +
+                      '✓ Dominado' +
+                    '</button>' +
+                    '<button type="button" class="fc-action-btn btn-revisar ' + (c.status === 'revisar' ? 'active' : '') + '" onclick="markFlashcardStatus(\'' + c.id + '\', \'revisar\', event)">' +
+                      '↻ Revisar' +
+                    '</button>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    function openAIFlashcardsModal(targetSubject) {
+      populateSubjectDropdowns();
+      if (targetSubject) {
+        const select = document.getElementById('modalAIFlashcardSubjectSelect');
+        if (select) select.value = targetSubject;
+      }
+      updateModalFCViewer();
+      openModal('modalAddNote');
+    }
+
+    function onModalAIFlashcardSubjectChanged(subj) {
+      updateModalFCViewer();
+    }
+
+    function updateModalFCViewer() {
+      const select = document.getElementById('modalAIFlashcardSubjectSelect');
+      const subj = select?.value || getRegisteredEditalSubjects()[0] || 'Noções de Direito Penal';
+      const container = document.getElementById('modalFCViewerContainer');
+      const countEl = document.getElementById('modalFCCount');
+      if (!container) return;
+
+      const allCards = getStoredAIFlashcards();
+      const filtered = allCards.filter(c => c.subject === subj || findCanonicalSubjectKey(c.subject) === findCanonicalSubjectKey(subj));
+
+      if (countEl) countEl.innerText = filtered.length;
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
+          'Nenhum flashcard gerado ainda para esta disciplina.<br>' +
+          'Clique no botão acima "⚡ Gerar Flashcards com IA" para criar o acervo tático.' +
+        '</div>';
+        return;
+      }
+
+      container.innerHTML = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; max-height: 280px; overflow-y: auto; padding: 4px;">' +
+        filtered.map(c => {
+          const color = c.color || getSubjectColor(c.subject);
+          return (
+            '<div class="fc-card-wrapper" style="min-height: 175px;">' +
+              '<div class="fc-card-3d" id="modalCard3d_' + c.id + '" style="--fc-subject-color: ' + color + '; min-height: 175px;" onclick="toggleCard3DFlip(\'' + c.id + '\', this)">' +
+                '<div class="fc-card-face fc-card-front">' +
+                  '<div class="fc-card-header">' +
+                    '<span class="fc-tag-badge">' + c.subject + '</span>' +
+                    '<span class="fc-status-pill ' + c.status + '">' + c.status + '</span>' +
+                  '</div>' +
+                  '<div class="fc-card-body-text">' +
+                    '<p style="margin: 0; font-size: 12px; font-weight: 600; line-height: 1.45;">' + c.front + '</p>' +
+                  '</div>' +
+                  '<div class="fc-card-footer">' +
+                    '<span class="fc-flip-hint">Toque p/ Bizu ➔</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="fc-card-face fc-card-back">' +
+                  '<div class="fc-card-header">' +
+                    '<span class="fc-tag-badge" style="background: var(--accent-green);">Bizu</span>' +
+                    '<span style="font-size: 10px; color: var(--accent-green);">✓</span>' +
+                  '</div>' +
+                  '<div class="fc-card-body-text">' +
+                    '<p style="margin: 0; font-size: 11.5px; line-height: 1.5; color: var(--text-main); white-space: pre-line;">' + c.back + '</p>' +
+                  '</div>' +
+                  '<div class="fc-card-footer">' +
+                    '<div class="fc-action-btn-group">' +
+                      '<button type="button" class="fc-action-btn btn-dominado" onclick="markFlashcardStatus(\'' + c.id + '\', \'dominado\', event)">✓ Dominado</button>' +
+                      '<button type="button" class="fc-action-btn btn-revisar" onclick="markFlashcardStatus(\'' + c.id + '\', \'revisar\', event)">↻ Revisar</button>' +
+                    '</div>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('') +
+      '</div>';
+    }
+
+    function openAIFlashcardsSection(event) {
+      if (event) event.preventDefault();
+      highlightSection('bizus');
+      document.getElementById('bizus')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      openAIFlashcardsModal();
+    }
+
+    /* ========================================================================
+       REATOR TÁTICO: MINI-PERGUNTAS INTERATIVAS (BASEADAS NOS FLASHCARDS)
+       ======================================================================== */
+    let currentQuizState = {
+      subject: 'todos',
+      questions: [],
+      currentIndex: 0,
+      correct: 0,
+      wrong: 0,
+      answered: false,
+      selectedOption: null,
+      completed: false
+    };
+
+    function generateQuestionsFromCards(subjectFilter) {
+      const allCards = getStoredAIFlashcards();
+      const targetCards = (subjectFilter === 'todos' || !subjectFilter)
+        ? allCards
+        : allCards.filter(c => c.subject === subjectFilter || findCanonicalSubjectKey(c.subject) === findCanonicalSubjectKey(subjectFilter));
+
+      if (targetCards.length === 0) return [];
+
+      const questions = [];
+      targetCards.forEach(c => {
+        if (c.quiz && c.quiz.statement && Array.isArray(c.quiz.options)) {
+          questions.push({
+            id: 'q_' + c.id,
+            cardId: c.id,
+            subject: c.subject,
+            color: c.color || getSubjectColor(c.subject),
+            statement: c.quiz.statement,
+            type: c.quiz.type || 'multiple_choice',
+            options: c.quiz.options,
+            correctIndex: c.quiz.correctIndex,
+            bizuOriginal: c.back,
+            comment: c.quiz.comment || ('Fundamentação Tática (Bizu Original): ' + c.back)
+          });
+        } else {
+          questions.push({
+            id: 'q_gen_' + c.id,
+            cardId: c.id,
+            subject: c.subject,
+            color: c.color || getSubjectColor(c.subject),
+            statement: 'Julgue o item técnico de concurso policial referente a ' + c.subject + ':\n\n"' + c.front + ' - Afirma-se que a doutrina e a lei determinam exatamente a regra fixada no verso do card."',
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: 0,
+            bizuOriginal: c.back,
+            comment: 'Fundamentação Oficial do Flashcard: ' + c.back
+          });
+        }
+      });
+
+      for (let i = questions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [questions[i], questions[j]] = [questions[j], questions[i]];
+      }
+
+      return questions.slice(0, 10);
+    }
+
+    function initInteractiveQuiz(subjectFilter = 'todos') {
+      const questions = generateQuestionsFromCards(subjectFilter);
+      currentQuizState = {
+        subject: subjectFilter || 'todos',
+        questions: questions,
+        currentIndex: 0,
+        correct: 0,
+        wrong: 0,
+        answered: false,
+        selectedOption: null,
+        completed: questions.length === 0
+      };
+      renderInteractiveQuiz();
+      renderModalQuiz();
+    }
+
+    function onQuizFilterChanged(subj) {
+      initInteractiveQuiz(subj);
+    }
+
+    function onModalQuizSubjectChanged(subj) {
+      initInteractiveQuiz(subj);
+    }
+
+    function renderInteractiveQuiz() {
+      const container = document.getElementById('interactiveQuizContainer');
+      const correctEl = document.getElementById('quizScoreCorrect');
+      const wrongEl = document.getElementById('quizScoreWrong');
+      const rateEl = document.getElementById('quizScoreAccuracy');
+
+      if (!container) return;
+
+      const totalAnswered = currentQuizState.correct + currentQuizState.wrong;
+      const accuracy = totalAnswered > 0 ? Math.round((currentQuizState.correct / totalAnswered) * 100) : 0;
+
+      if (correctEl) correctEl.innerText = '✓ ' + currentQuizState.correct + ' Acertos';
+      if (wrongEl) wrongEl.innerText = '✕ ' + currentQuizState.wrong + ' Erros';
+      if (rateEl) rateEl.innerText = accuracy + '%';
+
+      if (currentQuizState.questions.length === 0) {
+        container.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
+          'Nenhuma mini-pergunta disponível para esta seleção.<br>' +
+          'Gere flashcards para carregar automaticamente novas perguntas do edital.<br>' +
+          '<button class="btn-primary" style="margin-top: 10px; font-size: 11px; padding: 5px 14px; font-weight: 700;" onclick="generateAIFlashcardsAction()">⚡ Gerar Flashcards & Perguntas</button>' +
+        '</div>';
+        return;
+      }
+
+      if (currentQuizState.completed) {
+        const finalRate = totalAnswered > 0 ? Math.round((currentQuizState.correct / totalAnswered) * 100) : 0;
+        const feedbackBadge = finalRate >= 80 ? 'EXCELENTE - PADRÃO OPERACIONAL!' : (finalRate >= 60 ? 'BOM DESEMPENHO - REVISE OS BIZUS' : 'ATENÇÃO - REFAÇA A BATERIA');
+        const feedbackColor = finalRate >= 80 ? 'var(--accent-green)' : (finalRate >= 60 ? 'var(--gold-primary)' : '#F87171');
+
+        container.innerHTML = (
+          '<div class="quiz-card-interactive" style="text-align: center; padding: 26px 18px; align-items: center;">' +
+            '<div style="font-size: 32px; margin-bottom: 6px;">🎯</div>' +
+            '<h3 style="margin: 0 0 6px 0; color: var(--gold-light); font-size: 16px;">Missão de Mini-Perguntas Concluída!</h3>' +
+            '<span style="font-size: 11px; font-weight: 700; color: ' + feedbackColor + '; text-transform: uppercase; letter-spacing: 0.05em;">' + feedbackBadge + '</span>' +
+            '<div style="display: flex; gap: 14px; margin: 16px 0; font-family: \'JetBrains Mono\', monospace; font-size: 13px;">' +
+              '<span style="color: var(--accent-green);">Acertos: <strong>' + currentQuizState.correct + '</strong></span>' +
+              '<span style="color: #F87171;">Erros: <strong>' + currentQuizState.wrong + '</strong></span>' +
+              '<span style="color: var(--gold-primary);">Aproveitamento: <strong>' + finalRate + '%</strong></span>' +
+            '</div>' +
+            '<p style="font-size: 11.5px; color: var(--text-secondary); max-width: 440px; margin: 0 0 16px 0;">O progresso desta disciplina foi sincronizado e atualizado no painel de controle operacional do seu edital.</p>' +
+            '<div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">' +
+              '<button type="button" class="btn-secondary" onclick="initInteractiveQuiz(currentQuizState.subject)">↻ Reiniciar Bateria</button>' +
+              '<button type="button" class="btn-primary" onclick="openAIFlashcardsModal(currentQuizState.subject)">Revisar Flashcards Desta Matéria ➔</button>' +
+            '</div>' +
+          '</div>'
+        );
+        return;
+      }
+
+      const q = currentQuizState.questions[currentQuizState.currentIndex];
+      const qNum = currentQuizState.currentIndex + 1;
+      const totalQ = currentQuizState.questions.length;
+      const color = q.color || getSubjectColor(q.subject);
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const optionsHtml = q.options.map((opt, idx) => {
+        let optClass = 'quiz-opt-btn';
+        if (currentQuizState.answered) {
+          if (idx === q.correctIndex) {
+            optClass += ' correct-pick';
+          } else if (idx === currentQuizState.selectedOption) {
+            optClass += ' wrong-pick';
+          }
+        }
+
+        const letterLabel = q.type === 'true_false' ? (idx === 0 ? 'C' : 'E') : letters[idx];
+        return (
+          '<button type="button" class="' + optClass + '" ' + (currentQuizState.answered ? 'disabled' : '') + ' onclick="submitQuizAnswer(' + idx + ')">' +
+            '<span class="quiz-opt-letter">' + letterLabel + '</span>' +
+            '<span style="flex: 1;">' + opt + '</span>' +
+            (currentQuizState.answered && idx === q.correctIndex ? '<span style="color: var(--accent-green); font-weight: 700;">✓</span>' : '') +
+            (currentQuizState.answered && idx === currentQuizState.selectedOption && idx !== q.correctIndex ? '<span style="color: #F87171; font-weight: 700;">✕</span>' : '') +
+          '</button>'
+        );
+      }).join('');
+
+      let feedbackBoxHtml = '';
+      if (currentQuizState.answered) {
+        const isRight = currentQuizState.selectedOption === q.correctIndex;
+        feedbackBoxHtml = (
+          '<div class="quiz-feedback-box">' +
+            '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">' +
+              '<span style="font-size: 11.5px; font-weight: 700; color: ' + (isRight ? 'var(--accent-green)' : '#F87171') + '; text-transform: uppercase;">' +
+                (isRight ? '✓ Resposta Correta! Excelente fixação!' : '✕ Resposta Incorreta! Atenção ao Bizu:') +
+              '</span>' +
+              '<span style="font-size: 10px; color: var(--gold-primary); font-weight: 600; font-family: \'JetBrains Mono\', monospace;">GABARITO COMENTADO</span>' +
+            '</div>' +
+            '<p style="font-size: 12px; line-height: 1.5; color: var(--text-main); margin: 0 0 8px 0;">' + q.comment + '</p>' +
+            (q.bizuOriginal ? (
+              '<div style="margin-top: 8px; padding: 10px 12px; background: rgba(212, 175, 55, 0.08); border-left: 3px solid var(--gold-primary); border-radius: 4px;">' +
+                '<span style="font-size: 10.5px; font-weight: 700; color: var(--gold-light); display: flex; align-items: center; gap: 4px; margin-bottom: 3px;">' +
+                  '⚡ Bizu Original do Flashcard (Verso):' +
+                '</span>' +
+                '<span style="font-size: 11.5px; color: var(--text-secondary); line-height: 1.5; white-space: pre-line;">' + q.bizuOriginal + '</span>' +
+              '</div>'
+            ) : '') +
+            '<div style="margin-top: 10px; display: flex; justify-content: flex-end;">' +
+              '<button type="button" class="btn-primary" style="padding: 6px 16px; font-size: 11.5px; font-weight: 700;" onclick="nextQuizQuestion()">' +
+                (qNum === totalQ ? 'Finalizar Bateria ➔' : 'Próxima Pergunta ➔') +
+              '</button>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      container.innerHTML = (
+        '<div class="quiz-card-interactive">' +
+          '<div class="quiz-meta-header">' +
+            '<div style="display: flex; align-items: center; gap: 8px;">' +
+              '<span class="fc-tag-badge" style="background: ' + color + ';">' + q.subject + '</span>' +
+              '<span style="font-size: 11px; color: var(--gold-primary); font-weight: 700; font-family: \'JetBrains Mono\', monospace;">' +
+                'Questão ' + qNum + ' de ' + totalQ +
+              '</span>' +
+            '</div>' +
+            '<span style="font-size: 10px; color: var(--text-muted);">' + (q.type === 'true_false' ? 'Certo ou Errado' : 'Escolha a assertiva correta') + '</span>' +
+          '</div>' +
+          '<div class="quiz-q-statement">' +
+            q.statement.replace(/\n/g, '<br>') +
+          '</div>' +
+          '<div class="quiz-options-grid">' +
+            optionsHtml +
+          '</div>' +
+          feedbackBoxHtml +
+        '</div>'
+      );
+    }
+
+    function submitQuizAnswer(chosenIdx) {
+      if (currentQuizState.answered || currentQuizState.completed) return;
+      const q = currentQuizState.questions[currentQuizState.currentIndex];
+      if (!q) return;
+
+      currentQuizState.answered = true;
+      currentQuizState.selectedOption = chosenIdx;
+
+      const isCorrect = (chosenIdx === q.correctIndex);
+      if (isCorrect) {
+        currentQuizState.correct++;
+        playTacticalBlip(980, 0.08);
+      } else {
+        currentQuizState.wrong++;
+        playTacticalBlip(440, 0.12);
+      }
+
+      renderInteractiveQuiz();
+      renderModalQuiz();
+    }
+
+    function nextQuizQuestion() {
+      if (currentQuizState.currentIndex + 1 < currentQuizState.questions.length) {
+        currentQuizState.currentIndex++;
+        currentQuizState.answered = false;
+        currentQuizState.selectedOption = null;
+        renderInteractiveQuiz();
+        renderModalQuiz();
+      } else {
+        currentQuizState.completed = true;
+        finishQuizSession();
+        renderInteractiveQuiz();
+        renderModalQuiz();
+      }
+    }
+
+    function finishQuizSession() {
+      const totalAnswered = currentQuizState.correct + currentQuizState.wrong;
+      const rate = totalAnswered > 0 ? Math.round((currentQuizState.correct / totalAnswered) * 100) : 0;
+
+      const targetSubj = currentQuizState.subject !== 'todos' ? currentQuizState.subject : (currentQuizState.questions[0]?.subject || 'Geral');
+      try {
+        const raw = localStorage.getItem('concurso_app_data');
+        if (raw) {
+          const appData = JSON.parse(raw);
+          if (Array.isArray(appData.materias)) {
+            const mat = appData.materias.find(m => (m.nome || m) === targetSubj || findCanonicalSubjectKey(m.nome || m) === findCanonicalSubjectKey(targetSubj));
+            if (mat) {
+              if (!Array.isArray(mat.topicos)) mat.topicos = [];
+              const pendingTopic = mat.topicos.find(t => typeof t === 'object' && t !== null ? !t.concluido : false);
+              if (pendingTopic) {
+                pendingTopic.concluido = true;
+              } else if (mat.topicos.length === 0) {
+                mat.topicos.push({ id: 'top_quiz_' + Date.now(), texto: 'Mini-Perguntas Táticas dos Flashcards', concluido: true });
+              }
+            }
+          }
+
+          if (!Array.isArray(appData.studyLog)) appData.studyLog = [];
+          appData.studyLog.push({
+            id: 'log_quiz_' + Date.now(),
+            minutos: Math.max(15, totalAnswered * 2),
+            questoes: totalAnswered,
+            acertos: currentQuizState.correct,
+            data: new Date().toISOString().split('T')[0],
+            origem: 'mini_perguntas_flashcards'
+          });
+
+          localStorage.setItem('concurso_app_data', JSON.stringify(appData));
+        }
+
+        const customRaw = localStorage.getItem('tactical_custom_materias');
+        if (customRaw) {
+          const custom = JSON.parse(customRaw);
+          if (Array.isArray(custom)) {
+            const cMat = custom.find(m => (m.nome || m) === targetSubj || findCanonicalSubjectKey(m.nome || m) === findCanonicalSubjectKey(targetSubj));
+            if (cMat) {
+              if (!Array.isArray(cMat.topicos)) cMat.topicos = [];
+              const pending = cMat.topicos.find(t => typeof t === 'object' && t !== null ? !t.concluido : false);
+              if (pending) pending.concluido = true;
+              else if (cMat.topicos.length === 0) cMat.topicos.push({ id: 'top_q_' + Date.now(), texto: 'Mini-Perguntas dos Flashcards', concluido: true });
+            }
+            localStorage.setItem('tactical_custom_materias', JSON.stringify(custom));
+          }
+        }
+      } catch(e) {
+        console.warn('Erro ao atualizar progresso da disciplina:', e);
+      }
+
+      renderClasses();
+      updateStudyMetrics();
+
+      playTacticalBlip(1200, 0.1);
+      showToast('Bateria de Mini-Perguntas Concluída! Progresso da disciplina atualizado!', 'success');
+    }
+
+    /* Modal de Treinamento de Mini-Perguntas (Modo Foco) */
+    function openQuizTrainingModal(targetSubject) {
+      populateSubjectDropdowns();
+      if (targetSubject) {
+        const select = document.getElementById('modalQuizSubjectSelect');
+        if (select) select.value = targetSubject;
+      }
+      initInteractiveQuiz(targetSubject || currentQuizState.subject || 'todos');
+      openModal('modalAddTask');
+    }
+
+    function restartModalQuizBattery() {
+      const select = document.getElementById('modalQuizSubjectSelect');
+      const subj = select?.value || 'todos';
+      initInteractiveQuiz(subj);
+    }
+
+    function renderModalQuiz() {
+      const container = document.getElementById('modalQuizInteractiveBody');
+      const correctEl = document.getElementById('modalQuizScoreCorrect');
+      const wrongEl = document.getElementById('modalQuizScoreWrong');
+      const rateEl = document.getElementById('modalQuizScoreRate');
+
+      if (!container) return;
+
+      const totalAnswered = currentQuizState.correct + currentQuizState.wrong;
+      const accuracy = totalAnswered > 0 ? Math.round((currentQuizState.correct / totalAnswered) * 100) : 0;
+
+      if (correctEl) correctEl.innerText = '✓ ' + currentQuizState.correct + ' Acertos';
+      if (wrongEl) wrongEl.innerText = '✕ ' + currentQuizState.wrong + ' Erros';
+      if (rateEl) rateEl.innerText = accuracy + '%';
+
+      if (currentQuizState.questions.length === 0) {
+        container.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
+          'Nenhuma mini-pergunta para esta disciplina.<br>' +
+          '<button class="btn-primary" style="margin-top: 10px; font-size: 11px; padding: 5px 14px;" onclick="generateAIFlashcardsAction()">⚡ Gerar Flashcards com IA</button>' +
+        '</div>';
+        return;
+      }
+
+      if (currentQuizState.completed) {
+        container.innerHTML = (
+          '<div style="text-align: center; padding: 22px; background: rgba(14, 19, 30, 0.8); border: 1px solid var(--border-tactical); border-radius: var(--radius-sm);">' +
+            '<div style="font-size: 32px; margin-bottom: 8px;">🎯</div>' +
+            '<h3 style="color: var(--gold-light); margin: 0 0 6px 0;">Bateria Tática Concluída!</h3>' +
+            '<p style="color: var(--text-secondary); font-size: 12px; margin: 0 0 14px 0;">Aproveitamento: <strong style="color: var(--gold-primary); font-size: 14px;">' + accuracy + '%</strong> (' + currentQuizState.correct + '/' + totalAnswered + ')</p>' +
+            '<button type="button" class="btn-primary" onclick="restartModalQuizBattery()">Treinar Novamente ➔</button>' +
+          '</div>'
+        );
+        return;
+      }
+
+      const q = currentQuizState.questions[currentQuizState.currentIndex];
+      const qNum = currentQuizState.currentIndex + 1;
+      const totalQ = currentQuizState.questions.length;
+      const color = q.color || getSubjectColor(q.subject);
+      const letters = ['A', 'B', 'C', 'D'];
+
+      const optionsHtml = q.options.map((opt, idx) => {
+        let optClass = 'quiz-opt-btn';
+        if (currentQuizState.answered) {
+          if (idx === q.correctIndex) optClass += ' correct-pick';
+          else if (idx === currentQuizState.selectedOption) optClass += ' wrong-pick';
+        }
+
+        const letterLabel = q.type === 'true_false' ? (idx === 0 ? 'C' : 'E') : letters[idx];
+        return (
+          '<button type="button" class="' + optClass + '" ' + (currentQuizState.answered ? 'disabled' : '') + ' onclick="submitQuizAnswer(' + idx + ')">' +
+            '<span class="quiz-opt-letter">' + letterLabel + '</span>' +
+            '<span style="flex: 1;">' + opt + '</span>' +
+            (currentQuizState.answered && idx === q.correctIndex ? '<span style="color: var(--accent-green); font-weight: 700;">✓</span>' : '') +
+            (currentQuizState.answered && idx === currentQuizState.selectedOption && idx !== q.correctIndex ? '<span style="color: #F87171; font-weight: 700;">✕</span>' : '') +
+          '</button>'
+        );
+      }).join('');
+
+      let feedbackBoxHtml = '';
+      if (currentQuizState.answered) {
+        const isRight = currentQuizState.selectedOption === q.correctIndex;
+        feedbackBoxHtml = (
+          '<div class="quiz-feedback-box">' +
+            '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">' +
+              '<span style="font-size: 11.5px; font-weight: 700; color: ' + (isRight ? 'var(--accent-green)' : '#F87171') + '; text-transform: uppercase;">' +
+                (isRight ? '✓ Acerto Tático!' : '✕ Erro de Prova! Atenção ao Bizu:') +
+              '</span>' +
+              '<span style="font-size: 10px; color: var(--gold-primary); font-weight: 600; font-family: \'JetBrains Mono\', monospace;">GABARITO COMENTADO</span>' +
+            '</div>' +
+            '<p style="font-size: 12px; line-height: 1.5; color: var(--text-main); margin: 0 0 8px 0;">' + q.comment + '</p>' +
+            (q.bizuOriginal ? (
+              '<div style="margin-top: 8px; padding: 10px 12px; background: rgba(212, 175, 55, 0.08); border-left: 3px solid var(--gold-primary); border-radius: 4px;">' +
+                '<span style="font-size: 10.5px; font-weight: 700; color: var(--gold-light); display: flex; align-items: center; gap: 4px; margin-bottom: 3px;">' +
+                  '⚡ Bizu Original do Flashcard (Verso):' +
+                '</span>' +
+                '<span style="font-size: 11.5px; color: var(--text-secondary); line-height: 1.5; white-space: pre-line;">' + q.bizuOriginal + '</span>' +
+              '</div>'
+            ) : '') +
+            '<div style="margin-top: 10px; display: flex; justify-content: flex-end;">' +
+              '<button type="button" class="btn-primary" style="padding: 6px 16px; font-size: 11.5px; font-weight: 700;" onclick="nextQuizQuestion()">' +
+                (qNum === totalQ ? 'Finalizar Bateria ➔' : 'Próxima Pergunta ➔') +
+              '</button>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      container.innerHTML = (
+        '<div style="display: flex; flex-direction: column; gap: 12px;">' +
+          '<div style="display: flex; justify-content: space-between; align-items: center;">' +
+            '<span class="fc-tag-badge" style="background: ' + color + ';">' + q.subject + '</span>' +
+            '<span style="font-size: 11px; color: var(--gold-primary); font-family: \'JetBrains Mono\', monospace; font-weight: 700;">' +
+              'Questão ' + qNum + ' / ' + totalQ +
+            '</span>' +
+          '</div>' +
+          '<div class="quiz-q-statement" style="font-size: 13.5px; padding: 4px 0;">' +
+            q.statement.replace(/\n/g, '<br>') +
+          '</div>' +
+          '<div class="quiz-options-grid">' +
+            optionsHtml +
+          '</div>' +
+          feedbackBoxHtml +
+        '</div>'
+      );
+    }
+
+    function openQuizTrainingSection(event) {
+      if (event) event.preventDefault();
+      highlightSection('missoes');
+      document.getElementById('missoes')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      openQuizTrainingModal();
+    }
+
+
+    function populateSubjectDropdowns() {
+      const subjects = getRegisteredEditalSubjects();
+      
+      // 1. Dropdown do Quiz no card principal
+      const quizSelect = document.getElementById('quizSubjectFilterSelect');
+      if (quizSelect) {
+        quizSelect.innerHTML = '<option value="todos">Todas as Matérias (Missão Geral)</option>' +
+          subjects.map(s => '<option value="' + s + '">' + s + '</option>').join('');
+      }
+
+      // 2. Dropdown do Quiz no modal
+      const modalQuizSelect = document.getElementById('modalQuizSubjectSelect');
+      if (modalQuizSelect) {
+        modalQuizSelect.innerHTML = '<option value="todos">Todas as Matérias (Missão Geral)</option>' +
+          subjects.map(s => '<option value="' + s + '">' + s + '</option>').join('');
+      }
+
+      // 3. Dropdown de Flashcards no card principal
+      const fcHeaderSelect = document.getElementById('flashcardSubjectHeaderSelect');
+      if (fcHeaderSelect) {
+        fcHeaderSelect.innerHTML = subjects.map(s => '<option value="' + s + '">' + s + '</option>').join('');
+      }
+
+      // 4. Dropdown de Flashcards no modal de IA
+      const modalFCSelect = document.getElementById('modalAIFlashcardSubjectSelect');
+      if (modalFCSelect) {
+        modalFCSelect.innerHTML = subjects.map(s => '<option value="' + s + '">' + s + '</option>').join('');
+      }
+
+      // 5. Barra de Chips de matérias
+      const chipsBar = document.getElementById('flashcardsChipsBar');
+      if (chipsBar) {
+        chipsBar.innerHTML = '<button class="note-filter-btn fc-chip-btn ' + (currentAIFlashcardFilter === 'todos' ? 'active' : '') + '" data-subject="todos" onclick="filterAIFlashcardsBySubject(\'todos\')">Todas as Matérias</button>' +
+          subjects.map(s => {
+            const shortTag = getShortSubjectTag(s);
+            const isActive = currentAIFlashcardFilter === s;
+            return '<button class="note-filter-btn fc-chip-btn ' + (isActive ? 'active' : '') + '" data-subject="' + s + '" onclick="filterAIFlashcardsBySubject(\'' + s.replace(/'/g, "\\'") + '\')" title="' + s + '">' + shortTag + '</button>';
+          }).join('');
+      }
+
+      // Compatibilidade legada caso ainda existam selects antigos
+      const taskSelect = document.getElementById('inputTaskSubject');
+      const noteSelect = document.getElementById('inputNoteSubject');
+      const opts = subjects.map(s => '<option value="' + s + '">' + s + '</option>').join('');
+      if (taskSelect) taskSelect.innerHTML = opts;
+      if (noteSelect) noteSelect.innerHTML = opts;
     }
 
     /* ========================================================================
@@ -4461,90 +6152,9 @@
       }).join('');
     }
 
-    // Renderizar Missões / Tarefas (Tópicos do Edital do Modo Clássico + Missões Manuais)
+    // Renderizar Missões: Treinamento de Mini-Perguntas dos Flashcards
     function renderTasks(filterSubject) {
-      const tbody = document.getElementById('tasksTableBody');
-      if (!tbody) return;
-
-      const configured = getConfiguredMaterias();
-      if (configured.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 12px;">Nenhuma disciplina configurada. Configure suas matérias para organizar seus tópicos e missões de estudo.<br><button class="btn-primary" style="margin-top: 10px; font-size: 11px; padding: 4px 12px;" onclick="openSubjectConfigModal()">+ Configurar Matérias</button></td></tr>';
-        return;
-      }
-
-      // 1. Extrair os tópicos do edital de todas as matérias configuradas (ou da matéria filtrada)
-      let editalTasks = [];
-      const targets = filterSubject 
-        ? configured.filter(m => (m.nome || m) === filterSubject)
-        : configured;
-
-      targets.forEach(mat => {
-        const sName = mat.nome || mat;
-        if (Array.isArray(mat.topicos) && mat.topicos.length > 0) {
-          mat.topicos.forEach((top, tIdx) => {
-            const text = typeof top === 'object' && top !== null ? (top.texto || top.nome || 'Tópico ' + (tIdx + 1)) : top;
-            const isDone = typeof top === 'object' && top !== null ? (!!top.concluido || top.status === 'concluido' || top.status === 'done') : false;
-            editalTasks.push({
-              id: 'top_' + (mat.id || 'm') + '_' + tIdx,
-              materiaId: mat.id || sName,
-              topicIdx: tIdx,
-              isEditalTopic: true,
-              title: text,
-              date: 'Edital',
-              done: isDone,
-              priority: (typeof top === 'object' && top?.priority) ? top.priority : 3,
-              subject: sName
-            });
-          });
-        }
-      });
-
-      // 2. Mesclar tarefas manuais adicionadas pelo usuário (currentTasks)
-      let manualTasks = filterSubject 
-        ? currentTasks.filter(t => t.subject === filterSubject)
-        : currentTasks;
-
-      // Lista final combinada: tarefas manuais no topo, seguidas pelos tópicos do edital
-      const listToRender = [...manualTasks, ...editalTasks];
-
-      if (listToRender.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 12.5px;">' +
-          'Nenhuma missão cadastrada' + (filterSubject ? ' para ' + filterSubject : '') + '.<br>' +
-          '<button class="btn-primary" style="margin-top: 10px; font-size: 11px; padding: 4px 14px;" onclick="openModal(\'modalAddTask\')">+ Adicionar Nova Missão</button>' +
-        '</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = listToRender.map(t => {
-        const stars = '★'.repeat(t.priority || 3) + '☆'.repeat(Math.max(0, 4 - (t.priority || 3)));
-        const onChangeCall = t.isEditalTopic 
-          ? 'toggleEditalTopicDone(\'' + t.materiaId + '\', ' + t.topicIdx + ', \'' + t.subject.replace(/'/g, "\\'") + '\')' 
-          : 'toggleTaskDone(\'' + t.id + '\')';
-        return (
-          '<tr class="' + (t.done ? 'task-completed' : '') + '">' +
-            '<td class="task-check-cell">' +
-              '<input type="checkbox" class="task-checkbox" ' + (t.done ? 'checked' : '') + ' onchange="' + onChangeCall + '">' +
-            '</td>' +
-            '<td>' +
-              '<span class="task-title" style="' + (t.done ? 'text-decoration: line-through; color: var(--text-muted);' : 'color: var(--text-main); font-weight: 500;') + '">' + t.title + '</span>' +
-            '</td>' +
-            '<td>' +
-              '<span style="font-family: \'JetBrains Mono\', monospace; font-size: 11px; color: var(--text-gold);">' + (t.date || 'Edital') + '</span>' +
-            '</td>' +
-            '<td>' +
-              '<span class="status-badge ' + (t.done ? 'status-completed' : 'status-in-progress') + '">' +
-                (t.done ? 'Concluída' : 'Pendente') +
-              '</span>' +
-            '</td>' +
-            '<td>' +
-              '<span class="task-stars" onclick="' + (t.isEditalTopic ? '' : 'cycleTaskPriority(\'' + t.id + '\')') + '" title="' + (t.isEditalTopic ? 'Prioridade do Edital' : 'Clique para alterar prioridade') + '" style="cursor: pointer;">' + stars + '</span>' +
-            '</td>' +
-            '<td>' +
-              '<span class="subject-pill-cell pill-blue" onclick="filterTasksBySubject(\'' + t.subject.replace(/'/g, "\\'") + '\')" style="cursor: pointer;" title="Filtrar por ' + t.subject + '">' + t.subject + '</span>' +
-            '</td>' +
-          '</tr>'
-        );
-      }).join('');
+      initInteractiveQuiz(filterSubject || 'todos');
     }
 
     function toggleTaskDone(taskId) {
@@ -4769,65 +6379,15 @@
       loadCardIntoModal();
     }
 
-    // Renderizar Bizus & Notas Táticas
+    // Renderizar Flashcards por IA
     let currentNoteFilter = 'todos';
 
     function filterNotesByTag(tag, btn) {
-      currentNoteFilter = tag;
-      document.querySelectorAll('.note-filter-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      renderNotes();
+      filterAIFlashcardsBySubject(tag);
     }
 
     function renderNotes() {
-      const container = document.getElementById('stickyNotesContainer');
-      const badge = document.getElementById('notesCountBadge');
-      if (!container) return;
-
-      const configured = getConfiguredMaterias();
-      if (configured.length === 0) {
-        if (badge) badge.innerText = '0';
-        container.innerHTML = '<div style="grid-column: 1 / -1; padding: 24px 10px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
-          'Nenhum bizu tático disponível.<br>' +
-          'Configure as matérias do seu concurso para liberar os bizus doutrinários correspondentes ou adicione novos bizus.<br>' +
-          '<button class="btn-primary" style="margin-top: 8px; font-size: 11px; padding: 3px 10px;" onclick="openSubjectConfigModal()">+ Configurar Matérias</button>' +
-        '</div>';
-        return;
-      }
-
-      if (badge) badge.innerText = currentNotes.length;
-
-      const filtered = currentNoteFilter === 'todos' 
-        ? currentNotes 
-        : currentNotes.filter(n => {
-            const shortTag = getShortSubjectTag(n.tag || n.title || '');
-            return n.tag === currentNoteFilter || shortTag === currentNoteFilter || (n.tag && n.tag.toLowerCase().includes(currentNoteFilter.toLowerCase()));
-          });
-
-      if (filtered.length === 0) {
-        container.innerHTML = '<div style="grid-column: 1 / -1; padding: 24px 10px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
-          'Nenhum bizu encontrado neste filtro.<br>' +
-          '<button class="btn-primary" style="margin-top: 8px; font-size: 11px; padding: 3px 10px;" onclick="openModal(\'modalAddNote\')">+ Adicionar Bizu</button>' +
-        '</div>';
-        return;
-      }
-
-      container.innerHTML = filtered.map(n => {
-        const shortTag = getShortSubjectTag(n.tag || 'Bizu');
-        return (
-          '<div class="sticky-note" style="--note-accent: ' + (n.color || '#D4AF37') + ';" onclick="viewNoteFull(\'' + n.id + '\')">' +
-            '<button class="btn-note-del" onclick="deleteNote(\'' + n.id + '\', event)" title="Excluir este bizu" aria-label="Excluir">&times;</button>' +
-            '<div>' +
-              '<strong style="font-size: 11.5px; color: var(--gold-light); display: block; margin-bottom: 4px; padding-right: 18px;">' + n.title + '</strong>' +
-              '<p class="note-text" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 11px; line-height: 1.45; color: var(--text-muted); margin: 0;">' + (n.text || '').replace(/\n/g, ' ') + '</p>' +
-            '</div>' +
-            '<div class="note-footer" style="margin-top: 8px;">' +
-              '<span class="note-tag">' + shortTag + '</span>' +
-              '<span style="font-size: 10px; color: var(--text-secondary);">Ver Bizu →</span>' +
-            '</div>' +
-          '</div>'
-        );
-      }).join('');
+      renderAIFlashcards(currentAIFlashcardFilter || 'todos');
     }
 
     function viewNoteFull(id) {
@@ -5260,31 +6820,8 @@
     }
 
     function saveNewTask() {
-      const title = document.getElementById('inputTaskName')?.value.trim();
-      const subject = document.getElementById('inputTaskSubject')?.value;
-      const priority = parseInt(document.getElementById('inputTaskPriority')?.value || '3');
-      const dateVal = document.getElementById('inputTaskDate')?.value;
-
-      if (!title) {
-        alert('Digite o nome da missão ou tópico.');
-        return;
-      }
-
-      const newTask = {
-        id: 't_' + Date.now(),
-        title: title,
-        date: dateVal ? formatSimpleDate(dateVal) : 'Hoje',
-        done: false,
-        priority: priority,
-        subject: subject
-      };
-
-      currentTasks.unshift(newTask);
-      localStorage.setItem('tactical_os_tasks', JSON.stringify(currentTasks));
-      renderTasks();
       closeModal('modalAddTask');
-      document.getElementById('inputTaskName').value = '';
-      showToast('Nova missão tática adicionada com sucesso!', 'success');
+      openQuizTrainingModal();
     }
 
     /* Funções de Gestão de Provas & Metas Táticas */
@@ -5456,37 +6993,8 @@
     }
 
     function saveNewNote() {
-      const subject = document.getElementById('inputNoteSubject')?.value;
-      const text = document.getElementById('inputNoteText')?.value.trim();
-
-      if (!text) {
-        alert('Digite o conteúdo do bizu tático.');
-        return;
-      }
-
-      const colors = {
-        'Direito Penal': '#EF4444',
-        'Direito Processual Penal': '#F59E0B',
-        'Direito Constitucional': '#3B82F6',
-        'Direito Administrativo': '#10B981',
-        'Língua Portuguesa': '#8B5CF6',
-        'Legislação Especial': '#D4AF37'
-      };
-
-      const newNote = {
-        id: 'n_' + Date.now(),
-        title: 'Bizu • ' + subject,
-        tag: subject,
-        color: colors[subject] || '#D4AF37',
-        text: text
-      };
-
-      currentNotes.unshift(newNote);
-      localStorage.setItem('tactical_os_notes', JSON.stringify(currentNotes));
-      renderNotes();
       closeModal('modalAddNote');
-      document.getElementById('inputNoteText').value = '';
-      showToast('Bizu tático salvo com sucesso!', 'success');
+      generateAIFlashcardsAction();
     }
 
     function openStudyHoursQuickModal() {
