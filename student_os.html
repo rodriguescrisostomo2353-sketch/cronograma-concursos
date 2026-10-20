@@ -2320,6 +2320,171 @@
     }
 
     /* ==========================================================================
+       WORKS WHEEL 3D - NAVEGADOR DE MODOS (PERSPECTIVE DRUM & RING)
+       ========================================================================== */
+    .works-wheel-modal-card {
+      position: relative;
+      background: radial-gradient(circle at 50% 50%, #0d121c 0%, #05070b 100%) !important;
+      border: 1px solid rgba(212, 175, 55, 0.35) !important;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95), 0 0 45px rgba(212, 175, 55, 0.15) !important;
+    }
+
+    .works-wheel-stage {
+      position: absolute;
+      inset: 0;
+      cursor: grab;
+      touch-action: pan-x;
+      outline: none;
+      user-select: none;
+      overflow: hidden;
+    }
+    .works-wheel-stage:active {
+      cursor: grabbing;
+    }
+
+    .works-wheel-drum {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .works-wheel-center-label {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-family: inherit;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: rgba(212, 175, 55, 0.85);
+      text-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+      transition: opacity 0.15s ease;
+      user-select: none;
+      z-index: 10;
+    }
+
+    .works-wheel-active-title {
+      pointer-events: none;
+      position: absolute;
+      top: 50%;
+      left: 7%;
+      transform: translateY(-50%);
+      font-family: inherit;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #FFFFFF;
+      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.9), 0 0 20px rgba(212, 175, 55, 0.4);
+      max-width: 320px;
+      line-height: 1.1;
+      transition: opacity 0.15s ease;
+      user-select: none;
+      z-index: 10;
+    }
+
+    .works-wheel-index {
+      position: absolute;
+      top: 8%;
+      right: 3%;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      text-align: right;
+      line-height: 1.85;
+      z-index: 30;
+      user-select: none;
+    }
+
+    .works-wheel-index-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: inherit;
+      transition: all 0.2s ease;
+      padding: 5px 12px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .works-wheel-index-btn:hover {
+      color: var(--gold-light);
+      background: rgba(212, 175, 55, 0.08);
+      border-color: rgba(212, 175, 55, 0.2);
+    }
+    .works-wheel-index-btn.active {
+      color: var(--gold-primary);
+      font-weight: 700;
+      background: rgba(212, 175, 55, 0.14);
+      border-color: rgba(212, 175, 55, 0.4);
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
+    }
+
+    .works-wheel-card {
+      position: absolute;
+      backface-visibility: hidden;
+      transition: opacity 0.2s ease;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+    }
+
+    .works-wheel-card-inner {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #111622;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.15);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      transform-origin: center center;
+    }
+
+    .works-wheel-card:hover .works-wheel-card-inner {
+      border-color: var(--gold-primary);
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.9), 0 0 35px rgba(212, 175, 55, 0.4);
+    }
+
+    .works-wheel-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    .works-wheel-action-badge {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      background: rgba(7, 9, 14, 0.88);
+      color: var(--gold-primary);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      backdrop-filter: blur(8px);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .works-wheel-card:hover .works-wheel-action-badge {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ==========================================================================
        COLUNA DIREITA (PRODUTIVIDADE & FOCO TÁTICO)
        ========================================================================== */
     .right-sidebar {
@@ -3434,6 +3599,10 @@
         </div>
         
         <div class="banner-actions">
+          <button type="button" class="banner-btn" onclick="openWorksWheelModal()" title="Alternador 3D de Modos do Sistema (Works Wheel)" style="border-color: rgba(212, 175, 55, 0.45); background: rgba(212, 175, 55, 0.14); color: var(--gold-light); font-weight: 700;">
+            <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--gold-primary);"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 12l7.07-7.07"/><circle cx="12" cy="12" r="2"/></svg>
+            Modos 3D ⎈
+          </button>
           <a href="landing.html" class="banner-btn" title="Ir para a Tela Inicial com a Escultura Líquida">
             <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             Tela Inicial
@@ -4229,6 +4398,26 @@
           <button type="button" class="btn-primary" onclick="closeModal('modalViewBizu')">Fechar</button>
         </div>
       </div>
+    </div>
+  <!-- Modal Navegação de Modos via Works Wheel 3D -->
+  <div class="modal-backdrop" id="modalWorksWheel" style="z-index: 99999; backdrop-filter: blur(20px); background: rgba(4, 6, 10, 0.88);">
+    <div class="modal-card works-wheel-modal-card" style="max-width: 1040px; width: 95vw; height: 85vh; max-height: 720px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
+      
+      <!-- Top header bar of modal -->
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); background: rgba(15, 20, 30, 0.7); z-index: 20;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="display: inline-flex; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 8px #10B981;"></span>
+          <span style="font-size: 11px; font-family: monospace; letter-spacing: 0.1em; color: var(--gold-primary); text-transform: uppercase; font-weight: 700;">Navegador 3D de Modos • Works Wheel</span>
+          <span style="font-size: 10px; color: var(--text-muted); background: rgba(255,255,255,0.06); padding: 2px 7px; border-radius: 999px;">Use o scroll do mouse ou arraste</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeWorksWheelModal()" style="font-size: 22px; color: var(--text-muted); background: transparent; border: none; cursor: pointer; padding: 2px 8px; line-height: 1;" title="Fechar Roda 3D (ESC)">&times;</button>
+      </div>
+
+      <!-- Works Wheel Stage Container -->
+      <div id="worksWheelStage" style="flex: 1; position: relative; width: 100%; height: 100%; overflow: hidden; user-select: none;">
+        <!-- Preenchido e animado via JavaScript -->
+      </div>
+
     </div>
   </div>
 
@@ -8822,6 +9011,296 @@
         playTacticalBlip(780, 0.08);
       }
       showToast('Ordem padrão dos blocos restaurada!', 'success');
+    }
+
+    /* ========================================================================
+       WORKS WHEEL 3D - MOTOR DE NAVEGAÇÃO ENTRE OS MODOS DO SISTEMA
+       ======================================================================== */
+    const TACTICAL_WHEEL_MODES = [
+      {
+        title: "Student OS • Operacional",
+        subtitle: "Santuário Tático de Estudos",
+        image: "assets/student_os_banner.jpg",
+        href: "student_os.html",
+        badge: "MODO ATIVO"
+      },
+      {
+        title: "Modo Clássico • Edital",
+        subtitle: "Cronograma Tático & Simulados",
+        image: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1200&q=80",
+        href: "concurso_tatico.html",
+        badge: "EDITAL POLICIAL"
+      },
+      {
+        title: "Tela de Início • Portal Tático",
+        subtitle: "Escultura Líquida & Visão Geral",
+        image: "assets/sculpture_dark.webp",
+        href: "landing.html",
+        badge: "PORTAL GERAL"
+      }
+    ];
+
+    let worksWheelState = {
+      isOpen: false,
+      turn: 0,
+      target: 0,
+      active: 0,
+      animFrameId: null,
+      dragStart: null,
+      settleTimeout: null
+    };
+
+    function openWorksWheelModal() {
+      const modal = document.getElementById('modalWorksWheel');
+      if (!modal) return;
+      modal.classList.add('open');
+      worksWheelState.isOpen = true;
+      if (typeof playTacticalBlip === 'function') {
+        playTacticalBlip(720, 0.08);
+      }
+      setTimeout(initWorksWheelStage, 60);
+    }
+
+    function closeWorksWheelModal() {
+      const modal = document.getElementById('modalWorksWheel');
+      if (!modal) return;
+      modal.classList.remove('open');
+      worksWheelState.isOpen = false;
+      if (worksWheelState.animFrameId) {
+        cancelAnimationFrame(worksWheelState.animFrameId);
+        worksWheelState.animFrameId = null;
+      }
+      if (typeof playTacticalBlip === 'function') {
+        playTacticalBlip(420, 0.05);
+      }
+    }
+
+    function initWorksWheelStage() {
+      const stage = document.getElementById('worksWheelStage');
+      if (!stage) return;
+
+      const items = TACTICAL_WHEEL_MODES;
+      const count = items.length;
+      const last = Math.max(count - 1, 0);
+
+      stage.innerHTML = (
+        '<div id="worksWheelInteractionArea" tabindex="0" role="listbox" aria-label="Navegador de Modos 3D" class="works-wheel-stage">' +
+          '<div id="worksWheelDrum" class="works-wheel-drum"></div>' +
+        '</div>' +
+        '<div id="worksWheelCenterLabel" class="works-wheel-center-label">MODOS \'26</div>' +
+        '<div id="worksWheelActiveTitle" class="works-wheel-active-title"></div>' +
+        '<ol id="worksWheelIndexList" class="works-wheel-index"></ol>'
+      );
+
+      const drum = document.getElementById('worksWheelDrum');
+      const indexList = document.getElementById('worksWheelIndexList');
+      const activeTitle = document.getElementById('worksWheelActiveTitle');
+      const centerLabel = document.getElementById('worksWheelCenterLabel');
+      const interactiveArea = document.getElementById('worksWheelInteractionArea');
+
+      drum.innerHTML = items.map((item, i) => (
+        '<a id="worksWheelCard_' + i + '" class="works-wheel-card" href="' + item.href + '" onclick="event.preventDefault(); window.location.href=\'' + item.href + '\'">' +
+          '<span class="works-wheel-card-inner">' +
+            '<img src="' + item.image + '" alt="' + item.title + '" draggable="false">' +
+            '<span class="works-wheel-action-badge">' +
+              '<svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9 9 3M4 3h5v5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+              'Acessar Modo' +
+            '</span>' +
+          '</span>' +
+        '</a>'
+      )).join('');
+
+      indexList.innerHTML = items.map((item, i) => (
+        '<li>' +
+          '<button type="button" class="works-wheel-index-btn ' + (i === worksWheelState.active ? 'active' : '') + '" id="worksWheelIdxBtn_' + i + '" onclick="setWorksWheelTarget(' + (i + 1) + ')">' +
+            item.title +
+          '</button>' +
+        '</li>'
+      )).join('');
+
+      const CARD_H = 0.38;
+      const CARD_MAX_W = 0.34;
+      const CARD_RATIO = 1.45;
+      const STEP = 40;
+      const DRUM = 2.22;
+      const LENS = 2.7;
+      const RING_R = 1.14;
+      const BOW = 1.82;
+      const TITLE = 0.124;
+      const INDEX = 0.04;
+      const CULL = 1.6;
+      const WHEEL_UNITS = 900;
+      const DRAG_UNITS = 420;
+      const SETTLE = 140;
+      const EASE = 0.12;
+
+      const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+      const lerp = (a, b, t) => a + (b - a) * t;
+      const rad = (deg) => (deg * Math.PI) / 180;
+      const bowAt = (drumDeg, bow) => -bow * (1 - Math.cos(rad(drumDeg)));
+
+      function place(ringDeg, drumDeg, ringR, drumR, bow, m) {
+        return (
+          'translateX(' + (m * bowAt(drumDeg, bow)) + 'px) ' +
+          'rotateZ(' + ((1 - m) * ringDeg) + 'deg) translateY(' + (-(1 - m) * ringR) + 'px) ' +
+          'rotateX(' + (m * drumDeg) + 'deg) translateZ(' + (m * drumR) + 'px)'
+        );
+      }
+
+      function getMetrics() {
+        const w = stage.clientWidth || 800;
+        const h = stage.clientHeight || 560;
+        const cardW = Math.min(h * CARD_H * CARD_RATIO, w * CARD_MAX_W);
+        const cardH = cardW / CARD_RATIO;
+        const drumR = cardH * DRUM;
+        const ringR = cardH * RING_R;
+        const ringScale = count ? clamp((((2 * Math.PI * ringR) / count) * 0.82) / (cardW || 1), 0.16, 1) : 1;
+
+        return {
+          cardW, cardH, ringR, ringScale, drumR,
+          bow: cardH * BOW,
+          depth: cardH * LENS,
+          title: cardH * TITLE,
+          index: cardH * INDEX
+        };
+      }
+
+      let mtr = getMetrics();
+      interactiveArea.style.perspective = mtr.depth + 'px';
+      centerLabel.style.fontSize = mtr.title + 'px';
+      activeTitle.style.fontSize = mtr.title + 'px';
+      indexList.style.fontSize = mtr.index + 'px';
+
+      const cardEls = items.map((_, i) => document.getElementById('worksWheelCard_' + i));
+      cardEls.forEach(card => {
+        if (card) {
+          card.style.width = mtr.cardW + 'px';
+          card.style.height = mtr.cardH + 'px';
+          card.style.marginLeft = (-mtr.cardW / 2) + 'px';
+          card.style.marginTop = (-mtr.cardH / 2) + 'px';
+        }
+      });
+
+      window.setWorksWheelTarget = function(next) {
+        worksWheelState.target = clamp(next, 0, last + 1);
+        if (typeof playTacticalBlip === 'function') {
+          playTacticalBlip(560, 0.03);
+        }
+      };
+
+      interactiveArea.onwheel = function(e) {
+        const next = worksWheelState.target + (e.deltaY / WHEEL_UNITS);
+        if (next > 0 && next < last + 1) e.preventDefault();
+        worksWheelState.target = clamp(next, 0, last + 1);
+
+        clearTimeout(worksWheelState.settleTimeout);
+        worksWheelState.settleTimeout = setTimeout(() => {
+          worksWheelState.target = clamp(Math.round(worksWheelState.target), 0, last + 1);
+        }, SETTLE);
+      };
+
+      interactiveArea.onpointerdown = function(e) {
+        worksWheelState.dragStart = e.clientY;
+        interactiveArea.setPointerCapture(e.pointerId);
+      };
+      interactiveArea.onpointermove = function(e) {
+        if (worksWheelState.dragStart === null) return;
+        const delta = (worksWheelState.dragStart - e.clientY) / DRAG_UNITS;
+        worksWheelState.target = clamp(worksWheelState.target + delta, 0, last + 1);
+        worksWheelState.dragStart = e.clientY;
+      };
+      interactiveArea.onpointerup = function() {
+        worksWheelState.dragStart = null;
+        if (worksWheelState.target > 1) {
+          worksWheelState.target = clamp(Math.round(worksWheelState.target), 0, last + 1);
+        }
+      };
+
+      interactiveArea.onkeydown = function(e) {
+        if (e.key === 'ArrowDown') {
+          worksWheelState.target = clamp(Math.round(worksWheelState.target) + 1, 0, last + 1);
+          e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+          worksWheelState.target = clamp(Math.round(worksWheelState.target) - 1, 0, last + 1);
+          e.preventDefault();
+        } else if (e.key === 'Escape') {
+          closeWorksWheelModal();
+          e.preventDefault();
+        } else if (e.key === 'Enter') {
+          const activeItem = items[worksWheelState.active];
+          if (activeItem && activeItem.href) {
+            window.location.href = activeItem.href;
+          }
+        }
+      };
+
+      function drawFrame() {
+        if (!worksWheelState.isOpen) return;
+
+        const gap = worksWheelState.target - worksWheelState.turn;
+        if (Math.abs(gap) < 0.0005) {
+          worksWheelState.turn = worksWheelState.target;
+        } else {
+          worksWheelState.turn += gap * EASE;
+        }
+
+        const t = worksWheelState.turn;
+        const m = clamp(t, 0, 1);
+        const pos = Math.max(0, t - 1);
+
+        if (drum) {
+          drum.style.transform = 'translateZ(' + (-m * mtr.drumR) + 'px)';
+        }
+
+        for (let i = 0; i < count; i++) {
+          const d = i - pos;
+          const drumDeg = d * STEP;
+          const card = cardEls[i];
+          if (card) {
+            card.style.transform = place(d * (360 / count), drumDeg, mtr.ringR, mtr.drumR, mtr.bow, m);
+            card.style.opacity = (m > 0.5 && Math.abs(d) > CULL) ? '0' : '1';
+            card.style.zIndex = String(Math.round(100 - Math.abs(d) * 2));
+            const inner = card.querySelector('.works-wheel-card-inner');
+            if (inner) {
+              inner.style.transform = 'scale(' + lerp(mtr.ringScale, 1, m) + ')';
+            }
+          }
+        }
+
+        if (centerLabel) centerLabel.style.opacity = String(1 - m);
+        if (activeTitle) activeTitle.style.opacity = String(m);
+
+        const near = clamp(Math.round(pos), 0, last);
+        if (worksWheelState.active !== near) {
+          worksWheelState.active = near;
+          if (activeTitle && items[near]) {
+            activeTitle.innerText = items[near].title;
+          }
+          items.forEach((_, i) => {
+            const btn = document.getElementById('worksWheelIdxBtn_' + i);
+            if (btn) {
+              if (i === near) btn.classList.add('active');
+              else btn.classList.remove('active');
+            }
+          });
+        }
+
+        worksWheelState.animFrameId = requestAnimationFrame(drawFrame);
+      }
+
+      if (activeTitle && items[worksWheelState.active]) {
+        activeTitle.innerText = items[worksWheelState.active].title;
+      }
+      items.forEach((_, i) => {
+        const btn = document.getElementById('worksWheelIdxBtn_' + i);
+        if (btn) {
+          if (i === worksWheelState.active) btn.classList.add('active');
+          else btn.classList.remove('active');
+        }
+      });
+
+      worksWheelState.animFrameId = requestAnimationFrame(drawFrame);
+      interactiveArea.focus();
     }
 
     // Inicialização ao carregar
