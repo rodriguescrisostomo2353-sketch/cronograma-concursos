@@ -6,12 +6,12 @@ import { WorksWheel, type WorksWheelItem } from "@/components/ui/works-wheel";
 export const TACTICAL_MODES: WorksWheelItem[] = [
   {
     title: "Student OS • Operacional",
-    image: "assets/student_os_banner.jpg",
+    image: "assets/preview_student_os.png",
     href: "student_os.html",
   },
   {
     title: "Modo Clássico • Edital",
-    image: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1200&q=80",
+    image: "assets/preview_modo_classico.png",
     href: "concurso_tatico.html",
   },
   {
