@@ -3471,43 +3471,56 @@
                   <span>Voltar ao Painel</span>
                 </button>
                 <span style="display: flex; align-items: center; gap: 6px;">
-                  <svg class="tactical-icon" style="color: var(--gold-primary); width: 15px; height: 15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                  Flashcards Táticos por IA
+                  <svg class="tactical-icon" style="color: var(--gold-primary); width: 15px; height: 15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                  Bizus &amp; Flashcards Táticos
                 </span>
                 <span class="badge-count" id="flashcardsCountBadge" style="font-size: 10px; background: rgba(212, 175, 55, 0.15); color: var(--gold-primary); padding: 2px 7px; border-radius: 999px; font-weight: 700;">--</span>
               </div>
               <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                <!-- Alternador de Visualização: Modo Grade vs Modo Cilindro 3D (Tilted) -->
+                <!-- Alternador de 3 Modos: Bizus Táticos | Flashcards 3D | Cilindro 3D (Tilted) -->
                 <div class="fc-view-mode-toggle" id="flashcardsViewToggle">
-                  <button type="button" class="fc-toggle-btn active" id="btnViewGrid" onclick="setFlashcardsViewMode('grid')" title="Visualização em Grade 2D">
+                  <button type="button" class="fc-toggle-btn active" id="btnViewBizus" onclick="setFlashcardsViewMode('bizus')" title="Visualização Clássica de Bizus &amp; Notas Táticas">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    <span>Bizus Táticos</span>
+                  </button>
+                  <button type="button" class="fc-toggle-btn" id="btnViewGrid" onclick="setFlashcardsViewMode('grid')" title="Visualização em Grade de Flashcards 3D">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    <span>Grade</span>
+                    <span>Flashcards 3D</span>
                   </button>
                   <button type="button" class="fc-toggle-btn" id="btnViewCylinder" onclick="setFlashcardsViewMode('cylinder')" title="Visualização em Cilindro Curvo 3D (Tilted Grid)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-                    <span>Cilindro 3D (Tilted)</span>
+                    <span>Cilindro 3D</span>
                   </button>
                 </div>
-                <select id="flashcardSubjectHeaderSelect" class="form-control" style="padding: 3px 6px; font-size: 10.5px; height: 28px; width: auto; max-width: 150px;" onchange="filterAIFlashcardsBySubject(this.value)">
-                  <!-- Opções dinâmicas de matérias cadastradas -->
-                </select>
+
+                <button class="btn-quick-action" style="padding: 3px 8px; font-size: 10px; width: auto;" onclick="restoreDefaultNotes()" title="Restaurar todo o acervo completo de bizus táticos">
+                  ↻ Acervo
+                </button>
+                <button class="btn-quick-action" style="padding: 3px 8px; font-size: 10.5px; width: auto;" onclick="openModal('modalAddNote')" title="Adicionar novo bizu ou anotação tática">
+                  + Novo Bizu
+                </button>
                 <button class="btn-quick-action" style="padding: 3px 10px; font-size: 10.5px; width: auto; background: var(--gold-primary); color: #0B0E14; font-weight: 700;" onclick="generateAIFlashcardsAction()" title="Gerar novos Flashcards com Inteligência Artificial">
-                  ⚡ Gerar Flashcards com IA
+                  ⚡ Gerar com IA
                 </button>
               </div>
             </div>
             
-            <!-- Barra de Chips de Matérias Cadastradas -->
+            <!-- Barra de Chips de Matérias Cadastradas / Filtros -->
             <div class="notes-filter-bar" id="flashcardsChipsBar">
               <!-- Gerado via JavaScript -->
             </div>
             
-            <!-- Grade Tradicional de Flashcards 3D -->
-            <div class="sticky-notes-grid" id="aiFlashcardsGrid" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); max-height: 380px;">
-              <!-- Renderizado dinamicamente via JavaScript -->
+            <!-- 1. Grade de Bizus & Notas Táticas (Post-its Dourados com Modal Completo) -->
+            <div class="sticky-notes-grid" id="stickyNotesContainer" style="display: grid;">
+              <!-- Renderizado dinamicamente via renderNotes() -->
             </div>
 
-            <!-- Palco Cilíndrico 3D (TiltedGridHero) -->
+            <!-- 2. Grade de Flashcards 3D Interativos -->
+            <div class="sticky-notes-grid" id="aiFlashcardsGrid" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); max-height: 380px; display: none;">
+              <!-- Renderizado dinamicamente via renderAIFlashcards() -->
+            </div>
+
+            <!-- 3. Palco Cilíndrico 3D (TiltedGridHero) -->
             <div class="tilted-cylinder-stage" id="aiFlashcardsCylinderContainer" style="display: none;">
               <div class="tilted-cylinder-viewport" id="tiltedCylinderViewport">
                 <!-- Cards posicionados dinamicamente no arco 3D -->
@@ -3702,11 +3715,53 @@
     <div class="modal-card" style="max-width: 640px;">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <svg class="tactical-icon" style="color: var(--gold-primary); width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-          <h3 style="font-size: 15px; margin: 0; color: var(--gold-light);">Central de Flashcards Táticos Gerados por IA</h3>
+          <svg class="tactical-icon" style="color: var(--gold-primary); width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          <h3 style="font-size: 15px; margin: 0; color: var(--gold-light);">Novo Bizu Tático / Central de Flashcards</h3>
         </div>
         <button class="modal-close-btn" onclick="closeModal('modalAddNote')">&times;</button>
       </div>
+      <div style="display: flex; gap: 8px; border-bottom: 1px solid var(--border-tactical); padding: 0 18px 8px 18px; margin-top: 10px;">
+        <button type="button" class="fc-toggle-btn active" id="tabAddManualBizu" onclick="switchAddNoteModalTab('manual')">
+          <span>✍️ Anotar Bizu Tático</span>
+        </button>
+        <button type="button" class="fc-toggle-btn" id="tabAddAIFlashcards" onclick="switchAddNoteModalTab('ai')">
+          <span>⚡ Gerar Flashcards com IA</span>
+        </button>
+      </div>
+      
+      <!-- Painel 1: Formulário de Bizu Manual -->
+      <div id="panelAddManualBizu" class="modal-body" style="gap: 12px; padding-top: 12px;">
+        <div class="form-group">
+          <label style="font-size: 11px; font-weight: 700; color: var(--gold-light); text-transform: uppercase;">Disciplina do Concurso:</label>
+          <select id="inputNoteSubject" class="form-control" style="font-size: 12px; height: 36px;">
+            <option value="Direito Penal">Direito Penal</option>
+            <option value="Direito Processual Penal">Direito Processual Penal</option>
+            <option value="Direito Constitucional">Direito Constitucional</option>
+            <option value="Direito Administrativo">Direito Administrativo</option>
+            <option value="Língua Portuguesa">Língua Portuguesa</option>
+            <option value="Legislação Especial">Legislação Especial</option>
+            <option value="Raciocínio Lógico-Matemático">Raciocínio Lógico-Matemático</option>
+            <option value="Informática Básica">Informática Básica</option>
+            <option value="Estatística">Estatística</option>
+            <option value="Direitos Humanos">Direitos Humanos</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label style="font-size: 11px; font-weight: 700; color: var(--gold-light); text-transform: uppercase;">Título do Bizu / Artigo-Chave:</label>
+          <input type="text" id="inputNoteTitle" class="form-control" placeholder="Ex: Audiência de Custódia - Prazos e Nulidades" style="font-size: 12.5px; height: 36px;">
+        </div>
+        <div class="form-group">
+          <label style="font-size: 11px; font-weight: 700; color: var(--gold-light); text-transform: uppercase;">Bizu / Síntese Operacional Doutrinária:</label>
+          <textarea id="inputNoteText" class="form-control" rows="4" placeholder="Escreva a regra mnemônica, prazo, súmula vinculante ou distinção doutrinária..." style="font-size: 12px; line-height: 1.5;"></textarea>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalAddNote')">Cancelar</button>
+          <button type="button" class="btn-primary" style="background: var(--gold-primary); color: #0B0E14; font-weight: 700;" onclick="saveNewNote()">✓ Salvar Bizu Tático</button>
+        </div>
+      </div>
+
+      <!-- Painel 2: Geração de Flashcards por IA -->
+      <div id="panelAddAIFlashcards" style="display: none;"
       <div class="modal-body" style="gap: 14px;">
         <div style="background: rgba(14, 19, 30, 0.7); border: 1px solid var(--border-tactical); border-radius: var(--radius-sm); padding: 12px; display: flex; flex-direction: column; gap: 10px;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
@@ -3813,6 +3868,9 @@
           <button type="button" class="btn-primary" onclick="closeModal('modalViewBizu')">Fechar</button>
         </div>
       </div>
+    </div>
+  </div>
+
   <!-- ==========================================================================
        PAREDE DE AUTENTICAÇÃO TÁTICA (LOGIN / CADASTRO OBRIGATÓRIO)
        ========================================================================== -->
@@ -4981,38 +5039,65 @@
        PERSISTÊNCIA E GERAÇÃO DE FLASHCARDS POR IA
        ------------------------------------------------------------------------ */
     function getStoredAIFlashcards() {
+      let cards = [];
       try {
         const raw = localStorage.getItem('tactical_ai_flashcards');
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            cards = parsed;
+          }
         }
       } catch(e) {
         console.warn('Erro ao carregar flashcards IA:', e);
       }
 
-      const initialCards = [];
-      const subjects = getRegisteredEditalSubjects();
-      subjects.forEach((subj, sIdx) => {
-        const canonicalKey = findCanonicalSubjectKey(subj);
-        const templateList = AI_FLASHCARDS_CATALOG[canonicalKey] || AI_FLASHCARDS_CATALOG['Noções de Direito Penal'];
-        templateList.forEach((tmpl, cIdx) => {
-          initialCards.push({
-            id: 'fc_ai_' + sIdx + '_' + cIdx + '_' + Date.now(),
-            subject: subj,
-            canonicalKey: canonicalKey,
-            color: getSubjectColor(subj, sIdx),
-            front: tmpl.front,
-            back: tmpl.back,
-            status: 'novo',
-            quiz: tmpl.quiz,
-            createdAt: new Date().toISOString()
+      // Se tiver menos de 10 cards, mesclar com todos os MASTER_NOTES do acervo doutrinário
+      if (cards.length < 15 && typeof MASTER_NOTES !== 'undefined') {
+        const existingIds = new Set(cards.map(c => c.id));
+        MASTER_NOTES.forEach((mn, idx) => {
+          const fcId = 'fc_mn_' + mn.id;
+          if (!existingIds.has(fcId)) {
+            cards.push({
+              id: fcId,
+              subject: mn.tag || 'Direito Penal',
+              canonicalKey: findCanonicalSubjectKey(mn.tag || 'Direito Penal'),
+              color: mn.color || '#D4AF37',
+              front: mn.title,
+              back: mn.text,
+              status: 'novo',
+              createdAt: new Date().toISOString()
+            });
+          }
+        });
+
+        // Adicionar também templates do catálogo de IA
+        const subjects = getRegisteredEditalSubjects();
+        subjects.forEach((subj, sIdx) => {
+          const canonicalKey = findCanonicalSubjectKey(subj);
+          const templateList = AI_FLASHCARDS_CATALOG[canonicalKey] || [];
+          templateList.forEach((tmpl, cIdx) => {
+            const fcId = 'fc_ai_' + sIdx + '_' + cIdx;
+            if (!existingIds.has(fcId)) {
+              cards.push({
+                id: fcId,
+                subject: subj,
+                canonicalKey: canonicalKey,
+                color: getSubjectColor(subj, sIdx),
+                front: tmpl.front,
+                back: tmpl.back,
+                status: 'novo',
+                quiz: tmpl.quiz,
+                createdAt: new Date().toISOString()
+              });
+            }
           });
         });
-      });
 
-      saveStoredAIFlashcards(initialCards);
-      return initialCards;
+        saveStoredAIFlashcards(cards);
+      }
+
+      return cards;
     }
 
     function saveStoredAIFlashcards(cards) {
@@ -5185,7 +5270,7 @@
       renderAIFlashcards(currentAIFlashcardFilter);
     }
 
-    let currentFlashcardsViewMode = 'grid'; // 'grid' | 'cylinder'
+    let currentFlashcardsViewMode = 'bizus'; // 'bizus' | 'grid' | 'cylinder'
     let tiltedCylinderState = {
       currentIndex: 0,
       totalCards: 0,
@@ -5197,26 +5282,106 @@
 
     function setFlashcardsViewMode(mode) {
       currentFlashcardsViewMode = mode;
+      const bizusBtn = document.getElementById('btnViewBizus');
       const gridBtn = document.getElementById('btnViewGrid');
       const cylinderBtn = document.getElementById('btnViewCylinder');
+
+      const bizusContainer = document.getElementById('stickyNotesContainer');
       const gridContainer = document.getElementById('aiFlashcardsGrid');
       const cylinderContainer = document.getElementById('aiFlashcardsCylinderContainer');
 
-      if (gridBtn && cylinderBtn) {
-        gridBtn.classList.toggle('active', mode === 'grid');
-        cylinderBtn.classList.toggle('active', mode === 'cylinder');
-      }
+      if (bizusBtn) bizusBtn.classList.toggle('active', mode === 'bizus');
+      if (gridBtn) gridBtn.classList.toggle('active', mode === 'grid');
+      if (cylinderBtn) cylinderBtn.classList.toggle('active', mode === 'cylinder');
 
-      if (gridContainer && cylinderContainer) {
-        if (mode === 'cylinder') {
+      if (bizusContainer && gridContainer && cylinderContainer) {
+        if (mode === 'bizus') {
+          bizusContainer.style.display = 'grid';
+          gridContainer.style.display = 'none';
+          cylinderContainer.style.display = 'none';
+          renderNotes();
+        } else if (mode === 'cylinder') {
+          bizusContainer.style.display = 'none';
           gridContainer.style.display = 'none';
           cylinderContainer.style.display = 'flex';
           renderTiltedCylinderFlashcards();
         } else {
+          bizusContainer.style.display = 'none';
           cylinderContainer.style.display = 'none';
           gridContainer.style.display = 'grid';
+          renderAIFlashcards();
         }
       }
+    }
+
+    function switchAddNoteModalTab(tab) {
+      const tabManual = document.getElementById('tabAddManualBizu');
+      const tabAI = document.getElementById('tabAddAIFlashcards');
+      const panelManual = document.getElementById('panelAddManualBizu');
+      const panelAI = document.getElementById('panelAddAIFlashcards');
+
+      if (tabManual && tabAI && panelManual && panelAI) {
+        tabManual.classList.toggle('active', tab === 'manual');
+        tabAI.classList.toggle('active', tab === 'ai');
+        panelManual.style.display = tab === 'manual' ? 'flex' : 'none';
+        panelAI.style.display = tab === 'ai' ? 'block' : 'none';
+      }
+    }
+
+    function saveNewNote() {
+      const subject = document.getElementById('inputNoteSubject')?.value || 'Direito Penal';
+      const title = document.getElementById('inputNoteTitle')?.value.trim() || ('Bizu • ' + subject);
+      const text = document.getElementById('inputNoteText')?.value.trim();
+
+      if (!text) {
+        alert('Digite o conteúdo ou síntese do bizu tático.');
+        return;
+      }
+
+      const colors = {
+        'Direito Penal': '#EF4444',
+        'Direito Processual Penal': '#F59E0B',
+        'Direito Constitucional': '#3B82F6',
+        'Direito Administrativo': '#10B981',
+        'Língua Portuguesa': '#8B5CF6',
+        'Legislação Especial': '#D4AF37',
+        'Raciocínio Lógico-Matemático': '#EC4899',
+        'Informática Básica': '#06B6D4',
+        'Estatística': '#10B981',
+        'Direitos Humanos': '#8B5CF6'
+      };
+
+      const newNote = {
+        id: 'n_user_' + Date.now(),
+        title: title,
+        tag: subject,
+        color: colors[subject] || '#D4AF37',
+        text: text
+      };
+
+      currentNotes.unshift(newNote);
+      localStorage.setItem('tactical_os_notes', JSON.stringify(currentNotes));
+
+      // Sincroniza também no catálogo de flashcards para aparecer no modo 3D e Cilindro
+      const allFlashcards = getStoredAIFlashcards();
+      allFlashcards.unshift({
+        id: 'fc_' + newNote.id,
+        subject: subject,
+        canonicalKey: findCanonicalSubjectKey(subject),
+        color: newNote.color,
+        front: title,
+        back: text,
+        status: 'novo',
+        createdAt: new Date().toISOString()
+      });
+      saveStoredAIFlashcards(allFlashcards);
+
+      renderNotes();
+      renderAIFlashcards();
+      closeModal('modalAddNote');
+      document.getElementById('inputNoteTitle').value = '';
+      document.getElementById('inputNoteText').value = '';
+      showToast('Bizu tático salvo com sucesso no seu acervo!', 'success');
     }
 
     function renderAIFlashcards(filterSubject) {
@@ -7031,7 +7196,69 @@
     }
 
     function renderNotes() {
-      renderAIFlashcards(currentAIFlashcardFilter || 'todos');
+      const container = document.getElementById('stickyNotesContainer');
+      const badge = document.getElementById('flashcardsCountBadge') || document.getElementById('notesCountBadge');
+      if (!container) return;
+
+      const configured = getConfiguredMaterias();
+      if (configured.length === 0) {
+        if (badge) badge.innerText = '0 Bizus';
+        container.innerHTML = '<div style="grid-column: 1 / -1; padding: 24px 10px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
+          'Nenhum bizu tático disponível.<br>' +
+          'Configure as matérias do seu concurso para liberar os bizus doutrinários correspondentes ou adicione novos bizus.<br>' +
+          '<button class="btn-primary" style="margin-top: 8px; font-size: 11px; padding: 5px 12px;" onclick="openSubjectConfigModal()">+ Configurar Matérias</button>' +
+        '</div>';
+        return;
+      }
+
+      // Se currentNotes estiver vazio, recarrega via generateNotesForSubjects
+      if (!currentNotes || currentNotes.length === 0) {
+        currentNotes = generateNotesForSubjects(configured);
+      }
+
+      const activeFilter = currentAIFlashcardFilter || currentNoteFilter || 'todos';
+
+      const filtered = (activeFilter === 'todos' || !activeFilter)
+        ? currentNotes
+        : currentNotes.filter(n => {
+            const shortTag = getShortSubjectTag(n.tag || n.title || '');
+            const canonicalFilter = findCanonicalSubjectKey(activeFilter);
+            const canonicalTag = findCanonicalSubjectKey(n.tag || '');
+            return n.tag === activeFilter || shortTag === activeFilter || canonicalTag === canonicalFilter || (n.tag && n.tag.toLowerCase().includes(activeFilter.toLowerCase()));
+          });
+
+      if (badge) {
+        badge.innerText = filtered.length + ' Bizus';
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1 / -1; padding: 24px 10px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
+          'Nenhum bizu encontrado neste filtro de matéria.<br>' +
+          '<div style="margin-top: 10px; display: flex; gap: 8px; justify-content: center;">' +
+            '<button class="btn-primary" style="font-size: 11px; padding: 4px 12px;" onclick="openModal(\'modalAddNote\')">+ Adicionar Bizu</button>' +
+            '<button class="btn-secondary" style="font-size: 11px; padding: 4px 12px;" onclick="restoreDefaultNotes()">↻ Restaurar Acervo</button>' +
+          '</div>' +
+        '</div>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(n => {
+        const shortTag = getShortSubjectTag(n.tag || 'Bizu');
+        const accentColor = n.color || '#D4AF37';
+        return (
+          '<div class="sticky-note" style="--note-accent: ' + accentColor + ';" onclick="viewNoteFull(\'' + n.id + '\')">' +
+            '<button type="button" class="btn-note-del" onclick="deleteNote(\'' + n.id + '\', event)" title="Excluir este bizu" aria-label="Excluir">&times;</button>' +
+            '<div>' +
+              '<strong style="font-size: 11.5px; color: var(--gold-light); display: block; margin-bottom: 5px; padding-right: 18px; font-weight: 700;">' + n.title + '</strong>' +
+              '<p class="note-text" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 11px; line-height: 1.5; color: var(--text-main); margin: 0; opacity: 0.88;">' + (n.text || '').replace(/\n/g, ' ') + '</p>' +
+            '</div>' +
+            '<div class="note-footer" style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">' +
+              '<span class="note-tag" style="background: rgba(212, 175, 55, 0.12); color: ' + accentColor + '; border: 1px solid rgba(212, 175, 55, 0.25); font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 600;">' + shortTag + '</span>' +
+              '<span style="font-size: 10.5px; color: var(--gold-primary); font-weight: 600;">Ver Bizu Completo →</span>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
     }
 
     function viewNoteFull(id) {
