@@ -1735,6 +1735,277 @@
       animation: rotateForever 1s linear infinite;
     }
 
+    /* ==========================================================================
+       NOVO: BOTÃO TÁTICO "VOLTAR AO PAINEL" & TRANSIÇÃO 3D CILÍNDRICA (TILTED GRID HERO)
+       ========================================================================== */
+    /* 1. Botão Animado "Voltar ao Painel" */
+    .btn-tactical-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 20, 30, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 8px;
+      color: var(--gold-light, #F1E5C8);
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .btn-tactical-back:hover {
+      border-color: #D4AF37;
+      color: #FFFFFF;
+      background: rgba(26, 34, 49, 0.95);
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.28), 0 4px 10px rgba(0, 0, 0, 0.45);
+    }
+
+    .btn-tactical-back .back-arrow-icon {
+      width: 14px;
+      height: 14px;
+      stroke: var(--gold-primary, #D4AF37);
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), stroke 0.2s ease;
+    }
+
+    .btn-tactical-back:hover .back-arrow-icon {
+      stroke: #FFFFFF;
+      transform: translateX(-4px);
+    }
+
+    .btn-tactical-back:active {
+      transform: scale(0.95);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+    }
+
+    /* 2. Palco 3D para Transição Cilíndrica na Troca de Telas */
+    .center-content {
+      perspective: 1200px;
+      transform-style: preserve-3d;
+    }
+
+    .tilted-arc-out-forward {
+      animation: tiltedArcOutForward 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      pointer-events: none;
+    }
+    @keyframes tiltedArcOutForward {
+      0% {
+        opacity: 1;
+        transform: translateZ(0) rotateY(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateZ(-80px) rotateY(-8deg);
+      }
+    }
+
+    .tilted-arc-in-forward {
+      animation: tiltedArcInForward 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes tiltedArcInForward {
+      0% {
+        opacity: 0;
+        transform: translateZ(-80px) rotateY(8deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translateZ(0) rotateY(0deg);
+      }
+    }
+
+    .tilted-arc-out-backward {
+      animation: tiltedArcOutBackward 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      pointer-events: none;
+    }
+    @keyframes tiltedArcOutBackward {
+      0% {
+        opacity: 1;
+        transform: translateZ(0) rotateY(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateZ(-80px) rotateY(8deg);
+      }
+    }
+
+    .tilted-arc-in-backward {
+      animation: tiltedArcInBackward 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes tiltedArcInBackward {
+      0% {
+        opacity: 0;
+        transform: translateZ(-80px) rotateY(-8deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translateZ(0) rotateY(0deg);
+      }
+    }
+
+    /* 3. Alternador de Modo de Visualização (Grade vs Cilindro 3D) */
+    .fc-view-mode-toggle {
+      display: inline-flex;
+      background: rgba(14, 19, 30, 0.7);
+      border: 1px solid var(--border-tactical);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .fc-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 9px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 10.5px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      user-select: none;
+    }
+
+    .fc-toggle-btn svg {
+      width: 13px;
+      height: 13px;
+      color: currentColor;
+    }
+
+    .fc-toggle-btn:hover {
+      color: var(--gold-light);
+      background: rgba(212, 175, 55, 0.08);
+    }
+
+    .fc-toggle-btn.active {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(212, 175, 55, 0.12) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: var(--gold-light);
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    }
+
+    /* 4. Palco Cilíndrico 3D (TiltedGridHero) */
+    .tilted-cylinder-stage {
+      position: relative;
+      width: 100%;
+      min-height: 290px;
+      perspective: 1100px;
+      perspective-origin: 50% 50%;
+      overflow: hidden;
+      padding: 24px 10px 14px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+    }
+
+    .tilted-cylinder-viewport {
+      width: 100%;
+      max-width: 880px;
+      height: 235px;
+      position: relative;
+      transform-style: preserve-3d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tilted-cylinder-card-slot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 290px;
+      height: 220px;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease, filter 0.5s ease;
+      will-change: transform, opacity;
+      cursor: pointer;
+    }
+
+    .tilted-cylinder-nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 14px;
+      z-index: 10;
+    }
+
+    .tilted-nav-arrow {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(15, 20, 30, 0.85);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      color: var(--gold-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .tilted-nav-arrow:hover {
+      border-color: #D4AF37;
+      background: rgba(26, 34, 49, 0.95);
+      color: #FFFFFF;
+      transform: scale(1.1);
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+    }
+
+    .tilted-nav-arrow:active {
+      transform: scale(0.92);
+    }
+
+    .tilted-indicators-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .tilted-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: none;
+      padding: 0;
+    }
+
+    .tilted-dot.active {
+      width: 18px;
+      border-radius: 999px;
+      background: var(--gold-primary);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tilted-arc-out-forward,
+      .tilted-arc-in-forward,
+      .tilted-arc-out-backward,
+      .tilted-arc-in-backward {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .tilted-cylinder-card-slot {
+        transition: opacity 0.3s ease !important;
+      }
+    }
+
 
     .note-text {
       font-size: 11px;
@@ -3115,6 +3386,13 @@
         <div class="tasks-card" id="missoes">
           <div class="section-title">
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-tactical-back" onclick="navigateBackToDashboard(event)" title="Voltar para a tela anterior do Painel">
+                <svg class="back-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>Voltar ao Painel</span>
+              </button>
               <span style="display: flex; align-items: center; gap: 6px;">
                 <svg class="tactical-icon" style="color: var(--gold-primary); width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                 Missões Táticas • Mini-Perguntas dos Flashcards
@@ -3164,13 +3442,31 @@
           <div class="notes-card" id="bizus">
             <div class="section-title">
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn-tactical-back" onclick="navigateBackToDashboard(event)" title="Voltar para a tela anterior do Painel">
+                  <svg class="back-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                  </svg>
+                  <span>Voltar ao Painel</span>
+                </button>
                 <span style="display: flex; align-items: center; gap: 6px;">
                   <svg class="tactical-icon" style="color: var(--gold-primary); width: 15px; height: 15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
                   Flashcards Táticos por IA
                 </span>
                 <span class="badge-count" id="flashcardsCountBadge" style="font-size: 10px; background: rgba(212, 175, 55, 0.15); color: var(--gold-primary); padding: 2px 7px; border-radius: 999px; font-weight: 700;">--</span>
               </div>
-              <div style="display: flex; gap: 6px; align-items: center;">
+              <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <!-- Alternador de Visualização: Modo Grade vs Modo Cilindro 3D (Tilted) -->
+                <div class="fc-view-mode-toggle" id="flashcardsViewToggle">
+                  <button type="button" class="fc-toggle-btn active" id="btnViewGrid" onclick="setFlashcardsViewMode('grid')" title="Visualização em Grade 2D">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <span>Grade</span>
+                  </button>
+                  <button type="button" class="fc-toggle-btn" id="btnViewCylinder" onclick="setFlashcardsViewMode('cylinder')" title="Visualização em Cilindro Curvo 3D (Tilted Grid)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                    <span>Cilindro 3D (Tilted)</span>
+                  </button>
+                </div>
                 <select id="flashcardSubjectHeaderSelect" class="form-control" style="padding: 3px 6px; font-size: 10.5px; height: 28px; width: auto; max-width: 150px;" onchange="filterAIFlashcardsBySubject(this.value)">
                   <!-- Opções dinâmicas de matérias cadastradas -->
                 </select>
@@ -3185,9 +3481,25 @@
               <!-- Gerado via JavaScript -->
             </div>
             
-            <!-- Grade de Flashcards 3D -->
+            <!-- Grade Tradicional de Flashcards 3D -->
             <div class="sticky-notes-grid" id="aiFlashcardsGrid" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); max-height: 380px;">
               <!-- Renderizado dinamicamente via JavaScript -->
+            </div>
+
+            <!-- Palco Cilíndrico 3D (TiltedGridHero) -->
+            <div class="tilted-cylinder-stage" id="aiFlashcardsCylinderContainer" style="display: none;">
+              <div class="tilted-cylinder-viewport" id="tiltedCylinderViewport">
+                <!-- Cards posicionados dinamicamente no arco 3D -->
+              </div>
+              <div class="tilted-cylinder-nav">
+                <button type="button" class="tilted-nav-arrow" onclick="rotateTiltedCylinder(-1)" title="Card Anterior">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <div class="tilted-indicators-dots" id="tiltedDotsContainer"></div>
+                <button type="button" class="tilted-nav-arrow" onclick="rotateTiltedCylinder(1)" title="Próximo Card">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -4852,6 +5164,40 @@
       renderAIFlashcards(currentAIFlashcardFilter);
     }
 
+    let currentFlashcardsViewMode = 'grid'; // 'grid' | 'cylinder'
+    let tiltedCylinderState = {
+      currentIndex: 0,
+      totalCards: 0,
+      filteredCards: [],
+      cardWidth: 290,
+      radius: 460,
+      angleStep: 30
+    };
+
+    function setFlashcardsViewMode(mode) {
+      currentFlashcardsViewMode = mode;
+      const gridBtn = document.getElementById('btnViewGrid');
+      const cylinderBtn = document.getElementById('btnViewCylinder');
+      const gridContainer = document.getElementById('aiFlashcardsGrid');
+      const cylinderContainer = document.getElementById('aiFlashcardsCylinderContainer');
+
+      if (gridBtn && cylinderBtn) {
+        gridBtn.classList.toggle('active', mode === 'grid');
+        cylinderBtn.classList.toggle('active', mode === 'cylinder');
+      }
+
+      if (gridContainer && cylinderContainer) {
+        if (mode === 'cylinder') {
+          gridContainer.style.display = 'none';
+          cylinderContainer.style.display = 'flex';
+          renderTiltedCylinderFlashcards();
+        } else {
+          cylinderContainer.style.display = 'none';
+          gridContainer.style.display = 'grid';
+        }
+      }
+    }
+
     function renderAIFlashcards(filterSubject) {
       const container = document.getElementById('aiFlashcardsGrid');
       const countBadge = document.getElementById('flashcardsCountBadge');
@@ -4864,6 +5210,12 @@
         ? allCards
         : allCards.filter(c => c.subject === currentAIFlashcardFilter || findCanonicalSubjectKey(c.subject) === findCanonicalSubjectKey(currentAIFlashcardFilter));
 
+      tiltedCylinderState.filteredCards = filtered;
+      tiltedCylinderState.totalCards = filtered.length;
+      if (tiltedCylinderState.currentIndex >= filtered.length) {
+        tiltedCylinderState.currentIndex = Math.max(0, filtered.length - 1);
+      }
+
       if (countBadge) {
         countBadge.innerText = filtered.length + ' Cards';
       }
@@ -4874,9 +5226,15 @@
           '<span style="font-size: 11px; color: var(--text-secondary); margin: 6px 0; display: block;">Gere flashcards automaticamente com inteligência artificial para iniciar seus ciclos de memorização.</span>' +
           '<button class="btn-primary" style="margin-top: 8px; font-size: 11px; padding: 5px 14px; font-weight: 700;" onclick="generateAIFlashcardsAction()">⚡ Gerar Flashcards com IA Agora</button>' +
         '</div>';
+        
+        const cylViewport = document.getElementById('tiltedCylinderViewport');
+        if (cylViewport) {
+          cylViewport.innerHTML = '<div style="color: var(--text-muted); font-size: 12px; text-align: center;">Nenhum card disponível para o modo 3D nesta disciplina.</div>';
+        }
         return;
       }
 
+      // Renderiza Grade Tradicional
       container.innerHTML = filtered.map(c => {
         const color = c.color || getSubjectColor(c.subject);
         const statusLabel = c.status === 'dominado' ? 'Dominado' : (c.status === 'revisar' ? 'Revisar' : 'Novo');
@@ -4926,6 +5284,217 @@
           '</div>'
         );
       }).join('');
+
+      // Renderiza Cilindro 3D se ativo ou para pré-aquecer o palco
+      renderTiltedCylinderFlashcards();
+    }
+
+    // Algoritmo TiltedGridHero: Posicionamento 3D Cilíndrico com Arco Dinâmico
+    function renderTiltedCylinderFlashcards() {
+      const viewport = document.getElementById('tiltedCylinderViewport');
+      const dotsContainer = document.getElementById('tiltedDotsContainer');
+      if (!viewport) return;
+
+      const cards = tiltedCylinderState.filteredCards;
+      if (!cards || cards.length === 0) {
+        viewport.innerHTML = '<div style="color: var(--text-muted); font-size: 12px; text-align: center;">Nenhum card cadastrado para visualização 3D.</div>';
+        if (dotsContainer) dotsContainer.innerHTML = '';
+        return;
+      }
+
+      const total = cards.length;
+      const current = tiltedCylinderState.currentIndex;
+      const cardWidth = tiltedCylinderState.cardWidth || 290;
+      
+      // Cálculo do raio e passo angular baseado na geometria do arco cilíndrico
+      const angleStep = Math.min(36, Math.max(22, 140 / Math.max(3, total)));
+      const angleRad = (angleStep * Math.PI) / 180;
+      const radius = Math.round((cardWidth / 2) / Math.tan(angleRad / 2)) || 460;
+      tiltedCylinderState.radius = radius;
+      tiltedCylinderState.angleStep = angleStep;
+
+      // Renderizar Cards no Palco Cilíndrico
+      viewport.innerHTML = cards.map((c, i) => {
+        const offset = i - current;
+        // Distância circular mais curta no anel
+        let shortestOffset = offset;
+        if (Math.abs(offset) > total / 2) {
+          shortestOffset = offset > 0 ? offset - total : offset + total;
+        }
+
+        const deg = shortestOffset * angleStep;
+        const isCenter = shortestOffset === 0;
+        const zIndex = 20 - Math.abs(shortestOffset);
+        const opacity = Math.max(0.2, 1 - Math.abs(shortestOffset) * 0.35);
+        const filter = isCenter ? 'none' : 'blur(' + Math.min(3, Math.abs(shortestOffset) * 1.5) + 'px)';
+        const color = c.color || getSubjectColor(c.subject);
+        const statusLabel = c.status === 'dominado' ? 'Dominado' : (c.status === 'revisar' ? 'Revisar' : 'Novo');
+        const statusClass = c.status || 'novo';
+
+        // Equação cilíndrica central: translateZ(radius) rotateY(deg) translateZ(-radius)
+        const transformStr = 'translate(-50%, -50%) translateZ(' + radius + 'px) rotateY(' + deg + 'deg) translateZ(-' + radius + 'px)';
+
+        return (
+          '<div class="tilted-cylinder-card-slot ' + (isCenter ? 'center-focus' : '') + '" ' +
+            'id="tiltedSlot_' + i + '" ' +
+            'style="transform: ' + transformStr + '; z-index: ' + zIndex + '; opacity: ' + opacity + '; filter: ' + filter + '; pointer-events: ' + (isCenter || Math.abs(shortestOffset) <= 1 ? 'auto' : 'none') + ';" ' +
+            'onclick="' + (isCenter ? '' : 'rotateTiltedCylinderTo(' + i + ')') + '">' +
+            
+            '<div class="fc-card-3d" id="card3d_cyl_' + c.id + '" style="--fc-subject-color: ' + color + '; height: 100%;" onclick="' + (isCenter ? 'toggleCard3DFlip(\'cyl_' + c.id + '\', this)' : '') + '">' +
+              '<!-- Frente do Card -->' +
+              '<div class="fc-card-face fc-card-front">' +
+                '<div class="fc-card-header">' +
+                  '<span class="fc-tag-badge" title="' + c.subject + '">' + c.subject + '</span>' +
+                  '<span class="fc-status-pill ' + statusClass + '">' + statusLabel + '</span>' +
+                '</div>' +
+                '<div class="fc-card-body-text">' +
+                  '<span style="font-size: 10px; color: var(--gold-primary); text-transform: uppercase; font-weight: 700; margin-bottom: 3px;">Conceito-Chave / Artigo</span>' +
+                  '<p style="margin: 0; font-size: 12px; font-weight: 600; line-height: 1.45; color: var(--text-main);">' + c.front + '</p>' +
+                '</div>' +
+                '<div class="fc-card-footer">' +
+                  '<span class="fc-flip-hint">' + (isCenter ? '↻ Toque para ver o Bizu' : 'Clique para focar') + '</span>' +
+                  (isCenter ? 
+                    '<button type="button" class="fc-action-btn" onclick="deleteAIFlashcard(\'' + c.id + '\', event)" title="Excluir card" style="color: #F87171; border-color: rgba(239, 68, 68, 0.3);">' +
+                      '✕' +
+                    '</button>' : '') +
+                '</div>' +
+              '</div>' +
+              '<!-- Verso do Card (Bizu) -->' +
+              '<div class="fc-card-face fc-card-back">' +
+                '<div class="fc-card-header">' +
+                  '<span class="fc-tag-badge" style="background: var(--accent-green);">Bizu Tático</span>' +
+                  '<span class="fc-flip-hint" style="color: var(--accent-green);">✓ Verso</span>' +
+                '</div>' +
+                '<div class="fc-card-body-text">' +
+                  '<p style="margin: 0; font-size: 11.5px; line-height: 1.5; color: var(--text-main); white-space: pre-line;">' + c.back + '</p>' +
+                '</div>' +
+                '<div class="fc-card-footer">' +
+                  '<div class="fc-action-btn-group">' +
+                    '<button type="button" class="fc-action-btn btn-dominado ' + (c.status === 'dominado' ? 'active' : '') + '" onclick="markFlashcardStatus(\'' + c.id + '\', \'dominado\', event)">' +
+                      '✓ Dominado' +
+                    '</button>' +
+                    '<button type="button" class="fc-action-btn btn-revisar ' + (c.status === 'revisar' ? 'active' : '') + '" onclick="markFlashcardStatus(\'' + c.id + '\', \'revisar\', event)">' +
+                      '↻ Revisar' +
+                    '</button>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+
+          '</div>'
+        );
+      }).join('');
+
+      // Indicadores de Posição (Dots)
+      if (dotsContainer) {
+        dotsContainer.innerHTML = cards.map((_, i) => (
+          '<button type="button" class="tilted-dot ' + (i === current ? 'active' : '') + '" ' +
+            'onclick="rotateTiltedCylinderTo(' + i + ')" ' +
+            'title="Card ' + (i + 1) + ' de ' + total + '"></button>'
+        )).join('');
+      }
+    }
+
+    function rotateTiltedCylinder(direction) {
+      const cards = tiltedCylinderState.filteredCards;
+      if (!cards || cards.length <= 1) return;
+      const total = cards.length;
+      tiltedCylinderState.currentIndex = (tiltedCylinderState.currentIndex + direction + total) % total;
+      renderTiltedCylinderFlashcards();
+    }
+
+    function rotateTiltedCylinderTo(index) {
+      const cards = tiltedCylinderState.filteredCards;
+      if (!cards || index < 0 || index >= cards.length) return;
+      tiltedCylinderState.currentIndex = index;
+      renderTiltedCylinderFlashcards();
+    }
+
+    // Suporte a Teclas de Seta para Navegação no Cilindro 3D
+    document.addEventListener('keydown', (e) => {
+      if (currentFlashcardsViewMode === 'cylinder') {
+        const cyl = document.getElementById('aiFlashcardsCylinderContainer');
+        if (cyl && cyl.style.display !== 'none') {
+          if (e.key === 'ArrowLeft') {
+            rotateTiltedCylinder(-1);
+          } else if (e.key === 'ArrowRight') {
+            rotateTiltedCylinder(1);
+          }
+        }
+      }
+    });
+
+    // 2. Transição 3D Cilíndrica na Troca de Telas (TiltedGridHero Algorithm)
+    function executeTiltedScreenTransition(fromId, toId, direction) {
+      direction = direction || 'forward';
+      const fromEl = document.getElementById(fromId);
+      const toEl = document.getElementById(toId);
+
+      if (!toEl) {
+        if (toId) highlightSection(toId);
+        return;
+      }
+
+      // Atualiza menu lateral ativo
+      document.querySelectorAll('.nav-list a').forEach(a => {
+        const href = a.getAttribute('href')?.replace('#', '');
+        const li = a.closest('.nav-item');
+        if (href === toId) {
+          li?.classList.add('active');
+        } else if (href === fromId || ['disciplinas', 'cronograma', 'simulados', 'missoes', 'bizus'].includes(href)) {
+          li?.classList.remove('active');
+        }
+      });
+
+      // Se o elemento de origem não for encontrado ou já for o mesmo, foca diretamente
+      if (!fromEl || fromEl === toEl) {
+        highlightSection(toId);
+        toEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+      }
+
+      // Classes de arco cilíndrico 3D
+      const outClass = direction === 'forward' ? 'tilted-arc-out-forward' : 'tilted-arc-out-backward';
+      const inClass = direction === 'forward' ? 'tilted-arc-in-forward' : 'tilted-arc-in-backward';
+
+      fromEl.classList.remove('tilted-arc-out-forward', 'tilted-arc-out-backward', 'tilted-arc-in-forward', 'tilted-arc-in-backward');
+      toEl.classList.remove('tilted-arc-out-forward', 'tilted-arc-out-backward', 'tilted-arc-in-forward', 'tilted-arc-in-backward');
+
+      fromEl.classList.add(outClass);
+
+      // Garante que o elemento destino esteja visível antes da animação de entrada
+      toEl.style.display = '';
+      toEl.classList.add(inClass);
+      toEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      highlightSection(toId);
+
+      setTimeout(() => {
+        fromEl.classList.remove(outClass);
+        toEl.classList.remove(inClass);
+      }, 460);
+    }
+
+    // Ação do Botão Tático "← Voltar ao Painel"
+    function navigateBackToDashboard(event) {
+      if (event) event.preventDefault();
+
+      // Identifica a subtela atual (seja Flashcards ou Missões)
+      const currentActive = document.querySelector('.nav-item.active a')?.getAttribute('href')?.replace('#', '') || 'bizus';
+      executeTiltedScreenTransition(currentActive, 'disciplinas', 'backward');
+
+      // Garante a ativação de "Disciplinas do Edital" no menu lateral
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      const discLink = document.querySelector('.nav-list a[href="#disciplinas"]');
+      if (discLink) {
+        discLink.closest('.nav-item')?.classList.add('active');
+      }
+
+      // Scroll suave até o topo da grade de disciplinas
+      const discEl = document.getElementById('disciplinas');
+      if (discEl) {
+        discEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
     }
 
     function openAIFlashcardsModal(targetSubject) {
@@ -5004,9 +5573,7 @@
 
     function openAIFlashcardsSection(event) {
       if (event) event.preventDefault();
-      highlightSection('bizus');
-      document.getElementById('bizus')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      openAIFlashcardsModal();
+      executeTiltedScreenTransition('disciplinas', 'bizus', 'forward');
     }
 
     /* ========================================================================
@@ -5443,9 +6010,7 @@
 
     function openQuizTrainingSection(event) {
       if (event) event.preventDefault();
-      highlightSection('missoes');
-      document.getElementById('missoes')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      openQuizTrainingModal();
+      executeTiltedScreenTransition('disciplinas', 'missoes', 'forward');
     }
 
 
@@ -7070,15 +7635,18 @@
       updateClock();
       setInterval(updateClock, 1000);
 
-      // Interatividade nos menus de navegação
+      // Interatividade nos menus de navegação com Transição Tilted 3D
       document.querySelectorAll('.nav-list a').forEach(link => {
         link.addEventListener('click', (e) => {
-          document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-          link.closest('.nav-item')?.classList.add('active');
           const targetId = link.getAttribute('href')?.replace('#', '');
-          if (targetId) {
+          const currentActive = document.querySelector('.nav-item.active a')?.getAttribute('href')?.replace('#', '');
+          if (targetId && currentActive && targetId !== currentActive) {
+            executeTiltedScreenTransition(currentActive, targetId, 'forward');
+          } else if (targetId) {
             highlightSection(targetId);
           }
+          document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+          link.closest('.nav-item')?.classList.add('active');
         });
       });
     });
