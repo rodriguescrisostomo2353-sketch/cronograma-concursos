@@ -2,8 +2,8 @@
   "app": "Cronograma de Estudos para Concursos",
   "version": "1.9.1",
   "buildTime": "19/10/2026 10:00:00",
-  "exportDate": "2026-10-20T18:40:33.798Z",
-  "exportDateFormatted": "20/10/2026 às 15:40",
+  "exportDate": "2026-10-21T13:59:07.244Z",
+  "exportDateFormatted": "21/10/2026 às 10:59",
   "platform": "Web Browser",
   "summary": {
     "materiasCount": 5,
@@ -108,7 +108,7 @@
     ],
     "schedules": [
       {
-        "id": "sched-1792521633705",
+        "id": "sched-1792591147148",
         "name": "Cronograma Teste Smoke Manual",
         "type": "manual",
         "dias": [
@@ -130,8 +130,8 @@
             "dia": "Segunda",
             "slots": [
               {
-                "slotId": "slot-1792521633705-8lbvd",
-                "slotKey": "Segunda-bloco-1792521633705-0",
+                "slotId": "slot-1792591147148-4l4pj",
+                "slotKey": "Segunda-bloco-1792591147148-0",
                 "slotNumber": 1,
                 "subjectId": "mat-1",
                 "subjectName": "Língua Portuguesa",
@@ -153,10 +153,10 @@
             "slots": []
           }
         ],
-        "createdAt": "20/10/2026"
+        "createdAt": "21/10/2026"
       },
       {
-        "id": "sched-1792521633742",
+        "id": "sched-1792591147183",
         "name": "Cronograma Automático Smoke",
         "type": "auto",
         "dias": [
@@ -197,10 +197,10 @@
             "slots": []
           }
         ],
-        "createdAt": "20/10/2026"
+        "createdAt": "21/10/2026"
       }
     ],
-    "activeScheduleId": "sched-1792521633742",
+    "activeScheduleId": "sched-1792591147183",
     "completedSlots": {},
     "priorities": {},
     "examDate": null,
@@ -213,17 +213,17 @@
     },
     "studyLog": [
       {
-        "id": "log_f7bdaec6-9bf6-4701-8cff-5f851d8ed8ca",
+        "id": "log_0ee36b4b-d9cd-42c5-8adf-a2649e4a7369",
         "topicoId": "top_lp_0",
         "topicoNome": "1 Compreensão e interpretação de textos de gêneros variados.",
         "materiaId": "mat-1",
         "materiaNome": "Língua Portuguesa",
         "minutos": 30,
-        "data": "2026-10-20",
-        "criadoEm": "2026-10-20 15:40:33",
+        "data": "2026-10-21",
+        "criadoEm": "2026-10-21 10:59:07",
         "sessaoId": null,
         "origem": "manual",
-        "updatedAt": "2026-10-20T18:40:33.766Z"
+        "updatedAt": "2026-10-21T13:59:07.206Z"
       }
     ],
     "autoConfig": null,

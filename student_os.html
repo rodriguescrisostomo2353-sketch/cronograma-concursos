@@ -2945,7 +2945,7 @@
     }
 
     .modal-backdrop.open {
-      display: flex;
+      display: flex !important;
     }
 
     .modal-card {
@@ -4478,6 +4478,57 @@
       font-weight: 700;
     }
 
+    .vm-legal-section-title {
+      color: #FBBF24;
+      font-size: 13.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 18px 0 10px 0;
+      padding: 8px 14px;
+      background: rgba(212, 175, 55, 0.12);
+      border-left: 4px solid #D4AF37;
+      border-radius: 4px;
+    }
+
+    .vm-legal-lead {
+      color: #D4AF37;
+      font-weight: 800;
+    }
+
+    .vm-load-more-btn {
+      width: 100%;
+      padding: 12px 18px;
+      margin-top: 16px;
+      background: rgba(212, 175, 55, 0.08);
+      border: 1px dashed rgba(212, 175, 55, 0.45);
+      color: var(--gold-light);
+      font-weight: 700;
+      font-size: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .vm-load-more-btn:hover {
+      background: rgba(212, 175, 55, 0.2);
+      border-color: var(--gold-primary);
+      color: #FFF;
+      box-shadow: 0 4px 16px rgba(212, 175, 55, 0.2);
+    }
+
+    .vm-search-match {
+      background: #FBBF24 !important;
+      color: #000 !important;
+      padding: 1px 4px !important;
+      border-radius: 2px !important;
+      font-weight: 800 !important;
+    }
+
   </style>
 </head>
 <body>
@@ -5316,54 +5367,67 @@
   <!-- ==========================================================================
        LEITOR INTERATIVO DE LEI SECA + INTEGRAÇÃO GEMINI (#modalVMLawReader)
        ========================================================================== -->
-  <div class="modal-backdrop" id="modalVMLawReader" style="z-index: 100000; backdrop-filter: blur(18px); display: none;">
-    <div class="modal-card" style="max-width: 980px; width: 94vw; height: 90vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; background: #0E121A; border: 1px solid rgba(212, 175, 55, 0.35); box-shadow: 0 20px 60px rgba(0,0,0,0.85), 0 0 30px rgba(212, 175, 55, 0.15);">
+  <div class="modal-backdrop" id="modalVMLawReader" style="z-index: 100000; backdrop-filter: blur(18px);">
+    <div class="modal-card" style="max-width: 1040px; width: 95vw; height: 92vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; background: #0B0E14; border: 1px solid #D4AF37; box-shadow: 0 25px 70px rgba(0,0,0,0.92), 0 0 35px rgba(212, 175, 55, 0.2); border-radius: 12px;">
       
-      <!-- Topbar do Leitor -->
-      <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(212, 175, 55, 0.2); background: rgba(18, 23, 34, 0.95); gap: 12px; flex-wrap: wrap;">
-        <div style="display: flex; align-items: center; gap: 12px; min-width: 220px;">
-          <span style="font-size: 20px;">⚖️</span>
+      <!-- Topbar Fixa do Leitor -->
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(212, 175, 55, 0.25); background: rgba(14, 18, 26, 0.98); gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 12px; min-width: 240px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalVMLawReader')" style="font-size: 11.5px; padding: 6px 12px; border-color: rgba(212,175,55,0.4); color: var(--gold-light); display: inline-flex; align-items: center; gap: 6px;" title="Voltar para a Biblioteca de Leis">
+            ← Voltar para a Biblioteca
+          </button>
           <div>
-            <h3 id="vmReaderLawTitle" style="margin: 0; font-size: 14.5px; color: var(--gold-light); font-weight: 700;">Constituição Federal de 1988</h3>
-            <span id="vmReaderLawSub" style="font-size: 11px; color: var(--text-muted);">Repositório oficial ctresb/leis</span>
+            <h3 id="vmReaderLawTitle" style="margin: 0; font-size: 14.5px; color: var(--gold-light); font-weight: 700; max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Constituição Federal / 88</h3>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
+              <span id="vmReaderLawSub" style="font-size: 11px; color: var(--text-muted);">ctresb/leis/constituicao.md</span>
+              <a id="vmReaderGithubLink" href="https://github.com/ctresb/leis/blob/main/constituicao.md" target="_blank" rel="noopener noreferrer" style="font-size: 10px; color: var(--gold-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 1px 6px; border-radius: 4px; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.25);">
+                🔗 Ver Original no GitHub
+              </a>
+            </div>
           </div>
         </div>
 
         <!-- Busca interna na lei aberta -->
         <div style="flex: 1; max-width: 380px; position: relative;">
-          <input type="text" id="vmReaderSearchInput" class="form-control" placeholder="🔍 Buscar artigo, parágrafo ou termo nesta lei..." oninput="VadeMecumEngine.onReaderSearch(this.value)" style="width: 100%; padding-left: 12px; padding-right: 70px; font-size: 12px; height: 34px; border-radius: 17px;" />
+          <input type="text" id="vmReaderSearchInput" class="form-control" placeholder="🔍 Localizar artigo ou palavra nesta lei..." oninput="VadeMecumEngine.onReaderSearch(this.value)" style="width: 100%; padding-left: 12px; padding-right: 75px; font-size: 12px; height: 34px; border-radius: 17px; background: rgba(0,0,0,0.5); border: 1px solid rgba(212,175,55,0.3); color: #fff;" />
           <span id="vmReaderMatchCount" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 10.5px; color: var(--gold-primary); font-weight: 700;"></span>
         </div>
 
         <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="btn-secondary" id="btnVmReaderFav" onclick="VadeMecumEngine.toggleCurrentReaderFavorite()" style="font-size: 12px; padding: 6px 12px;">
-            ⭐ Favoritar
+          <button type="button" class="btn-secondary" id="btnVmReaderFav" onclick="VadeMecumEngine.toggleCurrentReaderFavorite()" style="font-size: 11.5px; padding: 6px 12px;">
+            ⭐ Favoritar Lei
           </button>
-          <button type="button" class="btn-primary" onclick="VadeMecumEngine.generateFlashcardFromSelectedText()" style="font-size: 12px; padding: 6px 12px; background: var(--gold-primary); color: #0B0E14; font-weight: 700;">
-            ⚡ IA Flashcard
+          <button type="button" class="btn-secondary" onclick="VadeMecumEngine.grifarSelecao()" style="font-size: 11.5px; padding: 6px 12px; border-color: rgba(212,175,55,0.4); color: var(--gold-light);" title="Grifar trecho selecionado com o mouse">
+            🖍️ Grifar Trecho Selecionado
           </button>
-          <button class="modal-close-btn" onclick="closeModal('modalVMLawReader')" style="font-size: 22px;">&times;</button>
+          <button type="button" class="btn-primary" onclick="VadeMecumEngine.generateFlashcardFromSelectedText()" style="font-size: 11.5px; padding: 6px 12px; background: var(--gold-primary); color: #0B0E14; font-weight: 700;">
+            ⚡ Gerar Flashcards desta Lei com IA
+          </button>
+          <button class="modal-close-btn" onclick="closeModal('modalVMLawReader')" style="font-size: 22px; padding: 0 4px;" title="Fechar Leitor">&times;</button>
         </div>
       </div>
 
       <!-- Barra de Instrução de Leitura e Destaque -->
-      <div style="background: rgba(212, 175, 55, 0.08); border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding: 6px 20px; font-size: 11px; color: var(--gold-light); display: flex; align-items: center; justify-content: space-between;">
-        <span>💡 <strong>Dica Tática:</strong> Clique em <strong>"🖍️ Grifar Artigo"</strong> para salvar seus grifos ou em <strong>"⚡ IA"</strong> para gerar flashcards imediatos do artigo.</span>
-        <span id="vmReaderArticleCount" style="color: var(--text-muted); font-size: 10.5px;">Carregando artigos...</span>
+      <div style="background: rgba(212, 175, 55, 0.08); border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding: 7px 20px; font-size: 11px; color: var(--gold-light); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <span>💡 <strong>Dica Tática:</strong> Clique em qualquer artigo para <strong>grifá-lo</strong> ou use <strong>"⚡ IA"</strong> para gerar flashcards imediatos para seu treinamento.</span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span id="vmReaderArticleCount" style="color: var(--text-muted); font-size: 10.5px;">Carregando artigos...</span>
+          <span id="vmReaderScrollPercent" style="color: var(--gold-light); font-weight: 700; font-size: 11px; background: rgba(212,175,55,0.15); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.3);">Progresso: 0%</span>
+        </div>
       </div>
 
       <!-- Corpo da Lei com Artigos Formatados -->
-      <div id="vmReaderBody" style="flex: 1; overflow-y: auto; padding: 24px 30px; font-size: 14px; line-height: 1.75; color: #E2E8F0; scroll-behavior: smooth;">
+      <div id="vmReaderBody" onscroll="VadeMecumEngine.onReaderScroll(this)" style="flex: 1; overflow-y: auto; padding: 24px 30px; font-size: 14px; line-height: 1.75; color: #E2E8F0; scroll-behavior: smooth;">
         <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
           <div class="loading-spinner" style="width: 32px; height: 32px; border: 3px solid rgba(212, 175, 55, 0.2); border-top-color: var(--gold-primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px auto;"></div>
-          Carregando texto bruto da legislação...
+          ⏳ Carregando texto integral da lei do repositório ctresb/leis...
         </div>
       </div>
 
     </div>
   </div>
 
-<!-- ==========================================================================
+  <!-- ==========================================================================
        MODAIS DE CRIAÇÃO E ESTUDO
        ========================================================================== -->
 
@@ -7026,104 +7090,135 @@
       REPO_OWNER: 'ctresb',
       REPO_NAME: 'leis',
       BRANCH: 'main',
-      tree: [],
+      allRepoLaws: [],
       cleanLaws: [],
       rawCache: {},
       isInitialized: false,
+      FALLBACK_CORE_TEXTS: {"codigo-penal":"# CÓDIGO PENAL BRASILEIRO\n## DECRETO-LEI Nº 2.848, DE 7 DE DEZEMBRO DE 1940\nO Presidente da República, usando da atribuição que lhe confere o art. 180 da Constituição, decreta a seguinte Lei:\n\n### PARTE GERAL\n\n#### TÍTULO I — DA APLICAÇÃO DA LEI PENAL\n\n**Art. 1º** Não há crime sem lei anterior que o defina. Não há pena sem prévia cominação legal.\n\n**Art. 2º** Ninguém pode ser punido por fato que lei posterior deixa de considerar crime, cessando em virtude dela a execução e os efeitos penais da sentença condenatória.\n**Parágrafo único.** A lei posterior, que de qualquer modo favorecer o agente, aplica-se aos fatos anteriores, ainda que decididos por sentença condenatória transitada em julgado.\n\n**Art. 3º** A lei excepcional ou temporária, embora decorrido o período de sua duração ou cessadas as circunstâncias que a determinaram, aplica-se ao fato praticado durante sua vigência.\n\n**Art. 4º** Considera-se praticado o crime no momento da ação ou omissão, ainda que outro seja o momento do resultado. *(Teoria da Atividade)*\n\n**Art. 5º** Aplica-se a lei brasileira, sem prejuízo de convenções, tratados e regras de direito internacional, ao crime cometido no território nacional.\n\n**Art. 6º** Considera-se praticado o crime no lugar em que ocorreu a ação ou omissão, no todo ou em parte, bem como onde se produziu ou deveria produzir-se o resultado. *(Teoria da Ubiquidade)*\n\n#### TÍTULO II — DO CRIME\n\n**Art. 13** O resultado, de que depende a existência do crime, somente é imputável a quem lhe deu causa. Considera-se causa a ação ou omissão sem a qual o resultado não teria ocorrido.\n**§ 1º** A superveniência de causa relativamente independente exclui a imputação quando, por si só, produziu o resultado; imputam-se, porém, os fatos anteriores, quem os praticou.\n**§ 2º** A omissão é penalmente relevante quando o omitente devia e podia agir para evitar o resultado. O dever de agir incumbe a quem:\nI - tenha por lei obrigação de cuidado, proteção ou vigilância;\nII - de outra forma, assumiu a responsabilidade de impedir o resultado;\nIII - com seu comportamento anterior, criou o risco da ocorrência do resultado.\n\n**Art. 14** Diz-se o crime:\nI - consumado, quando nele se reúnem todos os elementos de sua definição legal;\nII - tentado, quando, iniciada a execução, não se consuma por circunstâncias alheias à vontade do agente.\n**Parágrafo único.** Salvo disposição em contrário, pune-se a tentativa com a pena correspondente à do crime consumado, diminuída de um a dois terços.\n\n**Art. 15** O agente que, voluntariamente, desiste de prosseguir na execução ou impede que o resultado se produza, só responde pelos atos já praticados. *(Desistência voluntária e Arrependimento eficaz)*\n\n**Art. 16** Nos crimes cometidos sem violência ou grave ameaça à pessoa, reparado o dano ou restituída a coisa, até o recebimento da denúncia ou da queixa, por ato voluntário do agente, a pena será reduzida de um a dois terços. *(Arrependimento posterior)*\n\n**Art. 17** Não se pune a tentativa quando, por ineficácia absoluta do meio ou por absoluta impropriedade do objeto, é impossível consumar-se o crime. *(Crime impossível)*\n\n**Art. 18** Diz-se o crime:\nI - doloso, quando o agente quis o resultado ou assumiu o risco de produzi-lo;\nII - culposo, quando o agente deu causa ao resultado por imprudência, negligência ou imperícia.\n\n**Art. 20** O erro sobre elemento constitutivo do tipo legal de crime exclui o dolo, mas permite a punição por crime culposo, se previsto em lei. *(Erro de tipo)*\n\n**Art. 21** O desconhecimento da lei é inescusável. O erro sobre a ilicitude do fato, se inevitável, isenta de pena; se evitável, poderá diminuí-la de um sexto a um terço. *(Erro de proibição)*\n\n**Art. 22** Se o fato é cometido sob coação moral irresistível ou em estrita obediência a ordem, não manifestamente ilegal, de superior hierárquico, só é punível o autor da coação ou da ordem.\n\n**Art. 23** Não há crime quando o agente pratica o fato:\nI - em estado de necessidade;\nII - em legítima defesa;\nIII - em estrito cumprimento de dever legal ou no exercício regular de direito.\n**Parágrafo único.** O agente, em qualquer das hipóteses deste artigo, responderá pelo excesso doloso ou culposo.\n\n**Art. 24** Considera-se em estado de necessidade quem pratica o fato para salvar de perigo atual, que não provocou por sua vontade, nem podia de outro modo evitar, direito próprio ou alheio, cujo sacrifício, nas circunstâncias, não era razoável exigir-se.\n\n**Art. 25** Entende-se em legítima defesa quem, usando moderadamente dos meios necessários, repele injusta agressão, atual ou iminente, a direito seu ou de outrem.\n**Parágrafo único.** Observados os requisitos previstos no caput deste artigo, considera-se também em legítima defesa o agente de segurança pública que repele agressão ou risco de agressão a vítima mantida refém durante a prática de crimes.\n\n### PARTE ESPECIAL\n\n#### TÍTULO I — DOS CRIMES CONTRA A PESSOA\n##### CAPÍTULO I — DOS CRIMES CONTRA A VIDA\n\n**Art. 121** Matar alguém:\nPena - reclusão, de seis a vinte anos.\n**§ 1º** Se o agente comete o crime impelido por motivo de relevante valor social ou moral, ou sob o domínio de violenta emoção, logo em seguida a injusta provocação da vítima, o juiz pode reduzir a pena de um sexto a um terço. *(Homicídio privilegiado)*\n**§ 2º** Se o homicídio é cometido:\nI - mediante paga ou promessa de recompensa, ou por outro motivo torpe;\nII - por motivo fútil;\nIII - com emprego de veneno, fogo, explosivo, asfixia, tortura ou outro meio insidioso ou cruel, ou de que possa resultar perigo comum;\nIV - à traição, de emboscada, ou mediante dissimulação ou outro recurso que dificulte ou torne impossível a defesa do ofendido;\nV - para assegurar a execução, a ocultação, a impunidade ou vantagem de outro crime;\nVI - contra a mulher por razões da condição de sexo feminino *(Feminicídio)*;\nVII - contra autoridade ou agente integrante dos órgãos de segurança pública (art. 142 e 144 CF), no exercício da função ou em decorrência dela, ou contra seu cônjuge, companheiro ou parente consanguíneo até terceiro grau;\nVIII - com emprego de arma de fogo de uso restrito ou proibido:\nPena - reclusão, de doze a trinta anos. *(Homicídio qualificado)*\n\n##### CAPÍTULO II — DAS LESÕES CORPORAIS\n\n**Art. 129** Ofender a integridade corporal ou a saúde de outrem:\nPena - detenção, de três meses a um ano.\n**§ 1º** Se resulta:\nI - incapacidade para as ocupações habituais, por mais de trinta dias;\nII - perigo de vida;\nIII - debilidade permanente de membro, sentido ou função;\nIV - aceleração de parto:\nPena - reclusão, de um a cinco anos. *(Lesão corporal grave)*\n**§ 2º** Se resulta:\nI - incapacidade permanente para o trabalho;\nII - enfermidade incurável;\nIII - perda ou inutilização do membro, sentido ou função;\nIV - deformidade permanente;\nV - aborto:\nPena - reclusão, de dois a oito anos. *(Lesão corporal gravíssima)*\n**§ 3º** Se resulta morte e as circunstâncias evidenciam que o agente não quis o resultado, nem assumiu o risco de produzi-lo:\nPena - reclusão, de quatro a doze anos. *(Lesão corporal seguida de morte)*\n\n#### TÍTULO II — DOS CRIMES CONTRA O PATRIMÔNIO\n\n**Art. 155** Subtrair, para si ou para outrem, coisa alheia móvel:\nPena - reclusão, de um a quatro anos, e multa.\n**§ 1º** A pena aumenta-se de um terço, se o crime é praticado durante o repouso noturno.\n**§ 4º** A pena é de reclusão de dois a oito anos, e multa, se o crime é cometido:\nI - com destruição ou rompimento de obstáculo à subtração da coisa;\nII - com abuso de confiança, ou mediante fraude, escalada ou destreza;\nIII - com emprego de chave falsa;\nIV - mediante concurso de duas ou mais pessoas.\n\n**Art. 157** Subtrair coisa móvel alheia, para si ou para outrem, mediante grave ameaça ou violência a pessoa, ou depois de havê-la, por qualquer meio, reduzido à impossibilidade de resistência:\nPena - reclusão, de quatro a dez anos, e multa.\n**§ 2º** A pena aumenta-se de 1/3 (um terço) até metade:\nII - se há o concurso de duas ou mais pessoas;\nVII - se a violência ou grave ameaça é exercida com emprego de arma branca;\n**§ 2º-A** A pena aumenta-se de 2/3 (dois terços):\nI - se a violência ou ameaça é exercida com emprego de arma de fogo;\nII - se há destruição ou rompimento de obstáculo mediante o emprego de explosivo ou de artefato análogo que cause perigo comum.\n**§ 3º** Se da violência resulta:\nI - lesão corporal grave, a pena é de reclusão de 7 a 18 anos, e multa;\nII - morte, a pena é de reclusão de 20 a 30 anos, e multa. *(Latrocínio - Crime Hediondo)*\n\n#### TÍTULO XI — DOS CRIMES CONTRA A ADMINISTRAÇÃO PÚBLICA\n##### CAPÍTULO I — DOS CRIMES PRATICADOS POR FUNCIONÁRIO PÚBLICO\n\n**Art. 312** Apropriar-se o funcionário público de dinheiro, valor ou qualquer outro bem móvel, público ou particular, de que tem a posse em razão do cargo, ou desviá-lo, em proveito próprio ou alheio:\nPena - reclusão, de dois a doze anos, e multa. *(Peculato-apropriação e Peculato-desvio)*\n**§ 1º** Aplica-se a mesma pena, se o funcionário público, embora não tendo a posse do dinheiro, valor ou bem, o subtrai, ou concorre para que seja subtraído, em proveito próprio ou alheio, valendo-se de facilidade que lhe proporciona a qualidade de funcionário. *(Peculato-furto)*\n**§ 2º** Se o funcionário concorre culposamente para o crime de outrem:\nPena - detenção, de três meses a um ano. *(Peculato culposo)*\n**§ 3º** No caso do parágrafo anterior, a reparação do dano, se precede à sentença irrecorrível, extingue a punibilidade; se lhe é posterior, reduz de metade a pena imposta.\n\n**Art. 316** Exigir, para si ou para outrem, direta ou indiretamente, ainda que fora da função ou antes de assumi-la, mas em razão dela, vantagem indevida:\nPena - reclusão, de dois a doze anos, e multa. *(Concussão)*\n\n**Art. 317** Solicitar ou receber, para si ou para outrem, direta ou indiretamente, ainda que fora da função ou antes de assumi-la, mas em razão dela, vantagem indevida, ou aceitar promessa de tal vantagem:\nPena - reclusão, de 2 a 12 anos, e multa. *(Corrupção passiva)*\n**§ 1º** A pena é aumentada de um terço, se, em consequência da vantagem ou promessa, o funcionário retarda ou deixa de praticar qualquer ato de ofício ou o pratica infringindo dever funcional.\n\n**Art. 319** Retardar ou deixar de praticar, indevidamente, ato de ofício, ou praticá-lo contra disposição expressa de lei, para satisfazer interesse ou sentimento pessoal:\nPena - detenção, de três meses a um ano, e multa. *(Prevaricação)*\n\n**Art. 327** Considera-se funcionário público, para os efeitos penais, quem, embora transitoriamente ou sem remuneração, exerce cargo, emprego ou função pública.\n**§ 1º** Equipara-se a funcionário público quem exerce cargo, emprego ou função em entidade paraestatal, e quem trabalha para empresa prestadora de serviço contratada ou conveniada para a execução de atividade típica da Administração Pública.\n**§ 2º** A pena será aumentada da terça parte quando os autores dos crimes previstos neste Capítulo forem ocupantes de cargos em comissão ou de função de direção ou assessoramento de órgão da administração direta, sociedade de economia mista, empresa pública ou fundação instituída pelo poder público.","codigo-processo-penal":"# CÓDIGO DE PROCESSO PENAL BRASILEIRO\n## DECRETO-LEI Nº 3.689, DE 3 DE OUTUBRO DE 1941\nO Presidente da República, usando da atribuição que lhe confere o art. 180 da Constituição, decreta a seguinte Lei:\n\n### LIVRO I — DO PROCESSO EM GERAL\n\n#### TÍTULO I — DISPOSIÇÕES PRELIMINARES\n\n**Art. 1º** O processo penal reger-se-á, em todo o território brasileiro, por este Código, ressalvados os tratados, as prerrogativas constitucionais e as leis especiais.\n\n**Art. 2º** A lei processual penal aplicar-se-á desde logo, sem prejuízo da validade dos atos realizados sob a vigência da lei anterior. *(Princípio do Efeito Imediato / Tempus Regit Actum)*\n\n**Art. 3º-A** O processo penal terá estrutura acusatória, vedadas a iniciativa do juiz na fase de investigação e a substituição da atuação probatória do órgão de acusação.\n\n#### TÍTULO II — DO INQUÉRITO POLICIAL\n\n**Art. 4º** A polícia judiciária será exercida pelas autoridades policiais no território de suas respectivas circunscrições e terá por fim a apuração das infrações penais e da sua autoria.\n**Parágrafo único.** A competência definida neste artigo não excluirá a de autoridades administrativas, a quem por lei seja cometida a mesma função.\n\n**Art. 5º** Nos crimes de ação pública o inquérito policial será iniciado:\nI - de ofício;\nII - mediante requisição da autoridade judiciária ou do Ministério Público, ou a requerimento do ofendido ou de quem tiver qualidade para representá-lo.\n**§ 1º** O requerimento a que se refere o nº II conterá sempre que possível a narração do fato, a individualização do indiciado e as testemunhas.\n**§ 3º** Qualquer pessoa do povo que tiver conhecimento da existência de infração penal em que caiba ação pública poderá, verbalmente ou por escrito, comunicá-la à autoridade policial *(delatio criminis)*.\n**§ 4º** O inquérito, nos crimes em que a ação pública depender de representação, não poderá sem ela ser iniciado.\n**§ 5º** Nos crimes de ação privada, a autoridade policial somente poderá proceder a inquérito a requerimento de quem tenha qualidade para intentar a ação.\n\n**Art. 6º** Logo que tiver conhecimento da prática da infração penal, a autoridade policial deverá:\nI - dirigir-se ao local, providenciando para que não se alterem o estado e conservação das coisas, até a chegada dos peritos criminais;\nII - apreender os objetos que tiverem relação com o fato, após liberados pelos peritos criminais;\nIII - colher todas as provas que servirem para o esclarecimento do fato e suas circunstâncias;\nIV - ouvir o ofendido;\nV - ouvir o indiciado, com observância, no que for aplicável, do disposto no Capítulo III do Título VIII deste Livro;\nVI - proceder a reconhecimento de pessoas e coisas e a acareações;\nVII - determinar, se for caso, que se proceda a exame de corpo de delito e a quaisquer outras perícias.\n\n**Art. 9º** Todas as peças do inquérito policial serão, num só processado, reduzidas a escrito ou datilografadas e, neste caso, rubricadas pela autoridade.\n\n**Art. 10** O inquérito deverá terminar no prazo de 10 dias, se o indiciado tiver sido preso em flagrante, ou estiver preso preventivamente, contado o prazo, nesta hipótese, a partir do dia em que se executar a ordem de prisão; ou no prazo de 30 dias, quando estiver solto, mediante fiança ou sem ela.\n\n**Art. 17** A autoridade policial não poderá mandar arquivar autos de inquérito. *(Indisponibilidade do Inquérito Policial)*\n\n#### TÍTULO VII — DA PROVA\n##### CAPÍTULO I — DISPOSIÇÕES GERAIS\n\n**Art. 155** O juiz formará sua convicção pela livre apreciação da prova produzida em contraditório judicial, não podendo fundamentar sua decisão exclusivamente nos elementos informativos colhidos na investigação, ressalvadas as provas cautelares, não repetíveis e antecipadas.\n\n**Art. 157** São inadmissíveis, devendo ser desentranhadas do processo, as provas ilícitas, assim entendidas as obtidas em violação a normas constitucionais ou legais.\n**§ 1º** São também inadmissíveis as provas derivadas das ilícitas, salvo quando não evidenciado o nexo de causalidade entre umas e outras, ou quando as derivadas puderem ser obtidas por uma fonte independente das primeiras. *(Teoria dos Frutos da Árvore Envenenada)*\n\n##### CAPÍTULO II — DO EXAME DO CORPO DE DELITO E DA CADEIA DE CUSTÓDIA\n\n**Art. 158** Quando a infração deixar vestígios, será indispensável o exame de corpo de delito, direto ou indireto, não podendo supri-lo a confissão do acusado.\n\n**Art. 158-A** Considera-se cadeia de custódia o conjunto de todos os procedimentos utilizados para manter e documentar a história cronológica do vestígio coletado em locais ou em vítimas de crimes, para rastrear sua posse e manuseio a partir de seu reconhecimento até o descarte.\n**§ 1º** O início da cadeia de custódia dá-se com a preservação do local de crime ou com procedimentos policiais ou periciais nos quais seja detectada a existência de vestígio.\n\n#### TÍTULO IX — DA PRISÃO E DAS MEDIDAS CAUTELARES\n##### CAPÍTULO II — DA PRISÃO EM FLAGRANTE\n\n**Art. 301** Qualquer do povo poderá e as autoridades policiais e seus agentes deverão prender quem quer que seja encontrado em flagrante delito.\n\n**Art. 302** Considera-se em flagrante delito quem:\nI - está cometendo a infração penal *(Flagrante próprio)*;\nII - acaba de cometê-la *(Flagrante próprio)*;\nIII - é perseguido, logo após, pela autoridade, pelo ofendido ou por qualquer pessoa, em situação que faça presumir ser autor da infração *(Flagrante impróprio ou quase-flagrante)*;\nIV - é encontrado, logo depois, com instrumentos, armas, objetos ou papéis que façam presumir ser ele autor da infração *(Flagrante presumido ou ficto)*.\n\n**Art. 306** A prisão de qualquer pessoa e o local onde se encontre serão comunicados imediatamente ao juiz competente, ao Ministério Público e à família do preso ou à pessoa por ele indicada.\n**§ 1º** Em até 24 (vinte e quatro) horas após a realização da prisão, será encaminhado ao juiz competente o auto de prisão em flagrante e, caso o autuado não informe o nome de seu advogado, cópia integral para a Defensoria Pública.\n**§ 2º** No mesmo prazo, será entregue ao preso, mediante recibo, a nota de culpa, assinada pela autoridade, com o motivo da prisão, o nome do condutor e os das testemunhas.\n\n**Art. 310** Após receber o auto de prisão em flagrante, no prazo máximo de até 24 (vinte e quatro) horas após a realização da prisão, o juiz deverá promover audiência de custódia com a presença do acusado, seu advogado ou defensor público e o membro do Ministério Público, e, motivadamente:\nI - relaxar a prisão ilegal; ou\nII - converter a prisão em flagrante em preventiva, quando presentes os requisitos do art. 312 deste Código; ou\nIII - conceder liberdade provisória, com ou sem fiança.\n\n##### CAPÍTULO III — DA PRISÃO PREVENTIVA\n\n**Art. 311** Em qualquer fase da investigação policial ou do processo penal, caberá a prisão preventiva decretada pelo juiz, a requerimento do Ministério Público, do querelante ou do assistente, ou por representação da autoridade policial. *(Vedada a decretação de ofício pelo Juiz)*\n\n**Art. 312** A prisão preventiva poderá ser decretada como garantia da ordem pública, da ordem econômica, por conveniência da instrução criminal ou para assegurar a aplicação da lei penal, quando houver prova da existência do crime e indício suficiente de autoria e de perigo gerado pelo estado de liberdade do imputado.","lei-de-drogas":"# SISTEMA NACIONAL DE POLÍTICAS PÚBLICAS SOBRE DROGAS - SISNAD\n## LEI Nº 11.343, DE 23 DE AGOSTO DE 2006\nInstitui o Sistema Nacional de Políticas Públicas sobre Drogas - Sisnad; prescreve medidas para prevenção do uso indevido, atenção e reinserção social de usuários e dependentes de drogas; estabelece normas para repressão à produção não autorizada e ao tráfico ilícito de drogas e define crimes.\n\n### CAPÍTULO III — DOS CRIMES E DAS PENAS\n\n**Art. 28** Quem adquirir, guardar, tiver em depósito, transportar ou trouxer consigo, para consumo pessoal, drogas sem autorização ou em desacordo com determinação legal ou regulamentar será submetido às seguintes penas:\nI - advertência sobre os efeitos das drogas;\nII - prestação de serviços à comunidade;\nIII - medida educativa de comparecimento a programa ou curso educativo.\n**§ 1º** Às mesmas medidas submete-se quem, para seu consumo pessoal, semeia, cultiva ou colhe plantas destinadas à preparação de pequena quantidade de substância ou produto capaz de causar dependência física ou psíquica.\n**§ 2º** Para determinar se a droga destinava-se a consumo pessoal, o juiz atenderá à natureza e à quantidade da substância apreendida, ao local e às condições em que se desenvolveu a ação, às circunstâncias sociais e pessoais, bem como à conduta e aos antecedentes do agente.\n**§ 3º** As penas previstas nos incisos II e III do caput deste artigo serão aplicadas pelo prazo máximo de 5 (cinco) meses. Em caso de reincidência, o prazo máximo será de 10 (dez) meses.\n*(Nota Tática: Vedada a imposição de prisão em flagrante ou privativa de liberdade para o Art. 28 - Despenalização).*\n\n**Art. 33** Importar, exportar, remeter, preparar, produzir, fabricar, adquirir, vender, expor à venda, oferecer, ter em depósito, transportar, trazer consigo, guardar, prescrever, ministrar, entregar a consumo ou fornecer drogas, ainda que gratuitamente, sem autorização ou em desacordo com determinação legal ou regulamentar:\nPena - reclusão de 5 (cinco) a 15 (quinze) anos e pagamento de 500 (quinhentos) a 1.500 (mil e quinhentos) dias-multa. *(Crime Equiparado a Hediondo)*\n**§ 1º** Nas mesmas penas incorre quem:\nI - importa, exporta, remete, produz, fabrica, adquire, vende, expõe à venda, oferece, fornece, tem em depósito, transporta, traz consigo ou guarda, ainda que gratuitamente, matéria-prima, insumo ou produto químico destinado à preparação de drogas;\nII - semeia, cultiva ou faz a colheita, sem autorização ou em desacordo com determinação legal ou regulamentar, de plantas que se constituam em matéria-prima para a preparação de drogas;\nIII - utiliza local ou bem de qualquer natureza de que tem a propriedade, posse, administração, guarda ou vigilância, ou consente que outrem dele se utilize, ainda que gratuitamente, sem autorização ou em desacordo com determinação legal ou regulamentar, para o tráfico ilícito de drogas.\n**§ 4º** Nos delitos definidos no caput e no § 1º deste artigo, as penas poderão ser reduzidas de um sexto a dois terços, desde que o agente seja primário, de bons antecedentes, não se dedique às atividades criminosas nem integre organização criminosa. *(Tráfico Privilegiado - Não é Hediondo segundo STF e STJ)*\n\n**Art. 34** Fabricar, adquirir, utilizar, transportar, oferecer, vender, emprestar, trazer consigo, ter em depósito ou fornecer, ainda que gratuitamente, maquinário, aparelho, instrumento ou qualquer objeto destinado à fabricação, preparação, produção ou transformação de drogas, sem autorização ou em desacordo com determinação legal ou regulamentar:\nPena - reclusão, de 3 (três) a 10 (dez) anos, e pagamento de 1.200 (mil e duzentos) a 2.000 (dois mil) dias-multa.\n\n**Art. 35** Associarem-se duas ou mais pessoas para o fim de praticar, reiteradamente ou não, qualquer dos crimes previstos nos arts. 33, caput e § 1º, e 34 desta Lei:\nPena - reclusão, de 3 (três) a 10 (dez) anos, e pagamento de 700 (setecentos) a 1.200 (mil e duzentos) dias-multa. *(Exige dolo de associação estável e permanente).*\n\n**Art. 40** As penas previstas nos arts. 33 a 37 desta Lei são aumentadas de um sexto a dois terços, se:\nI - a matéria tiver por procedência ou destino qualquer ponto do exterior, ou caracterizar tráfico entre Estados da Federação ou entre estes e o Distrito Federal;\nII - o agente prevalecer-se de função pública ou no desempenho de missão de tutela, policiamento ou vigilância;\nIII - a infração tiver sido cometida nas dependências ou imediações de estabelecimentos prisionais, de ensino ou hospitalares, de sedes de entidades estudantis, sociais, culturais, recreativas, esportivas, ou onde se realizem espetáculos ou diversões públicas;\nIV - o crime tiver sido praticado com violência, grave ameaça, emprego de arma de fogo, ou qualquer processo de intimidação difusa ou coletiva;\nVI - sua prática envolver ou visar a atingir criança ou adolescente ou a quem tenha, por qualquer motivo, diminuída ou suprimida a capacidade de entendimento e determinação.\n\n### CAPÍTULO IV — DO PROCEDIMENTO POLICIAL E DESTRUIÇÃO DE DROGAS\n\n**Art. 50** Para efeito da lavratura do auto de prisão em flagrante e do estabelecimento da materialidade do delito, é suficiente o laudo de constatação da natureza e quantidade da droga, firmado por perito oficial ou, na falta deste, por pessoa idônea.\n**§ 1º** O perito que subscrever o laudo a que se refere o caput deste artigo não ficará impedido de participar da elaboração do laudo definitivo.\n**§ 3º** Recebida a cópia do auto de prisão em flagrante, o juiz, no prazo de 10 (dez) dias, certificará a regularidade formal do laudo de constatação preliminar e determinará a destruição das drogas apreendidas, guardando-se amostra necessária à realização do laudo definitivo.\n**§ 4º** A destruição das drogas será executada pelo Delegado de Polícia no prazo de 15 (quinze) dias na presença do Ministério Público e da autoridade sanitária.","lei-abuso-autoridade":"# LEI DE ABUSO DE AUTORIDADE\n## LEI Nº 13.869, DE 5 DE SETEMBRO DE 2019\nDispõe sobre os crimes de abuso de autoridade; altera a Lei nº 7.960, de 21 de dezembro de 1989, a Lei nº 9.296, de 2 de julho de 1996, a Lei nº 8.069, de 13 de julho de 1990, e a Lei nº 8.906, de 4 de julho de 1994; e revoga a Lei nº 4.898, de 9 de dezembro de 1965.\n\n### CAPÍTULO I — DISPOSIÇÕES GERAIS\n\n**Art. 1º** Esta Lei define os crimes de abuso de autoridade, cometidos por agente público, servidor ou não, que, no exercício de suas funções ou a pretexto de exercê-las, abuse do poder que lhe foi conferido.\n**§ 1º** As condutas descritas nesta Lei constituem crime de abuso de autoridade quando praticadas pelo agente com a finalidade específica de prejudicar outrem ou beneficiar a si mesmo ou a terceiro, ou, ainda, por mero capricho ou satisfação pessoal. *(Dolo Específico Obrigatório)*\n**§ 2º** A divergência na interpretação de lei ou na avaliação de fatos e provas não configura abuso de autoridade. *(Hermenêutica Judiciária e Policial Protegida)*\n\n**Art. 2º** É sujeito ativo do crime de abuso de autoridade qualquer agente público, servidor ou não, da administração direta, indireta ou fundacional de qualquer dos Poderes da União, dos Estados, do Distrito Federal, dos Municípios e de Território, compreendendo:\nI - servidores públicos e militares ou pessoas a eles equiparadas;\nII - membros do Poder Legislativo;\nIII - membros do Poder Executivo;\nIV - membros do Poder Judiciário;\nV - membros do Ministério Público;\nVI - membros dos tribunais ou conselhos de contas.\n\n**Art. 3º** Os crimes previstos nesta Lei são de ação penal pública incondicionada.\n**§ 1º** Será admitida ação privada subsidiária da pública se a ação penal não for intentada no prazo legal pelo Ministério Público.\n\n**Art. 4º** São efeitos da condenação:\nI - tornar certa a obrigação de indenizar o dano causado pelo crime;\nII - a inabilitação para o exercício de cargo, mandato ou função pública, pelo período de 1 (um) a 5 (cinco) anos;\nIII - a perda do cargo, do mandato ou da função pública.\n**Parágrafo único.** Os efeitos previstos nos incisos II e III do caput deste artigo são condicionados à ocorrência de reincidência em crime de abuso de autoridade e não são automáticos, devendo ser declarados motivadamente na sentença.\n\n### CAPÍTULO II — DOS CRIMES EM ESPÉCIE\n\n**Art. 9º** Decretar medida de privação da liberdade em manifesta desconformidade com as hipóteses legais:\nPena - detenção, de 1 (um) a 4 (quatro) anos, e multa.\n**Parágrafo único.** Ocorre a mesma pena a autoridade judiciária que, dentro de prazo razoável, deixar de:\nI - relaxar a prisão manifestamente ilegal;\nII - substituir a prisão preventiva por medida cautelar diversa ou de conceder liberdade provisória, quando manifestamente cabível;\nIII - deferir liminar ou ordem de habeas corpus, quando manifestamente cabível.\n\n**Art. 13** Constranger o preso ou o detento, mediante violência, grave ameaça ou redução de sua capacidade de resistência, a:\nI - exibir-se ou ter seu corpo ou parte dele exibido à curiosidade pública;\nII - submeter-se a situação vexatória ou a constrangimento não autorizado em lei;\nIII - produzir prova contra si mesmo ou contra terceiro:\nPena - detenção, de 1 (um) a 4 (quatro) anos, e multa, sem prejuízo da pena cominada à violência.\n\n**Art. 22** Invadir ou adentrar, clandestina ou astuciosamente, ou à revelia da vontade do ocupante, imóvel alheio ou suas dependências, ou nele permanecer nas mesmas condições, sem determinação judicial ou fora das condições estabelecidas em lei:\nPena - detenção, de 1 (um) a 4 (quatro) anos, e multa.\n**§ 1º** Incorre na mesma pena quem:\nI - coage outrem, mediante violência ou grave ameaça, a franquear-lhe o acesso a imóvel ou suas dependências;\nII - executa mandado de busca e apreensão domiciliar após as 21h (vinte e uma horas) ou antes das 5h (cinco horas).\n**§ 2º** Não haverá crime se o ingresso for para prestar socorro, ou quando houver fundados indícios de flagrante delito ou desastre.\n\n**Art. 25** Proceder à obtenção de prova, em procedimento de investigação ou processo, por meio manifestamente ilícito:\nPena - detenção, de 1 (um) a 4 (quatro) anos, e multa.\n\n**Art. 38** Antecipar o responsável pelas investigações, por meio de rede social ou qualquer outro meio de divulgação, atribuição de culpa, antes de concluídas as apurações e formalizada a acusação:\nPena - detenção, de 6 (seis) meses a 2 (dois) anos, e multa.","crimes-hediondos":"# LEI DE CRIMES HEDIONDOS\n## LEI Nº 8.072, DE 25 DE JULHO DE 1990\nDispõe sobre os crimes hediondos, nos termos do art. 5º, inciso XLIII, da Constituição Federal, e determina outras providências.\n\n**Art. 1º** São considerados hediondos os seguintes crimes, todos tipificados no Decreto-Lei nº 2.848, de 7 de dezembro de 1940 - Código Penal, consumados ou tentados:\nI - homicídio (art. 121), quando praticado em atividade típica de grupo de extermínio, ainda que cometido por um só agente, e homicídio qualificado (art. 121, § 2º, incisos I, II, III, IV, V, VI, VII e VIII);\nI-A - lesão corporal dolosa de natureza gravíssima (art. 129, § 2º) e lesão corporal seguida de morte (art. 129, § 3º), quando praticadas contra autoridade ou agente integrante dos órgãos de segurança pública (arts. 142 e 144 CF), no exercício da função ou em decorrência dela, ou contra seu cônjuge, companheiro ou parente consanguíneo até terceiro grau;\nII - roubo:\na) circunstanciado pela restrição de liberdade da vítima (art. 157, § 2º, V);\nb) circunstanciado pelo emprego de arma de fogo (art. 157, § 2º-A, I) ou pelo emprego de arma de fogo de uso proibido ou restrito (art. 157, § 2º-B);\nc) qualificado pelo resultado lesão corporal grave ou morte *(Latrocínio, art. 157, § 3º)*;\nIII - extorsão qualificada pela restrição da liberdade da vítima, ocorrência de lesão corporal ou morte (art. 158, § 3º);\nIV - extorsão mediante sequestro e na forma qualificada (art. 159, caput, e §§ 1º, 2º e 3º);\nV - estupro (art. 213, caput e §§ 1º e 2º);\nVI - estupro de vulnerável (art. 217-A, caput e §§ 1º, 2º, 3º e 4º);\nVII - epidemia com resultado morte (art. 267, § 1º);\nVII-B - falsificação, corrupção, adulteração ou alteração de produto destinado a fins terapêuticos ou medicinais (art. 273, caput e §§ 1º, 1º-A e 1º-B);\nVIII - furto qualificado pelo emprego de explosivo ou de artefato análogo que cause perigo comum (art. 155, § 4º-A).\n**Parágrafo único.** Consideram-se também hediondos, tentados ou consumados:\nI - o crime de genocídio, previsto nos arts. 1º, 2º e 3º da Lei nº 2.889, de 1º de outubro de 1956;\nII - o crime de posse ou porte ilegal de arma de fogo de uso proibido, previsto no art. 16 da Lei nº 10.826, de 22 de dezembro de 2003;\nIII - o crime de comércio ilegal de armas de fogo, previsto no art. 17 da Lei nº 10.826, de 22 de dezembro de 2003;\nIV - o crime de tráfico internacional de arma de fogo, acessório ou munição, previsto no art. 18 da Lei nº 10.826, de 22 de dezembro de 2003;\nV - o crime de organização criminosa, quando direcionado à prática de crime hediondo ou equiparado.\n\n**Art. 2º** Os crimes hediondos, a prática da tortura, o tráfico ilícito de entorpecentes e drogas afins e o terrorismo são insuscetíveis de:\nI - anistia, graça e indulto;\nII - fiança.\n**§ 1º** A pena por crime previsto neste artigo será cumprida inicialmente em regime fechado. *(Nota: STF declarou a inconstitucionalidade da fixação obrigatória de regime fechado, cabendo ao juiz analisar o art. 33 do CP).*\n**§ 3º** Em caso de sentença condenatória, o juiz decidirá fundamentadamente se o réu poderá apelar em liberdade.","interceptacao-telefonica":"# LEI DE INTERCEPTAÇÃO TELEFÔNICA\n## LEI Nº 9.296, DE 24 DE JULHO DE 1996\nRegulamenta o inciso XII, parte final, do art. 5º da Constituição Federal (inviolabilidade do sigilo das comunicações telefônicas).\n\n**Art. 1º** A interceptação de comunicações telefônicas, de qualquer natureza, para prova em investigação criminal e em instrução processual penal, observará o disposto nesta Lei e dependerá de ordem do juiz competente da ação principal, sob segredo de justiça.\n**Parágrafo único.** O disposto nesta Lei aplica-se à interceptação do fluxo de comunicações em sistemas de informática e telemática.\n\n**Art. 2º** Não será admitida a interceptação de comunicações telefônicas quando ocorrer qualquer das seguintes hipóteses:\nI - não houver indícios razoáveis da autoria ou participação em infração penal;\nII - a prova puder ser feita por outros meios disponíveis;\nIII - o fato investigado constituir infração penal punida, no máximo, com pena de detenção.\n**Parágrafo único.** Em qualquer hipótese deve ser descrita com clareza a situação objeto da investigação, inclusive com a indicação e qualificação dos investigados, salvo impossibilidade manifesta, devidamente justificada.\n\n**Art. 3º** A interceptação das comunicações telefônicas poderá ser determinada pelo juiz, de ofício ou a requerimento:\nI - da autoridade policial, na investigação criminal;\nII - do representante do Ministério Público, na investigação criminal e na instrução processual penal.\n\n**Art. 4º** O pedido de interceptação de comunicação telefônica conterá a demonstração de que a sua realização é necessária à apuração de infração penal, com indicação dos meios a serem empregados.\n\n**Art. 5º** A decisão será fundamentada, sob pena de nulidade, no prazo máximo de vinte e quatro horas.\n**Parágrafo único.** A interceptação não poderá exceder o prazo de 15 (quinze) dias, renovável por igual período uma vez comprovada a indispensabilidade do meio de prova. *(Jurisprudência pacífica do STF/STJ admite sucessivas renovações de 15 dias enquanto perdurar a indispensabilidade).*\n\n**Art. 10** Constitui crime realizar interceptação de comunicações telefônicas, de informática ou telemática, promover escuta ambiental ou quebrar segredo da Justiça, sem autorização judicial ou com objetivos não autorizados em lei:\nPena - reclusão, de 2 (dois) a 4 (quatro) anos, e multa.","estatuto-desarmamento":"# ESTATUTO DO DESARMAMENTO\n## LEI Nº 10.826, DE 22 DE DEZEMBRO DE 2003\nDispõe sobre registro, posse e comercialização de armas de fogo e munição, sobre o Sistema Nacional de Armas – Sinarm, define crimes e dá outras providências.\n\n### CAPÍTULO IV — DOS CRIMES E DAS PENAS\n\n**Art. 12** Possuir ou manter sob sua guarda arma de fogo, acessório ou munição, de uso permitido, em desacordo com determinação legal ou regulamentar, no interior de sua residência ou dependência desta, ou, ainda no seu local de trabalho, desde que seja o titular ou o responsável legal do estabelecimento ou empresa:\nPena - detenção, de 1 (um) a 3 (três) anos, e multa. *(Posse irregular de arma de uso permitido).*\n\n**Art. 13** Deixar de observar as cautelas necessárias para impedir que menor de 18 (dezoito) anos ou pessoa portadora de deficiência mental se apodere de arma de fogo que esteja sob sua posse ou que seja de sua propriedade:\nPena - detenção, de 1 (um) a 2 (dois) anos, e multa. *(Omissão de cautela).*\n\n**Art. 14** Portar, deter, adquirir, fornecer, receber, ter em depósito, transportar, ceder, ainda que gratuitamente, emprestar, remeter, empregar, manter sob guarda ou ocultar arma de fogo, acessório ou munição, de uso permitido, sem autorização e em desacordo com determinação legal ou regulamentar:\nPena - reclusão, de 2 (dois) a 4 (quatro) anos, e multa. *(Porte ilegal de arma de uso permitido).*\n\n**Art. 15** Disparar arma de fogo ou acionar munição em lugar habitado ou em suas adjacências, em via pública ou em direção a ela, desde que essa conduta não tenha por finalidade a prática de outro crime:\nPena - reclusão, de 2 (dois) a 4 (quatro) anos, e multa. *(Subsidiariedade expressa).*\n\n**Art. 16** Possuir, deter, portar, adquirir, fornecer, receber, ter em depósito, transportar, ceder, ainda que gratuitamente, emprestar, remeter, empregar, manter sob sua guarda ou ocultar arma de fogo, acessório ou munição de uso restrito, sem autorização e em desacordo com determinação legal ou regulamentar:\nPena - reclusão, de 3 (três) a 6 (seis) anos, e multa.\n**§ 1º** Nas mesmas penas incorre quem:\nI - suprime ou altera marca, numeração ou qualquer sinal de identificação de arma de fogo ou artefato;\nII - modifica as características de arma de fogo, de forma a torná-la equivalente a arma de fogo de uso proibido ou restrito;\nIV - porta, possui, adquire, transporta ou fornece arma de fogo com numeração, marca ou qualquer outro sinal de identificação raspado, suprimido ou adulterado.\n**§ 2º** Se a conduta envolver arma de fogo, acessório ou munição de uso proibido:\nPena - reclusão, de 4 (quatro) a 12 (doze) anos. *(Crime Hediondo).*\n\n**Art. 17** Adquirir, alugar, receber, transportar, conduzir, ocultar, ter em depósito, desmontar, montar, remontar, adulterar, vender, expor à venda, ou de qualquer forma utilizar, em proveito próprio ou alheio, no exercício de atividade comercial ou industrial, arma de fogo, acessório ou munição, sem autorização ou em desacordo com determinação legal ou regulamentar:\nPena - reclusão, de 6 (seis) a 12 (doze) anos, e multa. *(Comércio ilegal de arma de fogo - Crime Hediondo).*\n\n**Art. 18** Importar, exportar, favorecer a entrada ou saída do território nacional, a qualquer título, de arma de fogo, acessório ou munição, sem autorização da autoridade competente:\nPena - reclusão, de 8 (oito) a 16 (dezesseis) anos, e multa. *(Tráfico internacional de arma de fogo - Crime Hediondo).*","maria-da-penha":"# LEI MARIA DA PENHA\n## LEI Nº 11.340, DE 7 DE AGOSTO DE 2006\nCria mecanismos para coibir a violência doméstica e familiar contra a mulher, nos termos do § 8º do art. 226 da Constituição Federal.\n\n### TÍTULO I — DISPOSIÇÕES PRELIMINARES\n\n**Art. 1º** Esta Lei cria mecanismos para coibir e prevenir a violência doméstica e familiar contra a mulher, seja qual for a sua orientação sexual.\n\n**Art. 5º** Para os efeitos desta Lei, configura violência doméstica e familiar contra a mulher qualquer ação ou omissão baseada no gênero que lhe cause morte, lesão, sofrimento físico, sexual ou psicológico e dano moral ou patrimonial:\nI - no âmbito da unidade doméstica, compreendida como o espaço de convívio permanente de pessoas, com ou sem vínculo familiar, inclusive as esporadicamente agregadas;\nII - no âmbito da família, compreendida como a comunidade formada por indivíduos que são ou se consideram aparentados, unidos por laços naturais, por afinidade ou por vontade expressa;\nIII - em qualquer relação íntima de afeto, na qual o agressor conviva ou tenha convivido com a ofendida, independentemente de coabitação. *(Súmula 600 STJ: prescinde de coabitação).*\n\n### TÍTULO II — DAS FORMAS DE VIOLÊNCIA CONTRA A MULHER\n\n**Art. 7º** São formas de violência doméstica e familiar contra a mulher, entre outras:\nI - a violência física, entendida como qualquer conduta que ofenda sua integridade ou saúde corporal;\nII - a violência psicológica, entendida como qualquer conduta que lhe cause dano emocional e diminuição da autoestima ou que lhe prejudique e perturbe o pleno desenvolvimento;\nIII - a violência sexual, entendida como qualquer conduta que a constranja a presenciar, a manter ou a participar de relação sexual não desejada;\nIV - a violência patrimonial, entendida como qualquer conduta que configure retenção, subtração, destruição parcial ou total de seus objetos, instrumentos de trabalho, documentos pessoais, bens ou valores;\nV - a violência moral, entendida como qualquer conduta que configure calúnia, difamação ou injúria.\n\n### TÍTULO III — DA ASSISTÊNCIA E ATUAÇÃO POLICIAL\n\n**Art. 12-C** Verificada a existência de risco atual ou iminente à vida ou à integridade física da mulher em situação de violência doméstica e familiar, ou de seus dependentes, o agressor será imediatamente afastado do lar, domicílio ou local de convivência com a ofendida:\nI - pela autoridade judicial;\nII - pelo Delegado de Polícia, quando o Município não for sede de comarca; ou\nIII - pelo policial, quando o Município não for sede de comarca e não houver Delegado disponível no momento do atendimento.\n**§ 1º** Nas hipóteses dos incisos II e III do caput deste artigo, o juiz será comunicado no prazo máximo de 24 (vinte e quatro) horas e decidirá, em igual prazo, sobre a manutenção ou a revogação da medida concedida.\n\n**Art. 17** É vedada a aplicação, nos casos de violência doméstica e familiar contra a mulher, de penas de cesta básica ou outras de prestação pecuniária, bem como a substituição de pena que implique o pagamento isolado de multa.\n\n**Art. 24-A** Descumprir decisão judicial que defere medidas protetivas de urgência previstas nesta Lei:\nPena - detenção, de 3 (três) meses a 2 (dois) anos.\n**§ 1º** A configuração do crime independe da competência civil ou criminal do juiz que deferiu as medidas.\n**§ 2º** Na hipótese de prisão em flagrante, apenas a autoridade judicial poderá conceder fiança. *(Vedada a fiança pelo Delegado de Polícia).*","organizacoes-criminosas":"# LEI DE ORGANIZAÇÕES CRIMINOSAS\n## LEI Nº 12.850, DE 2 DE AGOSTO DE 2013\nDefine organização criminosa e dispõe sobre a investigação criminal, os meios de obtenção da prova, infrações penais correlatas e o procedimento criminal.\n\n### CAPÍTULO I — DA ORGANIZAÇÃO CRIMINOSA\n\n**Art. 1º** Esta Lei define organização criminosa e dispõe sobre a investigação criminal, os meios de obtenção da prova, infrações penais correlatas e o procedimento criminal.\n**§ 1º** Considera-se organização criminosa a associação de 4 (quatro) ou mais pessoas estruturalmente ordenada e caracterizada pela divisão de tarefas, ainda que informalmente, com objetivo de obter, direta ou indiretamente, vantagem de qualquer natureza, mediante a prática de infrações penais cujas penas máximas sejam superiores a 4 (quatro) anos, ou que sejam de caráter transnacional.\n\n**Art. 2º** Promover, constituir, financiar ou integrar, pessoalmente ou por interposta pessoa, organização criminosa:\nPena - reclusão, de 3 (três) a 8 (oito) anos, e multa, sem prejuízo das penas correspondentes às demais infrações penais praticadas.\n**§ 2º** As penas aumentam-se de até a metade se na atuação da organização criminosa houver emprego de arma de fogo.\n**§ 4º** A pena é aumentada de 1/6 (um sexto) a 2/3 (dois terços):\nI - se há participação de criança ou adolescente;\nII - se há concurso de funcionário público, valendo-se a organização criminosa dessa condição para a prática de infração penal;\nIII - se o produto ou proveito da infração penal destinar-se, no todo ou em parte, ao exterior;\nIV - se a organização criminosa mantém conexão com outras organizações criminosas independentes;\nV - se as circunstâncias do fato evidenciarem a transnacionalidade da organização.\n\n### CAPÍTULO II — DA INVESTIGAÇÃO E DOS MEIOS DE OBTENÇÃO DA PROVA\n\n**Art. 3º** Em qualquer fase da persecução penal, serão permitidos, sem prejuízo de outros já previstos em lei, os seguintes meios de obtenção da prova:\nI - colaboração premiada;\nII - captação ambiental de sinais eletromagnéticos, ópticos ou acústicos;\nIII - ação controlada;\nIV - acesso a registros de dados cadastrais constantes de bancos de dados públicos ou relativos a serviços de telecomunicações;\nV - interceptação de comunicações telefônicas e telemáticas, nos termos da legislação específica;\nVI - afastamento dos sigilos financeiro, bancário e fiscal, nos termos da legislação específica;\nVII - infiltração, por policiais, em atividade de investigação;\nVIII - cooperação entre instituições e órgãos federais, distritais, estaduais e municipais na busca de provas.\n\n#### SEÇÃO I — DA COLABORAÇÃO PREMIADA\n\n**Art. 3º-A** O acordo de colaboração premiada é negócio jurídico processual e meio de obtenção de prova, que pressupõe utilidade e interesse públicos.\n\n**Art. 4º** O juiz poderá, a requerimento das partes, conceder o perdão judicial, reduzir em até 2/3 (dois terços) a pena privativa de liberdade ou substituí-la por restritiva de direitos daquele que tenha colaborado efetiva e voluntariamente com a investigação e com o processo criminal, desde que dessa colaboração advenha um ou mais dos seguintes resultados:\nI - a identificação dos demais coautores e partícipes da organização criminosa e das infrações penais por eles praticadas;\nII - a revelação da estrutura hierárquica e da divisão de tarefas da organização criminosa;\nIII - a prevenção de infrações penais decorrentes das atividades da organização criminosa;\nIV - a recuperação total ou parcial do produto ou do proveito das infrações penais praticadas pela organização criminosa;\nV - a localização de eventual vítima com a sua integridade física preservada.\n\n#### SEÇÃO II — DA AÇÃO CONTROLADA\n\n**Art. 8º** Consiste a ação controlada em retardar a intervenção policial ou administrativa relativa à ação praticada por organização criminosa ou a ela vinculada, desde que mantida sob observação e acompanhamento para que a medida legal se concretize no momento mais eficaz à formação de provas e obtenção de informações.\n**§ 1º** O retardamento da intervenção policial ou administrativa será previamente comunicado ao juiz competente que, se for o caso, estabelecerá os seus limites e comunicará ao Ministério Público."},
 
-      async init() {
-        if (this.isInitialized && this.cleanLaws.length > 0) {
-          this.populateLawDropdown();
-          return this.cleanLaws;
+      async fetchAllRepoLaws() {
+        if (this.allRepoLaws && this.allRepoLaws.length > 0) {
+          return this.allRepoLaws;
         }
-        this.isInitialized = true;
 
         // 1. Tentar ler cache salvo no sessionStorage
         try {
-          const cached = sessionStorage.getItem('ctresb_leis_tree');
-          if (cached) {
-            const parsed = JSON.parse(cached);
+          const cachedTree = sessionStorage.getItem('ctresb_leis_full_tree');
+          const cachedCount = sessionStorage.getItem('ctresb_leis_count');
+          if (cachedTree) {
+            const parsed = JSON.parse(cachedTree);
             if (Array.isArray(parsed) && parsed.length > 0) {
+              this.allRepoLaws = parsed;
               this.cleanLaws = parsed;
-              this.populateLawDropdown();
-              return this.cleanLaws;
+              this.BRANCH = sessionStorage.getItem('ctresb_leis_branch') || 'main';
+              if (cachedCount && Number(cachedCount) <= parsed.length) {
+                return this.allRepoLaws;
+              }
             }
           }
         } catch (e) {
           console.warn('[GitHubLawProvider] Falha ao ler cache da sessão:', e);
         }
 
-        // 2. Mapeamento via GitHub REST API (com fallback de branches e endpoints)
-        try {
-          let treeData = null;
-          let activeBranch = 'main';
+        let treeData = null;
+        let activeBranch = 'main';
 
+        // 1. Tentar branch main recursiva
+        try {
+          const resMain = await fetch(`https://api.github.com/repos/${this.REPO_OWNER}/${this.REPO_NAME}/git/trees/main?recursive=1`, {
+            headers: { 'Accept': 'application/vnd.github.v3+json' }
+          });
+          if (resMain.ok) {
+            treeData = await resMain.json();
+            activeBranch = 'main';
+          }
+        } catch (eMain) {
+          console.warn('[GitHubLawProvider] Falha ao tentar branch main:', eMain);
+        }
+
+        // 2. Fallback automático para branch master recursiva
+        if (!treeData || !treeData.tree) {
           try {
-            const resMain = await fetch(`https://api.github.com/repos/${this.REPO_OWNER}/${this.REPO_NAME}/git/trees/main?recursive=1`, {
+            const resMaster = await fetch(`https://api.github.com/repos/${this.REPO_OWNER}/${this.REPO_NAME}/git/trees/master?recursive=1`, {
               headers: { 'Accept': 'application/vnd.github.v3+json' }
             });
-            if (resMain.ok) {
-              treeData = await resMain.json();
-              activeBranch = 'main';
+            if (resMaster.ok) {
+              treeData = await resMaster.json();
+              activeBranch = 'master';
             }
-          } catch (eMain) {
-            console.warn('[GitHubLawProvider] Falha ao tentar branch main:', eMain);
+          } catch (eMaster) {
+            console.warn('[GitHubLawProvider] Falha ao tentar branch master:', eMaster);
           }
+        }
 
-          if (!treeData || !treeData.tree) {
-            try {
-              const resMaster = await fetch(`https://api.github.com/repos/${this.REPO_OWNER}/${this.REPO_NAME}/git/trees/master?recursive=1`, {
-                headers: { 'Accept': 'application/vnd.github.v3+json' }
-              });
-              if (resMaster.ok) {
-                treeData = await resMaster.json();
-                activeBranch = 'master';
+        // 3. Fallback para endpoint contents
+        if (!treeData || !treeData.tree) {
+          try {
+            const resContents = await fetch(`https://api.github.com/repos/${this.REPO_OWNER}/${this.REPO_NAME}/contents`);
+            if (resContents.ok) {
+              const contents = await resContents.json();
+              if (Array.isArray(contents)) {
+                treeData = {
+                  tree: contents.map(c => ({
+                    path: c.path,
+                    type: c.type === 'file' ? 'blob' : c.type
+                  }))
+                };
               }
-            } catch (eMaster) {
-              console.warn('[GitHubLawProvider] Falha ao tentar branch master:', eMaster);
             }
+          } catch (eContents) {
+            console.warn('[GitHubLawProvider] Falha ao tentar contents:', eContents);
           }
+        }
 
-          if (!treeData || !treeData.tree) {
-            try {
-              const resContents = await fetch(`https://api.github.com/repos/${this.REPO_OWNER}/${this.REPO_NAME}/contents`);
-              if (resContents.ok) {
-                const contents = await resContents.json();
-                if (Array.isArray(contents)) {
-                  this.cleanLaws = contents.filter(c => c.name.endsWith('.md') || c.name.endsWith('.txt')).map(c => c.path);
-                }
-              }
-            } catch (eContents) {
-              console.warn('[GitHubLawProvider] Falha ao tentar contents:', eContents);
-            }
+        this.BRANCH = activeBranch;
+
+        if (treeData && Array.isArray(treeData.tree)) {
+          const blacklist = ['README.md', 'LICENSE', 'COBERTURA.md', 'PROGRESSO.md', 'WORKLOG.md', '.gitattributes', '.gitignore'];
+          this.allRepoLaws = treeData.tree
+            .filter(item => {
+              if (item.type !== 'blob') return false;
+              const p = item.path;
+              if (p.startsWith('.') || p.includes('/_')) return false;
+              if (blacklist.includes(p)) return false;
+              return (
+                p.endsWith('.md') ||
+                p.endsWith('.txt') ||
+                p.endsWith('.html') ||
+                p.endsWith('.json')
+              );
+            })
+            .map(item => item.path);
+
+          this.cleanLaws = this.allRepoLaws;
+
+          // Armazenar índice em cache no sessionStorage (fração segura para não exceder limites de 5MB do navegador)
+          try {
+            sessionStorage.setItem('ctresb_leis_branch', activeBranch);
+            sessionStorage.setItem('ctresb_leis_count', String(this.allRepoLaws.length));
+            sessionStorage.setItem('ctresb_leis_full_tree', JSON.stringify(this.allRepoLaws.slice(0, 2500)));
+          } catch (quotaErr) {
+            console.warn('[GitHubLawProvider] sessionStorage atingiu cota máxima, mantendo na memória ativa:', quotaErr);
           }
-
-          this.BRANCH = activeBranch;
-
-          if (treeData && Array.isArray(treeData.tree)) {
-            const blacklist = ['README.md', 'LICENSE', 'COBERTURA.md', 'PROGRESSO.md', 'WORKLOG.md'];
-            this.cleanLaws = treeData.tree
-              .filter(item => item.type === 'blob' && (item.path.endsWith('.md') || item.path.endsWith('.txt') || item.path.endsWith('.json') || item.path.endsWith('.html')) && !item.path.startsWith('.') && !item.path.includes('/_') && !blacklist.includes(item.path))
-              .map(item => item.path);
-
-            // Armazenar índice em cache no sessionStorage (fração segura para não exceder limites de 5MB)
-            try {
-              sessionStorage.setItem('ctresb_leis_tree', JSON.stringify(this.cleanLaws.slice(0, 1500)));
-            } catch (quotaErr) {
-              console.warn('[GitHubLawProvider] sessionStorage atingiu cota máxima, mantendo na memória ativa:', quotaErr);
-            }
-          }
-        } catch (err) {
-          console.warn('[GitHubLawProvider] Erro ao carregar repositório de leis ctresb/leis:', err);
         }
 
         // Garantir fallback universal com constituicao.md
-        if (!this.cleanLaws || this.cleanLaws.length === 0) {
-          this.cleanLaws = ['constituicao.md'];
+        if (!this.allRepoLaws || this.allRepoLaws.length === 0) {
+          this.allRepoLaws = ['constituicao.md'];
+          this.cleanLaws = this.allRepoLaws;
         }
 
         this.populateLawDropdown();
-        return this.cleanLaws;
+        return this.allRepoLaws;
+      },
+
+      async init() {
+        if (this.isInitialized && this.allRepoLaws.length > 0) {
+          this.populateLawDropdown();
+          return this.allRepoLaws;
+        }
+        this.isInitialized = true;
+        return this.fetchAllRepoLaws();
       },
 
       populateLawDropdown() {
@@ -7135,7 +7230,7 @@
         html += '<option value="constituicao.md">CF/88 - Constituição Federal de 1988 (Completa)</option>';
 
         // Constituições Estaduais
-        const consts = this.cleanLaws.filter(p => p !== 'constituicao.md' && p.includes('constituicao'));
+        const consts = this.allRepoLaws.filter(p => p !== 'constituicao.md' && p.includes('constituicao'));
         if (consts.length > 0) {
           html += '<optgroup label="Constituições Estaduais">';
           consts.slice(0, 25).forEach(path => {
@@ -7145,7 +7240,7 @@
         }
 
         // Leis Complementares
-        const comps = this.cleanLaws.filter(p => p.includes('complementar'));
+        const comps = this.allRepoLaws.filter(p => p.includes('complementar'));
         if (comps.length > 0) {
           html += '<optgroup label="Leis Complementares">';
           comps.slice(0, 30).forEach(path => {
@@ -7155,7 +7250,7 @@
         }
 
         // Leis Ordinárias e outros normativos
-        const others = this.cleanLaws.filter(p => !p.includes('constituicao') && !p.includes('complementar'));
+        const others = this.allRepoLaws.filter(p => !p.includes('constituicao') && !p.includes('complementar'));
         if (others.length > 0) {
           html += '<optgroup label="Leis Ordinárias / Outros">';
           others.slice(0, 35).forEach(path => {
@@ -7173,6 +7268,18 @@
       formatPathToLabel(path) {
         if (!path) return 'Legislação';
         if (path === 'constituicao.md') return 'CF/88 - Constituição Federal de 1988';
+        if (path === 'codigo-penal') return 'Código Penal Brasileiro (Dec-Lei 2.848/40)';
+        if (path === 'codigo-processo-penal') return 'Código de Processo Penal (Dec-Lei 3.689/41)';
+        if (path === 'lei-de-drogas') return 'Lei de Drogas (Lei 11.343/06)';
+        if (path === 'lei-abuso-autoridade') return 'Abuso de Autoridade (Lei 13.869/19)';
+        if (path === 'crimes-hediondos') return 'Crimes Hediondos (Lei 8.072/90)';
+        if (path === 'interceptacao-telefonica') return 'Interceptação Telefônica (Lei 9.296/96)';
+        if (path === 'estatuto-desarmamento') return 'Estatuto do Desarmamento (Lei 10.826/03)';
+        if (path === 'maria-da-penha') return 'Lei Maria da Penha (Lei 11.340/06)';
+        if (path === 'organizacoes-criminosas') return 'Organizações Criminosas (Lei 12.850/13)';
+        if (path === 'estatuto-servidores') return 'Estatuto dos Servidores Públicos';
+        if (path === 'direitos-humanos') return 'Declaração Universal dos Direitos Humanos';
+
         const parts = path.split('/');
         const fileName = parts[parts.length - 1].replace(/\.(md|txt|json|html)$/i, '');
         const state = (parts.length > 2 && parts[0] === 'estaduais') ? `[${parts[1]}] ` : '';
@@ -7192,36 +7299,22 @@
         }
 
         if (s.includes('penal') || s.includes('process') || s.includes('crime')) {
-          const match = this.cleanLaws.find(p => {
-            const lp = p.toLowerCase();
-            return lp.includes('penal') || lp.includes('process') || lp.includes('crime') || lp.includes('cpp') || lp.includes('cp');
-          });
-          if (match) return match;
-          return 'constituicao.md'; // CF/88 contém direitos e garantias penais e art. 144 Segurança Pública
+          return 'codigo-penal';
         }
 
-        if (s.includes('administrativ') || s.includes('servidor') || s.includes('estatuto') || s.includes('public')) {
-          const match = this.cleanLaws.find(p => {
-            const lp = p.toLowerCase();
-            return lp.includes('administrativ') || lp.includes('servidor') || lp.includes('estatuto');
-          });
-          if (match) return match;
-          return 'constituicao.md'; // CF/88 Art. 37 a 41
+        if (s.includes('administrativ') || s.includes('servidor') || s.includes('estatuto')) {
+          return 'estatuto-servidores';
         }
 
-        if (s.includes('especial') || s.includes('drogas') || s.includes('hediond') || s.includes('abuso') || s.includes('armas')) {
-          const match = this.cleanLaws.find(p => {
-            const lp = p.toLowerCase();
-            return lp.includes('drogas') || lp.includes('hediond') || lp.includes('abuso') || lp.includes('armas') || lp.includes('tortura');
-          });
-          if (match) return match;
-          return 'constituicao.md';
-        }
+        if (s.includes('drogas')) return 'lei-de-drogas';
+        if (s.includes('abuso')) return 'lei-abuso-autoridade';
+        if (s.includes('hediond')) return 'crimes-hediondos';
+        if (s.includes('armas') || s.includes('desarmamento')) return 'estatuto-desarmamento';
 
-        // Tentar buscar por qualquer palavra-chave da matéria
+        const pool = this.allRepoLaws.length > 0 ? this.allRepoLaws : this.cleanLaws;
         const tokens = s.split(/\s+/).filter(t => t.length >= 4 && !['nocoes', 'direito', 'geral', 'basica'].includes(t));
         for (const token of tokens) {
-          const match = this.cleanLaws.find(p => p.toLowerCase().includes(token));
+          const match = pool.find(p => p.toLowerCase().includes(token));
           if (match) return match;
         }
 
@@ -7232,15 +7325,25 @@
         if (!path) path = 'constituicao.md';
         if (this.rawCache[path]) return this.rawCache[path];
 
+        // 1. Se for uma das leis fundamentais do concurso no fallback oficial consolidado
+        if (this.FALLBACK_CORE_TEXTS && this.FALLBACK_CORE_TEXTS[path]) {
+          this.rawCache[path] = this.FALLBACK_CORE_TEXTS[path];
+          return this.FALLBACK_CORE_TEXTS[path];
+        }
+
+        // 2. Se for arquivo real do repositório ctresb/leis (ex: constituicao.md ou estaduais/...)
         const url = `https://raw.githubusercontent.com/${this.REPO_OWNER}/${this.REPO_NAME}/${this.BRANCH}/${path}`;
         try {
           const res = await fetch(url);
-          if (!res.ok) throw new Error(`HTTP ${res.status} ao carregar lei bruta.`);
+          if (!res.ok) throw new Error(`HTTP ${res.status} ao carregar lei bruta (${url}).`);
           const text = await res.text();
           this.rawCache[path] = text;
           return text;
         } catch (e) {
-          console.warn('[GitHubLawProvider] Erro no download do raw, tentando fallback na constituicao.md:', e);
+          console.warn('[GitHubLawProvider] Erro no download do raw, tentando fallback:', e);
+          if (this.FALLBACK_CORE_TEXTS && this.FALLBACK_CORE_TEXTS[path]) {
+            return this.FALLBACK_CORE_TEXTS[path];
+          }
           if (path !== 'constituicao.md') {
             return this.fetchRawLaw('constituicao.md');
           }
@@ -7253,7 +7356,6 @@
           return rawText || '';
         }
 
-        // Regex tolerante a formatos do repositório (**Art. X**, Art. X, # Art. X)
         const regex = /(?:^|\n)\s*(?:\*\*|#+)?\s*Art(?:igo|\.)\s*\d+[º\d\w.-]*/gi;
         const matches = [];
         let m;
@@ -7268,7 +7370,6 @@
           if (end >= rawText.length) {
             end = rawText.length;
           } else {
-            // Fatiamento inteligente no último artigo ou quebra de parágrafo antes de estourar maxChars
             const sub = rawText.slice(start, end);
             const lastArt = Math.max(sub.lastIndexOf('\n**Art.'), sub.lastIndexOf('\nArt.'));
             const lastPara = sub.lastIndexOf('\n\n');
@@ -7280,7 +7381,6 @@
           return rawText.slice(start, end).trim();
         }
 
-        // Fallback para blocos por parágrafos caso a lei não use a nomenclatura Art.
         const maxStart = Math.max(0, rawText.length - maxChars);
         const randomStart = Math.floor(Math.random() * maxStart);
         const nextPara = rawText.indexOf('\n\n', randomStart);
@@ -7288,6 +7388,8 @@
         return rawText.slice(actualStart, actualStart + maxChars).trim();
       }
     };
+
+    window.GitHubLawProvider = GitHubLawProvider;
 
     /* ========================================================================
        GERENCIAMENTO DA API KEY E MODELO DO GOOGLE GEMINI
@@ -10392,11 +10494,17 @@ Formato do Schema JSON Obrigatório:
        7. SALVAMENTO E MODAIS
        ======================================================================== */
     function openModal(id) {
-      document.getElementById(id)?.classList.add('open');
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.display = 'flex';
+      el.classList.add('open');
     }
 
     function closeModal(id) {
-      document.getElementById(id)?.classList.remove('open');
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('open');
+      el.style.display = 'none';
     }
 
     function saveNewTask() {
@@ -11475,6 +11583,7 @@ Formato do Schema JSON Obrigatório:
     const VadeMecumEngine = {
       activeCategory: 'all',
       searchQuery: '',
+      displayLimit: 24,
       currentLawPath: null,
       currentLawTitle: '',
       currentRawText: '',
@@ -11650,27 +11759,39 @@ Formato do Schema JSON Obrigatório:
         this.renderRankingList();
         this.updateReadingPlayerFromStorage();
         
-        // Sincronizar em paralelo com GitHub
+        // Sincronizar em paralelo com o repositório ctresb/leis
         this.syncGitHubLaws();
       },
 
       async syncGitHubLaws() {
         const badge = document.getElementById('vmRepoStatusBadge');
         const acervoCounter = document.getElementById('vmAcervoCounter');
+        const badgeAll = document.getElementById('vmBadgeCountAll');
         try {
-          await GitHubLawProvider.init();
-          const laws = GitHubLawProvider.cleanLaws || [];
+          const laws = await GitHubLawProvider.fetchAllRepoLaws();
+          const totalCount = (laws && laws.length) ? laws.length : 0;
+          const formattedCount = totalCount.toLocaleString('pt-BR');
+
           if (badge) {
-            badge.innerHTML = '🟢 ctresb/leis: ' + laws.length + ' Leis Sincronizadas';
+            badge.innerHTML = '🟢 ctresb/leis: ' + formattedCount + ' Leis Sincronizadas';
             badge.style.color = '#34D399';
             badge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+            badge.style.background = 'rgba(16, 185, 129, 0.12)';
+          }
+          if (badgeAll) {
+            badgeAll.innerText = formattedCount;
           }
           if (acervoCounter) {
-            acervoCounter.innerText = laws.length + ' arquivos disponíveis no repositório';
+            acervoCounter.innerText = formattedCount + ' arquivos disponíveis no repositório';
+          }
+
+          if (this.activeCategory === 'all') {
+            this.renderForYouGrid();
           }
           this.renderAcervoRow(laws);
         } catch (e) {
-          if (badge) badge.innerText = '📜 ctresb/leis: Modo Offline';
+          console.warn('[VadeMecum] Falha ao sincronizar acervo GitHub:', e);
+          if (badge) badge.innerText = '📜 ctresb/leis: Modo Local (Offline)';
         }
       },
 
@@ -11681,7 +11802,7 @@ Formato do Schema JSON Obrigatório:
         
         container.innerHTML = codes.map(c => `
           <div class="vm-featured-card">
-            <div class="vm-book-cover" style="border-left-color: ${c.accent};" onclick="VadeMecumEngine.openLawReader('${c.path}', '${c.title}')">
+            <div class="vm-book-cover" style="border-left-color: ${c.accent}; cursor: pointer;" onclick="VadeMecumEngine.openLawReader('${c.path}', '${c.title}')">
               <div class="vm-book-cover-seal">
                 <img src="assets/distintivo_policia_civil.png" alt="PCMG" onerror="this.src='assets/logo_faca_caveira.png'" />
               </div>
@@ -11692,15 +11813,15 @@ Formato do Schema JSON Obrigatório:
             </div>
             <div class="vm-featured-info">
               <span style="font-size: 10px; font-weight: 800; color: ${c.accent}; text-transform: uppercase;">${c.category}</span>
-              <h3>${c.title}</h3>
+              <h3 style="cursor: pointer;" onclick="VadeMecumEngine.openLawReader('${c.path}', '${c.title}')">${c.title}</h3>
               <div class="vm-sub">${c.sub}</div>
               <div class="vm-stars">${c.stars} <span style="font-size: 10.5px; color: var(--gold-light); font-weight: 600;">Incidência Máxima</span></div>
               <div class="vm-summary-snippet">${c.summary}</div>
               <div class="vm-card-actions">
-                <button type="button" class="btn-primary" onclick="VadeMecumEngine.openLawReader('${c.path}', '${c.title}')" style="padding: 6px 12px; font-size: 11.5px; font-weight: 700; background: var(--gold-primary); color: #0B0E14;">
+                <button type="button" class="btn-primary" onclick="event.stopPropagation(); VadeMecumEngine.openLawReader('${c.path}', '${c.title}')" style="padding: 6px 12px; font-size: 11.5px; font-weight: 700; background: var(--gold-primary); color: #0B0E14;">
                   📖 Ler Lei
                 </button>
-                <button type="button" class="btn-secondary" onclick="generateAIFlashcards('${c.targetSubject}')" style="padding: 6px 12px; font-size: 11.5px;">
+                <button type="button" class="btn-secondary" onclick="event.stopPropagation(); generateAIFlashcards('${c.targetSubject}')" style="padding: 6px 12px; font-size: 11.5px;">
                   ⚡ Flashcards IA
                 </button>
               </div>
@@ -11715,66 +11836,129 @@ Formato do Schema JSON Obrigatório:
 
         let list = customList;
         if (!list) {
+          const repoLaws = GitHubLawProvider.allRepoLaws || [];
           if (this.activeCategory === 'all') {
-            list = this.CORE_LAWS;
+            list = [...this.CORE_LAWS, ...repoLaws];
           } else if (this.activeCategory === 'codigos') {
             list = this.CORE_LAWS.filter(l => l.isCode);
           } else if (this.activeCategory === 'especial') {
             list = this.CORE_LAWS.filter(l => l.category === 'especial');
           } else {
-            list = this.CORE_LAWS.filter(l => l.category === this.activeCategory || l.subCategory === this.activeCategory);
+            const cat = this.activeCategory.toLowerCase();
+            const coreMatch = this.CORE_LAWS.filter(l => 
+              (l.category && l.category.toLowerCase().includes(cat)) || 
+              (l.subCategory && l.subCategory.toLowerCase().includes(cat))
+            );
+            const repoMatch = repoLaws.filter(p => p.toLowerCase().includes(cat));
+            list = [...coreMatch, ...repoMatch];
           }
         }
 
         if (this.searchQuery) {
           const q = this.searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          list = list.filter(l => {
-            const t = (l.title + ' ' + l.sub + ' ' + l.summary + ' ' + l.badge).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-            return t.includes(q);
+          list = list.filter(item => {
+            if (typeof item === 'object') {
+              const str = (item.title + ' ' + item.sub + ' ' + item.summary + ' ' + item.badge + ' ' + item.path).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+              return str.includes(q);
+            } else if (typeof item === 'string') {
+              const str = (item + ' ' + GitHubLawProvider.formatPathToLabel(item)).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+              return str.includes(q);
+            }
+            return false;
           });
         }
 
-        const flashcards = getStoredAIFlashcards ? getStoredAIFlashcards() : [];
+        const countBadge = document.getElementById('vmForYouCountBadge');
+        if (countBadge) countBadge.innerText = list.length.toLocaleString('pt-BR') + ' leis listadas';
 
         if (list.length === 0) {
           container.innerHTML = `
-            <div style="grid-column: 1 / -1; padding: 30px; text-align: center; color: var(--text-muted); background: rgba(255,255,255,0.02); border-radius: 8px;">
-              🔍 Nenhuma lei encontrada para o filtro selecionado. Tente outro termo de busca.
+            <div style="grid-column: 1 / -1; padding: 36px; text-align: center; color: var(--text-muted); background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed rgba(212,175,55,0.2);">
+              🔍 Nenhuma lei encontrada no acervo do repositório para o termo <strong>"${this.escapeHTML(this.searchQuery)}"</strong>.
             </div>
           `;
           return;
         }
 
-        container.innerHTML = list.map(l => {
-          const cardsCount = flashcards.filter(f => (f.leiReferencia || f.subject || '').toLowerCase().includes(l.title.toLowerCase()) || (f.leiReferencia || '').includes(l.badge)).length;
-          return `
-            <div class="vm-law-card" onclick="VadeMecumEngine.openLawReader('${l.path}', '${l.title}')">
-              <div class="vm-book-cover" style="width: 65px; min-width: 65px; height: 92px; padding: 6px 4px; border-left-color: ${l.accent || 'var(--gold-primary)'};">
-                <div class="vm-book-cover-seal" style="width: 18px; height: 18px;">
-                  <img src="assets/distintivo_policia_civil.png" alt="PC" onerror="this.src='assets/logo_faca_caveira.png'" />
+        const flashcards = typeof getStoredAIFlashcards === 'function' ? getStoredAIFlashcards() : [];
+        const visibleItems = list.slice(0, this.displayLimit);
+
+        let cardsHtml = visibleItems.map(item => {
+          if (typeof item === 'object') {
+            const cardsCount = flashcards.filter(f => (f.leiReferencia || f.subject || '').toLowerCase().includes(item.title.toLowerCase()) || (f.leiReferencia || '').includes(item.badge)).length;
+            return `
+              <div class="vm-law-card" onclick="VadeMecumEngine.openLawReader('${item.path}', '${item.title.replace(/'/g, "\\'")}')">
+                <div class="vm-book-cover" style="width: 65px; min-width: 65px; height: 92px; padding: 6px 4px; border-left-color: ${item.accent || 'var(--gold-primary)'};">
+                  <div class="vm-book-cover-seal" style="width: 18px; height: 18px;">
+                    <img src="assets/distintivo_policia_civil.png" alt="PC" onerror="this.src='assets/logo_faca_caveira.png'" />
+                  </div>
+                  <div>
+                    <div class="vm-book-cover-title" style="font-size: 8.5px;">${item.badge}</div>
+                  </div>
                 </div>
-                <div>
-                  <div class="vm-book-cover-title" style="font-size: 8.5px;">${l.badge}</div>
+                <div class="vm-law-card-info">
+                  <span style="font-size: 9.5px; font-weight: 700; color: ${item.accent || 'var(--gold-primary)'};">${item.category}</span>
+                  <h4>${item.title}</h4>
+                  <p>${item.sub}</p>
+                  <div class="vm-stars" style="font-size: 10px;">${item.stars || '★★★★★'}</div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                    <span style="font-size: 10px; color: var(--gold-light); background: rgba(212, 175, 55, 0.12); padding: 2px 6px; border-radius: 4px;">
+                      ⚡ ${cardsCount} flashcards
+                    </span>
+                    <span style="font-size: 11px; color: var(--gold-primary); font-weight: 700;">Ler ➔</span>
+                  </div>
                 </div>
               </div>
-              <div class="vm-law-card-info">
-                <span style="font-size: 9.5px; font-weight: 700; color: ${l.accent || 'var(--gold-primary)'};">${l.category}</span>
-                <h4>${l.title}</h4>
-                <p>${l.sub}</p>
-                <div class="vm-stars" style="font-size: 10px;">${l.stars || '★★★★★'}</div>
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
-                  <span style="font-size: 10px; color: var(--gold-light); background: rgba(212, 175, 55, 0.12); padding: 2px 6px; border-radius: 4px;">
-                    ⚡ ${cardsCount} flashcards
-                  </span>
-                  <span style="font-size: 11px; color: var(--text-muted);">Ler ➔</span>
+            `;
+          } else {
+            const pathStr = item;
+            const label = GitHubLawProvider.formatPathToLabel(pathStr);
+            const parts = pathStr.split('/');
+            const state = (parts.length > 2 && parts[0] === 'estaduais') ? parts[1] : 'BR';
+            const type = parts.includes('leis-complementares') ? 'Lei Complementar' : (parts.includes('leis-ordinarias') ? 'Lei Ordinária' : 'Legislação');
+
+            return `
+              <div class="vm-law-card" onclick="VadeMecumEngine.openLawReader('${pathStr}', '${label.replace(/'/g, "\\'")}')">
+                <div class="vm-book-cover" style="width: 65px; min-width: 65px; height: 92px; padding: 6px 4px; border-left-color: var(--gold-primary);">
+                  <div class="vm-book-cover-seal" style="width: 18px; height: 18px;">
+                    <img src="assets/distintivo_policia_civil.png" alt="PC" onerror="this.src='assets/logo_faca_caveira.png'" />
+                  </div>
+                  <div>
+                    <div class="vm-book-cover-title" style="font-size: 8.5px;">${state}</div>
+                  </div>
+                </div>
+                <div class="vm-law-card-info">
+                  <span style="font-size: 9.5px; font-weight: 700; color: var(--gold-primary);">${type} • ${state}</span>
+                  <h4>${label}</h4>
+                  <p style="font-family: monospace; font-size: 9.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${pathStr}</p>
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px;">
+                    <span style="font-size: 9.5px; color: var(--gold-light); background: rgba(212, 175, 55, 0.12); padding: 2px 6px; border-radius: 4px;">
+                      ctresb/leis
+                    </span>
+                    <span style="font-size: 11px; color: var(--gold-primary); font-weight: 700;">Ler ➔</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          `;
+            `;
+          }
         }).join('');
 
-        const countBadge = document.getElementById('vmForYouCountBadge');
-        if (countBadge) countBadge.innerText = list.length + ' leis listadas';
+        if (list.length > visibleItems.length) {
+          cardsHtml += `
+            <div style="grid-column: 1 / -1; display: flex; justify-content: center; margin-top: 14px;">
+              <button type="button" class="vm-load-more-btn" onclick="VadeMecumEngine.loadMoreLaws()">
+                ⚡ Carregar Mais Leis do Repositório (+24) — Exibindo ${visibleItems.length.toLocaleString('pt-BR')} de ${list.length.toLocaleString('pt-BR')} Leis
+              </button>
+            </div>
+          `;
+        }
+
+        container.innerHTML = cardsHtml;
+      },
+
+      loadMoreLaws() {
+        this.displayLimit += 24;
+        this.renderForYouGrid();
       },
 
       renderRankingList() {
@@ -11784,9 +11968,9 @@ Formato do Schema JSON Obrigatório:
         const favs = this.getFavorites();
 
         container.innerHTML = ranked.map(item => {
-          const isFav = favs.includes(item.id);
+          const isFav = favs.includes(item.id) || favs.includes(item.path);
           return `
-            <div class="vm-ranking-item" onclick="VadeMecumEngine.openLawReader('${item.path}', '${item.title}')">
+            <div class="vm-ranking-item" onclick="VadeMecumEngine.openLawReader('${item.path}', '${item.title.replace(/'/g, "\\'")}')">
               <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
                 <div class="vm-rank-number" style="border-color: ${item.accent}; color: ${item.accent};">${item.rank}</div>
                 <div style="min-width: 0;">
@@ -11794,7 +11978,7 @@ Formato do Schema JSON Obrigatório:
                   <div style="font-size: 10px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.sub}</div>
                 </div>
               </div>
-              <button type="button" class="vm-fav-heart ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); VadeMecumEngine.toggleFavorite('${item.id}')" title="Favoritar">
+              <button type="button" class="vm-fav-heart ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); VadeMecumEngine.toggleFavorite('${item.path}')" title="Favoritar">
                 ${isFav ? '❤️' : '♡'}
               </button>
             </div>
@@ -11805,12 +11989,12 @@ Formato do Schema JSON Obrigatório:
       renderAcervoRow(laws) {
         const container = document.getElementById('vmAcervoRow');
         if (!container) return;
-        const displayList = (laws && laws.length > 0) ? laws.slice(0, 45) : this.CORE_LAWS.map(l => l.path);
+        const displayList = (laws && laws.length > 0) ? laws.slice(0, 48) : this.CORE_LAWS.map(l => l.path);
 
-        container.innerHTML = displayList.map((path, idx) => {
+        container.innerHTML = displayList.map(path => {
           const label = GitHubLawProvider.formatPathToLabel(path);
           return `
-            <div class="vm-acervo-card" onclick="VadeMecumEngine.openLawReader('${path}', '${label}')">
+            <div class="vm-acervo-card" onclick="VadeMecumEngine.openLawReader('${path}', '${label.replace(/'/g, "\\'")}')">
               <span class="vm-acervo-card-badge">LEI</span>
               <div class="vm-collection-mini-cover" style="width: 44px; height: 60px; font-size: 11px; margin-top: 4px;">
                 📜
@@ -11826,12 +12010,14 @@ Formato do Schema JSON Obrigatório:
 
       onSearchInput(val) {
         this.searchQuery = (val || '').trim();
+        this.displayLimit = 24;
         this.renderForYouGrid();
       },
 
       filterCategory(cat, ev) {
         if (ev) ev.preventDefault();
         this.activeCategory = cat;
+        this.displayLimit = 24;
         
         document.querySelectorAll('.vm-nav-link').forEach(el => el.classList.remove('active'));
         if (ev && ev.currentTarget) ev.currentTarget.classList.add('active');
@@ -11849,9 +12035,10 @@ Formato do Schema JSON Obrigatório:
         if (ev && ev.currentTarget) ev.currentTarget.classList.add('active');
 
         const favs = this.getFavorites();
-        const filtered = this.CORE_LAWS.filter(l => favs.includes(l.id));
+        const filtered = this.CORE_LAWS.filter(l => favs.includes(l.id) || favs.includes(l.path));
         const titleEl = document.getElementById('vmForYouSectionTitle');
         if (titleEl) titleEl.innerText = '⭐ Suas Leis Favoritas';
+        this.displayLimit = 24;
         this.renderForYouGrid(filtered);
       },
 
@@ -11866,14 +12053,15 @@ Formato do Schema JSON Obrigatório:
         
         const titleEl = document.getElementById('vmForYouSectionTitle');
         if (titleEl) titleEl.innerText = '📌 Leis com Artigos Grifados';
+        this.displayLimit = 24;
         this.renderForYouGrid(filtered.length > 0 ? filtered : this.CORE_LAWS);
       },
 
       getFavorites() {
         try {
-          return JSON.parse(localStorage.getItem('tatico_os_leis_favoritas') || '["cf88", "cp", "drogas"]');
+          return JSON.parse(localStorage.getItem('tatico_os_leis_favoritas') || '["cf88", "codigo-penal", "lei-de-drogas"]');
         } catch (e) {
-          return ['cf88', 'cp', 'drogas'];
+          return ['cf88', 'codigo-penal', 'lei-de-drogas'];
         }
       },
 
@@ -11891,7 +12079,7 @@ Formato do Schema JSON Obrigatório:
         this.renderRankingList();
         const favBtn = document.getElementById('btnVmReaderFav');
         if (favBtn) {
-          favBtn.innerText = favs.includes(lawId) ? '❤️ Favorita' : '⭐ Favoritar';
+          favBtn.innerText = favs.includes(lawId) ? '❤️ Favorita' : '⭐ Favoritar Lei';
         }
       },
 
@@ -11915,7 +12103,7 @@ Formato do Schema JSON Obrigatório:
         grid.scrollBy({ left: direction * 340, behavior: 'smooth' });
       },
 
-      updateReadingPlayer(title, percent = 45) {
+      updateReadingPlayer(title, percent = 0) {
         const titleEl = document.getElementById('vmReadingPlayerTitle');
         const barEl = document.getElementById('vmReadingPlayerBar');
         const pctEl = document.getElementById('vmReadingPlayerPercent');
@@ -11934,8 +12122,8 @@ Formato do Schema JSON Obrigatório:
       updateReadingPlayerFromStorage() {
         try {
           const saved = JSON.parse(localStorage.getItem('tatico_os_last_read_law'));
-          if (saved) {
-            this.updateReadingPlayer(saved.title, saved.percent);
+          if (saved && saved.title) {
+            this.updateReadingPlayer(saved.title, saved.percent || 0);
           }
         } catch (e) {}
       },
@@ -11943,57 +12131,95 @@ Formato do Schema JSON Obrigatório:
       resumeLastReadLaw() {
         try {
           const saved = JSON.parse(localStorage.getItem('tatico_os_last_read_law'));
-          if (saved && saved.path) {
-            this.openLawReader(saved.path, saved.title);
+          if (saved && (saved.path || saved.title)) {
+            this.openLawReader(saved.path || 'constituicao.md', saved.title);
             return;
           }
         } catch (e) {}
         this.openLawReader('constituicao.md', 'Constituição Federal / 88');
       },
 
-      async openLawReader(lawPath, lawTitle = null) {
+      async openLawReader(lawInput, customTitle = null) {
+        let path = '';
+        let title = customTitle || '';
+
+        if (typeof lawInput === 'object' && lawInput !== null) {
+          path = lawInput.path || lawInput.id || 'constituicao.md';
+          title = lawInput.title || title;
+        } else if (typeof lawInput === 'string') {
+          path = lawInput.trim();
+        }
+
+        // Se for ID das core laws (ex: 'cf88', 'cp', 'cpp', 'drogas', 'abuso', 'hediondos', 'interceptacao', 'desarmamento', 'mariadapenha', 'orcrim')
+        const coreMatch = this.CORE_LAWS.find(l => l.id === path || l.path === path || l.title.toLowerCase() === path.toLowerCase());
+        if (coreMatch) {
+          path = coreMatch.path;
+          if (!title) title = coreMatch.title;
+        }
+
+        if (!title) {
+          title = GitHubLawProvider.formatPathToLabel(path);
+        }
+
         const modal = document.getElementById('modalVMLawReader');
         const bodyEl = document.getElementById('vmReaderBody');
         const titleEl = document.getElementById('vmReaderLawTitle');
         const subEl = document.getElementById('vmReaderLawSub');
         const countEl = document.getElementById('vmReaderArticleCount');
         const favBtn = document.getElementById('btnVmReaderFav');
+        const githubLink = document.getElementById('vmReaderGithubLink');
 
         if (!modal || !bodyEl) return;
 
-        const resolvedPath = GitHubLawProvider.resolvePathForSubject(lawPath, lawPath);
-        const resolvedTitle = lawTitle || GitHubLawProvider.formatPathToLabel(resolvedPath);
+        this.currentLawPath = path;
+        this.currentLawTitle = title;
 
-        this.currentLawPath = resolvedPath;
-        this.currentLawTitle = resolvedTitle;
-
-        if (titleEl) titleEl.innerText = resolvedTitle;
-        if (subEl) subEl.innerText = 'ctresb/leis/' + resolvedPath;
-        if (countEl) countEl.innerText = 'Carregando texto oficial...';
+        if (titleEl) titleEl.innerText = title;
+        if (subEl) subEl.innerText = 'ctresb/leis/' + path;
+        if (githubLink) {
+          githubLink.href = `https://github.com/ctresb/leis/blob/${GitHubLawProvider.BRANCH || 'main'}/${path}`;
+        }
+        if (countEl) countEl.innerText = 'Carregando texto integral da lei...';
 
         const favs = this.getFavorites();
-        if (favBtn) favBtn.innerText = favs.includes(lawPath) || favs.includes(resolvedPath) ? '❤️ Favorita' : '⭐ Favoritar';
+        if (favBtn) favBtn.innerText = (favs.includes(path) || (coreMatch && favs.includes(coreMatch.id))) ? '❤️ Favorita' : '⭐ Favoritar Lei';
 
         bodyEl.innerHTML = `
           <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
-            <div class="loading-spinner" style="width: 34px; height: 34px; border: 3px solid rgba(212, 175, 55, 0.2); border-top-color: var(--gold-primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px auto;"></div>
-            Carregando texto de <code>raw.githubusercontent.com/ctresb/leis/${resolvedPath}</code>...
+            <div class="loading-spinner" style="width: 36px; height: 36px; border: 3px solid rgba(212, 175, 55, 0.2); border-top-color: var(--gold-primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px auto;"></div>
+            <div style="font-size: 14.5px; font-weight: 700; color: var(--gold-light);">⏳ Carregando texto integral da lei do repositório ctresb/leis...</div>
+            <code style="font-size: 11px; color: var(--text-muted); margin-top: 8px; display: inline-block;">ctresb/leis/${path}</code>
           </div>
         `;
 
+        // Abrir modal com exibição garantida
         openModal('modalVMLawReader');
-        this.updateReadingPlayer(resolvedTitle, 35);
+        this.updateReadingPlayer(title, 0);
 
         try {
-          const rawText = await GitHubLawProvider.fetchRawLaw(resolvedPath);
+          const rawText = await GitHubLawProvider.fetchRawLaw(path);
           this.currentRawText = rawText;
-          this.renderFormattedLaw(rawText, resolvedPath, resolvedTitle);
+          this.renderFormattedLaw(rawText, path, title);
+
+          // Tentar restaurar scroll se já havia progresso salvo
+          try {
+            const saved = JSON.parse(localStorage.getItem('tatico_os_last_read_law'));
+            if (saved && saved.path === path && saved.percent > 0) {
+              setTimeout(() => {
+                const max = bodyEl.scrollHeight - bodyEl.clientHeight;
+                if (max > 0) {
+                  bodyEl.scrollTop = Math.round((saved.percent / 100) * max);
+                }
+              }, 150);
+            }
+          } catch (e) {}
+
         } catch (err) {
           console.error('[VadeMecum Reader] Falha ao carregar lei:', err);
           bodyEl.innerHTML = `
-            <div style="padding: 30px; text-align: center; color: #F87171; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+            <div style="padding: 30px; text-align: center; color: #F87171; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; margin: 20px;">
               ⚠️ Não foi possível carregar o arquivo online do GitHub (${err.message}).<br>
-              <button type="button" class="btn-primary" onclick="VadeMecumEngine.openLawReader('${resolvedPath}', '${resolvedTitle}')" style="margin-top: 14px;">Tentar Novamente</button>
+              <button type="button" class="btn-primary" onclick="VadeMecumEngine.openLawReader('${path}', '${title.replace(/'/g, "\\'")}')" style="margin-top: 14px;">Tentar Novamente</button>
             </div>
           `;
         }
@@ -12007,45 +12233,186 @@ Formato do Schema JSON Obrigatório:
         const grifadosMap = JSON.parse(localStorage.getItem('tatico_os_artigos_grifados') || '{}');
         const lawGrifados = grifadosMap[lawKey] || [];
 
-        // Separar em blocos de artigos usando regex padrão de legislação
-        let chunks = rawText.split(/\r?\n(?=(?:\*\*|#+)?\s*Art(?:igo|\.)\s*\d+[º\d\w.-]*)/gi).filter(c => c && c.trim().length > 0);
-        if (chunks.length <= 1) { chunks = rawText.split(/\r?\n\s*\r?\n/).filter(c => c && c.trim().length > 0); }
+        // Remover ou formatar frontmatter se presente (leis estaduais possuem --- ... ---)
+        let clean = rawText || '';
+        let metadataHeader = '';
+        if (clean.startsWith('---')) {
+          const endFm = clean.indexOf('---', 3);
+          if (endFm !== -1) {
+            const fmContent = clean.slice(3, endFm).trim();
+            clean = clean.slice(endFm + 3).trim();
+            
+            // Extrair ementa e número para cabeçalho tático
+            const ementaMatch = fmContent.match(/ementa:\s*"([^"]+)"/i);
+            const ufMatch = fmContent.match(/uf:\s*"([^"]+)"/i);
+            if (ementaMatch || ufMatch) {
+              metadataHeader = `
+                <div style="background: rgba(212, 175, 55, 0.08); border-left: 4px solid var(--gold-primary); padding: 12px 16px; border-radius: 6px; margin-bottom: 20px;">
+                  <div style="font-size: 11px; font-weight: 800; color: var(--gold-light); text-transform: uppercase;">${ufMatch ? '[' + ufMatch[1] + '] ' : ''}Ementa Oficial:</div>
+                  <div style="font-size: 12.5px; color: #E2E8F0; margin-top: 4px; line-height: 1.5;">${this.escapeHTML(ementaMatch ? ementaMatch[1] : 'Texto oficial extraído do repositório ctresb/leis.')}</div>
+                </div>
+              `;
+            }
+          }
+        }
+
+        // Separar em blocos de artigos e títulos
+        const chunkRegex = /(?:^|\n)(?=(?:#+\s*)?(?:\*\*|\b)(?:Art(?:igo|\.)\s*\d+|T[IÍ]TULO|CAP[IÍ]TULO|SE[CÇ][AÃ]O|LIVRO)\b)/gi;
+        let chunks = clean.split(chunkRegex).filter(c => c && c.trim().length > 0);
+        if (chunks.length <= 1) {
+          chunks = clean.split(/\r?\n\s*\r?\n/).filter(c => c && c.trim().length > 0);
+        }
 
         if (countEl) {
-          countEl.innerText = chunks.length + ' seções/artigos identificados';
+          countEl.innerText = chunks.length.toLocaleString('pt-BR') + ' seções/artigos identificados';
         }
 
         if (chunks.length === 0) {
-          bodyEl.innerHTML = `<div class="vm-article-text" style="white-space: pre-wrap;">${this.escapeHTML(rawText)}</div>`;
+          bodyEl.innerHTML = metadataHeader + `<div class="vm-article-text" style="white-space: pre-wrap;">${this.escapeHTML(clean)}</div>`;
           return;
         }
 
-        bodyEl.innerHTML = chunks.slice(0, 180).map((chunk, idx) => {
-          const matchHeader = chunk.match(/(?:\*\*|#+)?\s*(Art(?:igo|\.)\s*\d+[º\d\w.-]*)/i);
+        const maxInitialChunks = Math.min(chunks.length, 250);
+
+        const renderedChunks = chunks.slice(0, maxInitialChunks).map((chunk, idx) => {
+          const trimmed = chunk.trim();
+
+          // 1. Verificar se é título / capítulo
+          const isHeading = /^(?:#{1,4}\s*|\*\*)?(?:T[IÍ]TULO|CAP[IÍ]TULO|SE[CÇ][AÃ]O|LIVRO|SUBSE[CÇ][AÃ]O)\b/i.test(trimmed);
+          if (isHeading && !/Art(?:igo|\.)\s*\d+/i.test(trimmed)) {
+            const cleanTitle = trimmed.replace(/^#+\s*/, '').replace(/\*\*/g, '').trim();
+            return `<div class="vm-legal-section-title">${this.escapeHTML(cleanTitle)}</div>`;
+          }
+
+          // 2. É um artigo legal
+          const matchHeader = trimmed.match(/(?:\*\*|#+)?\s*(Art(?:igo|\.)\s*\d+[º\d\w.-]*)/i);
           const artHeader = matchHeader ? matchHeader[1].replace(/[*#]/g, '').trim() : ('Artigo ' + (idx + 1));
-          const cleanText = chunk.replace(/(?:\*\*|#+)?\s*Art(?:igo|\.)\s*\d+[º\d\w.-]*/i, '').trim();
           const isGrifado = lawGrifados.includes(artHeader);
 
+          // Formatar o texto interno do artigo destacando artigos, parágrafos, incisos e penas
+          const formattedHtml = this.formatArticleContent(trimmed);
+
           return `
-            <div class="vm-article-block ${isGrifado ? 'grifado' : ''}" id="artBlock_${idx}">
+            <div class="vm-article-block ${isGrifado ? 'grifado' : ''}" id="artBlock_${idx}" onclick="VadeMecumEngine.toggleArticleGrifo('${lawKey}', '${artHeader}', ${idx})">
               <div class="vm-article-header">
                 <span class="vm-art-badge">${artHeader}</span>
                 <div class="vm-art-actions">
-                  <button type="button" class="vm-art-btn ${isGrifado ? 'active' : ''}" onclick="VadeMecumEngine.toggleArticleGrifo('${lawKey}', '${artHeader}', ${idx})">
+                  <button type="button" class="vm-art-btn ${isGrifado ? 'active' : ''}" onclick="event.stopPropagation(); VadeMecumEngine.toggleArticleGrifo('${lawKey}', '${artHeader}', ${idx})">
                     🖍️ ${isGrifado ? 'Grifado' : 'Grifar'}
                   </button>
-                  <button type="button" class="vm-art-btn" onclick="VadeMecumEngine.createFlashcardFromArticle('${lawTitle}', '${artHeader}', ${idx})">
+                  <button type="button" class="vm-art-btn" onclick="event.stopPropagation(); VadeMecumEngine.createFlashcardFromArticle('${lawTitle.replace(/'/g, "\\'")}', '${artHeader}', ${idx})">
                     ⚡ IA Flashcard
                   </button>
-                  <button type="button" class="vm-art-btn" onclick="VadeMecumEngine.copyArticleText(${idx})">
+                  <button type="button" class="vm-art-btn" onclick="event.stopPropagation(); VadeMecumEngine.copyArticleText(${idx})">
                     📋 Copiar
                   </button>
                 </div>
               </div>
-              <div class="vm-article-text" id="artText_${idx}">${this.escapeHTML(cleanText)}</div>
+              <div class="vm-article-text" id="artText_${idx}">${formattedHtml}</div>
             </div>
           `;
         }).join('');
+
+        bodyEl.innerHTML = metadataHeader + renderedChunks;
+      },
+
+      formatArticleContent(text) {
+        if (!text) return '';
+        let escaped = this.escapeHTML(text);
+
+        // Destacar artigos em dourado
+        escaped = escaped.replace(/(?:\*\*|#+)?\s*(Art(?:igo|\.)\s*\d+[º\d\w.-]*)\s*(?:\*\*)?/gi, 
+          '<strong class="vm-legal-lead" style="color: #D4AF37; font-weight: 800;">$1</strong>');
+
+        // Destacar parágrafos (§ 1º, Parágrafo único.)
+        escaped = escaped.replace(/(§\s*\d+[º\d\w.-]*|Par[aá]grafo\s+[uú]nico\.?)/gi, 
+          '<strong style="color: #FBBF24; font-weight: 700;">$1</strong>');
+
+        // Destacar incisos (I -, II -, III -, IV - etc.)
+        escaped = escaped.replace(/(?:^|\n)\s*([IVXLCDM]+\s*[-–—]\s*)/g, 
+          '<br/><strong style="color: #60A5FA; font-weight: 700;">$1</strong>');
+
+        // Destacar alíneas (a), b), c))
+        escaped = escaped.replace(/(?:^|\n)\s*([a-z]\)\s*)/g, 
+          '<br/><strong style="color: #A78BFA; font-weight: 600;">$1</strong>');
+
+        // Destacar penas
+        escaped = escaped.replace(/(Pena\s*[-–:]\s*[^.\n]+[.\n]?)/gi, 
+          '<span style="color: #F87171; font-weight: 600; background: rgba(239,68,68,0.1); padding: 2px 6px; border-radius: 4px; display: inline-block; margin: 4px 0;">$1</span>');
+
+        // Quebras de parágrafo
+        escaped = escaped.replace(/\n\n+/g, '</p><p style="margin: 8px 0;">');
+        escaped = escaped.replace(/\n/g, '<br/>');
+
+        return `<p style="margin: 0 0 6px 0;">${escaped}</p>`;
+      },
+
+      onReaderScroll(el) {
+        if (!el) return;
+        const maxScroll = el.scrollHeight - el.clientHeight;
+        const pct = maxScroll > 0 ? Math.min(100, Math.max(0, Math.round((el.scrollTop / maxScroll) * 100))) : 0;
+        
+        const pctBadge = document.getElementById('vmReaderScrollPercent');
+        if (pctBadge) pctBadge.innerText = `Progresso: ${pct}%`;
+
+        if (this.currentLawTitle) {
+          this.updateReadingPlayer(this.currentLawTitle, pct);
+        }
+      },
+
+      onReaderSearch(query) {
+        const matchCountEl = document.getElementById('vmReaderMatchCount');
+        const q = (query || '').trim();
+
+        if (!q) {
+          document.querySelectorAll('.vm-article-text').forEach(el => {
+            const raw = el.getAttribute('data-raw');
+            if (raw) {
+              el.innerHTML = raw;
+              el.removeAttribute('data-raw');
+            }
+          });
+          if (matchCountEl) matchCountEl.innerText = '';
+          return;
+        }
+
+        const escapedQuery = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escapedQuery})`, 'gi');
+        let totalMatches = 0;
+        let firstMatchEl = null;
+
+        document.querySelectorAll('.vm-article-text').forEach(el => {
+          let raw = el.getAttribute('data-raw');
+          if (!raw) {
+            raw = el.innerHTML;
+            el.setAttribute('data-raw', raw);
+          }
+
+          const textContent = el.textContent || el.innerText;
+          if (regex.test(textContent)) {
+            // Substituir apenas o texto fora das tags HTML
+            el.innerHTML = raw.replace(/(<[^>]+>)|([^<]+)/g, (match, tag, text) => {
+              if (tag) return tag;
+              return text.replace(regex, '<mark class="vm-search-match">$1</mark>');
+            });
+
+            const countInThis = el.querySelectorAll('mark.vm-search-match').length;
+            totalMatches += countInThis;
+            if (!firstMatchEl && countInThis > 0) {
+              firstMatchEl = el;
+            }
+          } else {
+            el.innerHTML = raw;
+          }
+        });
+
+        if (matchCountEl) {
+          matchCountEl.innerText = totalMatches > 0 ? `${totalMatches} encontradas` : '0 encontradas';
+        }
+
+        if (firstMatchEl) {
+          firstMatchEl.closest('.vm-article-block')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       },
 
       toggleArticleGrifo(lawKey, artHeader, blockIdx) {
@@ -12056,7 +12423,7 @@ Formato do Schema JSON Obrigatório:
         if (grifadosMap[lawKey].includes(artHeader)) {
           grifadosMap[lawKey] = grifadosMap[lawKey].filter(h => h !== artHeader);
           if (block) block.classList.remove('grifado');
-          showToast('Artigo desmarcado.', 'info');
+          showToast('Artigo desmarcado dos grifos.', 'info');
         } else {
           grifadosMap[lawKey].push(artHeader);
           if (block) block.classList.add('grifado');
@@ -12064,6 +12431,28 @@ Formato do Schema JSON Obrigatório:
         }
         localStorage.setItem('tatico_os_artigos_grifados', JSON.stringify(grifadosMap));
         this.updateFavoriteCounters();
+      },
+
+      grifarSelecao() {
+        const sel = window.getSelection();
+        const text = sel ? sel.toString().trim() : '';
+        if (!text) {
+          showToast('Selecione um trecho de texto com o cursor do mouse para grifar.', 'info');
+          return;
+        }
+        const lawKey = this.currentLawPath || 'constituicao.md';
+        const grifadosMap = JSON.parse(localStorage.getItem('tatico_os_artigos_grifados') || '{}');
+        if (!grifadosMap[lawKey]) grifadosMap[lawKey] = [];
+        
+        const snippet = text.length > 50 ? text.slice(0, 47) + '...' : text;
+        if (!grifadosMap[lawKey].includes(snippet)) {
+          grifadosMap[lawKey].push(snippet);
+          localStorage.setItem('tatico_os_artigos_grifados', JSON.stringify(grifadosMap));
+          this.updateFavoriteCounters();
+          showToast(`🖍️ Trecho grifado e salvo: "${snippet}"`, 'success');
+        } else {
+          showToast('Este trecho já está nos seus grifos salvos.', 'info');
+        }
       },
 
       async createFlashcardFromArticle(lawTitle, artHeader, blockIdx) {
@@ -12130,13 +12519,13 @@ Retorne estritamente um JSON no formato:
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
           const card = JSON.parse(text);
 
-          const allCards = getStoredAIFlashcards ? getStoredAIFlashcards() : [];
+          const allCards = typeof getStoredAIFlashcards === 'function' ? getStoredAIFlashcards() : [];
           const isErrado = String(card.quiz?.respostaCorreta || '').toLowerCase().includes('errado');
 
           allCards.unshift({
             id: 'fc_vademecum_' + Date.now(),
             subject: lawTitle,
-            canonicalKey: findCanonicalSubjectKey ? findCanonicalSubjectKey(lawTitle) : 'direito_constitucional',
+            canonicalKey: typeof findCanonicalSubjectKey === 'function' ? findCanonicalSubjectKey(lawTitle) : 'direito_constitucional',
             color: '#D4AF37',
             leiReferencia: `${lawTitle}, ${artHeader}`,
             front: card.frente,
@@ -12174,11 +12563,12 @@ Retorne estritamente um JSON no formato:
 
       generateFlashcardFromSelectedText() {
         const sel = window.getSelection().toString().trim();
-        if (!sel || sel.length < 15) {
-          showToast('Selecione um trecho de texto ou artigo com o mouse para gerar o flashcard.', 'warn');
+        if (sel && sel.length >= 15) {
+          this.createFlashcardFromArticle(this.currentLawTitle, 'Trecho Selecionado', 0);
           return;
         }
-        this.createFlashcardFromArticle(this.currentLawTitle, 'Trecho Selecionado', 0);
+        
+        this.createFlashcardFromArticle(this.currentLawTitle, 'Artigo em Destaque', 0);
       },
 
       copyArticleText(blockIdx) {
@@ -12187,29 +12577,6 @@ Retorne estritamente um JSON no formato:
           navigator.clipboard.writeText(textEl.innerText).then(() => {
             showToast('📋 Artigo copiado para a área de transferência!', 'success');
           });
-        }
-      },
-
-      onReaderSearch(query) {
-        const matchCountEl = document.getElementById('vmReaderMatchCount');
-        const q = (query || '').trim().toLowerCase();
-
-        document.querySelectorAll('.vm-article-text').forEach(el => {
-          const raw = el.getAttribute('data-raw') || el.innerText;
-          if (!el.getAttribute('data-raw')) el.setAttribute('data-raw', raw);
-
-          if (!q) {
-            el.innerHTML = this.escapeHTML(raw);
-            if (matchCountEl) matchCountEl.innerText = '';
-          } else {
-            const regex = new RegExp('(' + q.replace(/[.*+?^$\{}()|[\]\\]/g, '\\$&') + ')', 'gi');
-            el.innerHTML = this.escapeHTML(raw).replace(regex, '<mark>$1</mark>');
-          }
-        });
-
-        if (q && matchCountEl) {
-          const count = document.querySelectorAll('#vmReaderBody mark').length;
-          matchCountEl.innerText = count + ' encontradas';
         }
       },
 
@@ -12266,6 +12633,13 @@ Retorne estritamente um JSON no formato:
 
     window.openVadeMecumView = openVadeMecumView;
     window.closeVadeMecumView = closeVadeMecumView;
+
+    window.openLawReader = function(lawInput, lawTitle) {
+      if (typeof VadeMecumEngine !== 'undefined' && VadeMecumEngine.openLawReader) {
+        VadeMecumEngine.openLawReader(lawInput, lawTitle);
+      }
+    };
+
     window.VadeMecumEngine = VadeMecumEngine;
 
     // Detectar hash ou preferência de visualização ao carregar
