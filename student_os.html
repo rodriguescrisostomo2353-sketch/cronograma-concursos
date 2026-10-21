@@ -4575,10 +4575,9 @@
         <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
           <label style="font-size: 11px; font-weight: 700; color: var(--gold-primary); text-transform: uppercase;">Modelo do Gemini</label>
           <select id="selectGeminiModel" class="form-control" style="width: 100%; box-sizing: border-box;">
-            <option value="gemini-2.5-flash" selected>gemini-2.5-flash (Padrão - Alta Precisão & Velocidade)</option>
-            <option value="gemini-1.5-flash">gemini-1.5-flash (Estável)</option>
-            <option value="gemini-2.0-flash">gemini-2.0-flash</option>
-            <option value="gemini-1.5-pro">gemini-1.5-pro (Raciocínio Profundo)</option>
+            <option value="gemini-3.0-flash" selected>gemini-3.0-flash (Padrão Recomendado - Alta Velocidade)</option>
+            <option value="gemini-3.0-pro">gemini-3.0-pro (Raciocínio Avançado)</option>
+            <option value="gemini-2.5-pro">gemini-2.5-pro (Estabilidade & Profundidade)</option>
           </select>
         </div>
 
@@ -6063,14 +6062,27 @@
 
     function openGeminiConfigModal() {
       const savedKey = localStorage.getItem('tatico_os_gemini_key') || '';
-      const savedModel = localStorage.getItem('tatico_os_gemini_model') || 'gemini-2.5-flash';
+      let savedModel = localStorage.getItem('tatico_os_gemini_model') || 'gemini-3.0-flash';
+      // Migração de modelos antigos
+      if (['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'].includes(savedModel)) {
+        savedModel = 'gemini-3.0-flash';
+        localStorage.setItem('tatico_os_gemini_model', savedModel);
+      }
 
       const input = document.getElementById('inputGeminiApiKey');
       const select = document.getElementById('selectGeminiModel');
       const statusBox = document.getElementById('geminiConnectionStatus');
 
       if (input) input.value = savedKey;
-      if (select) select.value = savedModel;
+      if (select) {
+        if (!Array.from(select.options).some(o => o.value === savedModel)) {
+          const opt = document.createElement('option');
+          opt.value = savedModel;
+          opt.textContent = `${savedModel} (Auto-selecionado)`;
+          select.appendChild(opt);
+        }
+        select.value = savedModel;
+      }
 
       if (statusBox) {
         if (savedKey) {
@@ -6078,7 +6090,7 @@
           statusBox.style.background = 'rgba(16, 185, 129, 0.12)';
           statusBox.style.border = '1px solid rgba(16, 185, 129, 0.35)';
           statusBox.style.color = '#34D399';
-          statusBox.innerHTML = '<span>🟢 Chave salva localmente. Clique em "Salvar e Testar" para validar a conexão.</span>';
+          statusBox.innerHTML = `<span>🟢 Chave salva localmente [${savedModel}]. Clique em "Salvar e Testar" para validar a conexão.</span>`;
         } else {
           statusBox.style.display = 'none';
         }
@@ -6093,6 +6105,40 @@
       input.type = input.type === 'password' ? 'text' : 'password';
     }
 
+    async function discoverBestGeminiModel(apiKey, failedModel = null) {
+      if (!apiKey || !apiKey.trim()) return null;
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey.trim()}`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (!data || !Array.isArray(data.models)) return null;
+
+        const validModels = data.models
+          .filter(m => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes('generateContent'))
+          .map(m => m.name ? m.name.replace(/^models\//, '') : '')
+          .filter(name => Boolean(name) && name !== failedModel);
+
+        if (validModels.length === 0) return null;
+
+        // 1. Primeiro modelo 'gemini-3' (prioriza gemini-3.*flash se existir, depois qualquer gemini-3)
+        const gemini3Flash = validModels.find(n => /gemini-3/i.test(n) && /flash/i.test(n));
+        if (gemini3Flash) return gemini3Flash;
+
+        const anyGemini3 = validModels.find(n => /gemini-3/i.test(n));
+        if (anyGemini3) return anyGemini3;
+
+        // 2. Primeiro modelo 'flash'
+        const anyFlash = validModels.find(n => /flash/i.test(n));
+        if (anyFlash) return anyFlash;
+
+        // 3. Primeiro modelo compatível
+        return validModels[0] || null;
+      } catch (err) {
+        console.warn('[Gemini Discovery] Erro ao buscar lista de modelos:', err);
+        return null;
+      }
+    }
+
     async function saveAndTestGeminiKey() {
       const input = document.getElementById('inputGeminiApiKey');
       const select = document.getElementById('selectGeminiModel');
@@ -6100,7 +6146,7 @@
       const statusBox = document.getElementById('geminiConnectionStatus');
 
       const key = (input?.value || '').trim();
-      const model = select?.value || 'gemini-2.5-flash';
+      let model = select?.value || 'gemini-3.0-flash';
 
       if (!key) {
         showToast('Por favor, informe a chave da API Gemini antes de testar.', 'warn');
@@ -6121,8 +6167,9 @@
       }
 
       try {
-        const testUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
-        const res = await fetch(testUrl, {
+        let activeModel = model;
+        let testUrl = `https://generativelanguage.googleapis.com/v1beta/models/${activeModel}:generateContent?key=${key}`;
+        let res = await fetch(testUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -6130,15 +6177,54 @@
           })
         });
 
+        let autoSelectedMsg = '';
+
+        // Se o modelo escolhido falhar, busca automaticamente na API os modelos disponíveis para a chave
+        if (!res.ok) {
+          if (statusBox) {
+            statusBox.style.display = 'flex';
+            statusBox.style.background = 'rgba(234, 179, 8, 0.12)';
+            statusBox.style.border = '1px solid rgba(234, 179, 8, 0.35)';
+            statusBox.style.color = '#FACC15';
+            statusBox.innerHTML = '<span>🔍 Modelo indisponível. Consultando modelos aceitos pela sua chave na Google API...</span>';
+          }
+
+          const fallbackModel = await discoverBestGeminiModel(key, activeModel);
+          if (fallbackModel && fallbackModel !== activeModel) {
+            activeModel = fallbackModel;
+            testUrl = `https://generativelanguage.googleapis.com/v1beta/models/${activeModel}:generateContent?key=${key}`;
+            res = await fetch(testUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: 'ping' }] }]
+              })
+            });
+
+            if (res.ok) {
+              autoSelectedMsg = `Modelo "${model}" falhou. Auto-selecionado: "${activeModel}".`;
+              if (select) {
+                if (!Array.from(select.options).some(o => o.value === activeModel)) {
+                  const newOpt = document.createElement('option');
+                  newOpt.value = activeModel;
+                  newOpt.textContent = `${activeModel} (Auto-selecionado)`;
+                  select.appendChild(newOpt);
+                }
+                select.value = activeModel;
+              }
+            }
+          }
+        }
+
         if (!res.ok) {
           const errBody = await res.json().catch(() => ({}));
           const errMsg = errBody.error?.message || `HTTP ${res.status}`;
           throw new Error(errMsg);
         }
 
-        // Sucesso: Persistir chave e modelo
+        // Sucesso: Persistir chave e modelo aprovado
         localStorage.setItem('tatico_os_gemini_key', key);
-        localStorage.setItem('tatico_os_gemini_model', model);
+        localStorage.setItem('tatico_os_gemini_model', activeModel);
         updateGeminiStatusIndicator();
 
         if (statusBox) {
@@ -6146,15 +6232,15 @@
           statusBox.style.background = 'rgba(16, 185, 129, 0.16)';
           statusBox.style.border = '1px solid rgba(16, 185, 129, 0.45)';
           statusBox.style.color = '#34D399';
-          statusBox.innerHTML = '<span>🟢 Conexão com Google Gemini aprovada com sucesso! Chave salva.</span>';
+          statusBox.innerHTML = `<span>🟢 Conexão com Google Gemini aprovada com sucesso! [${activeModel}]${autoSelectedMsg ? '<br><small style="color: #FBBF24;">' + autoSelectedMsg + '</small>' : ''}</span>`;
         }
 
         playTacticalBlip(1040, 0.08);
-        showToast('🔑 API Gemini conectada e validada com sucesso!', 'success');
+        showToast(`🔑 API Gemini conectada e validada com sucesso (${activeModel})!`, 'success');
 
         setTimeout(() => {
           closeModal('modalGeminiKey');
-        }, 850);
+        }, autoSelectedMsg ? 1500 : 850);
 
       } catch (err) {
         console.error('[Gemini Key Test Error]:', err);
@@ -6206,7 +6292,11 @@
       if (modalInd) modalInd.style.display = 'flex';
 
       const apiKey = localStorage.getItem('tatico_os_gemini_key');
-      const model = localStorage.getItem('tatico_os_gemini_model') || 'gemini-2.5-flash';
+      let model = localStorage.getItem('tatico_os_gemini_model') || 'gemini-3.0-flash';
+      if (['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'].includes(model)) {
+        model = 'gemini-3.0-flash';
+        localStorage.setItem('tatico_os_gemini_model', model);
+      }
       const lawSelect = document.getElementById('lawSourceSelect');
       const explicitLaw = lawSelect ? lawSelect.value : 'auto';
 
@@ -6311,8 +6401,8 @@ Formato do Schema JSON Obrigatório:
 ]`;
         }
 
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey.trim()}`;
-        const response = await fetch(apiUrl, {
+        let apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey.trim()}`;
+        let response = await fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -6323,6 +6413,28 @@ Formato do Schema JSON Obrigatório:
             }
           })
         });
+
+        // Se o modelo escolhido falhar (ex: 404 de modelo descontinuado/indisponível), consulta modelos aceitos pela chave
+        if (!response.ok && (response.status === 404 || response.status === 400)) {
+          const fallbackModel = await discoverBestGeminiModel(apiKey, model);
+          if (fallbackModel && fallbackModel !== model) {
+            console.log(`[Gemini RAG] Modelo ${model} falhou (${response.status}). Alternando automaticamente para: ${fallbackModel}`);
+            model = fallbackModel;
+            localStorage.setItem('tatico_os_gemini_model', model);
+            apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey.trim()}`;
+            response = await fetch(apiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: systemPrompt }] }],
+                generationConfig: {
+                  responseMimeType: 'application/json',
+                  temperature: 0.4
+                }
+              })
+            });
+          }
+        }
 
         if (!response.ok) {
           const errData = await response.json().catch(() => ({}));
