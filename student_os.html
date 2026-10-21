@@ -4589,10 +4589,6 @@
               <span class="plus-icon">⚖️</span> Vade Mecum • Leis
             </button>
 
-            <button class="btn-quick-action" onclick="openVadeMecumView()">
-              <span class="plus-icon">⚖️</span> Vade Mecum • Leis
-            </button>
-
             <button class="btn-quick-action" onclick="openModal('modalAddAssessment')">
               <span class="plus-icon">+</span> Novo Simulado / Meta
             </button>
@@ -4617,13 +4613,6 @@
             <span>Gestão Operacional</span>
           </div>
           <ul class="nav-list">
-            <li class="nav-item">
-              <a href="#vademecum" onclick="event.preventDefault(); openVadeMecumView();">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                Biblioteca de Leis • Vade Mecum
-              </a>
-            </li>
-
             <li class="nav-item">
               <a href="#vademecum" onclick="event.preventDefault(); openVadeMecumView();">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
@@ -7281,9 +7270,19 @@
         if (path === 'direitos-humanos') return 'Declaração Universal dos Direitos Humanos';
 
         const parts = path.split('/');
-        const fileName = parts[parts.length - 1].replace(/\.(md|txt|json|html)$/i, '');
+        let fileName = parts[parts.length - 1].replace(/\.(md|txt|json|html)$/i, '');
         const state = (parts.length > 2 && parts[0] === 'estaduais') ? `[${parts[1]}] ` : '';
-        return state + fileName.replace(/[-_]/g, ' ');
+
+        fileName = fileName.replace(/-id\d+$/i, '');
+        fileName = fileName.replace(/^lei-complementar-(\d+)-(\d{4})/i, 'Lei Complementar nº $1/$2');
+        fileName = fileName.replace(/^lei-ordinaria-(\d+)-(\d{4})/i, 'Lei Ordinária nº $1/$2');
+        fileName = fileName.replace(/^lei-(\d+)-(\d{4})/i, 'Lei nº $1/$2');
+        fileName = fileName.replace(/^emenda-constitucional-(\d+)-(\d{4})/i, 'Emenda Constitucional nº $1/$2');
+        fileName = fileName.replace(/^constituicao-([a-z]{2})-(.*)/i, (_, uf) => 'Constituição Estadual (' + uf.toUpperCase() + ')');
+
+        let formatted = fileName.replace(/[-_]/g, ' ');
+        formatted = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+        return state + formatted;
       },
 
       resolvePathForSubject(subjectName, explicitPath) {
@@ -7332,7 +7331,7 @@
         }
 
         // 2. Se for arquivo real do repositório ctresb/leis (ex: constituicao.md ou estaduais/...)
-        const url = `https://raw.githubusercontent.com/${this.REPO_OWNER}/${this.REPO_NAME}/${this.BRANCH}/${path}`;
+        const url = `https://raw.githubusercontent.com/${this.REPO_OWNER}/${this.REPO_NAME}/${this.BRANCH}/${encodeURI(path)}`;
         try {
           const res = await fetch(url);
           if (!res.ok) throw new Error(`HTTP ${res.status} ao carregar lei bruta (${url}).`);
