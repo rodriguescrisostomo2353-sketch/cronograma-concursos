@@ -7673,7 +7673,20 @@
           statusBox.style.background = 'rgba(239, 68, 68, 0.16)';
           statusBox.style.border = '1px solid rgba(239, 68, 68, 0.4)';
           statusBox.style.color = '#F87171';
-          statusBox.innerHTML = `<span>🔴 Falha na conexão: ${err.message || 'Chave inválida ou modelo inacessível.'}</span>`;
+
+          let customErrorMsg = err.message || 'Chave inválida ou modelo inacessível.';
+          if (customErrorMsg.includes('denied access') || customErrorMsg.includes('PROJECT_DENIED')) {
+            customErrorMsg = '<strong>Projeto do Google Bloqueado/Suspenso:</strong> O Google Cloud bloqueou o projeto GCP vinculado a esta chave de API.<br><br>' +
+              '💡 <strong>Como resolver agora:</strong><br>' +
+              '1. Acesse o <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="color: #93C5FD; text-decoration: underline; font-weight: 700;">Google AI Studio (aistudio.google.com)</a>.<br>' +
+              '2. Clique em <strong>"Create API key"</strong> (Criar chave de API).<br>' +
+              '3. Selecione <strong>"Create API key in new project"</strong> (em um <u>NOVO projeto</u>, nunca no projeto suspenso).<br>' +
+              '4. Cole a nova chave gerada aqui e clique em Salvar e Testar.';
+          } else if (customErrorMsg.includes('API_KEY_INVALID') || customErrorMsg.includes('key not valid')) {
+            customErrorMsg = '<strong>Chave de API inválida:</strong> Verifique se copiou a chave completa iniciada com <code>AIzaSy...</code>.';
+          }
+
+          statusBox.innerHTML = `<span>🔴 Falha na conexão: ${customErrorMsg}</span>`;
         }
         showToast('Falha na validação da chave Gemini. Verifique os dados.', 'error');
       } finally {
