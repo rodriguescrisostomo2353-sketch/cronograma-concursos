@@ -1304,6 +1304,7 @@
       gap: 12px;
     }
 
+    #flashcardsChipsBar,
     .notes-filter-bar {
       display: flex;
       gap: 6px;
@@ -1313,16 +1314,29 @@
       padding-bottom: 6px;
       border-bottom: 1px solid var(--border-tactical);
       scrollbar-width: thin;
+      scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
       -webkit-overflow-scrolling: touch;
     }
 
+    #flashcardsChipsBar::-webkit-scrollbar,
     .notes-filter-bar::-webkit-scrollbar {
-      height: 3px;
+      height: 4px;
     }
 
+    #flashcardsChipsBar::-webkit-scrollbar-track,
+    .notes-filter-bar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #flashcardsChipsBar::-webkit-scrollbar-thumb,
     .notes-filter-bar::-webkit-scrollbar-thumb {
-      background: var(--border-gold);
+      background: rgba(212, 175, 55, 0.3);
       border-radius: 4px;
+    }
+
+    #flashcardsChipsBar::-webkit-scrollbar-thumb:hover,
+    .notes-filter-bar::-webkit-scrollbar-thumb:hover {
+      background: rgba(212, 175, 55, 0.6);
     }
 
     .note-filter-btn {
@@ -1528,6 +1542,27 @@
       color: var(--gold-primary);
       border-color: rgba(212, 175, 55, 0.4);
       background: rgba(212, 175, 55, 0.12);
+    }
+
+    .fc-status-pill.revisao-erro {
+      color: #F87171 !important;
+      border-color: rgba(239, 68, 68, 0.5) !important;
+      background: rgba(239, 68, 68, 0.18) !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.05em;
+    }
+
+    #btnOpenPasteErrorPrintModal:hover {
+      background: rgba(212, 175, 55, 0.22) !important;
+      border-color: var(--gold-light) !important;
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.35) !important;
+      transform: translateY(-1px);
+    }
+
+    .fc-action-btn.btn-view-print:hover {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #F87171 !important;
+      color: #FFF !important;
     }
 
     .fc-card-body-text {
@@ -5364,7 +5399,7 @@
                   Flashcards Táticos por IA
                 </span>
                 <span class="live-telemetry-badge gold" title="Inteligência Artificial Ativa"><span class="live-dot-ping"></span><span>IA 3D</span></span>
-                <span class="badge-count" id="flashcardsCountBadge" style="font-size: 10px; background: rgba(212, 175, 55, 0.15); color: var(--gold-primary); padding: 2px 7px; border-radius: 999px; font-weight: 700;">43 CARDS</span>
+                <span class="badge-count" id="flashcardsCountBadge" style="font-size: 10px; background: rgba(212, 175, 55, 0.15); color: var(--gold-primary); padding: 2px 7px; border-radius: 999px; font-weight: 700;">0 CARDS</span>
               </div>
               <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
                 <!-- Alternador de Modos: Grade vs Cilindro 3D (Tilted) -->
@@ -5395,6 +5430,13 @@
 
                 <button class="btn-quick-action" id="btnGenerateAIFlashcards" style="padding: 4px 10px; font-size: 11px; width: auto; background: var(--gold-primary); color: #0B0E14; font-weight: 700;" onclick="generateAIFlashcardsAction()" title="Gerar novos Flashcards com Inteligência Artificial">
                   ⚡ Gerar Flashcards com IA
+                </button>
+                <button type="button" class="btn-quick-action btn-paste-error-print" id="btnOpenPasteErrorPrintModal" onclick="openPasteErrorPrintModal()" style="padding: 4px 11px; font-size: 11px; width: auto; background: rgba(212, 175, 55, 0.12); border: 1px dashed #D4AF37; color: #f8fafc; font-weight: 600; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);" title="Colar print de questão errada para criar flashcard com IA (Ctrl+V)">
+                  <span style="font-size: 13px;">📸</span>
+                  <span>Colar Print de Questão (Ctrl+V)</span>
+                </button>
+                <button type="button" class="btn-quick-action" id="btnClearAIFlashcards" onclick="clearAllAIFlashcards()" style="padding: 4px 9px; font-size: 11px; width: auto; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.35); color: #F87171; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;" title="Limpar todos os flashcards salvos">
+                  <span>🗑️ Limpar Cards</span>
                 </button>
               </div>
             </div>
@@ -6343,6 +6385,100 @@
     </div>
   </div>
 
+  <!-- Modal: Caderno de Erros • Transformar Print em Flashcard -->
+  <div class="modal-backdrop" id="modalPasteErrorPrint" style="display: none;">
+    <div class="modal-card" style="max-width: 620px; width: 95%;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">📸</span>
+          <div>
+            <h3 style="margin: 0; font-size: 15px; color: var(--gold-light);">Caderno de Erros • Transformar Print em Flashcard</h3>
+            <span style="font-size: 11px; color: var(--text-muted);">Cole o print da questão que errou (Ctrl+V) para gerar revisão cirúrgica com IA</span>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeModal('modalPasteErrorPrint')">&times;</button>
+      </div>
+      <div class="modal-body" style="gap: 14px; display: flex; flex-direction: column;">
+        
+        <!-- Zona de Colagem / Drag & Drop -->
+        <div id="pasteErrorDropZone" style="border: 2px dashed rgba(212, 175, 55, 0.4); border-radius: 10px; padding: 22px 16px; background: rgba(14, 19, 30, 0.7); text-align: center; cursor: pointer; transition: all 0.2s ease; position: relative;">
+          
+          <div id="pastePromptContainer" style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.3); display: flex; align-items: center; justify-content: center; font-size: 24px;">
+              📋
+            </div>
+            <div style="font-size: 13.5px; font-weight: 700; color: var(--text-main);">
+              Pressione <kbd style="background: rgba(255,255,255,0.1); padding: 2px 7px; border-radius: 4px; border: 1px solid var(--border-tactical); font-size: 12px; color: var(--gold-primary);">Ctrl + V</kbd> para colar o print da questão
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-muted); max-width: 440px; line-height: 1.4;">
+              Ou arraste e solte uma imagem aqui (PNG, JPEG, WebP) ou <span style="color: var(--gold-light); text-decoration: underline; font-weight: 600;">clique para selecionar arquivo</span>
+            </div>
+            <input type="file" id="inputErrorPrintFile" accept="image/png,image/jpeg,image/webp" style="display: none;" onchange="handleErrorPrintFileSelect(event)">
+          </div>
+
+          <!-- Preview da Imagem Colada -->
+          <div id="pastePreviewContainer" style="display: none; flex-direction: column; align-items: center; gap: 10px;">
+            <div style="position: relative; max-width: 100%; max-height: 240px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-tactical); background: #000; box-shadow: 0 4px 14px rgba(0,0,0,0.6);">
+              <img id="previewErrorPrintImg" src="" alt="Print da Questão" style="max-height: 230px; max-width: 100%; object-fit: contain; display: block;">
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 500px; font-size: 11px; color: var(--text-muted);">
+              <span id="previewImageInfo">Imagem carregada</span>
+              <button type="button" onclick="clearErrorPrintImage(event)" style="background: transparent; border: 1px solid rgba(239, 68, 68, 0.4); color: #F87171; border-radius: 4px; padding: 2px 8px; font-size: 11px; cursor: pointer;">
+                ✕ Trocar / Remover Imagem
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seletor de Matéria -->
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 11px; font-weight: 700; color: var(--gold-light); text-transform: uppercase;">
+            1. Matéria da Questão:
+          </label>
+          <select id="selectErrorPrintSubject" class="form-input" style="font-size: 12px; background: rgba(14, 19, 30, 0.9); border: 1px solid var(--border-tactical); color: var(--text-main); padding: 8px 10px; border-radius: 6px;">
+            <option value="auto" selected>🤖 Detectar Matéria Automaticamente pela IA</option>
+          </select>
+        </div>
+
+        <!-- O que me fez errar -->
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 11px; font-weight: 700; color: var(--gold-light); text-transform: uppercase;">
+            2. O que me fez errar? <span style="font-weight: 400; color: var(--text-muted); text-transform: none;">(Opcional - ajuda a IA a focar no seu ponto cego):</span>
+          </label>
+          <input type="text" id="inputErrorPrintReason" class="form-input" placeholder="Ex: Confundi os prazos do CPP, caí na pegadinha da alternativa C..." style="font-size: 12px; background: rgba(14, 19, 30, 0.9); border: 1px solid var(--border-tactical); color: var(--text-main); padding: 8px 10px; border-radius: 6px;">
+        </div>
+
+        <!-- Indicador de Carregamento da IA -->
+        <div id="aiAnalyzingPrintIndicator" style="display: none; align-items: center; justify-content: center; gap: 10px; padding: 12px; background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 6px; color: var(--gold-light); font-size: 12px; font-weight: 600;">
+          <span style="font-size: 15px;">⏳</span>
+          <span>Gemini Multimodal analisando a questão do print e gerando card cirúrgico...</span>
+        </div>
+
+        <!-- Botão Principal -->
+        <button type="button" class="btn-primary" id="btnAnalyzeErrorPrintAndCreateCard" onclick="analyzeErrorPrintAction()" style="padding: 10px 16px; font-size: 13px; font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #D4AF37, #AA820A); color: #0B0E14; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s ease;">
+          <span>⚡ Analisar Print e Criar Flashcard de Revisão</span>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Visualização em Alta Resolução do Print Original -->
+  <div class="modal-backdrop" id="modalViewOriginalPrint" style="display: none;">
+    <div class="modal-card" style="max-width: 820px; width: 95%;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 18px;">🖼️</span>
+          <h3 id="titleOriginalPrintModal" style="margin: 0; font-size: 15px; color: var(--gold-light);">Print Original da Questão</h3>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeModal('modalViewOriginalPrint')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; border-radius: 8px; overflow: auto; max-height: 80vh;">
+        <img id="imgOriginalPrintModal" src="" alt="Print da Questão" style="max-width: 100%; max-height: 72vh; object-fit: contain; border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.8);">
+      </div>
+    </div>
+  </div>
+
   <!-- Container de Toasts -->
   <div class="toast-container" id="toastContainer"></div>
 
@@ -6893,459 +7029,9 @@
       return DEFAULT_POLICE_SUBJECTS;
     }
 
-    // CATÁLOGO MESTRE TÉCNICO DE FLASHCARDS & MINI-PERGUNTAS POR DISCIPLINA
-    const AI_FLASHCARDS_CATALOG = {
-      'Língua Portuguesa': [
-        {
-          id: 'fc_port_1',
-          front: 'Em "Alugam-se salas comerciais", qual a função da partícula "SE" e a regra de concordância verbal?',
-          back: 'Partícula Apassivadora (PA). O verbo é Transitivo Direto (VTD) e concorda obrigatoriamente com o sujeito paciente ("salas comerciais são alugadas"). Se o sujeito for plural, o verbo flexiona no plural.',
-          quiz: {
-            statement: 'Na oração "Trata-se de ocorrências graves", a partícula "SE" atua como apassivadora, devendo o verbo ir para o plural caso o substantivo seguinte esteja no plural.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. O verbo "tratar-se" rege preposição ("de"), sendo VTI; o "SE" atua como Índice de Indeterminação do Sujeito e o verbo é OBRIGATORIAMENTE singular ("Trata-se de...").'
-          }
-        },
-        {
-          id: 'fc_port_2',
-          front: 'Quais são os 3 casos clássicos de CRASE FACULTATIVA mais cobrados em concursos policiais?',
-          back: 'Regra mnemônica "Até a Maria": 1) Antes de nomes próprios femininos; 2) Antes de pronomes possessivos femininos singulares ("à minha arma"); 3) Após a preposição "até".',
-          quiz: {
-            statement: 'O acento indicativo de crase é facultativo em qual das opções abaixo?',
-            type: 'multiple_choice',
-            options: [
-              'A viatura deslocou-se até à delegacia plantonista.',
-              'O mandado foi entregue à uma testemunha protegida.',
-              'Os investigadores compareceram à audiências públicas.'
-            ],
-            correctIndex: 0,
-            comment: 'Gabarito A. Após a preposição "até", o uso do acento grave é facultativo ("até a" ou "até à"). Antes de "uma" ou palavra no plural sem artigo definido ("a audiências"), a crase é proibida.'
-          }
-        },
-        {
-          id: 'fc_port_3',
-          front: 'Qual a distinção sintática entre Complemento Nominal (CN) e Adjunto Adnominal (AA) com preposição "de"?',
-          back: 'CN: Liga-se a substantivo abstrato, adjetivo ou advérbio e tem sentido PACIENTE (alvo da ação). AA: Liga-se apenas a substantivos e tem sentido AGENTE (posse ou autor da ação).',
-          quiz: {
-            statement: 'Na frase "A perícia concluiu a apreensão do armamento clandestino", o termo "do armamento clandestino" exerce a função sintática de Adjunto Adnominal.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. O termo possui sentido paciente (o armamento foi apreendido), caracterizando Complemento Nominal e não Adjunto Adnominal.'
-          }
-        }
-      ],
-      'Raciocínio Lógico-Matemático': [
-        {
-          id: 'fc_rlm_1',
-          front: 'Qual a regra de ouro para negar a proposição condicional "Se P, então Q" (P → Q)?',
-          back: 'Regra do MANÉ: Mantém a primeira E Nega a segunda: ~(P → Q) ≡ P ∧ ~Q. Alerta de prova: a negação lógica de uma condicional NUNCA é outra condicional!',
-          quiz: {
-            statement: 'A negação lógica de "Se o agente estuda com disciplina, então ele é aprovado" é "Se o agente não estuda, então não é aprovado".',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. A negação de uma condicional nunca é condicional. Pela regra do MANÉ, a negação é: "O agente estuda com disciplina E NÃO é aprovado".'
-          }
-        },
-        {
-          id: 'fc_rlm_2',
-          front: 'Quais são as duas principais equivalências lógicas da proposição condicional (P → Q)?',
-          back: '1) Contrapositiva: ~Q → ~P (inverte e nega tudo); 2) Silogismo disjuntivo (Regra do NEYMAR): ~P ∨ Q (Nega a primeira OU Mantém a segunda).',
-          quiz: {
-            statement: 'A proposição "Se o investigado confessa, a pena é atenuada" é logicamente equivalente a:',
-            type: 'multiple_choice',
-            options: [
-              'O investigado não confessa ou a pena é atenuada.',
-              'Se a pena é atenuada, o investigado confessou.',
-              'O investigado confessa e a pena não é atenuada.'
-            ],
-            correctIndex: 0,
-            comment: 'Gabarito A. Pela equivalência do NEYMAR (~P ∨ Q), nega-se a primeira ("O investigado não confessa") OU mantém-se a segunda ("a pena é atenuada").'
-          }
-        },
-        {
-          id: 'fc_rlm_3',
-          front: 'Como negar proposições quantificadoras universais ("Todo A é B")?',
-          back: 'Mnemônico "PEA + NÃO": Pelo menos um, Existe um ou Algum A NÃO é B. Jamais negue "Todo" utilizando "Nenhum"!',
-          quiz: {
-            statement: 'A negação lógica de "Todo policial civil porta arma de fogo" é "Nenhum policial civil porta arma de fogo".',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. Negar "Todo" exige apenas quebrar a regra: "Pelo menos um policial civil NÃO porta arma" (ou "Algum/Existe policial que não porta").'
-          }
-        }
-      ],
-      'Estatística': [
-        {
-          id: 'fc_est_1',
-          front: 'Qual a relação entre Média, Mediana e Moda em uma distribuição com Assimetria Positiva (à direita)?',
-          back: 'Moda < Mediana < Média. A cauda longa da distribuição estende-se para a direita, puxando a média aritmética para valores mais altos.',
-          quiz: {
-            statement: 'Em uma distribuição com assimetria positiva (à direita), verifica-se que a média é superior à mediana e esta é superior à moda.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 0,
-            comment: 'Gabarito Certo. Na assimetria à direita, a cauda alongada puxa a média para cima, resultando na ordenação: Moda < Mediana < Média.'
-          }
-        },
-        {
-          id: 'fc_est_2',
-          front: 'O que mede o Coeficiente de Variação (CV) de Pearson e qual a sua vantagem?',
-          back: 'CV = (Desvio Padrão / Média) × 100%. Mede a dispersão relativa e é uma medida adimensional (sem unidade de medida), ideal para comparar amostras de escalas diferentes.',
-          quiz: {
-            statement: 'O Coeficiente de Variação (CV) de Pearson caracteriza-se fundamentalmente por ser:',
-            type: 'multiple_choice',
-            options: [
-              'Uma medida de dispersão relativa expressa em porcentagem adimensional.',
-              'Uma medida de tendência central calculada pela raiz quadrada da variância.',
-              'Um teste de hipóteses paramétrico invariante no intervalo de -1 a +1.'
-            ],
-            correctIndex: 0,
-            comment: 'Gabarito A. O CV é a razão percentual do desvio padrão pela média, sendo adimensional e medindo a dispersão relativa.'
-          }
-        },
-        {
-          id: 'fc_est_3',
-          front: 'Qual a diferença entre Amostragem Estratificada e Amostragem por Conglomerados?',
-          back: 'Estratificada: divide em grupos homogêneos internamente (estratos); sorteia indivíduos de TODOS os estratos. Conglomerados: divide em grupos heterogêneos internamente; sorteia ALGUNS grupos por inteiro.',
-          quiz: {
-            statement: 'Na amostragem estratificada, a população é dividida em grupos heterogêneos internamente e sorteiam-se alguns grupos inteiros.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. Essa definição descreve a amostragem por CONGLOMERADOS. Na estratificada, os grupos são internamente homogêneos e sorteia-se de todos.'
-          }
-        }
-      ],
-      'Informática Básica': [
-        {
-          id: 'fc_inf_1',
-          front: 'Qual a diferença essencial entre Phishing, Ransomware e Spyware (Keylogger)?',
-          back: 'Phishing: engenharia social para roubar credenciais. Ransomware: sequestro e cifragem de arquivos exigindo resgate financeiro. Keylogger: spyware que grava as teclas digitadas.',
-          quiz: {
-            statement: 'O malware que sequestra arquivos do computador por meio de criptografia forte e exige pagamento de resgate é denominado:',
-            type: 'multiple_choice',
-            options: [
-              'Ransomware',
-              'Phishing Scam',
-              'Spyware Adware'
-            ],
-            correctIndex: 0,
-            comment: 'Gabarito A. O Ransomware sequestra dados criptografando o disco e cobra resgate (geralmente em criptomoedas) para fornecer a chave de descriptografia.'
-          }
-        },
-        {
-          id: 'fc_inf_2',
-          front: 'Quais são os 5 Princípios Fundamentais da Segurança da Informação (CIDAR)?',
-          back: 'C - Confidencialidade (sigilo); I - Integridade (sem alteração indevida); D - Disponibilidade (acesso garantido aos autorizados); A - Autenticidade (identidade real do autor); R - Não Repúdio (irretratabilidade).',
-          quiz: {
-            statement: 'O princípio do Não Repúdio (irretratabilidade) impede que o autor de um documento ou mensagem assinada digitalmente negue a sua autoria.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 0,
-            comment: 'Gabarito Certo. O Não Repúdio garante validade jurídica e impede a negação do ato praticado pelo emissor.'
-          }
-        },
-        {
-          id: 'fc_inf_3',
-          front: 'Qual a distinção técnica entre Criptografia Simétrica e Criptografia Assimétrica?',
-          back: 'Simétrica: usa uma única chave secreta compartilhada para cifrar e decifrar (AES, DES - alta velocidade). Assimétrica: usa um par de chaves, pública para cifrar e privada para decifrar (RSA - assinaturas digitais).',
-          quiz: {
-            statement: 'Na criptografia simétrica são empregadas duas chaves matematicamente interligadas: a chave pública para cifragem e a privada para decifragem.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. O par de chaves pública e privada é exclusivo da criptografia ASSIMÉTRICA. A simétrica utiliza apenas uma única chave secreta.'
-          }
-        }
-      ],
-      'Noções de Direito Penal': [
-        {
-          id: 'fc_pen_1',
-          front: 'Qual a distinção dogmática entre Dolo Eventual e Culpa Consciente no Código Penal?',
-          back: 'Dolo Eventual: assume o risco do resultado com indiferença ("tanto faz, não me importo"). Culpa Consciente: prevê o resultado danoso, mas confia sinceramente na sua perícia para evitá-lo ("sei do perigo, mas nada vai acontecer").',
-          quiz: {
-            statement: 'Na culpa consciente, o agente prevê o resultado lesivo e assume o risco de sua produção com total indiferença psicológica.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. A aceitação indiferente do risco caracteriza o DOLO EVENTUAL. Na culpa consciente, o agente NÃO aceita o resultado e acredita sinceramente que o evitará.'
-          }
-        },
-        {
-          id: 'fc_pen_2',
-          front: 'Quais são as 4 excludentes de ilicitude do art. 23 do CP e como é tratado o excesso?',
-          back: '1) Estado de necessidade; 2) Legítima defesa; 3) Estrito cumprimento do dever legal; 4) Exercício regular de direito. O excesso (doloso ou culposo) é SEMPRE punível!',
-          quiz: {
-            statement: 'Segundo o art. 23 do Código Penal, o agente que em qualquer das causas de exclusão da ilicitude exceder os limites legais:',
-            type: 'multiple_choice',
-            options: [
-              'Responderá pelo excesso praticado a título de dolo ou culpa.',
-              'Ficará isento de pena caso comprove motivo de relevante valor moral.',
-              'Terá a pena atenuada em dois terços sem responder por crime culposo.'
-            ],
-            correctIndex: 0,
-            comment: 'Gabarito A. O parágrafo único do art. 23 prevê expressamente a responsabilização pelo excesso doloso ou culposo.'
-          }
-        },
-        {
-          id: 'fc_pen_3',
-          front: 'Quais infrações penais NÃO admitem a figura da TENTATIVA (mnemônico COUP-C)?',
-          back: 'C - Crimes Culposos (salvo culpa imprópria); O - Omissivos próprios; U - Unissubsistentes (ato único); P - Preterdolosos; C - Contravenções Penais (art. 4º da LCP).',
-          quiz: {
-            statement: 'As contravenções penais e os crimes omissivos próprios admitem tentativa caso a ação do agente seja interrompida por terceiro.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. Pelo art. 4º da Lei das Contravenções Penais e pela doutrina clássica (COUP-C), contravenções penais e crimes omissivos próprios NÃO admitem tentativa.'
-          }
-        }
-      ],
-      'Noções de Direito Processual Penal': [
-        {
-          id: 'fc_pro_1',
-          front: 'Quais os prazos do Inquérito Policial na Justiça Estadual (CPP) e a autoridade policial pode arquivá-lo?',
-          back: 'Preso: 10 dias (improrrogáveis no CPP comum). Solto: 30 dias (prorrogáveis). A autoridade policial NUNCA pode mandar arquivar autos de inquérito (art. 17 CPP - Princípio da Indisponibilidade).',
-          quiz: {
-            statement: 'Constatando de pronto a manifesta atipicidade da conduta investigada, o Delegado de Polícia pode determinar o arquivamento do inquérito policial.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. O art. 17 do CPP veda expressamente: a autoridade policial não poderá mandar arquivar autos de inquérito (Princípio da Indisponibilidade).'
-          }
-        },
-        {
-          id: 'fc_pro_2',
-          front: 'Qual o prazo da Prisão Temporária (Lei 7.960/89) em crimes comuns e em crimes hediondos?',
-          back: 'Crimes comuns do rol taxativo: 5 dias + 5 dias. Crimes hediondos e equiparados (3T): 30 dias + 30 dias. Cabível EXCLUSIVAMENTE durante a fase de inquérito policial (não cabe em juízo).',
-          quiz: {
-            statement: 'O prazo legal da prisão temporária para apuração de crime hediondo ou equiparado é de:',
-            type: 'multiple_choice',
-            options: [
-              '30 dias, prorrogável por mais 30 dias mediante comprovada necessidade.',
-              '5 dias, prorrogável uma única vez por mais 5 dias pelo juiz.',
-              '15 dias improrrogáveis, vedada a decretação durante a instrução processual.'
-            ],
-            correctIndex: 0,
-            comment: 'Gabarito A. Nos crimes hediondos e equiparados (Lei 8.072/90), a prisão temporária tem prazo de 30 dias, prorrogável por igual período em caso de extrema necessidade.'
-          }
-        },
-        {
-          id: 'fc_pro_3',
-          front: 'Quais as 10 etapas legais da Cadeia de Custódia introduzidas no art. 158-B do CPP pelo Pacote Anticrime?',
-          back: '1. Reconhecimento, 2. Isolamento, 3. Fixação, 4. Coleta, 5. Acondicionamento, 6. Transporte, 7. Recebimento, 8. Processamento, 9. Armazenamento, 10. Descarte.',
-          quiz: {
-            statement: 'O isolamento e a fixação do vestígio constituem etapas obrigatórias da cadeia de custódia da prova pericial previstas no CPP.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 0,
-            comment: 'Gabarito Certo. O art. 158-B do CPP estabelece isolamento (2ª etapa) e fixação (3ª etapa) como procedimentos legais essenciais para preservar vestígios.'
-          }
-        }
-      ],
-      'Noções de Direito Constitucional': [
-        {
-          id: 'fc_cst_1',
-          front: 'A casa é asilo inviolável (Art. 5º, XI CF). Quais são as 4 exceções para entrada sem consentimento?',
-          back: 'A qualquer hora (dia ou noite): 1) Flagrante delito; 2) Desastre; 3) Prestar socorro. Somente durante o dia: 4) Por determinação judicial (critério legal: 05h às 21h nos termos da Lei 13.869).',
-          quiz: {
-            statement: 'Munidos de mandado de busca e apreensão judicial, policiais civis podem penetrar no domicílio do suspeito às 22h30min sem o seu consentimento.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. Por determinação judicial a entrada só pode ocorrer DURANTE O DIA (das 05h às 21h). À noite, apenas com flagrante delito, desastre ou socorro.'
-          }
-        },
-        {
-          id: 'fc_cst_2',
-          front: 'Quais são as 4 Cláusulas Pétreas expressas no art. 60, § 4º da Constituição Federal?',
-          back: 'Mnemônico FOVOSEDI: 1) FOrma federativa de Estado; 2) Voto direto, secreto, universal e periódico; 3) SEparação dos Poderes; 4) DIreitos e garantias individuais.',
-          quiz: {
-            statement: 'Segundo o art. 60, § 4º da CF/88, NÃO será objeto de deliberação a proposta de emenda constitucional tendente a abolir:',
-            type: 'multiple_choice',
-            options: [
-              'A separação dos Poderes e os direitos e garantias individuais.',
-              'O sistema de governo presidencialista e a forma republicana.',
-              'O bicameralismo do Congresso Nacional e a imunidade parlamentar.'
-            ],
-            correctIndex: 0,
-            comment: 'Gabarito A. As cláusulas pétreas expressas do art. 60, § 4º abrangem forma federativa, voto direto/secreto/universal/periódico, separação dos poderes e direitos/garantias individuais.'
-          }
-        },
-        {
-          id: 'fc_cst_3',
-          front: 'Qual a atribuição constitucional expressa da Polícia Civil no art. 144, § 4º da CF/88?',
-          back: 'Às polícias civis, dirigidas por delegados de carreira, incumbem as funções de polícia judiciária e a apuração de infrações penais, exceto as militares.',
-          quiz: {
-            statement: 'A apuração de infrações penais militares praticadas por policiais militares em serviço é de competência constitucional da Polícia Civil.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. O art. 144, § 4º da CF excetua expressamente as infrações penais militares da apuração da Polícia Civil.'
-          }
-        }
-      ],
-      'Noções de Direito Administrativo': [
-        {
-          id: 'fc_adm_1',
-          front: 'Quais são os 4 atributos do Ato Administrativo pelo mnemônico PATI e a exceção da multa?',
-          back: 'P - Presunção de Legitimidade e Veracidade; A - Autoexecutoriedade; T - Tipicidade; I - Imperatividade. ATENÇÃO: A cobrança de multa pecuniária NÃO é autoexecutória (exige execução fiscal judicial).',
-          quiz: {
-            statement: 'A Administração Pública pode executar diretamente e expropriar bens para satisfazer a cobrança de multa administrativa não quitada, dispensando o Poder Judiciário.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. A cobrança de multas administrativas não possui autoexecutoriedade; exige o ajuizamento de Execução Fiscal no Poder Judiciário.'
-          }
-        },
-        {
-          id: 'fc_adm_2',
-          front: 'Quais requisitos do ato administrativo (COMFIFOR) admitem CONVALIDAÇÃO (saneamento do vício)?',
-          back: 'Apenas dois: Competência (desde que não exclusiva) e Forma (desde que não essencial à validade). Motivo, Finalidade e Objeto NUNCA admitem convalidação.',
-          quiz: {
-            statement: 'No regime dos atos administrativos, é passível de convalidação o vício sanável relativo a:',
-            type: 'multiple_choice',
-            options: [
-              'Competência quanto à pessoa, desde que não seja privativa ou exclusiva.',
-              'Finalidade desviada para beneficiar parente da autoridade pública.',
-              'Motivo inexistente comprovado por prova documental irrefutável.'
-            ],
-            correctIndex: 0,
-            comment: 'Gabarito A. A convalidação somente é cabível em vícios sanáveis de Competência (não exclusiva) e Forma (não essencial à validade do ato).'
-          }
-        },
-        {
-          id: 'fc_adm_3',
-          front: 'Qual a diferença entre Desconcentração e Descentralização administrativa?',
-          back: 'DesCOncentração = cria Órgãos (mesma pessoa jurídica, há hierarquia e subordinação). DesCENtralização = cria ENTes (outra pessoa jurídica: autarquias, fundações; não há subordinação, apenas tutela).',
-          quiz: {
-            statement: 'A criação de uma delegacia especializada no âmbito da própria Polícia Civil constitui exemplo típico de desconcentração administrativa.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 0,
-            comment: 'Gabarito Certo. A divisão interna de atribuições dentro da mesma pessoa jurídica (órgãos públicos) caracteriza a Desconcentração.'
-          }
-        }
-      ],
-      'Legislação Penal Especial': [
-        {
-          id: 'fc_leg_1',
-          front: 'Quais crimes são inafiançáveis e insuscetíveis de graça ou anistia pela CF/88 e Lei 8.072/90?',
-          back: 'O grupo "3T": Tortura, Tráfico Ilícito de Entorpecentes e Terrorismo, além dos Crimes Hediondos. ATENÇÃO: são crimes PRESRITÍVEIS! Apenas racismo e ação de grupos armados são imprescritíveis.',
-          quiz: {
-            statement: 'Os crimes hediondos e o tráfico ilícito de drogas são inafiançáveis, insuscetíveis de graça/anistia e imprescritíveis segundo a Constituição Federal.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. São inafiançáveis e insuscetíveis de anistia/graça, mas PRESCREVEM normalmente segundo as regras do Código Penal.'
-          }
-        },
-        {
-          id: 'fc_leg_2',
-          front: 'Na Lei de Abuso de Autoridade (Lei 13.869/19), qual elemento subjetivo especial (dolo específico) é exigido?',
-          back: 'Finalidade específica de: 1) prejudicar outrem; 2) beneficiar a si mesmo ou a terceiro; ou 3) por mero capricho ou satisfação pessoal. A lei veda expressamente o crime de hermenêutica.',
-          quiz: {
-            statement: 'Segundo a Lei 13.869/2019, a divergência na interpretação de lei ou na avaliação de fatos e provas:',
-            type: 'multiple_choice',
-            options: [
-              'Não configura crime de abuso de autoridade (vedação ao crime de hermenêutica).',
-              'Configura abuso de autoridade culposo se comprovada negligência grave.',
-              'Gera afastamento cautelar automático da autoridade sem remuneração.'
-            ],
-            correctIndex: 0,
-            comment: 'Gabarito A. O art. 1º, § 2º da Lei 13.869 veda o crime de hermenêutica: a divergência na interpretação de lei não configura abuso de autoridade.'
-          }
-        },
-        {
-          id: 'fc_leg_3',
-          front: 'A autoridade policial (Delegado de Polícia) pode deferir medida protetiva de urgência na Lei Maria da Penha?',
-          back: 'Sim! Se o município não for sede de comarca e não houver juiz disponível no momento, o Delegado pode conceder medida de afastamento do agressor, comunicando o juiz em até 24 horas.',
-          quiz: {
-            statement: 'A autoridade policial pode afastar o agressor do lar quando o município não for sede de comarca e não houver juiz disponível, comunicando em até 24h.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 0,
-            comment: 'Gabarito Certo. Trata-se da permissão expressa do art. 12-C da Lei 11.340/2006 para resguardar a integridade física da vítima.'
-          }
-        }
-      ],
-      'Direitos Humanos': [
-        {
-          id: 'fc_dh_1',
-          front: 'Qual o status dos tratados de DH aprovados pelo rito do art. 5º, § 3º da CF/88 vs demais tratados de DH?',
-          back: 'Rito do Art. 5º, § 3º (2 turnos, 3/5 de cada Casa): status de Emenda Constitucional. Demais tratados de DH (rito comum ou anteriores à EC 45): status SUPRALEGAL (acima das leis ordinárias, abaixo da CF).',
-          quiz: {
-            statement: 'Os tratados de direitos humanos aprovados em dois turnos por três quintos dos membros de cada Casa do Congresso Nacional equivalem a emendas constitucionais.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 0,
-            comment: 'Gabarito Certo. Essa é a previsão textual do art. 5º, § 3º da CF/88, introduzida pela Emenda Constitucional nº 45/2004.'
-          }
-        },
-        {
-          id: 'fc_dh_2',
-          front: 'Quais são as principais características dogmáticas inerentes aos Direitos Humanos?',
-          back: 'Universalidade (a todos), Inalienabilidade (não comercializáveis), Imprescritibilidade (não se perdem com o tempo), Irrenunciabilidade (não se pode renunciar) e Indivisibilidade.',
-          quiz: {
-            statement: 'O atributo segundo o qual os direitos humanos não se perdem pelo simples decurso do tempo sem o seu exercício é a:',
-            type: 'multiple_choice',
-            options: [
-              'Imprescritibilidade',
-              'Inalienabilidade',
-              'Complementaridade'
-            ],
-            correctIndex: 0,
-            comment: 'Gabarito A. A Imprescritibilidade assegura que os direitos fundamentais podem ser exigidos a qualquer tempo, não prescrevendo com o decurso dos anos.'
-          }
-        },
-        {
-          id: 'fc_dh_3',
-          front: 'Qual a única hipótese admitida de prisão civil por dívida no Brasil à luz do Pacto de San José da Costa Rica?',
-          back: 'Apenas do devedor inescusável de alimentos (pensão alimentícia). A prisão do depositário infiel é ILÍCITA nos termos da Súmula Vinculante 25 do STF e da CADH.',
-          quiz: {
-            statement: 'No Brasil, é lícita a prisão civil do depositário infiel nos casos de alienação fiduciária em garantia.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. A Súmula Vinculante 25 do STF estabelece que é ilícita a prisão civil de depositário infiel, qualquer que seja a modalidade do depósito.'
-          }
-        }
-      ],
-      'Conhecimentos Básicos': [
-        {
-          id: 'fc_bas_1',
-          front: 'Quais são os 5 princípios constitucionais expressos da administração pública no art. 37 da CF/88?',
-          back: 'Mnemônico LIMPE: Legalidade, Impessoalidade, Moralidade, Publicidade e Eficiência (Eficiência introduzida pela EC 19/98).',
-          quiz: {
-            statement: 'O princípio da eficiência constava na redação original da Constituição de 1988 como princípio expresso da administração pública.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. O princípio da eficiência foi incluído no caput do art. 37 pela Emenda Constitucional nº 19/1998.'
-          }
-        }
-      ],
-      'Conhecimentos Específicos': [
-        {
-          id: 'fc_esp_1',
-          front: 'Qual a natureza jurídica do Inquérito Policial e suas características fundamentais?',
-          back: 'Procedimento administrativo informativo, inquisitório, preparatório para a ação penal, escrito, oficial e sigiloso, conduzido pela polícia judiciária.',
-          quiz: {
-            statement: 'O inquérito policial caracteriza-se juridicamente como um processo jurisdicional contencioso sob o crivo do contraditório judicial.',
-            type: 'true_false',
-            options: ['Certo', 'Errado'],
-            correctIndex: 1,
-            comment: 'Gabarito Errado. O inquérito policial é procedimento administrativo de natureza inquisitiva e informativa, não sendo processo judicial contencioso.'
-          }
-        }
-      ]
-    };
+    // CATÁLOGO DE FLASHCARDS & MINI-PERGUNTAS (100% DINÂMICO VIA GEMINI API - SEM SEEDS ESTÁTICOS)
+    const AI_FLASHCARDS_CATALOG = {};
 
-    // Obter nome canônico ou mais próximo
     function findCanonicalSubjectKey(rawName) {
       if (!rawName) return 'Noções de Direito Penal';
       const norm = rawName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -7363,12 +7049,7 @@
       if (norm.includes('especifico')) return 'Conhecimentos Específicos';
       if (norm.includes('basico')) return 'Conhecimentos Básicos';
 
-      const keys = Object.keys(AI_FLASHCARDS_CATALOG);
-      for (const k of keys) {
-        const kNorm = k.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        if (norm.includes(kNorm) || kNorm.includes(norm)) return k;
-      }
-      return 'Noções de Direito Penal';
+      return rawName.trim() || 'Noções de Direito Penal';
     }
 
     /* ========================================================================
@@ -7406,63 +7087,14 @@
         const raw = localStorage.getItem('tactical_ai_flashcards');
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            cards = parsed;
+          if (Array.isArray(parsed)) {
+            // Apenas flashcards gerados legitimamente pela API Gemini são aceitos
+            cards = parsed.filter(c => c && c.generatedByRealGemini === true);
           }
         }
       } catch(e) {
         console.warn('Erro ao carregar flashcards IA:', e);
       }
-
-      // Se tiver menos de 15 cards, mesclar com todo o acervo doutrinário e templates da IA
-      if (cards.length < 15) {
-        const existingIds = new Set(cards.map(c => c.id));
-
-        // 1. Templates de todas as matérias cadastradas no edital
-        const subjects = getRegisteredEditalSubjects();
-        subjects.forEach((subj, sIdx) => {
-          const canonicalKey = findCanonicalSubjectKey(subj);
-          const templateList = AI_FLASHCARDS_CATALOG[canonicalKey] || [];
-          templateList.forEach((tmpl, cIdx) => {
-            const fcId = 'fc_ai_' + sIdx + '_' + cIdx;
-            if (!existingIds.has(fcId)) {
-              cards.push({
-                id: fcId,
-                subject: subj,
-                canonicalKey: canonicalKey,
-                color: getSubjectColor(subj, sIdx),
-                front: tmpl.front,
-                back: tmpl.back,
-                status: 'novo',
-                quiz: tmpl.quiz,
-                createdAt: new Date().toISOString()
-              });
-              existingIds.add(fcId);
-            }
-          });
-        });
-
-        // 2. Mesclar também com MASTER_NOTES doutrinários
-        MASTER_NOTES.forEach((mn, idx) => {
-          const fcId = 'fc_mn_' + mn.id;
-          if (!existingIds.has(fcId)) {
-            cards.push({
-              id: fcId,
-              subject: mn.tag || 'Direito Penal',
-              canonicalKey: findCanonicalSubjectKey(mn.tag || 'Direito Penal'),
-              color: mn.color || '#D4AF37',
-              front: mn.title,
-              back: mn.text,
-              status: 'novo',
-              createdAt: new Date().toISOString()
-            });
-            existingIds.add(fcId);
-          }
-        });
-
-        saveStoredAIFlashcards(cards);
-      }
-
       return cards;
     }
 
@@ -8094,15 +7726,13 @@
 
       // Se a chave não estiver configurada no navegador:
       if (!apiKey || apiKey.trim().length === 0) {
-        showToast('🔑 API Gemini não configurada. Abra a configuração no botão "🔑 API Gemini" para usar o repositório ctresb/leis.', 'warn');
+        showToast('🔑 API Gemini não configurada. Abra a configuração para inserir sua chave e gerar flashcards.', 'warn');
         openGeminiConfigModal();
-        generateLocalAIFlashcardsFallback(targetSubject, (added) => {
-          if (actionBtn) { actionBtn.disabled = false; actionBtn.innerHTML = originalActionText; }
-          if (modalBtn) modalBtn.disabled = false;
-          if (modalInd) modalInd.style.display = 'none';
-          isGeneratingAIFlashcards = false;
-          if (typeof callback === 'function') callback(added);
-        });
+        if (actionBtn) { actionBtn.disabled = false; actionBtn.innerHTML = originalActionText; }
+        if (modalBtn) modalBtn.disabled = false;
+        if (modalInd) modalInd.style.display = 'none';
+        isGeneratingAIFlashcards = false;
+        if (typeof callback === 'function') callback(0);
         return;
       }
 
@@ -8270,6 +7900,7 @@ Formato do Schema JSON Obrigatório:
             front: frontText,
             back: backText,
             status: 'novo',
+            generatedByRealGemini: true,
             quiz: {
               statement: item.quiz?.pergunta || item.quiz?.statement || frontText,
               pergunta: item.quiz?.pergunta || item.quiz?.statement || frontText,
@@ -8300,10 +7931,8 @@ Formato do Schema JSON Obrigatório:
 
       } catch (geminiErr) {
         console.error('[Gemini Generation Error]:', geminiErr);
-        showToast(`⚠️ Erro na API Gemini: ${geminiErr.message}. Carregando acervo local de segurança.`, 'error');
-
-        // Fallback local seguro
-        generateLocalAIFlashcardsFallback(targetSubject, callback);
+        showToast(`⚠️ Falha ao gerar flashcards via Gemini: ${geminiErr.message}. Verifique sua chave da API e conexão.`, 'error');
+        if (typeof callback === 'function') callback(0);
       } finally {
         if (actionBtn) {
           actionBtn.disabled = false;
@@ -8313,90 +7942,6 @@ Formato do Schema JSON Obrigatório:
         if (modalInd) modalInd.style.display = 'none';
         isGeneratingAIFlashcards = false;
       }
-    }
-
-    function generateLocalAIFlashcardsFallback(targetSubject, callback) {
-      const canonicalKey = findCanonicalSubjectKey(targetSubject);
-      const catalogTemplates = AI_FLASHCARDS_CATALOG[canonicalKey] || AI_FLASHCARDS_CATALOG['Noções de Direito Penal'];
-
-      const allCards = getStoredAIFlashcards();
-      const existingFronts = new Set(allCards.map(c => c.front.trim().toLowerCase()));
-
-      let addedCount = 0;
-      catalogTemplates.forEach((tmpl, i) => {
-        if (!existingFronts.has(tmpl.front.trim().toLowerCase())) {
-          allCards.unshift({
-            id: 'fc_ai_' + Date.now() + '_' + i,
-            subject: targetSubject,
-            canonicalKey: canonicalKey,
-            color: getSubjectColor(targetSubject),
-            leiReferencia: 'Acervo Tático Oficial',
-            front: tmpl.front,
-            back: tmpl.back,
-            status: 'novo',
-            quiz: tmpl.quiz,
-            createdAt: new Date().toISOString()
-          });
-          addedCount++;
-        }
-      });
-
-      if (addedCount === 0) {
-        const extraVariations = [
-          {
-            front: 'Jurisprudência / Súmula relevante em ' + targetSubject + ': Regra geral vs Exceção.',
-            back: 'Bizu Tático de Prova: Fique atento aos termos "salvo", "vedado" e "improrrogável", pois a banca costuma inverter a regra com a exceção.',
-            quiz: {
-              statement: 'Em matéria de ' + targetSubject + ', a jurisprudência dominante veda a interpretação extensiva prejudicial ao investigado.',
-              pergunta: 'Em matéria de ' + targetSubject + ', a jurisprudência dominante veda a interpretação extensiva prejudicial ao investigado.',
-              type: 'true_false',
-              options: ['Certo', 'Errado'],
-              correctIndex: 0,
-              respostaCorreta: 'Certo',
-              comment: 'Gabarito Certo. Veda-se a analogia in malam partem que restrinja direitos sem base legal estrita.',
-              explicacao: 'Gabarito Certo. Veda-se a analogia in malam partem que restrinja direitos sem base legal estrita.'
-            }
-          },
-          {
-            front: 'Situação-Problema Operacional de Simulado em ' + targetSubject + ': Tomada de decisão fundamentada.',
-            back: 'Bizu Operacional: Identifique de pronto a capitulação exata e o procedimento legal aplicável antes de qualquer ato decisório.',
-            quiz: {
-              statement: 'Na atuação prática em ' + targetSubject + ', a motivação expressa dos atos da autoridade constitui requisito indeclinável de validade.',
-              pergunta: 'Na atuação prática em ' + targetSubject + ', a motivação expressa dos atos da autoridade constitui requisito indeclinável de validade.',
-              type: 'true_false',
-              options: ['Certo', 'Errado'],
-              correctIndex: 0,
-              respostaCorreta: 'Certo',
-              comment: 'Gabarito Certo. A motivação dos atos administrativos e policiais é requisito indeclinável de validade sob a ordem constitucional.',
-              explicacao: 'Gabarito Certo. A motivação dos atos administrativos e policiais é requisito indeclinável de validade sob a ordem constitucional.'
-            }
-          }
-        ];
-
-        extraVariations.forEach((tmpl, i) => {
-          allCards.unshift({
-            id: 'fc_ai_synth_' + Date.now() + '_' + i,
-            subject: targetSubject,
-            canonicalKey: canonicalKey,
-            color: getSubjectColor(targetSubject),
-            leiReferencia: 'Simulado Tático',
-            front: tmpl.front,
-            back: tmpl.back,
-            status: 'novo',
-            quiz: tmpl.quiz,
-            createdAt: new Date().toISOString()
-          });
-          addedCount++;
-        });
-      }
-
-      saveStoredAIFlashcards(allCards);
-      if (typeof initInteractiveQuiz === 'function') {
-        initInteractiveQuiz(currentQuizState.subject || targetSubject);
-      }
-      playTacticalBlip(1040, 0.08);
-      renderAIFlashcards(targetSubject);
-      if (typeof callback === 'function') callback(addedCount);
     }
 
     function generateAIFlashcardsAction() {
@@ -8431,6 +7976,390 @@ Formato do Schema JSON Obrigatório:
     window.generateAIFlashcards = generateAIFlashcards;
     window.generateAIFlashcardsAction = generateAIFlashcardsAction;
     window.triggerGenerateFlashcardsFromModal = triggerGenerateFlashcardsFromModal;
+
+    /* ========================================================================
+       CADERNO DE ERROS: PRINT DE QUESTÃO ERRADA -> FLASHCARD MULTIMODAL IA
+       ======================================================================== */
+    let currentErrorPrintData = {
+      file: null,
+      dataUrl: null,
+      thumbnailUrl: null,
+      mimeType: 'image/jpeg'
+    };
+
+    function compressImageToDataUrl(fileOrBlob, maxWidth = 1200, maxHeight = 1200, quality = 0.82) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+            if (width > maxWidth || height > maxHeight) {
+              const ratio = Math.min(maxWidth / width, maxHeight / height);
+              width = Math.round(width * ratio);
+              height = Math.round(height * ratio);
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = () => reject(new Error('Falha ao decodificar imagem para compressão'));
+          img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error('Falha ao ler arquivo de imagem'));
+        reader.readAsDataURL(fileOrBlob);
+      });
+    }
+
+    function openPasteErrorPrintModal() {
+      const select = document.getElementById('selectErrorPrintSubject');
+      if (select) {
+        const subjects = typeof getRegisteredEditalSubjects === 'function' ? getRegisteredEditalSubjects() : [];
+        let opts = '<option value="auto" selected>🤖 Detectar Matéria Automaticamente pela IA</option>';
+        subjects.forEach(s => {
+          opts += '<option value="' + s + '">' + s + '</option>';
+        });
+        select.innerHTML = opts;
+      }
+      openModal('modalPasteErrorPrint');
+    }
+    window.openPasteErrorPrintModal = openPasteErrorPrintModal;
+
+    async function processErrorPrintFile(file) {
+      if (!file || !file.type || !file.type.startsWith('image/')) {
+        showToast('Por favor, cole ou selecione um arquivo de imagem válido (PNG, JPEG, WebP).', 'warn');
+        return;
+      }
+
+      try {
+        // Gera imagem otimizada para Gemini Multimodal e miniatura leve para o card no localStorage
+        const geminiDataUrl = await compressImageToDataUrl(file, 1200, 1200, 0.85);
+        const thumbDataUrl = await compressImageToDataUrl(file, 480, 480, 0.72);
+
+        currentErrorPrintData = {
+          file: file,
+          dataUrl: geminiDataUrl,
+          thumbnailUrl: thumbDataUrl,
+          mimeType: 'image/jpeg'
+        };
+
+        const imgEl = document.getElementById('previewErrorPrintImg');
+        const promptContainer = document.getElementById('pastePromptContainer');
+        const previewContainer = document.getElementById('pastePreviewContainer');
+        const infoEl = document.getElementById('previewImageInfo');
+
+        if (imgEl) imgEl.src = thumbDataUrl;
+        if (infoEl) {
+          const sizeKb = Math.round((thumbDataUrl.length * 0.75) / 1024);
+          infoEl.innerText = 'Print pronto para análise (' + sizeKb + ' KB)';
+        }
+
+        if (promptContainer) promptContainer.style.display = 'none';
+        if (previewContainer) previewContainer.style.display = 'flex';
+
+        openPasteErrorPrintModal();
+        if (typeof playTacticalBlip === 'function') playTacticalBlip(920, 0.06);
+        showToast('📸 Print capturado com sucesso! Pronto para criar o flashcard.', 'info');
+      } catch (err) {
+        console.error('[Process Error Print]:', err);
+        showToast('Erro ao processar imagem do print.', 'error');
+      }
+    }
+    window.processErrorPrintFile = processErrorPrintFile;
+
+    function handleErrorPrintFileSelect(event) {
+      const files = event.target?.files;
+      if (files && files.length > 0) {
+        processErrorPrintFile(files[0]);
+      }
+    }
+    window.handleErrorPrintFileSelect = handleErrorPrintFileSelect;
+
+    function clearErrorPrintImage(e) {
+      if (e) e.stopPropagation();
+      currentErrorPrintData = { file: null, dataUrl: null, thumbnailUrl: null, mimeType: 'image/jpeg' };
+      const promptContainer = document.getElementById('pastePromptContainer');
+      const previewContainer = document.getElementById('pastePreviewContainer');
+      const fileInput = document.getElementById('inputErrorPrintFile');
+      const imgEl = document.getElementById('previewErrorPrintImg');
+      if (imgEl) imgEl.src = '';
+      if (fileInput) fileInput.value = '';
+      if (promptContainer) promptContainer.style.display = 'flex';
+      if (previewContainer) previewContainer.style.display = 'none';
+    }
+    window.clearErrorPrintImage = clearErrorPrintImage;
+
+    function setupErrorPrintDragAndDrop() {
+      const dropZone = document.getElementById('pasteErrorDropZone');
+      const fileInput = document.getElementById('inputErrorPrintFile');
+      if (!dropZone) return;
+
+      dropZone.addEventListener('click', (e) => {
+        if (e.target.closest('#pastePreviewContainer') || e.target.closest('button')) return;
+        if (fileInput) fileInput.click();
+      });
+
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'var(--gold-primary)';
+        dropZone.style.background = 'rgba(212, 175, 55, 0.15)';
+      });
+
+      ['dragleave', 'dragend'].forEach(evt => {
+        dropZone.addEventListener(evt, () => {
+          dropZone.style.borderColor = 'rgba(212, 175, 55, 0.4)';
+          dropZone.style.background = 'rgba(14, 19, 30, 0.7)';
+        });
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'rgba(212, 175, 55, 0.4)';
+        dropZone.style.background = 'rgba(14, 19, 30, 0.7)';
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          processErrorPrintFile(e.dataTransfer.files[0]);
+        }
+      });
+    }
+
+    async function analyzeErrorPrintAction() {
+      if (!currentErrorPrintData.dataUrl) {
+        showToast('Cole ou selecione o print de uma questão antes de analisar.', 'warn');
+        return;
+      }
+
+      const apiKey = localStorage.getItem('tatico_os_gemini_key');
+      if (!apiKey || apiKey.trim().length === 0) {
+        showToast('🔑 API Gemini não configurada. Abra a configuração para inserir sua chave.', 'warn');
+        openGeminiConfigModal();
+        return;
+      }
+
+      const btn = document.getElementById('btnAnalyzeErrorPrintAndCreateCard');
+      const indicator = document.getElementById('aiAnalyzingPrintIndicator');
+      const subjectSelect = document.getElementById('selectErrorPrintSubject');
+      const reasonInput = document.getElementById('inputErrorPrintReason');
+
+      const selectedSubject = subjectSelect ? subjectSelect.value : 'auto';
+      const studentErrorNote = reasonInput ? reasonInput.value.trim() : '';
+
+      if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+      }
+      if (indicator) indicator.style.display = 'flex';
+
+      try {
+        const base64Data = currentErrorPrintData.dataUrl.replace(/^data:image\/[a-zA-Z]+;base64,/, '');
+        const mimeType = currentErrorPrintData.mimeType || 'image/jpeg';
+
+        let model = localStorage.getItem('tatico_os_gemini_model') || 'gemini-3.0-flash';
+        if (['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'].includes(model)) {
+          model = 'gemini-3.0-flash';
+          localStorage.setItem('tatico_os_gemini_model', model);
+        }
+
+        const subjectHint = selectedSubject !== 'auto' ? 'A matéria informada pelo aluno é: "' + selectedSubject + '".' : 'Identifique a matéria com exatidão.';
+        const noteHint = studentErrorNote ? 'Nota do aluno sobre o que o fez errar: "' + studentErrorNote + '". Destaque e esclareça esse ponto.' : '';
+
+        const systemPrompt = 'Você é um Tutor Tático e Especialista em Bancas de Concursos Públicos (Cebraspe, FGV, Vunesp, FCC).\n' +
+          'Analise a imagem desta questão de concurso que o aluno errou. ' + subjectHint + ' ' + noteHint + '\n' +
+          'Transcreva o ponto central cobrado na questão, descubra qual é o gabarito correto e a pegadinha da banca, e crie 1 Flashcard Tático de Revisão de Erro + 1 Mini-Pergunta de fixação no formato JSON estrito.\n\n' +
+          'REQUISITOS OBRIGATÓRIOS:\n' +
+          '1. Retorne estritamente um único objeto JSON sem markdown envolvente.\n' +
+          '2. "frente": Pergunta direta focada exatamente no conceito/regra/prazo que a questão do print cobrou (sem copiar enunciados longos ou alternativas inteiras, focando no núcleo do erro).\n' +
+          '3. "verso": ✅ GABARITO E BIZU: Explicação direta da resposta certa.\n🚨 PEGADINHA DA QUESTÃO: Onde o candidato costuma errar nessa questão.\n⚖️ FUNDAMENTAÇÃO: Base legal ou doutrinária objetiva.\n' +
+          '4. "quiz": Uma assertiva inédita de Certo/Errado cobrando exatamente a mesma regra da questão para testar fixação.\n\n' +
+          'Formato JSON Obrigatório:\n' +
+          '{\n' +
+          '  "materia": "' + (selectedSubject !== 'auto' ? selectedSubject : 'Disciplina Identificada') + '",\n' +
+          '  "leiReferencia": "Tema da Questão / Artigo de Lei (Revisão de Erro)",\n' +
+          '  "origemErro": true,\n' +
+          '  "frente": "Pergunta direta focada no ponto cobrado na questão do print",\n' +
+          '  "verso": "✅ GABARITO E BIZU: ...\\n\\n🚨 PEGADINHA DA QUESTÃO: ...\\n\\n⚖️ FUNDAMENTAÇÃO: ...",\n' +
+          '  "quiz": {\n' +
+          '    "pergunta": "Assertiva inédita de Certo ou Errado",\n' +
+          '    "respostaCorreta": "Certo",\n' +
+          '    "explicacao": "Justificativa curta baseada na questão revisada"\n' +
+          '  }\n' +
+          '}';
+
+        const requestPayload = {
+          contents: [{
+            parts: [
+              {
+                inline_data: {
+                  mime_type: mimeType,
+                  data: base64Data
+                }
+              },
+              {
+                text: systemPrompt
+              }
+            ]
+          }],
+          generationConfig: {
+            responseMimeType: 'application/json',
+            temperature: 0.2
+          }
+        };
+
+        let apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + apiKey.trim();
+        let response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestPayload)
+        });
+
+        // Fallback automático para gemini-2.0-flash se o modelo escolhido falhar (404/400)
+        if (!response.ok && (response.status === 404 || response.status === 400)) {
+          const fallbackModel = (model === 'gemini-3.0-flash') ? 'gemini-2.0-flash' : (typeof discoverBestGeminiModel === 'function' ? await discoverBestGeminiModel(apiKey, model) : null);
+          if (fallbackModel && fallbackModel !== model) {
+            console.warn('[Gemini Vision Fallback]: tentando ' + fallbackModel);
+            apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/' + fallbackModel + ':generateContent?key=' + apiKey.trim();
+            response = await fetch(apiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(requestPayload)
+            });
+          }
+        }
+
+        if (!response.ok) {
+          const errText = await response.text();
+          throw new Error('HTTP ' + response.status + ': ' + errText);
+        }
+
+        const data = await response.json();
+        const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!rawText) throw new Error('A API Gemini não retornou texto para a imagem.');
+
+        let resultJson = null;
+        try {
+          resultJson = JSON.parse(rawText);
+        } catch (e) {
+          const match = rawText.match(/\{[\s\S]*\}/);
+          if (match) resultJson = JSON.parse(match[0]);
+          else throw new Error('Não foi possível interpretar o JSON retornado pela IA.');
+        }
+
+        const finalSubject = (selectedSubject !== 'auto' && selectedSubject) ? selectedSubject : (resultJson.materia || 'Geral');
+        const isErrado = String(resultJson.quiz?.respostaCorreta || '').toLowerCase().includes('errado');
+
+        const newCard = {
+          id: 'fc_err_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+          subject: finalSubject,
+          canonicalKey: finalSubject,
+          color: typeof getSubjectColor === 'function' ? getSubjectColor(finalSubject) : '#EF4444',
+          leiReferencia: resultJson.leiReferencia || 'Revisão de Erro',
+          origemErro: true,
+          isErrorPrint: true,
+          front: resultJson.frente || 'Revisão de questão do print',
+          back: resultJson.verso || 'Bizu Tático gerado a partir do print.',
+          printThumbnail: currentErrorPrintData.thumbnailUrl,
+          userErrorNote: studentErrorNote || null,
+          status: 'revisar',
+          generatedByRealGemini: true,
+          quiz: {
+            statement: resultJson.quiz?.pergunta || resultJson.frente,
+            pergunta: resultJson.quiz?.pergunta || resultJson.frente,
+            type: 'true_false',
+            options: ['Certo', 'Errado'],
+            correctIndex: isErrado ? 1 : 0,
+            respostaCorreta: isErrado ? 'Errado' : 'Certo',
+            comment: resultJson.quiz?.explicacao || resultJson.verso,
+            explicacao: resultJson.quiz?.explicacao || resultJson.verso
+          },
+          createdAt: new Date().toISOString()
+        };
+
+        const allCards = getStoredAIFlashcards();
+        allCards.unshift(newCard);
+        saveStoredAIFlashcards(allCards);
+
+        // Alimenta automaticamente banco de quiz de Missões & Tópicos
+        if (typeof initInteractiveQuiz === 'function') {
+          initInteractiveQuiz(currentQuizState.subject || 'todos');
+        }
+
+        // Atualiza filtro e lista de chips
+        renderRegisteredEditalSelects();
+        renderAIFlashcards(currentAIFlashcardFilter);
+        if (typeof updateModalFCViewer === 'function') updateModalFCViewer();
+
+        closeModal('modalPasteErrorPrint');
+        clearErrorPrintImage();
+        if (reasonInput) reasonInput.value = '';
+
+        if (typeof playTacticalBlip === 'function') playTacticalBlip(1040, 0.1);
+        showToast('🚨 Flashcard de Revisão de Erro criado com sucesso em ' + finalSubject + '!', 'success');
+
+      } catch (err) {
+        console.error('[Gemini Vision Analysis Error]:', err);
+        showToast('⚠️ Falha ao analisar print da questão: ' + err.message, 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+        }
+        if (indicator) indicator.style.display = 'none';
+      }
+    }
+    window.analyzeErrorPrintAction = analyzeErrorPrintAction;
+
+    function viewOriginalPrintModal(cardId, event) {
+      if (event) event.stopPropagation();
+      const allCards = getStoredAIFlashcards();
+      const card = allCards.find(c => c && c.id === cardId);
+      if (!card || !card.printThumbnail) {
+        showToast('Print não encontrado para este flashcard.', 'info');
+        return;
+      }
+      const imgEl = document.getElementById('imgOriginalPrintModal');
+      const titleEl = document.getElementById('titleOriginalPrintModal');
+      if (imgEl) imgEl.src = card.printThumbnail;
+      if (titleEl) titleEl.innerText = 'Print da Questão • ' + card.subject;
+      openModal('modalViewOriginalPrint');
+    }
+    window.viewOriginalPrintModal = viewOriginalPrintModal;
+
+    // Listener global de Paste (Ctrl+V) para capturar prints de qualquer ponto do Student OS
+    window.addEventListener('paste', (e) => {
+      const activeEl = document.activeElement;
+      const isInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable);
+      
+      const items = (e.clipboardData || window.clipboardData)?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type && items[i].type.indexOf('image') !== -1) {
+          const file = items[i].getAsFile();
+          if (file) {
+            e.preventDefault();
+            processErrorPrintFile(file);
+            return;
+          }
+        }
+      }
+    });
+
+    function clearAllAIFlashcards() {
+      if (!confirm('Deseja realmente limpar todos os flashcards táticos salvos?')) return;
+      saveStoredAIFlashcards([]);
+      renderAIFlashcards(currentAIFlashcardFilter);
+      updateModalFCViewer();
+      if (typeof initInteractiveQuiz === 'function') {
+        initInteractiveQuiz(currentQuizState.subject || 'todos');
+      }
+      showToast('Todos os flashcards táticos foram limpos.', 'info');
+    }
+    window.clearAllAIFlashcards = clearAllAIFlashcards;
 
     /* ------------------------------------------------------------------------
        RENDERIZAÇÃO DOS FLASHCARDS 3D NA CENTRAL #bizus
@@ -8527,20 +8456,7 @@ Formato do Schema JSON Obrigatório:
       currentNotes.unshift(newNote);
       localStorage.setItem('tactical_os_notes', JSON.stringify(currentNotes));
 
-      // Sincroniza também no catálogo de flashcards para aparecer no modo 3D e Cilindro
-      const allFlashcards = getStoredAIFlashcards();
-      allFlashcards.unshift({
-        id: 'fc_' + newNote.id,
-        subject: subject,
-        canonicalKey: findCanonicalSubjectKey(subject),
-        color: newNote.color,
-        front: title,
-        back: text,
-        status: 'novo',
-        createdAt: new Date().toISOString()
-      });
-      saveStoredAIFlashcards(allFlashcards);
-
+      // Notas salvas no acervo doutrinário tático
       renderNotes();
       renderAIFlashcards();
       closeModal('modalAddNote');
@@ -8559,7 +8475,9 @@ Formato do Schema JSON Obrigatório:
       const allCards = getStoredAIFlashcards();
       const filtered = (currentAIFlashcardFilter === 'todos' || !currentAIFlashcardFilter)
         ? allCards
-        : allCards.filter(c => c.subject === currentAIFlashcardFilter || findCanonicalSubjectKey(c.subject) === findCanonicalSubjectKey(currentAIFlashcardFilter));
+        : (currentAIFlashcardFilter === 'erros'
+            ? allCards.filter(c => c.origemErro === true || c.isErrorPrint === true)
+            : allCards.filter(c => c.subject === currentAIFlashcardFilter || findCanonicalSubjectKey(c.subject) === findCanonicalSubjectKey(currentAIFlashcardFilter)));
 
       tiltedCylinderState.filteredCards = filtered;
       tiltedCylinderState.totalCards = filtered.length;
@@ -8568,19 +8486,30 @@ Formato do Schema JSON Obrigatório:
       }
 
       if (countBadge) {
-        countBadge.innerText = filtered.length + ' Cards';
+        countBadge.innerText = filtered.length + ' CARDS';
       }
 
       if (filtered.length === 0) {
-        container.innerHTML = '<div style="grid-column: 1 / -1; padding: 26px 14px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-sm);">' +
-          'Nenhum Flashcard cadastrado para esta disciplina.<br>' +
-          '<span style="font-size: 11px; color: var(--text-secondary); margin: 6px 0; display: block;">Gere flashcards automaticamente com inteligência artificial para iniciar seus ciclos de memorização.</span>' +
-          '<button class="btn-primary" style="margin-top: 8px; font-size: 11px; padding: 5px 14px; font-weight: 700;" onclick="generateAIFlashcardsAction()">⚡ Gerar Flashcards com IA Agora</button>' +
-        '</div>';
+        const isErrorFilter = currentAIFlashcardFilter === 'erros';
+        const emptyMsg = isErrorFilter
+          ? 'Nenhum flashcard de questão errada encontrado.<br><span style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px; display: block;">Cole prints das questões que você errou (Ctrl+V) para a IA gerar revisões cirúrgicas.</span>'
+          : 'Nenhum flashcard gerado. Selecione a matéria acima, conecte sua API Gemini e clique em ⚡ Gerar Flashcards com IA.';
+        const actionBtn = isErrorFilter
+          ? '<button class="btn-primary" style="margin-top: 8px; font-size: 11px; padding: 6px 14px; font-weight: 700; background: rgba(212, 175, 55, 0.2); border: 1px dashed #D4AF37; color: #FFF;" onclick="openPasteErrorPrintModal()">📸 Colar Print de Questão Agora</button>'
+          : '';
+
+        container.innerHTML = 
+          '<div style="grid-column: 1 / -1; padding: 48px 20px; text-align: center; color: var(--text-muted); font-size: 13px; border: 1px dashed var(--border-tactical); border-radius: var(--radius-md); background: rgba(255,255,255,0.015); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">' +
+            '<div style="font-size: 32px; margin-bottom: 4px; opacity: 0.8;">' + (isErrorFilter ? '📸' : '⚡') + '</div>' +
+            '<p style="margin: 0; font-size: 13.5px; font-weight: 600; color: var(--text-secondary); max-width: 500px; line-height: 1.5;">' +
+              emptyMsg +
+            '</p>' +
+            actionBtn +
+          '</div>';
         
         const cylViewport = document.getElementById('tiltedCylinderViewport');
         if (cylViewport) {
-          cylViewport.innerHTML = '<div style="color: var(--text-muted); font-size: 12px; text-align: center;">Nenhum card disponível para o modo 3D nesta disciplina.</div>';
+          cylViewport.innerHTML = '<div style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 40px 20px;">' + (isErrorFilter ? 'Nenhum flashcard de questão errada para o modo 3D.' : 'Nenhum flashcard gerado. Selecione a matéria acima, conecte sua API Gemini e clique em ⚡ Gerar Flashcards com IA.') + '</div>';
         }
         return;
       }
@@ -8588,8 +8517,12 @@ Formato do Schema JSON Obrigatório:
       // Renderiza Grade Tradicional
       container.innerHTML = filtered.map(c => {
         const color = c.color || getSubjectColor(c.subject);
-        const statusLabel = c.status === 'dominado' ? 'Dominado' : (c.status === 'revisar' ? 'Revisar' : 'Novo');
-        const statusClass = c.status || 'novo';
+        const isErro = c.origemErro === true || c.isErrorPrint === true;
+        const statusLabel = isErro ? '🚨 REVISÃO DE ERRO' : (c.status === 'dominado' ? 'Dominado' : (c.status === 'revisar' ? 'Revisar' : 'Novo'));
+        const statusClass = isErro ? 'revisao-erro' : (c.status || 'novo');
+        const printBtnHtml = c.printThumbnail
+          ? '<button type="button" class="fc-action-btn btn-view-print" onclick="viewOriginalPrintModal(\'' + c.id + '\', event)" title="Ver print da questão errada" style="color: #FCA5A5; border-color: rgba(239, 68, 68, 0.4); font-size: 11px; padding: 2px 7px;">🖼️ Ver Print</button>'
+          : '';
 
         return (
           '<div class="fc-card-wrapper">' +
@@ -8601,21 +8534,25 @@ Formato do Schema JSON Obrigatório:
                   '<span class="fc-status-pill ' + statusClass + '" style="margin-left: auto;">' + statusLabel + '</span>' +
                 '</div>' +
                 '<div class="fc-card-body-text">' +
-                  '<span style="font-size: 10.5px; color: var(--gold-primary); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Conceito-Chave / Artigo</span>' +
+                  '<span style="font-size: 10.5px; color: var(--gold-primary); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">' + (isErro ? '🎯 Ponto Cego / Foco do Erro' : 'Conceito-Chave / Artigo') + '</span>' +
                   '<p style="margin: 0; font-size: 12.5px; font-weight: 600; line-height: 1.5; color: var(--text-main);">' + c.front + '</p>' +
+                  (c.userErrorNote ? '<div style="margin-top: 8px; font-size: 11px; color: #FCA5A5; background: rgba(239,68,68,0.1); padding: 4px 7px; border-radius: 4px; border-left: 2px solid #EF4444;">⚠️ <strong>Nota:</strong> ' + c.userErrorNote + '</div>' : '') +
                 '</div>' +
                 '<div class="fc-card-footer">' +
                   '<span class="fc-flip-hint">↻ Toque para ver o Bizu</span>' +
-                  '<button type="button" class="fc-action-btn" onclick="deleteAIFlashcard(\'' + c.id + '\', event)" title="Excluir card" style="color: #F87171; border-color: rgba(239, 68, 68, 0.3);">' +
-                    '✕' +
-                  '</button>' +
+                  '<div style="display: flex; align-items: center; gap: 4px; margin-left: auto;">' +
+                    printBtnHtml +
+                    '<button type="button" class="fc-action-btn" onclick="deleteAIFlashcard(\'' + c.id + '\', event)" title="Excluir card" style="color: #F87171; border-color: rgba(239, 68, 68, 0.3);">' +
+                      '✕' +
+                    '</button>' +
+                  '</div>' +
                 '</div>' +
               '</div>' +
               '<!-- Verso do Card (Bizu) -->' +
               '<div class="fc-card-face fc-card-back">' +
                 '<div class="fc-card-header">' +
-                  '<span class="fc-tag-badge" style="background: var(--accent-green);">Bizu Tático</span>' +
-                  '<span class="fc-flip-hint" style="color: var(--accent-green);">✓ Verso</span>' +
+                  '<span class="fc-tag-badge" style="background: ' + (isErro ? '#EF4444' : 'var(--accent-green)') + ';">' + (isErro ? '🚨 Resolução do Erro' : 'Bizu Tático') + '</span>' +
+                  '<span class="fc-flip-hint" style="color: ' + (isErro ? '#FCA5A5' : 'var(--accent-green)') + ';">✓ Verso</span>' +
                 '</div>' +
                 '<div class="fc-card-body-text">' +
                   '<p style="margin: 0; font-size: 12px; line-height: 1.55; color: var(--text-main); white-space: pre-line;">' + c.back + '</p>' +
@@ -8679,8 +8616,9 @@ Formato do Schema JSON Obrigatório:
         const opacity = Math.max(0.2, 1 - Math.abs(shortestOffset) * 0.35);
         const filter = isCenter ? 'none' : 'blur(' + Math.min(3, Math.abs(shortestOffset) * 1.5) + 'px)';
         const color = c.color || getSubjectColor(c.subject);
-        const statusLabel = c.status === 'dominado' ? 'Dominado' : (c.status === 'revisar' ? 'Revisar' : 'Novo');
-        const statusClass = c.status || 'novo';
+        const isErro = c.origemErro === true || c.isErrorPrint === true;
+        const statusLabel = isErro ? '🚨 REVISÃO DE ERRO' : (c.status === 'dominado' ? 'Dominado' : (c.status === 'revisar' ? 'Revisar' : 'Novo'));
+        const statusClass = isErro ? 'revisao-erro' : (c.status || 'novo');
 
         // Equação cilíndrica central: translateZ(radius) rotateY(deg) translateZ(-radius)
         const transformStr = 'translate(-50%, -50%) translateZ(' + radius + 'px) rotateY(' + deg + 'deg) translateZ(-' + radius + 'px)';
@@ -9451,7 +9389,10 @@ Formato do Schema JSON Obrigatório:
       // 5. Barra de Chips de matérias
       const chipsBar = document.getElementById('flashcardsChipsBar');
       if (chipsBar) {
+        const errorCardsCount = (typeof getStoredAIFlashcards === 'function' ? getStoredAIFlashcards() : []).filter(c => c && (c.origemErro === true || c.isErrorPrint === true)).length;
+        const errorBadge = errorCardsCount > 0 ? ' (' + errorCardsCount + ')' : '';
         chipsBar.innerHTML = '<button class="note-filter-btn fc-chip-btn ' + (currentAIFlashcardFilter === 'todos' ? 'active' : '') + '" data-subject="todos" onclick="filterAIFlashcardsBySubject(\'todos\')">Todas as Matérias</button>' +
+          '<button class="note-filter-btn fc-chip-btn ' + (currentAIFlashcardFilter === 'erros' ? 'active' : '') + '" data-subject="erros" onclick="filterAIFlashcardsBySubject(\'erros\')" style="color: #F87171; border-color: rgba(239,68,68,0.4);" title="Filtrar apenas questões que você errou (criadas via print)">🚨 Questões que Errei' + errorBadge + '</button>' +
           subjects.map(s => {
             const shortTag = getShortSubjectTag(s);
             const isActive = currentAIFlashcardFilter === s;
@@ -9478,53 +9419,9 @@ Formato do Schema JSON Obrigatório:
     /* ========================================================================
        3. REPOSITÓRIO MESTRE DE FLASHCARDS & BIZUS (GERADOS POR MATÉRIA)
        ======================================================================== */
-    const MASTER_FLASHCARDS = [
-      // Direito Penal
-      { id: 'fc_penal_1', tab: 'hoje', deck: 'Direito Penal', q: 'Qual a diferença fundamental entre Dolo Eventual e Culpa Consciente?', a: 'Dolo Eventual: assume o risco do resultado ("tanto faz, não me importo"). Culpa Consciente: prevê o resultado, mas confia sinceramente na sua perícia para evitá-lo.' },
-      { id: 'fc_penal_2', tab: '7d', deck: 'Direito Penal', q: 'Quais crimes são inafiançáveis e insuscetíveis de graça e anistia pela CF/88?', a: 'O grupo "3T" (Tortura, Tráfico Ilícito de Entorpecentes e Terrorismo) e os definidos como crimes hediondos propriamente ditos.' },
-      { id: 'fc_penal_3', tab: '7d', deck: 'Direito Penal', q: 'Qual a consequência do Erro de Tipo Essencial Inevitável vs Evitável?', a: 'Inevitável (escusável): exclui tanto o dolo quanto a culpa (fato atípico). Evitável (inescusável): exclui o dolo, mas permite punição por culpa se prevista em lei.' },
-      { id: 'fc_penal_4', tab: '30d', deck: 'Direito Penal', q: 'Quais são as infrações que NÃO admitem tentativa pelo mnemônico "COUP-C"?', a: 'C - Culposos; O - Omissivos próprios; U - Unissubsistentes; P - Preterdolosos; C - Contravenções penais.' },
+    const MASTER_FLASHCARDS = [];
 
-      // Processo Penal
-      { id: 'fc_proc_1', tab: 'hoje', deck: 'Proc. Penal', q: 'Qual o prazo de conclusão do Inquérito Policial na Justiça Estadual para réu preso e réu solto (CPP)?', a: 'Preso: 10 dias (improrrogáveis). Solto: 30 dias (prorrogáveis pela autoridade judicial competente).' },
-      { id: 'fc_proc_2', tab: '7d', deck: 'Proc. Penal', q: 'A autoridade policial (Delegado de Polícia) pode mandar arquivar autos de Inquérito Policial?', a: 'NUNCA. O art. 17 do CPP veda expressamente: a autoridade policial não poderá mandar arquivar autos de inquérito (princípio da indisponibilidade).' },
-      { id: 'fc_proc_3', tab: '7d', deck: 'Proc. Penal', q: 'Qual o prazo da Prisão Temporária (Lei 7.960/89) em crimes comuns e em crimes hediondos?', a: 'Crimes comuns do rol taxativo: 5 dias + 5 dias. Crimes hediondos e equiparados: 30 dias + 30 dias. Cabível APENAS durante a fase de inquérito policial.' },
-      { id: 'fc_proc_4', tab: '30d', deck: 'Proc. Penal', q: 'Quais as 10 etapas legais da Cadeia de Custódia introduzidas pelo Pacote Anticrime (art. 158-B CPP)?', a: '1. Reconhecimento, 2. Isolamento, 3. Fixação, 4. Coleta, 5. Acondicionamento, 6. Transporte, 7. Recebimento, 8. Processamento, 9. Armazenamento, 10. Descarte.' },
-
-      // Constitucional
-      { id: 'fc_const_1', tab: 'hoje', deck: 'Constitucional', q: 'A casa é asilo inviolável. Quais as 4 exceções constitucionais para entrada sem consentimento?', a: '1) Flagrante delito; 2) Desastre; 3) Prestar socorro (qualquer hora do dia ou da noite); 4) Por determinação judicial (somente durante o dia).' },
-      { id: 'fc_const_2', tab: '30d', deck: 'Constitucional', q: 'Quais são as 4 Cláusulas Pétreas expressas no art. 60, § 4º da Constituição Federal?', a: '1) Forma federativa de Estado; 2) Voto direto, secreto, universal e periódico; 3) Separação dos Poderes; 4) Direitos e garantias individuais.' },
-
-      // Administrativo
-      { id: 'fc_adm_1', tab: 'hoje', deck: 'Administrativo', q: 'Quais são os 4 atributos do ato administrativo pelo mnemônico PATI?', a: 'Presunção de Legitimidade, Autoexecutoriedade, Tipicidade e Imperatividade.' },
-      { id: 'fc_adm_2', tab: '7d', deck: 'Administrativo', q: 'Quais requisitos do ato administrativo admitem CONVALIDAÇÃO (saneamento do vício)?', a: 'Apenas Competência (desde que não exclusiva) e Forma (desde que não essencial à validade do ato).' },
-      { id: 'fc_adm_3', tab: '30d', deck: 'Administrativo', q: 'Por que a cobrança de multa administrativa não possui o atributo da autoexecutoriedade?', a: 'Porque a administração não pode expropriar bens diretamente; se o infrator não pagar, deve ajuizar Ação de Execução Fiscal no Judiciário.' },
-
-      // Português
-      { id: 'fc_port_1', tab: 'hoje', deck: 'Português', q: 'Em "Alugam-se salas comerciais", qual a função da partícula "SE" e qual a concordância verbal?', a: 'Partícula Apassivadora (salas comerciais são alugadas). O verbo concorda com o sujeito paciente no plural.' },
-      { id: 'fc_port_2', tab: '7d', deck: 'Português', q: 'Em "Precisa-se de escrivães táticos", qual a função do "SE" e por que o verbo fica no singular?', a: 'Índice de Indeterminação do Sujeito (ligado a VTI com preposição). O verbo fica obrigatoriamente na 3ª pessoa do singular.' },
-      { id: 'fc_port_3', tab: '30d', deck: 'Português', q: 'Quais são os 3 casos facultativos de crase mais cobrados em concursos policiais?', a: '1) Antes de nomes próprios femininos; 2) Antes de pronomes possessivos femininos singulares ("à minha arma"); 3) Após a preposição "até".' },
-
-      // Legislação Especial / PCMG
-      { id: 'fc_leg_1', tab: 'hoje', deck: 'Legislação PCMG', q: 'A autoridade policial (Delegado) pode decretar medidas protetivas de urgência da Lei Maria da Penha?', a: 'Sim, se o município não for sede de comarca e não houver juiz disponível no momento, com comunicação judicial em até 24h.' },
-      { id: 'fc_leg_2', tab: '30d', deck: 'Legislação PCMG', q: 'Qual o elemento subjetivo especial indispensável para caracterizar crime de Abuso de Autoridade (Lei 13.869)?', a: 'Dolo específico: finalidade de prejudicar outrem, beneficiar a si/terceiro ou por mero capricho/satisfação pessoal. Veda-se crime de hermenêutica.' },
-
-      // Informática
-      { id: 'fc_info_1', tab: 'hoje', deck: 'Informática', q: 'Qual a diferença entre Malware Phishing e Ransomware em investigações de crimes cibernéticos?', a: 'Phishing: engenharia social para roubar credenciais. Ransomware: sequestro de dados criptografados mediante exigência de resgate financeiro.' },
-      { id: 'fc_info_2', tab: '7d', deck: 'Informática', q: 'O que diferencia a memória RAM da memória ROM em termos operacionais?', a: 'RAM: memória volátil de leitura e escrita (perde dados sem energia). ROM: memória não-volátil apenas de leitura (contém BIOS/firmware permanente).' },
-
-      // RLM / Lógica
-      { id: 'fc_rlm_1', tab: 'hoje', deck: 'RLM / Lógica', q: 'Qual é a negação lógica da proposição condicional "Se estudo com disciplina, sou aprovado" (P -> Q)?', a: 'Regra do "MANÉ": Mantém a primeira E Nega a segunda: "Estudo com disciplina E NÃO sou aprovado" (P ∧ ~Q).' },
-      { id: 'fc_rlm_2', tab: '7d', deck: 'RLM / Lógica', q: 'Qual a tabela-verdade da Conjunção (E) vs Disjunção (OU)?', a: 'Conjunção (∧): verdadeira APENAS se ambas forem verdadeiras. Disjunção (∨): falsa APENAS se ambas forem falsas.' },
-
-      // Direitos Humanos
-      { id: 'fc_dh_1', tab: 'hoje', deck: 'Direitos Humanos', q: 'Qual a natureza jurídica dos Tratados de Direitos Humanos aprovados pelo rito do art. 5º, § 3º da CF/88?', a: 'Possuem equivalência às Emendas Constitucionais (aprovados em 2 turnos por 3/5 dos votos de cada Casa).' },
-
-      // Legislação de Trânsito
-      { id: 'fc_ctb_1', tab: 'hoje', deck: 'Legislação de Trânsito', q: 'Quais os crimes de trânsito em que a embriaguez ao volante é de perigo abstrato no CTB?', a: 'Art. 306 do CTB: crime de perigo abstrato, consuma-se com a simples constatação de álcool igual ou superior a 0,6 g/L no sangue ou 0,34 mg/L no etilômetro.' }
-    ];
-
-    // MASTER_NOTES já declarado acima no módulo de Flashcards & Bizus Táticos (linha ~5037)
+        // MASTER_NOTES já declarado acima no módulo de Flashcards & Bizus Táticos (linha ~5037)
 
     // Comparador estrito de matéria para evitar contaminação entre disciplinas do edital
     function matchesStrictSubject(tagOrDeck, configuredNames) {
@@ -9613,9 +9510,7 @@ Formato do Schema JSON Obrigatório:
     }
 
     function generateFlashcardsForSubjects(configuredList) {
-      if (!configuredList || configuredList.length === 0) return [];
-      const names = configuredList.map(m => m.nome || m);
-      return MASTER_FLASHCARDS.filter(fc => matchesStrictSubject(fc.deck, names));
+      return [];
     }
 
     function generateNotesForSubjects(configuredList) {
@@ -11982,12 +11877,34 @@ Formato do Schema JSON Obrigatório:
 
     // Inicialização ao carregar
     window.addEventListener('DOMContentLoaded', () => {
+      // 0. Expurgo automático de flashcards pré-programados legados do localStorage
+      if (!localStorage.getItem('tatico_purged_preprogrammed_v2')) {
+        try {
+          const raw = localStorage.getItem('tactical_ai_flashcards');
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+              const sanitized = parsed.filter(c => c && c.generatedByRealGemini === true);
+              localStorage.setItem('tactical_ai_flashcards', JSON.stringify(sanitized));
+            } else {
+              localStorage.setItem('tactical_ai_flashcards', '[]');
+            }
+          } else {
+            localStorage.setItem('tactical_ai_flashcards', '[]');
+          }
+        } catch(e) {
+          localStorage.setItem('tactical_ai_flashcards', '[]');
+        }
+        localStorage.setItem('tatico_purged_preprogrammed_v2', 'true');
+      }
+
       // 1. Checagem mandatória de autenticação
       checkAuth();
 
       // 2. Carregar dados operacionais
       initData();
       renderAIFlashcards();
+      setupErrorPrintDragAndDrop();
       initDraggableWidgets();
       updateClock();
       setInterval(updateClock, 1000);
