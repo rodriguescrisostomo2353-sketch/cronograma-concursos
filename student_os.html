@@ -3556,7 +3556,7 @@
     #vademecum,
     #viewVadeMecum,
     .vade-mecum-view {
-      display: grid !important;
+      display: none;
       grid-template-columns: 280px 1fr !important;
       width: 100vw !important;
       height: 100vh !important;
@@ -3570,6 +3570,55 @@
       margin: 0 !important;
       padding: 0 !important;
       animation: vmFadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    #vademecum.active,
+    #viewVadeMecum.active,
+    .vade-mecum-view.active,
+    #vademecum[style*="display: grid"],
+    #viewVadeMecum[style*="display: grid"],
+    .vade-mecum-view[style*="display: grid"] {
+      display: grid !important;
+    }
+
+    #student-os-container,
+    #studentOSAppContainer {
+      width: 100%;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    #works-wheel-modal,
+    #modalWorksWheel,
+    .works-wheel-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 6, 10, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 99999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #works-wheel-modal.open,
+    #modalWorksWheel.open,
+    .works-wheel-overlay.open {
+      display: flex !important;
+      opacity: 1;
+    }
+
+    .system-mode-container {
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #060709;
+      overflow: hidden;
     }
 
     @keyframes vmFadeUp {
@@ -4925,7 +4974,7 @@
 </head>
 <body>
 
-  <div class="app-container" id="studentOSAppContainer">
+  <div class="app-container" id="student-os-container" data-alias="studentOSAppContainer">
 
     <!-- ========================================================================
          1. BANNER HERO PANORÂMICO OPERACIONAL
@@ -5528,7 +5577,7 @@
             </div>
           </div>
 
-          <button type="button" class="vm-back-btn" onclick="closeVadeMecumView()">
+          <button type="button" class="vm-back-btn" onclick="window.switchSystemMode('student-os')">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
             Voltar ao Student OS
           </button>
@@ -5647,7 +5696,7 @@
         <header class="vm-topbar">
           <div class="vm-topbar-left">
             <div class="vm-nav-arrows">
-              <button class="vm-arrow-btn" onclick="closeVadeMecumView()" title="Voltar ao Student OS">&lt;</button>
+              <button class="vm-arrow-btn" onclick="window.switchSystemMode('student-os')" title="Voltar ao Student OS">&lt;</button>
               <button class="vm-arrow-btn" onclick="VadeMecumEngine.openNextLaw()" title="Avançar Histórico">&gt;</button>
             </div>
             <div class="vm-search-box">
@@ -5744,6 +5793,10 @@
 
       </main>
   </div>
+
+  <!-- Containers de Modos Complementares Padronizados -->
+  <div id="classic-mode-container" class="system-mode-container" style="display: none;"></div>
+  <div id="home-portal-container" class="system-mode-container" style="display: none;"></div>
 
   <!-- ==========================================================================
        LEITOR INTERATIVO DE LEI SECA + INTEGRAÇÃO GEMINI (#modalVMLawReader)
@@ -6060,7 +6113,7 @@
   </div>
 
   <!-- Modal Navegação de Modos via Works Wheel 3D -->
-  <div class="modal-backdrop" id="modalWorksWheel" style="z-index: 99999; backdrop-filter: blur(20px); background: rgba(4, 6, 10, 0.88);">
+  <div class="modal-backdrop works-wheel-overlay" id="works-wheel-modal" data-alias="modalWorksWheel" style="z-index: 99999; backdrop-filter: blur(20px); background: rgba(4, 6, 10, 0.88);">
     <div class="modal-card works-wheel-modal-card" style="max-width: 1040px; width: 95vw; height: 85vh; max-height: 720px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
       
       <!-- Top header bar of modal -->
@@ -11580,39 +11633,43 @@ Formato do Schema JSON Obrigatório:
        WORKS WHEEL 3D - MOTOR DE NAVEGAÇÃO ENTRE OS MODOS DO SISTEMA
        ======================================================================== */
     const TACTICAL_WHEEL_MODES = window.TACTICAL_WHEEL_MODES = [
-      {
-        id: "student_os",
-        title: "Student OS • Operacional",
-        subtitle: "Santuário Tático de Estudos",
-        image: "assets/preview_student_os.png",
-        href: "student_os.html",
-        badge: "MODO ATIVO"
-      },
-      {
-        id: "modo_classico",
-        title: "Modo Clássico • Edital",
-        subtitle: "Cronograma Tático & Simulados",
-        image: "assets/preview_modo_classico.png",
-        href: "concurso_tatico.html",
-        badge: "EDITAL POLICIAL"
-      },
-      {
-        id: "portal_tatico",
-        title: "Tela de Início • Portal Tático",
-        subtitle: "Escultura Líquida & Visão Geral",
-        image: "assets/sculpture_dark.webp",
-        href: "landing.html",
-        badge: "PORTAL GERAL"
-      },
-      {
-        id: "vademecum",
-        title: "Biblioteca de Leis • Vade Mecum",
-        subtitle: "Repositório ctresb/leis & Leitura Tática",
-        image: "assets/preview_vademecum.png",
-        href: "#vademecum",
-        badge: "VADE MECUM"
-      }
-    ];
+    {
+      id: "student_os",
+      key: "student-os",
+      title: "Student OS • Operacional",
+      subtitle: "Santuário Tático de Estudos",
+      image: "assets/preview_student_os.png",
+      href: "student_os.html",
+      badge: "MODO ATIVO"
+    },
+    {
+      id: "modo_classico",
+      key: "classic",
+      title: "Modo Clássico • Edital",
+      subtitle: "Cronograma Tático & Simulados",
+      image: "assets/preview_modo_classico.png",
+      href: "concurso_tatico.html",
+      badge: "EDITAL POLICIAL"
+    },
+    {
+      id: "portal_tatico",
+      key: "portal",
+      title: "Tela de Início • Portal Tático",
+      subtitle: "Escultura Líquida & Visão Geral",
+      image: "assets/sculpture_dark.webp",
+      href: "landing.html",
+      badge: "PORTAL GERAL"
+    },
+    {
+      id: "vademecum",
+      key: "vademecum",
+      title: "Biblioteca de Leis • Vade Mecum",
+      subtitle: "Repositório ctresb/leis & Leitura Tática",
+      image: "assets/preview_vademecum.png",
+      href: "#vademecum",
+      badge: "VADE MECUM"
+    }
+  ];
 
     window.worksWheelState = {
       isOpen: false,
@@ -11626,18 +11683,11 @@ Formato do Schema JSON Obrigatório:
     var worksWheelState = window.worksWheelState;
 
     function openWorksWheelModal() {
-      const modal = document.getElementById('modalWorksWheel');
+      const modal = document.getElementById('works-wheel-modal') || document.getElementById('modalWorksWheel') || document.querySelector('.works-wheel-overlay');
       if (!modal) return;
       modal.classList.add('open');
       modal.style.display = 'flex';
       worksWheelState.isOpen = true;
-
-      modal.onclick = function(e) {
-        if (e.target === modal) {
-          closeWorksWheelModal();
-        }
-      };
-
       if (typeof playTacticalBlip === 'function') {
         playTacticalBlip(720, 0.08);
       }
@@ -11645,7 +11695,7 @@ Formato do Schema JSON Obrigatório:
     }
 
     function closeWorksWheelModal() {
-      const modal = document.getElementById('modalWorksWheel');
+      const modal = document.getElementById('works-wheel-modal') || document.getElementById('modalWorksWheel') || document.querySelector('.works-wheel-overlay');
       if (!modal) return;
       modal.classList.remove('open');
       modal.style.display = 'none';
@@ -11668,31 +11718,10 @@ Formato do Schema JSON Obrigatório:
         playTacticalBlip(880, 0.09);
       }
 
-      // 1. Biblioteca de Leis • Vade Mecum
-      if (activeItem.id === 'vademecum' || (activeItem.href && activeItem.href.indexOf('#vademecum') !== -1)) {
-        closeWorksWheelModal();
-        openVadeMecumView();
-        return;
-      }
-
-      // 2. Student OS Principal
-      if (activeItem.id === 'student_os' || (activeItem.href && activeItem.href.indexOf('student_os.html') !== -1)) {
-        closeWorksWheelModal();
-        closeVadeMecumView();
-        localStorage.setItem('preferred_desktop_view', 'student_os');
-        return;
-      }
-
-      // 3. Modos externos
-      if (activeItem.href) {
-        if (activeItem.href.indexOf('concurso') !== -1 || activeItem.href.indexOf('index') !== -1) {
-          localStorage.setItem('preferred_desktop_view', 'concursos');
-        } else {
-          localStorage.removeItem('preferred_desktop_view');
-        }
-        window.location.href = activeItem.href;
-      }
+      const modeKey = activeItem.key || activeItem.id || 'student-os';
+      window.switchSystemMode(modeKey);
     }
+
     window.openWorksWheelModal = openWorksWheelModal;
     window.closeWorksWheelModal = closeWorksWheelModal;
     window.navigateToActiveMode = navigateToActiveMode;
@@ -11806,6 +11835,8 @@ Formato do Schema JSON Obrigatório:
 
       window.setWorksWheelTarget = function(next) {
         worksWheelState.target = clamp(next, 0, last + 1);
+        const targetIndex = clamp(next - 1, 0, last);
+        updateActiveDisplay(targetIndex);
         if (typeof playTacticalBlip === 'function') {
           playTacticalBlip(560, 0.03);
         }
@@ -13198,47 +13229,7 @@ Retorne estritamente um JSON no formato:
       }
     };
 
-    function openVadeMecumView() {
-      const appContainer = document.getElementById('studentOSAppContainer');
-      const vadeView = document.getElementById('vademecum') || document.getElementById('viewVadeMecum');
-
-      if (appContainer) appContainer.style.display = 'none';
-      if (vadeView) {
-        vadeView.style.display = 'grid';
-        window.scrollTo({ top: 0, behavior: 'instant' });
-      }
-
-      window.location.hash = 'vademecum';
-      localStorage.setItem('preferred_desktop_view', 'vademecum');
-
-      if (typeof playTacticalBlip === 'function') {
-        playTacticalBlip(780, 0.08);
-      }
-
-      if (typeof VadeMecumEngine !== 'undefined' && VadeMecumEngine.init) {
-        VadeMecumEngine.init();
-      }
-    }
-
-    function closeVadeMecumView() {
-      const appContainer = document.getElementById('studentOSAppContainer');
-      const vadeView = document.getElementById('vademecum') || document.getElementById('viewVadeMecum');
-
-      if (vadeView) vadeView.style.display = 'none';
-      if (appContainer) appContainer.style.display = 'block';
-
-      if (window.location.hash === '#vademecum') {
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-      }
-      localStorage.setItem('preferred_desktop_view', 'student_os');
-
-      if (typeof playTacticalBlip === 'function') {
-        playTacticalBlip(440, 0.05);
-      }
-    }
-
-    window.openVadeMecumView = openVadeMecumView;
-    window.closeVadeMecumView = closeVadeMecumView;
+    window.VadeMecumEngine = VadeMecumEngine;
 
     window.openLawReader = function(lawInput, lawTitle) {
       if (typeof VadeMecumEngine !== 'undefined' && VadeMecumEngine.openLawReader) {
@@ -13246,12 +13237,149 @@ Retorne estritamente um JSON no formato:
       }
     };
 
-    window.VadeMecumEngine = VadeMecumEngine;
+    // Compatibilidade de ID para #student-os-container e #studentOSAppContainer
+    (function initDomAliases() {
+      const _origGetElementById = document.getElementById.bind(document);
+      document.getElementById = function(id) {
+        if (id === 'studentOSAppContainer' || id === 'student-os-container') {
+          return _origGetElementById('student-os-container') || _origGetElementById('studentOSAppContainer');
+        }
+        if (id === 'viewVadeMecum' || id === 'vademecum') {
+          return _origGetElementById('vademecum') || _origGetElementById('viewVadeMecum');
+        }
+        if (id === 'modalWorksWheel' || id === 'works-wheel-modal') {
+          return _origGetElementById('works-wheel-modal') || _origGetElementById('modalWorksWheel');
+        }
+        return _origGetElementById(id);
+      };
+    })();
 
-    // Detectar hash ou preferência de visualização ao carregar
+    /**
+     * ========================================================================
+     * SISTEMA CENTRALIZADO DE ROTEAMENTO DE MODOS (switchSystemMode)
+     * ========================================================================
+     */
+    window.switchSystemMode = function(modeKey) {
+      // 1. Fecha o modal do Works Wheel se estiver aberto
+      const worksWheelModal = document.getElementById('works-wheel-modal') || document.getElementById('modalWorksWheel') || document.querySelector('.works-wheel-overlay');
+      if (worksWheelModal) {
+        worksWheelModal.classList.remove('open');
+        worksWheelModal.style.setProperty('display', 'none', 'important');
+      }
+      if (typeof closeWorksWheelModal === 'function') {
+        closeWorksWheelModal();
+      }
+
+      // 2. Oculta todas as views principais de forma segura
+      const views = [
+        '#student-os-container',
+        '#studentOSAppContainer',
+        '#vademecum',
+        '#viewVadeMecum',
+        '#classic-mode-container',
+        '#home-portal-container'
+      ];
+
+      views.forEach(selector => {
+        const el = document.querySelector(selector);
+        if (el) {
+          el.classList.remove('active');
+          el.classList.remove('open');
+          el.style.setProperty('display', 'none', 'important');
+        }
+      });
+
+      const key = (modeKey || '').toLowerCase().trim();
+
+      // 3. Exibe a view selecionada e executa inicializadores específicos
+      if (key === 'student-os' || key === 'operacional' || key === 'student_os' || key === 'studentos' || key === 'os') {
+        const mainDashboard = document.getElementById('student-os-container') || document.getElementById('studentOSAppContainer') || document.getElementById('app') || document.body.firstElementChild;
+        if (mainDashboard) {
+          mainDashboard.classList.add('active');
+          mainDashboard.style.setProperty('display', 'block', 'important');
+        }
+
+        const vademecumEl = document.getElementById('vademecum') || document.getElementById('viewVadeMecum');
+        if (vademecumEl) {
+          vademecumEl.classList.remove('active');
+          vademecumEl.style.setProperty('display', 'none', 'important');
+        }
+
+        if (window.location.hash) {
+          history.pushState("", document.title, window.location.pathname + window.location.search);
+        }
+        localStorage.setItem('preferred_desktop_view', 'student_os');
+
+        if (typeof playTacticalBlip === 'function') {
+          playTacticalBlip(440, 0.05);
+        }
+      } 
+      else if (key === 'vademecum' || key === 'biblioteca' || key === 'leis') {
+        const vademecumEl = document.getElementById('vademecum') || document.getElementById('viewVadeMecum');
+        if (vademecumEl) {
+          vademecumEl.classList.add('active');
+          vademecumEl.style.setProperty('display', 'grid', 'important'); // Garante CSS Grid rígido
+          if (typeof VadeMecumEngine !== 'undefined' && VadeMecumEngine.init) {
+            VadeMecumEngine.init();
+          }
+          if (typeof fetchAllRepoLaws === 'function') {
+            fetchAllRepoLaws();
+          }
+        }
+
+        const mainDashboard = document.getElementById('student-os-container') || document.getElementById('studentOSAppContainer');
+        if (mainDashboard) {
+          mainDashboard.classList.remove('active');
+          mainDashboard.style.setProperty('display', 'none', 'important');
+        }
+
+        history.pushState("", document.title, window.location.pathname + window.location.search + '#vademecum');
+        localStorage.setItem('preferred_desktop_view', 'vademecum');
+
+        if (typeof playTacticalBlip === 'function') {
+          playTacticalBlip(780, 0.08);
+        }
+      }
+      else if (key === 'classic' || key === 'modo_classico' || key === 'concurso' || key === 'concursos') {
+        const classicContainer = document.getElementById('classic-mode-container');
+        if (classicContainer && classicContainer.children.length > 0) {
+          classicContainer.classList.add('active');
+          classicContainer.style.setProperty('display', 'block', 'important');
+        } else {
+          localStorage.setItem('preferred_desktop_view', 'concursos');
+          window.location.href = 'concurso_tatico.html';
+        }
+      }
+      else if (key === 'portal' || key === 'portal_tatico' || key === 'home' || key === 'inicio') {
+        const portalContainer = document.getElementById('home-portal-container');
+        if (portalContainer && portalContainer.children.length > 0) {
+          portalContainer.classList.add('active');
+          portalContainer.style.setProperty('display', 'block', 'important');
+        } else {
+          localStorage.removeItem('preferred_desktop_view');
+          window.location.href = 'landing.html';
+        }
+      }
+
+      window.scrollTo(0, 0);
+    };
+
+    // Wrappers de compatibilidade para código legado e testes
+    window.openVadeMecumView = function() {
+      window.switchSystemMode('vademecum');
+    };
+
+    window.closeVadeMecumView = function() {
+      window.switchSystemMode('student-os');
+    };
+
+    // Verificação de Hash Inicial e Proteção contra Travamento de Tela
     window.addEventListener('DOMContentLoaded', () => {
-      if (window.location.hash === '#vademecum' || localStorage.getItem('preferred_desktop_view') === 'vademecum') {
-        setTimeout(openVadeMecumView, 120);
+      if (window.location.hash === '#vademecum') {
+        window.switchSystemMode('vademecum');
+      } else {
+        // Garante que o Student OS • Operacional seja exibido de imediato, evitando qualquer tela preta ou travamento inicial
+        window.switchSystemMode('student-os');
       }
     });
 
