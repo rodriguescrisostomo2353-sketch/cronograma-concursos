@@ -8302,7 +8302,9 @@ Formato do Schema JSON Obrigatório:
         }
 
         // Atualiza filtro e lista de chips
-        renderRegisteredEditalSelects();
+        if (typeof populateSubjectDropdowns === 'function') {
+          populateSubjectDropdowns();
+        }
         renderAIFlashcards(currentAIFlashcardFilter);
         if (typeof updateModalFCViewer === 'function') updateModalFCViewer();
 
@@ -9428,6 +9430,8 @@ Formato do Schema JSON Obrigatório:
         updateGeminiStatusIndicator();
       }
     }
+    window.populateSubjectDropdowns = populateSubjectDropdowns;
+    window.renderRegisteredEditalSelects = populateSubjectDropdowns;
 
     /* ========================================================================
        3. REPOSITÓRIO MESTRE DE FLASHCARDS & BIZUS (GERADOS POR MATÉRIA)
