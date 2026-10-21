@@ -3551,51 +3551,54 @@
     }
   
     /* ========================================================================
-       BIBLIOTECA DE LEIS • VADE MECUM (ESTILO CATÁLOGO TÁTICO LUXO)
+       BIBLIOTECA DE LEIS • VADE MECUM (ESTILO CATÁLOGO TÁTICO LUXO & CSS GRID FIXO)
        ======================================================================== */
-    .vade-mecum-view,
-    #viewVadeMecum {
-      display: grid;
-      grid-template-columns: 280px 1fr;
-      height: 100vh;
-      overflow: hidden;
-      background-color: #0b0e14;
-      color: #e2e8f0;
-      width: 100vw;
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      box-sizing: border-box;
-      animation: vmFadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    #vademecum,
+    #viewVadeMecum,
+    .vade-mecum-view {
+      display: grid !important;
+      grid-template-columns: 280px 1fr !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      position: fixed !important;
+      inset: 0 !important;
+      overflow: hidden !important;
+      background-color: #060709 !important;
+      color: #e2e8f0 !important;
+      z-index: 9999 !important;
+      box-sizing: border-box !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      animation: vmFadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     @keyframes vmFadeUp {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .vm-layout-wrapper {
-      display: contents;
-    }
-
     /* ------------------------------------------------------------------------
-       COLUNA 1: SIDEBAR ESQUERDA (280px fixos)
+       COLUNA 1: SIDEBAR ESQUERDA (.vade-sidebar, 280px fixos e independentes)
        ------------------------------------------------------------------------ */
+    .vade-sidebar,
     .vm-sidebar {
+      grid-column: 1 / 2 !important;
       width: 280px !important;
       min-width: 280px !important;
       max-width: 280px !important;
-      background: rgba(13, 17, 26, 0.95);
-      border-right: 1px solid rgba(212, 175, 55, 0.18);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow-y: auto;
-      height: 100vh;
-      box-sizing: border-box;
-      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
-      z-index: 50;
+      height: 100vh !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      background: #0B0E14 !important;
+      border-right: 1px solid rgba(212, 175, 55, 0.22) !important;
+      padding: 20px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      box-sizing: border-box !important;
+      box-shadow: 4px 0 28px rgba(0, 0, 0, 0.7) !important;
+      position: relative !important;
+      z-index: 20 !important;
     }
 
     .vm-sidebar-scroll {
@@ -3677,12 +3680,12 @@
       cursor: pointer;
       width: 100%;
       text-align: left;
-      font-weight: 500;
+      font-weight: 600;
       font-size: 12px;
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
       box-sizing: border-box;
     }
 
@@ -3730,43 +3733,37 @@
     }
 
     .vm-nav-link:hover {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(212, 175, 55, 0.08);
       color: #FFF;
       border-color: rgba(212, 175, 55, 0.2);
     }
 
     .vm-nav-link.active {
-      background: rgba(212, 175, 55, 0.14);
-      border-color: rgba(212, 175, 55, 0.35);
-      color: #D4AF37;
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--gold-light);
+      border-color: rgba(212, 175, 55, 0.4);
       font-weight: 700;
     }
 
-    .vm-nav-link .badge-count {
+    .badge-count {
       font-size: 10px;
-      font-weight: 800;
-      padding: 1px 6px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 2px 6px;
       border-radius: 10px;
-      background: rgba(255, 255, 255, 0.06);
-      color: #CBD5E1;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      color: var(--gold-light);
     }
 
-    .vm-nav-link.active .badge-count {
-      background: rgba(212, 175, 55, 0.25);
-      color: #D4AF37;
-    }
-
-    /* Coleções Táticas na Sidebar */
     .vm-collection-item {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 8px 10px;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      gap: 10px;
+      padding: 8px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
       box-sizing: border-box;
     }
 
@@ -3838,20 +3835,415 @@
     }
 
     /* ------------------------------------------------------------------------
-       COLUNA 2: ÁREA PRINCIPAL DIREITA (1fr com scroll próprio)
+       COLUNA 2: ÁREA PRINCIPAL DIREITA (.vade-main-content, 1fr com scroll próprio)
        ------------------------------------------------------------------------ */
+    .vade-main-content,
     .vm-main-content {
+      grid-column: 2 / 3 !important;
+      width: 100% !important;
+      height: 100vh !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+      padding: 24px 36px 60px 36px !important;
+      gap: 28px !important;
+      box-sizing: border-box !important;
+      background: #060709 !important;
+      position: relative !important;
+      z-index: 10 !important;
+    }
+
+    /* ========================================================================
+       PASTAS DE VIDRO 3D (GLASS FOLDER CARDS - FROSTED GLASSMORPHISM)
+       ======================================================================== */
+    .vm-folders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 22px;
+      width: 100%;
+    }
+
+    .glass-folder-card {
+      position: relative;
+      border-radius: 14px;
+      background: rgba(12, 16, 24, 0.78);
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      overflow: hidden;
+      cursor: pointer;
+      perspective: 1000px;
+    }
+
+    .glass-folder-card:hover {
+      border-color: rgba(212, 175, 55, 0.6);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(212, 175, 55, 0.18);
+      transform: translateY(-3px);
+    }
+
+    .glass-folder-card.is-open {
+      border-color: var(--gold-primary);
+      background: rgba(14, 18, 28, 0.96);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9), 0 0 32px rgba(212, 175, 55, 0.25);
+      grid-column: 1 / -1; /* Abre em largura total para leque luxuoso */
+    }
+
+    /* Aba da Pasta (Folder Tab) */
+    .glass-folder-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px 0 16px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .glass-folder-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(212, 175, 55, 0.14);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      color: var(--gold-light);
+      font-weight: 700;
+      font-size: 12px;
+      position: relative;
+      top: 1px;
+    }
+
+    .glass-folder-tab-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 10px;
+      background: rgba(212, 175, 55, 0.3);
+      color: #FFF;
+    }
+
+    .glass-folder-quick-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+    }
+
+    .folder-stars {
+      color: #FBBF24;
+      font-size: 11px;
+    }
+
+    .folder-edital-tag {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--gold-light);
+      background: rgba(212, 175, 55, 0.15);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    /* Corpo 3D com bolso e folhas */
+    .glass-folder-body {
+      position: relative;
+      height: 185px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      overflow-y: auto;
-      padding: 24px 32px;
-      gap: 28px;
-      box-sizing: border-box;
-      background-color: #0b0e14;
-      min-width: 0;
-      position: relative;
+      justify-content: flex-end;
+      transform-style: preserve-3d;
     }
+
+    .glass-folder-card.is-open .glass-folder-body {
+      height: 125px;
+    }
+
+    .glass-folder-back {
+      position: absolute;
+      inset: 10px 14px 12px 14px;
+      background: linear-gradient(180deg, rgba(24, 32, 48, 0.85) 0%, rgba(12, 16, 26, 0.95) 100%);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      z-index: 1;
+    }
+
+    .glass-folder-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      max-width: 90%;
+    }
+
+    /* Bolso de Documentos */
+    .glass-folder-pocket {
+      position: absolute;
+      inset: 16px 18px 16px 18px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .glass-folder-docs {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .glass-doc-sheet {
+      position: absolute;
+      bottom: 0;
+      width: 84%;
+      height: 100px;
+      background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 8px 8px 4px 4px;
+      box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.5);
+      padding: 8px 12px;
+      box-sizing: border-box;
+      transition: all 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 3px;
+    }
+
+    .glass-doc-sheet:nth-child(1) {
+      transform: translateY(12px) scale(0.91) rotate(-5deg);
+      background: #151D2A;
+      border-color: rgba(212, 175, 55, 0.2);
+      z-index: 1;
+    }
+    .glass-doc-sheet:nth-child(2) {
+      transform: translateY(6px) scale(0.95) rotate(4deg);
+      background: #1B2536;
+      border-color: rgba(212, 175, 55, 0.3);
+      z-index: 2;
+    }
+    .glass-doc-sheet:nth-child(3) {
+      transform: translateY(0px) scale(1) rotate(0deg);
+      background: #243048;
+      border-color: rgba(212, 175, 55, 0.45);
+      z-index: 3;
+    }
+
+    /* Micro-interação Hover: Folhas sobem */
+    .glass-folder-card:hover .glass-doc-sheet:nth-child(1) {
+      transform: translateY(-28px) scale(0.93) rotate(-7deg);
+    }
+    .glass-folder-card:hover .glass-doc-sheet:nth-child(2) {
+      transform: translateY(-34px) scale(0.97) rotate(6deg);
+    }
+    .glass-folder-card:hover .glass-doc-sheet:nth-child(3) {
+      transform: translateY(-40px) scale(1.02) rotate(0deg);
+      box-shadow: 0 -8px 22px rgba(212, 175, 55, 0.25);
+    }
+
+    /* Tampa Frontal de Vidro Fosco (3D Hinge) */
+    .glass-folder-front {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      height: 90px;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.78) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.38);
+      border-radius: 0 0 10px 10px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      z-index: 5;
+      transform-origin: bottom center;
+      transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      box-sizing: border-box;
+    }
+
+    .glass-folder-card:hover .glass-folder-front {
+      transform: rotateX(-24deg);
+      border-color: rgba(212, 175, 55, 0.65);
+      box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.7), 0 0 20px rgba(212, 175, 55, 0.2);
+    }
+
+    .glass-folder-card.is-open .glass-folder-front {
+      transform: rotateX(-50deg) translateY(8px);
+      background: rgba(15, 23, 42, 0.5);
+    }
+
+    .glass-folder-front-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: 12px;
+    }
+
+    .glass-folder-seal {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      border-radius: 8px;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .glass-folder-seal img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .glass-folder-front-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .glass-folder-front-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #FFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .glass-folder-front-stats {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 10.5px;
+      color: var(--gold-light);
+      margin-top: 3px;
+    }
+
+    .glass-folder-chevron {
+      color: var(--gold-primary);
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+    }
+
+    .glass-folder-card.is-open .glass-folder-chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Leque Expandido de Documentos da Pasta */
+    .glass-folder-expanded-area {
+      display: none;
+      padding: 18px 20px 24px 20px;
+      border-top: 1px solid rgba(212, 175, 55, 0.18);
+      background: rgba(8, 10, 16, 0.98);
+      animation: folderFanIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes folderFanIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .glass-folder-card.is-open .glass-folder-expanded-area {
+      display: block;
+    }
+
+    .glass-folder-fan-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed rgba(212, 175, 55, 0.2);
+    }
+
+    .glass-folder-fan-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    /* Card Individual de Lei no Leque */
+    .glass-fan-law-card {
+      background: rgba(22, 29, 44, 0.85);
+      border: 1px solid rgba(212, 175, 55, 0.28);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      transition: all 0.22s ease;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .glass-fan-law-card:hover {
+      background: rgba(30, 41, 62, 0.95);
+      border-color: var(--gold-primary);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(212, 175, 55, 0.22);
+    }
+
+    .glass-fan-law-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .glass-fan-law-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--gold-light);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    .glass-fan-law-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #FFF;
+      line-height: 1.35;
+      margin-top: 4px;
+    }
+
+    .glass-fan-law-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .glass-fan-law-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 6px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    
 
     /* Topbar */
     .vm-topbar {
@@ -5119,10 +5511,10 @@
   <!-- ==========================================================================
        VIEW: BIBLIOTECA DE LEIS • VADE MECUM (INTEGRADA A CTRESB/LEIS)
        ========================================================================== -->
-  <div id="viewVadeMecum" class="vade-mecum-view" style="display: none;">
+  <div id="vademecum" class="vade-mecum-view" style="display: none;">
           
       <!-- A. Sidebar Esquerda da Biblioteca (Navegação & Coleções) -->
-      <aside class="vm-sidebar">
+      <aside class="vade-sidebar vm-sidebar">
         <div class="vm-sidebar-scroll">
           
           <!-- Perfil do Agente & Botão Retorno -->
@@ -5249,7 +5641,7 @@
       </aside>
 
       <!-- Conteúdo Principal -->
-      <main class="vm-main-content">
+      <main class="vade-main-content vm-main-content">
         
         <!-- B. Barra Superior (Top Search & Ações) -->
         <header class="vm-topbar">
@@ -11270,16 +11662,33 @@ Formato do Schema JSON Obrigatório:
     function navigateToActiveMode() {
       const items = TACTICAL_WHEEL_MODES;
       const activeItem = items[worksWheelState.active];
-      if (activeItem && activeItem.href) {
-        if (activeItem.href.indexOf('student_os') !== -1) {
-          localStorage.setItem('preferred_desktop_view', 'student_os');
-        } else if (activeItem.href.indexOf('concurso') !== -1 || activeItem.href.indexOf('index') !== -1) {
+      if (!activeItem) return;
+
+      if (typeof playTacticalBlip === 'function') {
+        playTacticalBlip(880, 0.09);
+      }
+
+      // 1. Biblioteca de Leis • Vade Mecum
+      if (activeItem.id === 'vademecum' || (activeItem.href && activeItem.href.indexOf('#vademecum') !== -1)) {
+        closeWorksWheelModal();
+        openVadeMecumView();
+        return;
+      }
+
+      // 2. Student OS Principal
+      if (activeItem.id === 'student_os' || (activeItem.href && activeItem.href.indexOf('student_os.html') !== -1)) {
+        closeWorksWheelModal();
+        closeVadeMecumView();
+        localStorage.setItem('preferred_desktop_view', 'student_os');
+        return;
+      }
+
+      // 3. Modos externos
+      if (activeItem.href) {
+        if (activeItem.href.indexOf('concurso') !== -1 || activeItem.href.indexOf('index') !== -1) {
           localStorage.setItem('preferred_desktop_view', 'concursos');
         } else {
           localStorage.removeItem('preferred_desktop_view');
-        }
-        if (typeof playTacticalBlip === 'function') {
-          playTacticalBlip(880, 0.09);
         }
         window.location.href = activeItem.href;
       }
@@ -11829,35 +12238,40 @@ Formato do Schema JSON Obrigatório:
         `).join('');
       },
 
+      toggleFolder(folderId, ev) {
+        if (ev) ev.stopPropagation();
+        if (!this.openFolders) this.openFolders = new Set(['const', 'penal']);
+        if (this.openFolders.has(folderId)) {
+          this.openFolders.delete(folderId);
+        } else {
+          this.openFolders.add(folderId);
+        }
+        if (typeof playTacticalBlip === 'function') {
+          playTacticalBlip(620, 0.06);
+        }
+        this.renderForYouGrid();
+      },
+
       renderForYouGrid(customList = null) {
         const container = document.getElementById('vmForYouGrid');
         if (!container) return;
 
-        let list = customList;
-        if (!list) {
-          const repoLaws = GitHubLawProvider.allRepoLaws || [];
-          if (this.activeCategory === 'all') {
-            list = [...this.CORE_LAWS, ...repoLaws];
-          } else if (this.activeCategory === 'codigos') {
-            list = this.CORE_LAWS.filter(l => l.isCode);
-          } else if (this.activeCategory === 'especial') {
-            list = this.CORE_LAWS.filter(l => l.category === 'especial');
-          } else {
-            const cat = this.activeCategory.toLowerCase();
-            const coreMatch = this.CORE_LAWS.filter(l => 
-              (l.category && l.category.toLowerCase().includes(cat)) || 
-              (l.subCategory && l.subCategory.toLowerCase().includes(cat))
-            );
-            const repoMatch = repoLaws.filter(p => p.toLowerCase().includes(cat));
-            list = [...coreMatch, ...repoMatch];
-          }
+        if (!this.openFolders) {
+          this.openFolders = new Set(['const', 'penal']);
         }
 
+        // Se o usuário digitou pesquisa na barra superior: renderiza os cards individuais correspondentes
         if (this.searchQuery) {
+          let list = customList;
+          if (!list) {
+            const repoLaws = GitHubLawProvider.allRepoLaws || [];
+            list = [...this.CORE_LAWS, ...repoLaws];
+          }
+
           const q = this.searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           list = list.filter(item => {
             if (typeof item === 'object') {
-              const str = (item.title + ' ' + item.sub + ' ' + item.summary + ' ' + item.badge + ' ' + item.path).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+              const str = (item.title + ' ' + (item.sub || '') + ' ' + (item.summary || '') + ' ' + (item.badge || '') + ' ' + (item.path || '')).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
               return str.includes(q);
             } else if (typeof item === 'string') {
               const str = (item + ' ' + GitHubLawProvider.formatPathToLabel(item)).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -11865,94 +12279,285 @@ Formato do Schema JSON Obrigatório:
             }
             return false;
           });
-        }
 
-        const countBadge = document.getElementById('vmForYouCountBadge');
-        if (countBadge) countBadge.innerText = list.length.toLocaleString('pt-BR') + ' leis listadas';
+          const countBadge = document.getElementById('vmForYouCountBadge');
+          if (countBadge) countBadge.innerText = list.length.toLocaleString('pt-BR') + ' leis encontradas';
 
-        if (list.length === 0) {
-          container.innerHTML = `
-            <div style="grid-column: 1 / -1; padding: 36px; text-align: center; color: var(--text-muted); background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed rgba(212,175,55,0.2);">
-              🔍 Nenhuma lei encontrada no acervo do repositório para o termo <strong>"${this.escapeHTML(this.searchQuery)}"</strong>.
-            </div>
-          `;
-          return;
-        }
+          if (list.length === 0) {
+            container.innerHTML = `
+              <div style="grid-column: 1 / -1; padding: 36px; text-align: center; color: var(--text-muted); background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed rgba(212,175,55,0.2);">
+                🔍 Nenhuma lei encontrada no acervo para <strong>"${this.escapeHTML(this.searchQuery)}"</strong>.
+              </div>
+            `;
+            return;
+          }
 
-        const flashcards = typeof getStoredAIFlashcards === 'function' ? getStoredAIFlashcards() : [];
-        const visibleItems = list.slice(0, this.displayLimit);
+          const visibleItems = list.slice(0, this.displayLimit);
+          let cardsHtml = visibleItems.map(item => {
+            const isObj = typeof item === 'object';
+            const pathStr = isObj ? item.path : item;
+            const titleStr = isObj ? item.title : GitHubLawProvider.formatPathToLabel(pathStr);
+            const badgeStr = isObj ? (item.badge || 'LEI') : 'REPO';
+            const catStr = isObj ? (item.category || 'Geral') : 'ctresb/leis';
+            const descStr = isObj ? (item.summary || item.sub || '') : pathStr;
 
-        let cardsHtml = visibleItems.map(item => {
-          if (typeof item === 'object') {
-            const cardsCount = flashcards.filter(f => (f.leiReferencia || f.subject || '').toLowerCase().includes(item.title.toLowerCase()) || (f.leiReferencia || '').includes(item.badge)).length;
             return `
-              <div class="vm-law-card" onclick="VadeMecumEngine.openLawReader('${item.path}', '${item.title.replace(/'/g, "\\'")}')">
-                <div class="vm-book-cover" style="width: 65px; min-width: 65px; height: 92px; padding: 6px 4px; border-left-color: ${item.accent || 'var(--gold-primary)'};">
-                  <div class="vm-book-cover-seal" style="width: 18px; height: 18px;">
-                    <img src="assets/distintivo_policia_civil.png" alt="PC" onerror="this.src='assets/logo_faca_caveira.png'" />
-                  </div>
-                  <div>
-                    <div class="vm-book-cover-title" style="font-size: 8.5px;">${item.badge}</div>
-                  </div>
+              <div class="vm-law-card glass-fan-law-card" onclick="VadeMecumEngine.openLawReader('${pathStr}', '${titleStr.replace(/'/g, "\\'")}')">
+                <div class="glass-fan-law-header">
+                  <span class="glass-fan-law-badge">${badgeStr}</span>
+                  <span style="font-size: 10px; font-weight: 700; color: var(--gold-light);">${catStr}</span>
                 </div>
-                <div class="vm-law-card-info">
-                  <span style="font-size: 9.5px; font-weight: 700; color: ${item.accent || 'var(--gold-primary)'};">${item.category}</span>
-                  <h4>${item.title}</h4>
-                  <p>${item.sub}</p>
-                  <div class="vm-stars" style="font-size: 10px;">${item.stars || '★★★★★'}</div>
-                  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
-                    <span style="font-size: 10px; color: var(--gold-light); background: rgba(212, 175, 55, 0.12); padding: 2px 6px; border-radius: 4px;">
-                      ⚡ ${cardsCount} flashcards
-                    </span>
-                    <span style="font-size: 11px; color: var(--gold-primary); font-weight: 700;">Ler ➔</span>
-                  </div>
+                <div>
+                  <h4 class="glass-fan-law-title">${titleStr}</h4>
+                  <p class="glass-fan-law-desc">${descStr}</p>
+                </div>
+                <div class="glass-fan-law-actions">
+                  <button type="button" class="btn-primary" onclick="event.stopPropagation(); VadeMecumEngine.openLawReader('${pathStr}', '${titleStr.replace(/'/g, "\\'")}')" style="padding: 5px 12px; font-size: 11px; background: var(--gold-primary); color: #0B0E14; font-weight: 700; border-radius: 6px;">
+                    📖 Ler Lei
+                  </button>
+                  <button type="button" class="btn-secondary" onclick="event.stopPropagation(); generateAIFlashcards('${isObj ? (item.targetSubject || catStr) : 'Legislação'}')" style="padding: 5px 10px; font-size: 11px; border-radius: 6px;">
+                    ⚡ IA Flashcard
+                  </button>
                 </div>
               </div>
             `;
-          } else {
-            const pathStr = item;
-            const label = GitHubLawProvider.formatPathToLabel(pathStr);
-            const parts = pathStr.split('/');
-            const state = (parts.length > 2 && parts[0] === 'estaduais') ? parts[1] : 'BR';
-            const type = parts.includes('leis-complementares') ? 'Lei Complementar' : (parts.includes('leis-ordinarias') ? 'Lei Ordinária' : 'Legislação');
+          }).join('');
 
-            return `
-              <div class="vm-law-card" onclick="VadeMecumEngine.openLawReader('${pathStr}', '${label.replace(/'/g, "\\'")}')">
-                <div class="vm-book-cover" style="width: 65px; min-width: 65px; height: 92px; padding: 6px 4px; border-left-color: var(--gold-primary);">
-                  <div class="vm-book-cover-seal" style="width: 18px; height: 18px;">
-                    <img src="assets/distintivo_policia_civil.png" alt="PC" onerror="this.src='assets/logo_faca_caveira.png'" />
-                  </div>
-                  <div>
-                    <div class="vm-book-cover-title" style="font-size: 8.5px;">${state}</div>
-                  </div>
-                </div>
-                <div class="vm-law-card-info">
-                  <span style="font-size: 9.5px; font-weight: 700; color: var(--gold-primary);">${type} • ${state}</span>
-                  <h4>${label}</h4>
-                  <p style="font-family: monospace; font-size: 9.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${pathStr}</p>
-                  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px;">
-                    <span style="font-size: 9.5px; color: var(--gold-light); background: rgba(212, 175, 55, 0.12); padding: 2px 6px; border-radius: 4px;">
-                      ctresb/leis
-                    </span>
-                    <span style="font-size: 11px; color: var(--gold-primary); font-weight: 700;">Ler ➔</span>
-                  </div>
-                </div>
+          if (list.length > visibleItems.length) {
+            cardsHtml += `
+              <div style="grid-column: 1 / -1; display: flex; justify-content: center; margin-top: 14px;">
+                <button type="button" class="vm-load-more-btn" onclick="VadeMecumEngine.loadMoreLaws()">
+                  ⚡ Carregar Mais Leis (+24) — Exibindo ${visibleItems.length.toLocaleString('pt-BR')} de ${list.length.toLocaleString('pt-BR')}
+                </button>
               </div>
             `;
           }
-        }).join('');
 
-        if (list.length > visibleItems.length) {
-          cardsHtml += `
-            <div style="grid-column: 1 / -1; display: flex; justify-content: center; margin-top: 14px;">
-              <button type="button" class="vm-load-more-btn" onclick="VadeMecumEngine.loadMoreLaws()">
-                ⚡ Carregar Mais Leis do Repositório (+24) — Exibindo ${visibleItems.length.toLocaleString('pt-BR')} de ${list.length.toLocaleString('pt-BR')} Leis
-              </button>
-            </div>
-          `;
+          container.className = 'vm-folders-grid';
+          container.innerHTML = cardsHtml;
+          return;
         }
 
-        container.innerHTML = cardsHtml;
+        // Modo Normal: Renderizar PASTAS ANIMADAS EM VIDRO (Glass Folder Cards)
+        const categories = this.getFolderCategories();
+        const countBadge = document.getElementById('vmForYouCountBadge');
+        if (countBadge) countBadge.innerText = categories.length + ' Pastas Temáticas • Edital PCMG';
+
+        container.className = 'vm-folders-grid';
+        container.innerHTML = categories.map(cat => {
+          const isOpen = this.openFolders.has(cat.id);
+          const laws = cat.laws || [];
+
+          // Folhas de papel / capas que sobem no hover
+          const topDocs = laws.slice(0, 3);
+          const docsHtml = topDocs.map((law, idx) => `
+            <div class="glass-doc-sheet">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 8.5px; font-weight: 800; color: ${cat.accent}; text-transform: uppercase;">${law.badge}</span>
+                <span style="font-size: 8px; color: var(--gold-light);">Artigo Chave</span>
+              </div>
+              <div style="font-size: 10px; font-weight: 700; color: #FFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${law.title}</div>
+              <div style="font-size: 8.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${law.meta || 'Texto Consolidado'}</div>
+            </div>
+          `).join('');
+
+          // Grade expandida em leque quando a pasta está aberta
+          const expandedHtml = laws.map(law => `
+            <div class="glass-fan-law-card vm-law-card" onclick="event.stopPropagation(); VadeMecumEngine.openLawReader('${law.path}', '${law.title.replace(/'/g, "\\'")}')">
+              <div class="glass-fan-law-header">
+                <span class="glass-fan-law-badge">${law.badge}</span>
+                <span style="font-size: 10px; color: ${cat.accent}; font-weight: 700;">${law.tag || cat.title}</span>
+              </div>
+              <div>
+                <h4 class="glass-fan-law-title">${law.title}</h4>
+                <p class="glass-fan-law-desc">${law.meta || 'Legislação estruturada com artigos e parágrafos'}</p>
+              </div>
+              <div class="glass-fan-law-actions">
+                <button type="button" class="btn-primary" onclick="event.stopPropagation(); VadeMecumEngine.openLawReader('${law.path}', '${law.title.replace(/'/g, "\\'")}')" style="padding: 5px 12px; font-size: 11px; background: var(--gold-primary); color: #0B0E14; font-weight: 700; border-radius: 6px;">
+                  📖 Ler Lei
+                </button>
+                <button type="button" class="btn-secondary" onclick="event.stopPropagation(); generateAIFlashcards('${cat.targetSubject}')" style="padding: 5px 10px; font-size: 11px; border-radius: 6px;">
+                  ⚡ IA Flashcard
+                </button>
+              </div>
+            </div>
+          `).join('');
+
+          return `
+            <div class="glass-folder-card ${isOpen ? 'is-open' : ''}" id="folder_${cat.id}" onclick="VadeMecumEngine.toggleFolder('${cat.id}', event)">
+              
+              <!-- Aba Superior da Pasta -->
+              <div class="glass-folder-header">
+                <div class="glass-folder-tab">
+                  <span>${cat.icon}</span>
+                  <span>${cat.title}</span>
+                  <span class="glass-folder-tab-badge">${laws.length} ${cat.isRepo ? 'Amostras' : 'Leis'}</span>
+                </div>
+                <div class="glass-folder-quick-meta">
+                  <span class="folder-stars">${cat.stars}</span>
+                  <span class="folder-edital-tag">${cat.editalWeight}</span>
+                </div>
+              </div>
+
+              <!-- Corpo 3D com Bolso e Tampa Frontal Inclinável -->
+              <div class="glass-folder-body">
+                <div class="glass-folder-back">
+                  <div class="glass-folder-sub">${cat.subtitle}</div>
+                </div>
+
+                <div class="glass-folder-pocket">
+                  <div class="glass-folder-docs">
+                    ${docsHtml}
+                  </div>
+                </div>
+
+                <!-- Tampa de Vidro Fosco -->
+                <div class="glass-folder-front">
+                  <div class="glass-folder-front-content">
+                    <div class="glass-folder-seal">
+                      <img src="assets/distintivo_policia_civil.png" alt="PCMG" onerror="this.src='assets/logo_faca_caveira.png'" />
+                    </div>
+                    <div class="glass-folder-front-info">
+                      <div class="glass-folder-front-title">${cat.shortName}</div>
+                      <div class="glass-folder-front-stats">
+                        <span>⚡ ${laws.length} Leis do Edital</span>
+                        <span>${isOpen ? '📂 Aberta (Clique p/ Fechar)' : '📁 Fechada (Clique p/ Abrir Leque)'}</span>
+                      </div>
+                    </div>
+                    <div class="glass-folder-chevron">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Leque de Documentos Aberto -->
+              <div class="glass-folder-expanded-area">
+                <div class="glass-folder-fan-header">
+                  <div style="font-size: 13px; font-weight: 700; color: var(--gold-light);">
+                    📂 Conteúdo da Pasta: <span style="color: #FFF;">${cat.title}</span>
+                  </div>
+                  <span style="font-size: 11px; color: var(--text-muted);">Clique em "📖 Ler Lei" para abrir o texto completo</span>
+                </div>
+                <div class="glass-folder-fan-grid">
+                  ${expandedHtml}
+                </div>
+              </div>
+
+            </div>
+          `;
+        }).join('');
+      },
+
+      getFolderCategories() {
+        const repoLaws = GitHubLawProvider.allRepoLaws || [];
+        const repoSamples = repoLaws.slice(0, 12).map(path => ({
+          id: path,
+          path: path,
+          title: GitHubLawProvider.formatPathToLabel(path),
+          badge: path.split('/')[1] || 'ESTADUAL',
+          tag: 'ctresb/leis',
+          meta: path
+        }));
+
+        return [
+          {
+            id: 'const',
+            title: 'Direito Constitucional',
+            shortName: 'Constitucional & Direitos Humanos',
+            subtitle: 'CF/88, Direitos Fundamentais (Art. 5º), Segurança Pública (Art. 144) e Tratados Internacionais (DUDH e San José).',
+            icon: '🏛️',
+            accent: '#3B82F6',
+            stars: '★★★★★',
+            editalWeight: '100% Edital',
+            targetSubject: 'Direito Constitucional',
+            laws: [
+              { id: 'cf88', path: 'constituicao.md', title: 'Constituição Federal / 88', badge: 'CF/88', tag: 'Fundamental', meta: 'Arts. 1º ao 5º, 37 e 144' },
+              { id: 'dudh', path: 'direitos-humanos', title: 'Declaração Universal dos Direitos Humanos', badge: 'DUDH', tag: 'Tratado', meta: 'Garantias Fundamentais Globais' }
+            ]
+          },
+          {
+            id: 'penal',
+            title: 'Direito Penal',
+            shortName: 'Direito Penal • Geral & Especial',
+            subtitle: 'Teoria Geral do Crime, Culpabilidade, Homicídio, Roubo, Furto e Crimes Próprios de Funcionários Públicos.',
+            icon: '⚖️',
+            accent: '#EF4444',
+            stars: '★★★★★',
+            editalWeight: 'Núcleo Duro PCMG',
+            targetSubject: 'Direito Penal',
+            laws: [
+              { id: 'cp', path: 'codigo-penal', title: 'Código Penal Brasileiro', badge: 'CP/40', tag: 'Dec-Lei 2.848', meta: 'Arts. 1-25, 121, 155, 312-327' },
+              { id: 'cp_crimes', path: 'codigo-penal', title: 'Crimes Contra a Vida e o Patrimônio', badge: 'Vida/Patr', tag: 'Top Prova', meta: 'Arts. 121, 155, 157' },
+              { id: 'cp_admin', path: 'codigo-penal', title: 'Crimes Contra a Administração Pública', badge: 'Funcional', tag: 'Corrupção', meta: 'Arts. 312, 316, 317, 319' }
+            ]
+          },
+          {
+            id: 'proc_penal',
+            title: 'Processo Penal',
+            shortName: 'Processo Penal & Polícia Judiciária',
+            subtitle: 'Inquérito Policial, Cadeia de Custódia da Prova (Pacote Anticrime), Prisões em Flagrante, Preventiva e Cautelares.',
+            icon: '🛡️',
+            accent: '#10B981',
+            stars: '★★★★★',
+            editalWeight: 'Investigação Policial',
+            targetSubject: 'Direito Processual Penal',
+            laws: [
+              { id: 'cpp', path: 'codigo-processo-penal', title: 'Código de Processo Penal', badge: 'CPP/41', tag: 'Dec-Lei 3.689', meta: 'Arts. 4-23, 158-A, 301-312' },
+              { id: 'cpp_ip', path: 'codigo-processo-penal', title: 'Inquérito Policial & Investigação', badge: 'IP', tag: 'Art. 4º ao 23', meta: 'Atos de Polícia Judiciária' },
+              { id: 'cpp_custodia', path: 'codigo-processo-penal', title: 'Cadeia de Custódia & Prisões', badge: 'Custódia', tag: 'Flagrante', meta: 'Arts. 158-A ao 158-F, 301' }
+            ]
+          },
+          {
+            id: 'especial',
+            title: 'Legislação Extravagante',
+            shortName: 'Legislação Especial • Top Provas',
+            subtitle: 'Leis penais especiais mais cobradas: Drogas, Abuso, Hediondos, Desarmamento, Maria da Penha e ORCRIM.',
+            icon: '🚨',
+            accent: '#8B5CF6',
+            stars: '★★★★★',
+            editalWeight: 'Top 7 Provas',
+            targetSubject: 'Legislação Penal e Processual Penal Especial',
+            laws: [
+              { id: 'drogas', path: 'lei-de-drogas', title: 'Lei de Drogas (Lei 11.343/06)', badge: '11.343', tag: 'Tráfico', meta: 'Arts. 28, 33, 34, 40' },
+              { id: 'abuso', path: 'lei-abuso-autoridade', title: 'Abuso de Autoridade (Lei 13.869/19)', badge: '13.869', tag: 'Abuso', meta: 'Dolo específico, Arts. 1-4, 9, 22' },
+              { id: 'hediondos', path: 'crimes-hediondos', title: 'Crimes Hediondos (Lei 8.072/90)', badge: '8.072', tag: 'Hediondos', meta: 'Rol taxativo, Vedação 3T' },
+              { id: 'interceptacao', path: 'interceptacao-telefonica', title: 'Interceptação Telefônica (Lei 9.296/96)', badge: '9.296', tag: 'Escuta', meta: 'Prazo 15d, Requisitos' },
+              { id: 'desarmamento', path: 'estatuto-desarmamento', title: 'Estatuto do Desarmamento (Lei 10.826/03)', badge: '10.826', tag: 'Armas', meta: 'Posse vs Porte, Arts. 12-16' },
+              { id: 'mariadapenha', path: 'maria-da-penha', title: 'Lei Maria da Penha (Lei 11.340/06)', badge: '11.340', tag: 'Proteção', meta: 'Medidas Protetivas, Art. 24-A' },
+              { id: 'orcrim', path: 'organizacoes-criminosas', title: 'Organizações Criminosas (Lei 12.850/13)', badge: '12.850', tag: 'ORCRIM', meta: 'Colaboração, Ação Controlada' }
+            ]
+          },
+          {
+            id: 'admin',
+            title: 'Direito Administrativo',
+            shortName: 'Direito Administrativo & Regime Funcional',
+            subtitle: 'Estatuto dos Servidores Públicos, Regime Disciplinar, Processo Administrativo Disciplinar (PAD) e Responsabilidades.',
+            icon: '📋',
+            accent: '#D97706',
+            stars: '★★★★☆',
+            editalWeight: 'Estatutário',
+            targetSubject: 'Direito Administrativo',
+            laws: [
+              { id: 'admin', path: 'estatuto-servidores', title: 'Estatuto dos Servidores Públicos', badge: 'ADMIN', tag: 'Servidores', meta: 'Deveres, Proibições e PAD' }
+            ]
+          },
+          {
+            id: 'acervo_repo',
+            title: 'Acervo ctresb/leis',
+            shortName: 'Legislação Estadual (ctresb/leis)',
+            subtitle: 'Mais de 56.000 leis estaduais (AC, AL, AM, AP, BA) sincronizadas em tempo real via GitHub Tree API.',
+            icon: '🌐',
+            accent: '#06B6D4',
+            stars: '★★★★★',
+            editalWeight: 'Repositório GitHub',
+            targetSubject: 'Legislação Estadual',
+            isRepo: true,
+            laws: repoSamples.length > 0 ? repoSamples : [
+              { id: 'sample_ac', path: 'constituicao.md', title: 'Constituição Federal de 1988 (Raiz)', badge: 'CF/88', tag: 'Sincronizado', meta: 'ctresb/leis' }
+            ]
+          }
+        ];
       },
 
       loadMoreLaws() {
@@ -12595,12 +13200,12 @@ Retorne estritamente um JSON no formato:
 
     function openVadeMecumView() {
       const appContainer = document.getElementById('studentOSAppContainer');
-      const vadeView = document.getElementById('viewVadeMecum');
+      const vadeView = document.getElementById('vademecum') || document.getElementById('viewVadeMecum');
 
       if (appContainer) appContainer.style.display = 'none';
       if (vadeView) {
         vadeView.style.display = 'grid';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'instant' });
       }
 
       window.location.hash = 'vademecum';
@@ -12610,18 +13215,20 @@ Retorne estritamente um JSON no formato:
         playTacticalBlip(780, 0.08);
       }
 
-      VadeMecumEngine.init();
+      if (typeof VadeMecumEngine !== 'undefined' && VadeMecumEngine.init) {
+        VadeMecumEngine.init();
+      }
     }
 
     function closeVadeMecumView() {
       const appContainer = document.getElementById('studentOSAppContainer');
-      const vadeView = document.getElementById('viewVadeMecum');
+      const vadeView = document.getElementById('vademecum') || document.getElementById('viewVadeMecum');
 
       if (vadeView) vadeView.style.display = 'none';
       if (appContainer) appContainer.style.display = 'block';
 
       if (window.location.hash === '#vademecum') {
-        history.replaceState(null, '', window.location.pathname);
+        history.replaceState(null, '', window.location.pathname + window.location.search);
       }
       localStorage.setItem('preferred_desktop_view', 'student_os');
 
