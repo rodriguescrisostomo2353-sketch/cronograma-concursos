@@ -3941,11 +3941,21 @@
                   </button>
                 </div>
 
-                <select id="flashcardSubjectHeaderSelect" class="form-control" style="padding: 3px 6px; font-size: 10.5px; height: 28px; width: auto; max-width: 170px;" onchange="filterAIFlashcardsBySubject(this.value)">
+                <select id="flashcardSubjectHeaderSelect" class="form-control" style="padding: 3px 6px; font-size: 10.5px; height: 28px; width: auto; max-width: 165px;" onchange="filterAIFlashcardsBySubject(this.value)" title="Filtrar por Disciplina Cadastrada">
                   <!-- Opções dinâmicas de matérias cadastradas -->
                 </select>
 
-                <button class="btn-quick-action" style="padding: 4px 10px; font-size: 11px; width: auto; background: var(--gold-primary); color: #0B0E14; font-weight: 700;" onclick="generateAIFlashcardsAction()" title="Gerar novos Flashcards com Inteligência Artificial">
+                <select id="lawSourceSelect" class="form-control" style="padding: 3px 6px; font-size: 10.5px; height: 28px; width: auto; max-width: 220px;" title="Fonte Legal do Repositório ctresb/leis">
+                  <option value="auto">📜 Fonte Legal (Repo ctresb/leis): Automático por Matéria</option>
+                  <option value="constituicao.md">CF/88 - Constituição Federal de 1988 (Completa)</option>
+                </select>
+
+                <button type="button" class="btn-quick-action" id="btnGeminiApiKeyConfig" onclick="openGeminiConfigModal()" style="padding: 4px 9px; font-size: 11px; width: auto; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-tactical); color: var(--text-main); font-weight: 600; display: inline-flex; align-items: center; gap: 5px;" title="Configurar chave da API Google Gemini">
+                  <span>🔑 API Gemini</span>
+                  <span id="geminiKeyStatusDot" style="font-size: 9px;" title="Status da Chave Gemini">🔴</span>
+                </button>
+
+                <button class="btn-quick-action" id="btnGenerateAIFlashcards" style="padding: 4px 10px; font-size: 11px; width: auto; background: var(--gold-primary); color: #0B0E14; font-weight: 700;" onclick="generateAIFlashcardsAction()" title="Gerar novos Flashcards com Inteligência Artificial">
                   ⚡ Gerar Flashcards com IA
                 </button>
               </div>
@@ -4531,6 +4541,60 @@
         <div style="display: flex; gap: 8px;">
           <button type="button" class="btn-secondary" onclick="closeModal('modalConfigSubjects')">Cancelar</button>
           <button type="button" class="btn-primary" onclick="saveSubjectConfiguration()">Salvar e Gerar Ambiente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Configuração da API do Google Gemini -->
+  <div class="modal-backdrop" id="modalGeminiKey">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 18px;">🔑</span>
+          <h3 style="margin: 0; font-size: 15px; color: var(--gold-light);">Configuração da API Gemini (Google AI)</h3>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('modalGeminiKey')">&times;</button>
+      </div>
+      <div class="modal-body" style="gap: 14px; display: flex; flex-direction: column;">
+        <p style="font-size: 12px; color: var(--text-secondary); margin: 0; line-height: 1.5;">
+          Conecte sua chave da <strong>Google Gemini API</strong> para gerar flashcards e mini-perguntas táticas alimentadas em tempo real com leis do repositório <code>ctresb/leis</code>. Sua chave fica salva com total segurança apenas no seu navegador (<small>localStorage</small>).
+        </p>
+        
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 11px; font-weight: 700; color: var(--gold-primary); text-transform: uppercase;">Chave de API (Gemini API Key)</label>
+          <div style="position: relative;">
+            <input type="password" id="inputGeminiApiKey" class="form-control" placeholder="AIzaSy..." style="padding-right: 36px; width: 100%; box-sizing: border-box;" autocomplete="off" />
+            <button type="button" onclick="toggleGeminiKeyVisibility()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px;" title="Ver/Ocultar chave">👁️</button>
+          </div>
+          <small style="font-size: 10.5px; color: var(--text-muted);">
+            Obtenha gratuitamente no <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="color: var(--gold-light); text-decoration: underline;">Google AI Studio</a>.
+          </small>
+        </div>
+
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 11px; font-weight: 700; color: var(--gold-primary); text-transform: uppercase;">Modelo do Gemini</label>
+          <select id="selectGeminiModel" class="form-control" style="width: 100%; box-sizing: border-box;">
+            <option value="gemini-2.5-flash" selected>gemini-2.5-flash (Padrão - Alta Precisão & Velocidade)</option>
+            <option value="gemini-1.5-flash">gemini-1.5-flash (Estável)</option>
+            <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+            <option value="gemini-1.5-pro">gemini-1.5-pro (Raciocínio Profundo)</option>
+          </select>
+        </div>
+
+        <div id="geminiConnectionStatus" style="font-size: 11.5px; padding: 9px 12px; border-radius: var(--radius-sm); display: none; align-items: center; gap: 8px;">
+          <!-- Mensagem dinâmica de teste -->
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between; display: flex; align-items: center; gap: 10px;">
+        <button type="button" class="btn-secondary" onclick="removeGeminiKey()" style="color: #F87171; border-color: rgba(239, 68, 68, 0.35);">
+          🗑️ Remover Chave
+        </button>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalGeminiKey')">Fechar</button>
+          <button type="button" class="btn-primary" id="btnSaveGeminiKey" onclick="saveAndTestGeminiKey()" style="background: var(--gold-primary); color: #0B0E14; font-weight: 700;">
+            💾 Salvar e Testar Conexão
+          </button>
         </div>
       </div>
     </div>
@@ -5710,88 +5774,725 @@
       updateModalFCViewer();
     }
 
+    /* ========================================================================
+       INTEGRAÇÃO GITHUB REST API: REPOSITÓRIO DE LEIS (ctresb/leis)
+       ======================================================================== */
+    const GitHubLawProvider = {
+      REPO_OWNER: 'ctresb',
+      REPO_NAME: 'leis',
+      BRANCH: 'main',
+      tree: [],
+      cleanLaws: [],
+      rawCache: {},
+      isInitialized: false,
+
+      async init() {
+        if (this.isInitialized && this.cleanLaws.length > 0) {
+          this.populateLawDropdown();
+          return this.cleanLaws;
+        }
+        this.isInitialized = true;
+
+        // 1. Tentar ler cache salvo no sessionStorage
+        try {
+          const cached = sessionStorage.getItem('ctresb_leis_tree');
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              this.cleanLaws = parsed;
+              this.populateLawDropdown();
+              return this.cleanLaws;
+            }
+          }
+        } catch (e) {
+          console.warn('[GitHubLawProvider] Falha ao ler cache da sessão:', e);
+        }
+
+        // 2. Mapeamento via GitHub REST API (com fallback de branches e endpoints)
+        try {
+          let treeData = null;
+          let activeBranch = 'main';
+
+          try {
+            const resMain = await fetch(`https://api.github.com/repos/${this.REPO_OWNER}/${this.REPO_NAME}/git/trees/main?recursive=1`, {
+              headers: { 'Accept': 'application/vnd.github.v3+json' }
+            });
+            if (resMain.ok) {
+              treeData = await resMain.json();
+              activeBranch = 'main';
+            }
+          } catch (eMain) {
+            console.warn('[GitHubLawProvider] Falha ao tentar branch main:', eMain);
+          }
+
+          if (!treeData || !treeData.tree) {
+            try {
+              const resMaster = await fetch(`https://api.github.com/repos/${this.REPO_OWNER}/${this.REPO_NAME}/git/trees/master?recursive=1`, {
+                headers: { 'Accept': 'application/vnd.github.v3+json' }
+              });
+              if (resMaster.ok) {
+                treeData = await resMaster.json();
+                activeBranch = 'master';
+              }
+            } catch (eMaster) {
+              console.warn('[GitHubLawProvider] Falha ao tentar branch master:', eMaster);
+            }
+          }
+
+          if (!treeData || !treeData.tree) {
+            try {
+              const resContents = await fetch(`https://api.github.com/repos/${this.REPO_OWNER}/${this.REPO_NAME}/contents`);
+              if (resContents.ok) {
+                const contents = await resContents.json();
+                if (Array.isArray(contents)) {
+                  this.cleanLaws = contents.filter(c => c.name.endsWith('.md') || c.name.endsWith('.txt')).map(c => c.path);
+                }
+              }
+            } catch (eContents) {
+              console.warn('[GitHubLawProvider] Falha ao tentar contents:', eContents);
+            }
+          }
+
+          this.BRANCH = activeBranch;
+
+          if (treeData && Array.isArray(treeData.tree)) {
+            const blacklist = ['README.md', 'LICENSE', 'COBERTURA.md', 'PROGRESSO.md', 'WORKLOG.md'];
+            this.cleanLaws = treeData.tree
+              .filter(item => item.type === 'blob' && (item.path.endsWith('.md') || item.path.endsWith('.txt') || item.path.endsWith('.json') || item.path.endsWith('.html')) && !item.path.startsWith('.') && !item.path.includes('/_') && !blacklist.includes(item.path))
+              .map(item => item.path);
+
+            // Armazenar índice em cache no sessionStorage (fração segura para não exceder limites de 5MB)
+            try {
+              sessionStorage.setItem('ctresb_leis_tree', JSON.stringify(this.cleanLaws.slice(0, 1500)));
+            } catch (quotaErr) {
+              console.warn('[GitHubLawProvider] sessionStorage atingiu cota máxima, mantendo na memória ativa:', quotaErr);
+            }
+          }
+        } catch (err) {
+          console.warn('[GitHubLawProvider] Erro ao carregar repositório de leis ctresb/leis:', err);
+        }
+
+        // Garantir fallback universal com constituicao.md
+        if (!this.cleanLaws || this.cleanLaws.length === 0) {
+          this.cleanLaws = ['constituicao.md'];
+        }
+
+        this.populateLawDropdown();
+        return this.cleanLaws;
+      },
+
+      populateLawDropdown() {
+        const select = document.getElementById('lawSourceSelect');
+        if (!select) return;
+
+        const currentVal = select.value || 'auto';
+        let html = '<option value="auto">📜 Fonte Legal (Repo ctresb/leis): Automático por Matéria</option>';
+        html += '<option value="constituicao.md">CF/88 - Constituição Federal de 1988 (Completa)</option>';
+
+        // Constituições Estaduais
+        const consts = this.cleanLaws.filter(p => p !== 'constituicao.md' && p.includes('constituicao'));
+        if (consts.length > 0) {
+          html += '<optgroup label="Constituições Estaduais">';
+          consts.slice(0, 25).forEach(path => {
+            html += `<option value="${path}">${this.formatPathToLabel(path)}</option>`;
+          });
+          html += '</optgroup>';
+        }
+
+        // Leis Complementares
+        const comps = this.cleanLaws.filter(p => p.includes('complementar'));
+        if (comps.length > 0) {
+          html += '<optgroup label="Leis Complementares">';
+          comps.slice(0, 30).forEach(path => {
+            html += `<option value="${path}">${this.formatPathToLabel(path)}</option>`;
+          });
+          html += '</optgroup>';
+        }
+
+        // Leis Ordinárias e outros normativos
+        const others = this.cleanLaws.filter(p => !p.includes('constituicao') && !p.includes('complementar'));
+        if (others.length > 0) {
+          html += '<optgroup label="Leis Ordinárias / Outros">';
+          others.slice(0, 35).forEach(path => {
+            html += `<option value="${path}">${this.formatPathToLabel(path)}</option>`;
+          });
+          html += '</optgroup>';
+        }
+
+        select.innerHTML = html;
+        if (currentVal && select.querySelector(`option[value="${currentVal}"]`)) {
+          select.value = currentVal;
+        }
+      },
+
+      formatPathToLabel(path) {
+        if (!path) return 'Legislação';
+        if (path === 'constituicao.md') return 'CF/88 - Constituição Federal de 1988';
+        const parts = path.split('/');
+        const fileName = parts[parts.length - 1].replace(/\.(md|txt|json|html)$/i, '');
+        const state = (parts.length > 2 && parts[0] === 'estaduais') ? `[${parts[1]}] ` : '';
+        return state + fileName.replace(/[-_]/g, ' ');
+      },
+
+      resolvePathForSubject(subjectName, explicitPath) {
+        if (explicitPath && explicitPath !== 'auto') {
+          return explicitPath;
+        }
+
+        if (!subjectName) return 'constituicao.md';
+        const s = subjectName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+        if (s.includes('constitucional') || s.includes('humano') || s.includes('fundamental')) {
+          return 'constituicao.md';
+        }
+
+        if (s.includes('penal') || s.includes('process') || s.includes('crime')) {
+          const match = this.cleanLaws.find(p => {
+            const lp = p.toLowerCase();
+            return lp.includes('penal') || lp.includes('process') || lp.includes('crime') || lp.includes('cpp') || lp.includes('cp');
+          });
+          if (match) return match;
+          return 'constituicao.md'; // CF/88 contém direitos e garantias penais e art. 144 Segurança Pública
+        }
+
+        if (s.includes('administrativ') || s.includes('servidor') || s.includes('estatuto') || s.includes('public')) {
+          const match = this.cleanLaws.find(p => {
+            const lp = p.toLowerCase();
+            return lp.includes('administrativ') || lp.includes('servidor') || lp.includes('estatuto');
+          });
+          if (match) return match;
+          return 'constituicao.md'; // CF/88 Art. 37 a 41
+        }
+
+        if (s.includes('especial') || s.includes('drogas') || s.includes('hediond') || s.includes('abuso') || s.includes('armas')) {
+          const match = this.cleanLaws.find(p => {
+            const lp = p.toLowerCase();
+            return lp.includes('drogas') || lp.includes('hediond') || lp.includes('abuso') || lp.includes('armas') || lp.includes('tortura');
+          });
+          if (match) return match;
+          return 'constituicao.md';
+        }
+
+        // Tentar buscar por qualquer palavra-chave da matéria
+        const tokens = s.split(/\s+/).filter(t => t.length >= 4 && !['nocoes', 'direito', 'geral', 'basica'].includes(t));
+        for (const token of tokens) {
+          const match = this.cleanLaws.find(p => p.toLowerCase().includes(token));
+          if (match) return match;
+        }
+
+        return 'constituicao.md';
+      },
+
+      async fetchRawLaw(path) {
+        if (!path) path = 'constituicao.md';
+        if (this.rawCache[path]) return this.rawCache[path];
+
+        const url = `https://raw.githubusercontent.com/${this.REPO_OWNER}/${this.REPO_NAME}/${this.BRANCH}/${path}`;
+        try {
+          const res = await fetch(url);
+          if (!res.ok) throw new Error(`HTTP ${res.status} ao carregar lei bruta.`);
+          const text = await res.text();
+          this.rawCache[path] = text;
+          return text;
+        } catch (e) {
+          console.warn('[GitHubLawProvider] Erro no download do raw, tentando fallback na constituicao.md:', e);
+          if (path !== 'constituicao.md') {
+            return this.fetchRawLaw('constituicao.md');
+          }
+          throw e;
+        }
+      },
+
+      extractRandomLegalChunk(rawText, maxChars = 14000) {
+        if (!rawText || rawText.length <= maxChars) {
+          return rawText || '';
+        }
+
+        // Regex tolerante a formatos do repositório (**Art. X**, Art. X, # Art. X)
+        const regex = /(?:^|\n)\s*(?:\*\*|#+)?\s*Art(?:igo|\.)\s*\d+[º\d\w.-]*/gi;
+        const matches = [];
+        let m;
+        while ((m = regex.exec(rawText)) !== null) {
+          matches.push(m.index);
+        }
+
+        if (matches.length > 0) {
+          const chosenIdx = Math.floor(Math.random() * matches.length);
+          const start = matches[chosenIdx];
+          let end = start + maxChars;
+          if (end >= rawText.length) {
+            end = rawText.length;
+          } else {
+            // Fatiamento inteligente no último artigo ou quebra de parágrafo antes de estourar maxChars
+            const sub = rawText.slice(start, end);
+            const lastArt = Math.max(sub.lastIndexOf('\n**Art.'), sub.lastIndexOf('\nArt.'));
+            const lastPara = sub.lastIndexOf('\n\n');
+            const cutPoint = Math.max(lastArt, lastPara);
+            if (cutPoint > 1000) {
+              end = start + cutPoint;
+            }
+          }
+          return rawText.slice(start, end).trim();
+        }
+
+        // Fallback para blocos por parágrafos caso a lei não use a nomenclatura Art.
+        const maxStart = Math.max(0, rawText.length - maxChars);
+        const randomStart = Math.floor(Math.random() * maxStart);
+        const nextPara = rawText.indexOf('\n\n', randomStart);
+        const actualStart = (nextPara !== -1 && nextPara < randomStart + 1000) ? nextPara + 2 : randomStart;
+        return rawText.slice(actualStart, actualStart + maxChars).trim();
+      }
+    };
+
+    /* ========================================================================
+       GERENCIAMENTO DA API KEY E MODELO DO GOOGLE GEMINI
+       ======================================================================== */
+    function updateGeminiStatusIndicator() {
+      const dot = document.getElementById('geminiKeyStatusDot');
+      const btn = document.getElementById('btnGeminiApiKeyConfig');
+      const hasKey = !!(localStorage.getItem('tatico_os_gemini_key') && localStorage.getItem('tatico_os_gemini_key').trim());
+
+      if (dot) {
+        dot.innerText = hasKey ? '🟢' : '🔴';
+        dot.title = hasKey ? 'API Gemini Conectada' : 'API Gemini Não Configurada';
+      }
+      if (btn) {
+        btn.title = hasKey ? 'API Gemini Conectada (clique para gerenciar)' : 'API Gemini Não Configurada (clique para adicionar sua chave)';
+      }
+    }
+
+    function openGeminiConfigModal() {
+      const savedKey = localStorage.getItem('tatico_os_gemini_key') || '';
+      const savedModel = localStorage.getItem('tatico_os_gemini_model') || 'gemini-2.5-flash';
+
+      const input = document.getElementById('inputGeminiApiKey');
+      const select = document.getElementById('selectGeminiModel');
+      const statusBox = document.getElementById('geminiConnectionStatus');
+
+      if (input) input.value = savedKey;
+      if (select) select.value = savedModel;
+
+      if (statusBox) {
+        if (savedKey) {
+          statusBox.style.display = 'flex';
+          statusBox.style.background = 'rgba(16, 185, 129, 0.12)';
+          statusBox.style.border = '1px solid rgba(16, 185, 129, 0.35)';
+          statusBox.style.color = '#34D399';
+          statusBox.innerHTML = '<span>🟢 Chave salva localmente. Clique em "Salvar e Testar" para validar a conexão.</span>';
+        } else {
+          statusBox.style.display = 'none';
+        }
+      }
+
+      openModal('modalGeminiKey');
+    }
+
+    function toggleGeminiKeyVisibility() {
+      const input = document.getElementById('inputGeminiApiKey');
+      if (!input) return;
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    async function saveAndTestGeminiKey() {
+      const input = document.getElementById('inputGeminiApiKey');
+      const select = document.getElementById('selectGeminiModel');
+      const btn = document.getElementById('btnSaveGeminiKey');
+      const statusBox = document.getElementById('geminiConnectionStatus');
+
+      const key = (input?.value || '').trim();
+      const model = select?.value || 'gemini-2.5-flash';
+
+      if (!key) {
+        showToast('Por favor, informe a chave da API Gemini antes de testar.', 'warn');
+        if (statusBox) {
+          statusBox.style.display = 'flex';
+          statusBox.style.background = 'rgba(239, 68, 68, 0.12)';
+          statusBox.style.border = '1px solid rgba(239, 68, 68, 0.35)';
+          statusBox.style.color = '#F87171';
+          statusBox.innerHTML = '<span>🔴 Chave vazia. Cole sua GEMINI_API_KEY do Google AI Studio.</span>';
+        }
+        return;
+      }
+
+      const origText = btn ? btn.innerHTML : '💾 Salvar e Testar Conexão';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Testando Conexão...';
+      }
+
+      try {
+        const testUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+        const res = await fetch(testUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: 'ping' }] }]
+          })
+        });
+
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => ({}));
+          const errMsg = errBody.error?.message || `HTTP ${res.status}`;
+          throw new Error(errMsg);
+        }
+
+        // Sucesso: Persistir chave e modelo
+        localStorage.setItem('tatico_os_gemini_key', key);
+        localStorage.setItem('tatico_os_gemini_model', model);
+        updateGeminiStatusIndicator();
+
+        if (statusBox) {
+          statusBox.style.display = 'flex';
+          statusBox.style.background = 'rgba(16, 185, 129, 0.16)';
+          statusBox.style.border = '1px solid rgba(16, 185, 129, 0.45)';
+          statusBox.style.color = '#34D399';
+          statusBox.innerHTML = '<span>🟢 Conexão com Google Gemini aprovada com sucesso! Chave salva.</span>';
+        }
+
+        playTacticalBlip(1040, 0.08);
+        showToast('🔑 API Gemini conectada e validada com sucesso!', 'success');
+
+        setTimeout(() => {
+          closeModal('modalGeminiKey');
+        }, 850);
+
+      } catch (err) {
+        console.error('[Gemini Key Test Error]:', err);
+        if (statusBox) {
+          statusBox.style.display = 'flex';
+          statusBox.style.background = 'rgba(239, 68, 68, 0.16)';
+          statusBox.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          statusBox.style.color = '#F87171';
+          statusBox.innerHTML = `<span>🔴 Falha na conexão: ${err.message || 'Chave inválida ou modelo inacessível.'}</span>`;
+        }
+        showToast('Falha na validação da chave Gemini. Verifique os dados.', 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = origText;
+        }
+      }
+    }
+
+    function removeGeminiKey() {
+      if (!confirm('Deseja realmente remover a chave da API Gemini deste navegador?')) return;
+      localStorage.removeItem('tatico_os_gemini_key');
+      const input = document.getElementById('inputGeminiApiKey');
+      if (input) input.value = '';
+      updateGeminiStatusIndicator();
+      showToast('Chave da API Gemini removida com sucesso.', 'info');
+      closeModal('modalGeminiKey');
+    }
+
+    /* ========================================================================
+       MOTOR DE GERAÇÃO RAG: GEMINI API ALIMENTADA POR CTRESB/LEIS
+       ======================================================================== */
     let isGeneratingAIFlashcards = false;
 
-    function generateAIFlashcards(targetSubject, callback) {
+    async function generateAIFlashcards(targetSubject, callback) {
       if (isGeneratingAIFlashcards) return;
       isGeneratingAIFlashcards = true;
 
-      const canonicalKey = findCanonicalSubjectKey(targetSubject);
-      const catalogTemplates = AI_FLASHCARDS_CATALOG[canonicalKey] || AI_FLASHCARDS_CATALOG['Noções de Direito Penal'];
+      const actionBtn = document.getElementById('btnGenerateAIFlashcards');
+      const originalActionText = actionBtn ? actionBtn.innerHTML : '⚡ Gerar Flashcards com IA';
+      if (actionBtn) {
+        actionBtn.disabled = true;
+        actionBtn.innerHTML = '⏳ Lendo ctresb/leis e gerando com Gemini...';
+      }
 
-      setTimeout(() => {
-        const allCards = getStoredAIFlashcards();
-        const existingFronts = new Set(allCards.map(c => c.front.trim().toLowerCase()));
+      const modalBtn = document.getElementById('btnModalGenerateAI');
+      const modalInd = document.getElementById('modalAIGeneratingIndicator');
+      if (modalBtn) modalBtn.disabled = true;
+      if (modalInd) modalInd.style.display = 'flex';
 
-        let addedCount = 0;
-        catalogTemplates.forEach((tmpl, i) => {
-          if (!existingFronts.has(tmpl.front.trim().toLowerCase())) {
-            allCards.unshift({
-              id: 'fc_ai_' + Date.now() + '_' + i,
-              subject: targetSubject,
-              canonicalKey: canonicalKey,
-              color: getSubjectColor(targetSubject),
-              front: tmpl.front,
-              back: tmpl.back,
-              status: 'novo',
-              quiz: tmpl.quiz,
-              createdAt: new Date().toISOString()
-            });
-            addedCount++;
-          }
+      const apiKey = localStorage.getItem('tatico_os_gemini_key');
+      const model = localStorage.getItem('tatico_os_gemini_model') || 'gemini-2.5-flash';
+      const lawSelect = document.getElementById('lawSourceSelect');
+      const explicitLaw = lawSelect ? lawSelect.value : 'auto';
+
+      // Se a chave não estiver configurada no navegador:
+      if (!apiKey || apiKey.trim().length === 0) {
+        showToast('🔑 API Gemini não configurada. Abra a configuração no botão "🔑 API Gemini" para usar o repositório ctresb/leis.', 'warn');
+        openGeminiConfigModal();
+        generateLocalAIFlashcardsFallback(targetSubject, (added) => {
+          if (actionBtn) { actionBtn.disabled = false; actionBtn.innerHTML = originalActionText; }
+          if (modalBtn) modalBtn.disabled = false;
+          if (modalInd) modalInd.style.display = 'none';
+          isGeneratingAIFlashcards = false;
+          if (typeof callback === 'function') callback(added);
         });
+        return;
+      }
 
-        if (addedCount === 0) {
-          const extraVariations = [
-            {
-              front: 'Jurisprudência / Súmula relevante em ' + targetSubject + ': Regra geral vs Exceção.',
-              back: 'Bizu Tático de Prova: Fique atento aos termos "salvo", "vedado" e "improrrogável", pois a banca examinadora costuma inverter a regra com a exceção.',
-              quiz: {
-                statement: 'Em matéria de ' + targetSubject + ', a jurisprudência dominante veda a interpretação extensiva prejudicial ao investigado.',
-                type: 'true_false',
-                options: ['Certo', 'Errado'],
-                correctIndex: 0,
-                comment: 'Gabarito Certo. Veda-se a analogia in malam partem e a interpretação que restrinja garantias fundamentais sem base legal estrita.'
-              }
-            },
-            {
-              front: 'Situação-Problema Operacional de Simulado em ' + targetSubject + ': Tomada de decisão fundamentada.',
-              back: 'Bizu Operacional: Identifique de pronto a capitulação exata e o procedimento legal aplicável antes de qualquer ato decisório.',
-              quiz: {
-                statement: 'Na atuação prática em ' + targetSubject + ', a motivação expressa dos atos da autoridade constitui requisito indeclinável de validade.',
-                type: 'true_false',
-                options: ['Certo', 'Errado'],
-                correctIndex: 0,
-                comment: 'Gabarito Certo. A motivação dos atos administrativos e policiais é requisito indeclinável de validade sob a ordem constitucional.'
-              }
-            }
-          ];
+      try {
+        const sNorm = (targetSubject || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const isLegal = explicitLaw !== 'auto' || 
+          sNorm.includes('direito') || sNorm.includes('penal') || sNorm.includes('constitucional') ||
+          sNorm.includes('administrativo') || sNorm.includes('processual') || sNorm.includes('processo') ||
+          sNorm.includes('legislacao') || sNorm.includes('leis') || sNorm.includes('humano') ||
+          sNorm.includes('estatuto') || sNorm.includes('tributario') || sNorm.includes('civil');
 
-          extraVariations.forEach((tmpl, i) => {
-            allCards.unshift({
-              id: 'fc_ai_synth_' + Date.now() + '_' + i,
-              subject: targetSubject,
-              canonicalKey: canonicalKey,
-              color: getSubjectColor(targetSubject),
-              front: tmpl.front,
-              back: tmpl.back,
-              status: 'novo',
-              quiz: tmpl.quiz,
-              createdAt: new Date().toISOString()
-            });
-            addedCount++;
-          });
+        let lawContext = '';
+        let lawReferenceName = '';
+
+        if (isLegal) {
+          await GitHubLawProvider.init();
+          const resolvedPath = GitHubLawProvider.resolvePathForSubject(targetSubject, explicitLaw);
+          lawReferenceName = GitHubLawProvider.formatPathToLabel(resolvedPath);
+          try {
+            const rawLawText = await GitHubLawProvider.fetchRawLaw(resolvedPath);
+            lawContext = GitHubLawProvider.extractRandomLegalChunk(rawLawText, 14000);
+          } catch (lawErr) {
+            console.warn('[Gemini RAG] Falha ao extrair do ctresb/leis:', lawErr);
+            lawContext = '';
+          }
         }
 
+        let systemPrompt = '';
+        if (lawContext && lawContext.length > 50) {
+          systemPrompt = `Você é um Delegado de Polícia e Professor Especialista em Concursos Públicos das Carreiras Policiais (PF, PRF, PC, PM, Depen).
+Com base ESTRITAMENTE no texto legal fornecido abaixo, extraído em tempo real do repositório oficial de leis (https://github.com/ctresb/leis), elabore exatamente 5 Flashcards Táticos de alto rendimento para a disciplina "${targetSubject}".
+
+FONTE LEGAL REAL (REPOSITÓRIO ctresb/leis - ${lawReferenceName}):
+"""
+${lawContext}
+"""
+
+REQUISITOS OBRIGATÓRIOS:
+1. Retorne estritamente um array JSON contendo 5 objetos sem nenhum markdown antes ou depois.
+2. Cada flashcard deve focar em um artigo/parágrafo do texto legal com alta recorrência em provas policiais (pegadinhas, exceções, prazos, competências, regras sancionatórias, qualificadoras, garantias).
+3. "leiReferencia": Nome da Lei e artigo exato extraído do texto (Exemplo: "CF/88, Art. 5º, XI" ou "${lawReferenceName}, Artigo correspondente").
+4. "frente": Pergunta tática direta ou situação-problema prática baseada no artigo.
+5. "verso": Bizu objetivo + transcrição do trecho-chave do artigo + pegadinha clássica de banca examinadora.
+6. "quiz": Uma assertiva de prova (estilo Cebraspe / Certo ou Errado) baseada diretamente neste artigo, com gabarito e fundamentação direta.
+
+Formato do Schema JSON Obrigatório:
+[
+  {
+    "id": "gerado-no-front",
+    "materia": "${targetSubject}",
+    "leiReferencia": "Nome da Lei e Artigo exato extraído do texto",
+    "frente": "Pergunta tática direta ou situação-problema baseada no artigo",
+    "verso": "Bizu objetivo + transcrição do trecho-chave do artigo + pegadinha clássica de prova",
+    "quiz": {
+      "pergunta": "Assertiva de prova (Certo ou Errado) baseada neste artigo",
+      "respostaCorreta": "Certo",
+      "explicacao": "Fundamentação direta com base no artigo extraído do repositório ctresb/leis"
+    }
+  }
+]`;
+        } else {
+          // Disciplina não-jurídica (Português, RLM, Informática, Estatística, etc.)
+          systemPrompt = `Você é um Professor Especialista em Concursos Públicos das Carreiras Policiais (PF, PRF, PC, PM).
+Para a disciplina "${targetSubject}", elabore exatamente 5 Flashcards Táticos baseados na doutrina e tópicos de mais alta incidência em bancas policiais como Cebraspe, FGV e Vunesp.
+
+REQUISITOS OBRIGATÓRIOS:
+1. Retorne estritamente um array JSON contendo 5 objetos sem markdown envolvente.
+2. Cada flashcard deve abordar conceitos-chave, regras gramaticais/lógicas essenciais e pegadinhas clássicas de prova.
+3. "leiReferencia": Tópico Doutrinário Oficial da Disciplina.
+4. "frente": Pergunta tática direta ou situação-problema prática da matéria.
+5. "verso": Bizu objetivo + regra mnemônica + alerta de pegadinha.
+6. "quiz": Uma assertiva de prova (estilo Cebraspe / Certo ou Errado) com gabarito e fundamentação.
+
+Formato do Schema JSON Obrigatório:
+[
+  {
+    "id": "gerado-no-front",
+    "materia": "${targetSubject}",
+    "leiReferencia": "Tópico Oficial da Disciplina",
+    "frente": "Pergunta tática direta ou situação-problema",
+    "verso": "Bizu objetivo + conceito-chave + pegadinha clássica",
+    "quiz": {
+      "pergunta": "Assertiva de prova (Certo ou Errado)",
+      "respostaCorreta": "Certo",
+      "explicacao": "Fundamentação técnica e justificativa do gabarito"
+    }
+  }
+]`;
+        }
+
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey.trim()}`;
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: systemPrompt }] }],
+            generationConfig: {
+              responseMimeType: 'application/json',
+              temperature: 0.4
+            }
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          const errMsg = errData.error?.message || `Erro HTTP ${response.status}`;
+          throw new Error(errMsg);
+        }
+
+        const data = await response.json();
+        const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!textContent) {
+          throw new Error('A API Gemini não retornou conteúdo válido.');
+        }
+
+        let parsedItems = JSON.parse(textContent);
+        if (!Array.isArray(parsedItems)) {
+          parsedItems = parsedItems.flashcards || parsedItems.cards || Object.values(parsedItems)[0];
+        }
+        if (!Array.isArray(parsedItems)) {
+          parsedItems = [parsedItems];
+        }
+
+        const allCards = getStoredAIFlashcards();
+        const canonicalKey = findCanonicalSubjectKey(targetSubject);
+        const cardColor = getSubjectColor(targetSubject);
+        let addedCount = 0;
+
+        parsedItems.forEach((item, idx) => {
+          if (!item.frente && !item.front) return;
+          const frontText = item.frente || item.front;
+          const backText = item.verso || item.back;
+          const leiRef = item.leiReferencia || (lawReferenceName ? `${lawReferenceName}` : targetSubject);
+
+          const isErrado = String(item.quiz?.respostaCorreta || item.quiz?.gabarito || '').toLowerCase().includes('errado');
+
+          allCards.unshift({
+            id: 'fc_gemini_' + Date.now() + '_' + idx,
+            subject: targetSubject,
+            canonicalKey: canonicalKey,
+            color: cardColor,
+            leiReferencia: leiRef,
+            front: frontText,
+            back: backText,
+            status: 'novo',
+            quiz: {
+              statement: item.quiz?.pergunta || item.quiz?.statement || frontText,
+              pergunta: item.quiz?.pergunta || item.quiz?.statement || frontText,
+              type: 'true_false',
+              options: ['Certo', 'Errado'],
+              correctIndex: isErrado ? 1 : 0,
+              respostaCorreta: isErrado ? 'Errado' : 'Certo',
+              comment: item.quiz?.explicacao || item.quiz?.comment || backText,
+              explicacao: item.quiz?.explicacao || item.quiz?.comment || backText
+            },
+            createdAt: new Date().toISOString()
+          });
+          addedCount++;
+        });
+
         saveStoredAIFlashcards(allCards);
-        isGeneratingAIFlashcards = false;
+
+        // Alimentar automaticamente o banco de perguntas da aba Missões & Tópicos
+        if (typeof initInteractiveQuiz === 'function') {
+          initInteractiveQuiz(currentQuizState.subject || targetSubject);
+        }
 
         playTacticalBlip(1040, 0.08);
-        showToast('⚡ IA gerou ' + addedCount + ' novos Flashcards táticos para: ' + targetSubject + '!', 'success');
+        showToast(`⚡ Gemini gerou ${addedCount} novos Flashcards baseados em ${lawReferenceName || targetSubject}!`, 'success');
 
         renderAIFlashcards(targetSubject);
         if (typeof callback === 'function') callback(addedCount);
-      }, 700);
+
+      } catch (geminiErr) {
+        console.error('[Gemini Generation Error]:', geminiErr);
+        showToast(`⚠️ Erro na API Gemini: ${geminiErr.message}. Carregando acervo local de segurança.`, 'error');
+
+        // Fallback local seguro
+        generateLocalAIFlashcardsFallback(targetSubject, callback);
+      } finally {
+        if (actionBtn) {
+          actionBtn.disabled = false;
+          actionBtn.innerHTML = originalActionText;
+        }
+        if (modalBtn) modalBtn.disabled = false;
+        if (modalInd) modalInd.style.display = 'none';
+        isGeneratingAIFlashcards = false;
+      }
+    }
+
+    function generateLocalAIFlashcardsFallback(targetSubject, callback) {
+      const canonicalKey = findCanonicalSubjectKey(targetSubject);
+      const catalogTemplates = AI_FLASHCARDS_CATALOG[canonicalKey] || AI_FLASHCARDS_CATALOG['Noções de Direito Penal'];
+
+      const allCards = getStoredAIFlashcards();
+      const existingFronts = new Set(allCards.map(c => c.front.trim().toLowerCase()));
+
+      let addedCount = 0;
+      catalogTemplates.forEach((tmpl, i) => {
+        if (!existingFronts.has(tmpl.front.trim().toLowerCase())) {
+          allCards.unshift({
+            id: 'fc_ai_' + Date.now() + '_' + i,
+            subject: targetSubject,
+            canonicalKey: canonicalKey,
+            color: getSubjectColor(targetSubject),
+            leiReferencia: 'Acervo Tático Oficial',
+            front: tmpl.front,
+            back: tmpl.back,
+            status: 'novo',
+            quiz: tmpl.quiz,
+            createdAt: new Date().toISOString()
+          });
+          addedCount++;
+        }
+      });
+
+      if (addedCount === 0) {
+        const extraVariations = [
+          {
+            front: 'Jurisprudência / Súmula relevante em ' + targetSubject + ': Regra geral vs Exceção.',
+            back: 'Bizu Tático de Prova: Fique atento aos termos "salvo", "vedado" e "improrrogável", pois a banca costuma inverter a regra com a exceção.',
+            quiz: {
+              statement: 'Em matéria de ' + targetSubject + ', a jurisprudência dominante veda a interpretação extensiva prejudicial ao investigado.',
+              pergunta: 'Em matéria de ' + targetSubject + ', a jurisprudência dominante veda a interpretação extensiva prejudicial ao investigado.',
+              type: 'true_false',
+              options: ['Certo', 'Errado'],
+              correctIndex: 0,
+              respostaCorreta: 'Certo',
+              comment: 'Gabarito Certo. Veda-se a analogia in malam partem que restrinja direitos sem base legal estrita.',
+              explicacao: 'Gabarito Certo. Veda-se a analogia in malam partem que restrinja direitos sem base legal estrita.'
+            }
+          },
+          {
+            front: 'Situação-Problema Operacional de Simulado em ' + targetSubject + ': Tomada de decisão fundamentada.',
+            back: 'Bizu Operacional: Identifique de pronto a capitulação exata e o procedimento legal aplicável antes de qualquer ato decisório.',
+            quiz: {
+              statement: 'Na atuação prática em ' + targetSubject + ', a motivação expressa dos atos da autoridade constitui requisito indeclinável de validade.',
+              pergunta: 'Na atuação prática em ' + targetSubject + ', a motivação expressa dos atos da autoridade constitui requisito indeclinável de validade.',
+              type: 'true_false',
+              options: ['Certo', 'Errado'],
+              correctIndex: 0,
+              respostaCorreta: 'Certo',
+              comment: 'Gabarito Certo. A motivação dos atos administrativos e policiais é requisito indeclinável de validade sob a ordem constitucional.',
+              explicacao: 'Gabarito Certo. A motivação dos atos administrativos e policiais é requisito indeclinável de validade sob a ordem constitucional.'
+            }
+          }
+        ];
+
+        extraVariations.forEach((tmpl, i) => {
+          allCards.unshift({
+            id: 'fc_ai_synth_' + Date.now() + '_' + i,
+            subject: targetSubject,
+            canonicalKey: canonicalKey,
+            color: getSubjectColor(targetSubject),
+            leiReferencia: 'Simulado Tático',
+            front: tmpl.front,
+            back: tmpl.back,
+            status: 'novo',
+            quiz: tmpl.quiz,
+            createdAt: new Date().toISOString()
+          });
+          addedCount++;
+        });
+      }
+
+      saveStoredAIFlashcards(allCards);
+      if (typeof initInteractiveQuiz === 'function') {
+        initInteractiveQuiz(currentQuizState.subject || targetSubject);
+      }
+      playTacticalBlip(1040, 0.08);
+      renderAIFlashcards(targetSubject);
+      if (typeof callback === 'function') callback(addedCount);
     }
 
     function generateAIFlashcardsAction() {
@@ -5815,6 +6516,17 @@
         updateModalFCViewer();
       });
     }
+
+    // Exportação global no escopo window
+    window.GitHubLawProvider = GitHubLawProvider;
+    window.openGeminiConfigModal = openGeminiConfigModal;
+    window.toggleGeminiKeyVisibility = toggleGeminiKeyVisibility;
+    window.saveAndTestGeminiKey = saveAndTestGeminiKey;
+    window.removeGeminiKey = removeGeminiKey;
+    window.updateGeminiStatusIndicator = updateGeminiStatusIndicator;
+    window.generateAIFlashcards = generateAIFlashcards;
+    window.generateAIFlashcardsAction = generateAIFlashcardsAction;
+    window.triggerGenerateFlashcardsFromModal = triggerGenerateFlashcardsFromModal;
 
     /* ------------------------------------------------------------------------
        RENDERIZAÇÃO DOS FLASHCARDS 3D NA CENTRAL #bizus
@@ -5978,11 +6690,11 @@
         return (
           '<div class="fc-card-wrapper">' +
             '<div class="fc-card-3d" id="card3d_' + c.id + '" style="--fc-subject-color: ' + color + ';" onclick="toggleCard3DFlip(\'' + c.id + '\', this)">' +
-              '<!-- Frente do Card -->' +
               '<div class="fc-card-face fc-card-front">' +
-                '<div class="fc-card-header">' +
+                '<div class="fc-card-header" style="flex-wrap: wrap; gap: 4px;">' +
                   '<span class="fc-tag-badge" title="' + c.subject + '">' + c.subject + '</span>' +
-                  '<span class="fc-status-pill ' + statusClass + '">' + statusLabel + '</span>' +
+                  (c.leiReferencia ? '<span class="fc-tag-badge" style="background: rgba(212, 175, 55, 0.15); color: var(--gold-light); border: 1px solid rgba(212, 175, 55, 0.35); font-size: 8.5px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="' + c.leiReferencia + '">📜 ' + c.leiReferencia + '</span>' : '') +
+                  '<span class="fc-status-pill ' + statusClass + '" style="margin-left: auto;">' + statusLabel + '</span>' +
                 '</div>' +
                 '<div class="fc-card-body-text">' +
                   '<span style="font-size: 10.5px; color: var(--gold-primary); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Conceito-Chave / Artigo</span>' +
@@ -6076,11 +6788,11 @@
             'onclick="' + (isCenter ? '' : 'rotateTiltedCylinderTo(' + i + ')') + '">' +
             
             '<div class="fc-card-3d" id="card3d_cyl_' + c.id + '" style="--fc-subject-color: ' + color + '; height: 100%;" onclick="' + (isCenter ? 'toggleCard3DFlip(\'cyl_' + c.id + '\', this)' : '') + '">' +
-              '<!-- Frente do Card -->' +
               '<div class="fc-card-face fc-card-front">' +
-                '<div class="fc-card-header">' +
+                '<div class="fc-card-header" style="flex-wrap: wrap; gap: 4px;">' +
                   '<span class="fc-tag-badge" title="' + c.subject + '">' + c.subject + '</span>' +
-                  '<span class="fc-status-pill ' + statusClass + '">' + statusLabel + '</span>' +
+                  (c.leiReferencia ? '<span class="fc-tag-badge" style="background: rgba(212, 175, 55, 0.15); color: var(--gold-light); border: 1px solid rgba(212, 175, 55, 0.35); font-size: 8px; max-width: 125px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="' + c.leiReferencia + '">📜 ' + c.leiReferencia + '</span>' : '') +
+                  '<span class="fc-status-pill ' + statusClass + '" style="margin-left: auto;">' + statusLabel + '</span>' +
                 '</div>' +
                 '<div class="fc-card-body-text">' +
                   '<span style="font-size: 10px; color: var(--gold-primary); text-transform: uppercase; font-weight: 700; margin-bottom: 3px;">Conceito-Chave / Artigo</span>' +
@@ -6318,9 +7030,10 @@
             '<div class="fc-card-wrapper" style="min-height: 175px;">' +
               '<div class="fc-card-3d" id="modalCard3d_' + c.id + '" style="--fc-subject-color: ' + color + '; min-height: 175px;" onclick="toggleCard3DFlip(\'' + c.id + '\', this)">' +
                 '<div class="fc-card-face fc-card-front">' +
-                  '<div class="fc-card-header">' +
+                  '<div class="fc-card-header" style="flex-wrap: wrap; gap: 4px;">' +
                     '<span class="fc-tag-badge">' + c.subject + '</span>' +
-                    '<span class="fc-status-pill ' + c.status + '">' + c.status + '</span>' +
+                    (c.leiReferencia ? '<span class="fc-tag-badge" style="background: rgba(212, 175, 55, 0.15); color: var(--gold-light); border: 1px solid rgba(212, 175, 55, 0.35); font-size: 8px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="' + c.leiReferencia + '">📜 ' + c.leiReferencia + '</span>' : '') +
+                    '<span class="fc-status-pill ' + c.status + '" style="margin-left: auto;">' + c.status + '</span>' +
                   '</div>' +
                   '<div class="fc-card-body-text">' +
                     '<p style="margin: 0; font-size: 12px; font-weight: 600; line-height: 1.45;">' + c.front + '</p>' +
@@ -6382,18 +7095,24 @@
 
       const questions = [];
       targetCards.forEach(c => {
-        if (c.quiz && c.quiz.statement && Array.isArray(c.quiz.options)) {
+        const stmt = c.quiz?.statement || c.quiz?.pergunta;
+        if (c.quiz && stmt) {
+          const opts = Array.isArray(c.quiz.options) && c.quiz.options.length > 0 ? c.quiz.options : ['Certo', 'Errado'];
+          let corrIdx = typeof c.quiz.correctIndex === 'number' ? c.quiz.correctIndex : 0;
+          if (c.quiz.respostaCorreta) {
+            corrIdx = String(c.quiz.respostaCorreta).toLowerCase().includes('errado') ? 1 : 0;
+          }
           questions.push({
             id: 'q_' + c.id,
             cardId: c.id,
             subject: c.subject,
             color: c.color || getSubjectColor(c.subject),
-            statement: c.quiz.statement,
-            type: c.quiz.type || 'multiple_choice',
-            options: c.quiz.options,
-            correctIndex: c.quiz.correctIndex,
+            statement: stmt,
+            type: c.quiz.type || 'true_false',
+            options: opts,
+            correctIndex: corrIdx,
             bizuOriginal: c.back,
-            comment: c.quiz.comment || ('Fundamentação Tática (Bizu Original): ' + c.back)
+            comment: c.quiz.explicacao || c.quiz.comment || ('Fundamentação Tática (Bizu Original): ' + c.back)
           });
         } else {
           questions.push({
@@ -6842,6 +7561,14 @@
       const opts = subjects.map(s => '<option value="' + s + '">' + s + '</option>').join('');
       if (taskSelect) taskSelect.innerHTML = opts;
       if (noteSelect) noteSelect.innerHTML = opts;
+
+      // Sincroniza seletor de leis do ctresb/leis e status da chave Gemini
+      if (typeof GitHubLawProvider !== 'undefined' && GitHubLawProvider.populateLawDropdown) {
+        GitHubLawProvider.populateLawDropdown();
+      }
+      if (typeof updateGeminiStatusIndicator === 'function') {
+        updateGeminiStatusIndicator();
+      }
     }
 
     /* ========================================================================
@@ -9348,6 +10075,14 @@
       initDraggableWidgets();
       updateClock();
       setInterval(updateClock, 1000);
+
+      // 3. Inicializar repositório ctresb/leis e status da API Gemini
+      try {
+        GitHubLawProvider.init();
+        updateGeminiStatusIndicator();
+      } catch(e) {
+        console.warn('Erro ao inicializar provedor de leis/Gemini:', e);
+      }
 
       // Interatividade nos menus de navegação com Transição Tilted 3D
       document.querySelectorAll('.nav-list a').forEach(link => {
