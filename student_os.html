@@ -3665,20 +3665,19 @@
        COLUNA 1: SIDEBAR ESQUERDA (.vade-sidebar, 280px fixos e independentes)
        ------------------------------------------------------------------------ */
     .vade-sidebar,
+    .vade-sidebar,
     .vm-sidebar {
       grid-column: 1 / 2 !important;
       width: 280px !important;
       min-width: 280px !important;
       max-width: 280px !important;
       height: 100vh !important;
-      overflow-y: auto !important;
-      overflow-x: hidden !important;
+      overflow: hidden !important;
       background: #0B0E14 !important;
       border-right: 1px solid rgba(212, 175, 55, 0.22) !important;
       padding: 20px !important;
       display: flex !important;
       flex-direction: column !important;
-      justify-content: space-between !important;
       box-sizing: border-box !important;
       box-shadow: 4px 0 28px rgba(0, 0, 0, 0.7) !important;
       position: relative !important;
@@ -3692,6 +3691,7 @@
       overflow-y: auto;
       padding-right: 4px;
       flex: 1;
+      margin-bottom: 14px;
     }
 
     /* Perfil do Agente & Brasão PCMG */
@@ -3883,7 +3883,8 @@
       flex-direction: column;
       gap: 8px;
       box-sizing: border-box;
-      margin-top: auto;
+      margin-top: auto !important;
+      flex-shrink: 0 !important;
       box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
     }
 
@@ -3944,7 +3945,7 @@
     .vm-folders-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 22px;
+      gap: 24px;
       width: 100%;
     }
 
@@ -4522,9 +4523,9 @@
       background: linear-gradient(145deg, rgba(20, 26, 38, 0.95), rgba(12, 16, 24, 0.98));
       border: 1px solid rgba(212, 175, 55, 0.25);
       border-radius: 14px;
-      padding: 20px;
+      padding: 16px 18px;
       display: flex;
-      gap: 18px;
+      gap: 16px;
       align-items: center;
       position: relative;
       box-sizing: border-box;
@@ -4759,7 +4760,7 @@
 
     .vm-ranking-item {
       background: rgba(18, 23, 34, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(212, 175, 55, 0.14);
       border-radius: 8px;
       padding: 10px 14px;
       display: flex;
@@ -4769,10 +4770,7 @@
       cursor: pointer;
       transition: all 0.2s ease;
       box-sizing: border-box;
-    }
-
-    .vm-ranking-item:not(:last-child) {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 6px;
     }
 
     .vm-ranking-item:hover {
@@ -5005,6 +5003,172 @@
       font-weight: 800 !important;
     }
 
+  
+    /* ========================================================================
+       RESUMO OPERACIONAL DO DIA (4 INDICADORES HORIZONTAIS)
+       ======================================================================== */
+    .daily-operational-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 18px;
+      width: 100%;
+    }
+
+    @media (max-width: 1100px) {
+      .daily-operational-summary {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 600px) {
+      .daily-operational-summary {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .daily-summary-card {
+      background: linear-gradient(145deg, rgba(17, 24, 39, 0.9), rgba(11, 14, 20, 0.95));
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+      transition: all 0.25s ease;
+      box-sizing: border-box;
+    }
+
+    .daily-summary-card:hover {
+      border-color: rgba(212, 175, 55, 0.55);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 16px rgba(212, 175, 55, 0.12);
+    }
+
+    .summary-card-icon {
+      width: 42px;
+      height: 42px;
+      min-width: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      flex-shrink: 0;
+    }
+
+    .summary-card-data {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .summary-card-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: #F8FAFC;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .summary-card-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .summary-progress-track {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      margin: 3px 0;
+      overflow: hidden;
+    }
+
+    .summary-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #D4AF37, #10B981);
+      border-radius: 2px;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ========================================================================
+       WORKSPACE CENTRAL UNIFICADO (SWAPPABLE TOOL CONTAINER)
+       ======================================================================== */
+    .student-os-active-workspace {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .os-workspace-header {
+      background: rgba(14, 18, 28, 0.7);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 12px;
+      padding: 6px 8px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .os-tool-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .os-tool-tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .os-tool-tab-btn:hover {
+      background: rgba(212, 175, 55, 0.08);
+      color: #FFF;
+      border-color: rgba(212, 175, 55, 0.25);
+    }
+
+    .os-tool-tab-btn.active {
+      background: rgba(212, 175, 55, 0.16);
+      color: var(--gold-light);
+      border-color: rgba(212, 175, 55, 0.45);
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .os-tool-tab-btn .tab-icon {
+      font-size: 13px;
+    }
+
+    .os-tool-panel {
+      animation: toolFadeIn 0.25s ease forwards;
+    }
+
+    @keyframes toolFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
   </style>
 </head>
 <body>
@@ -5049,109 +5213,68 @@
            ==================================================================== -->
       <aside class="left-sidebar">
 
-        <!-- Ações Rápidas -->
-        <section class="section-box gold-accent">
+        <!-- Navegação Operacional Unificada -->
+        <section class="section-box gold-accent" style="margin-bottom: 14px;">
           <div class="section-title">
-            <span>Ações Rápidas</span>
-            <span style="font-size: 10px; color: var(--gold-primary);">● Operacional</span>
+            <span>Navegação Operacional</span>
+            <span style="font-size: 10px; color: var(--gold-primary);">● TÁTICO</span>
           </div>
-          <div class="quick-actions-list">
-            <button class="btn-quick-action" onclick="openVadeMecumView()">
-              <span class="plus-icon">⚖️</span> Vade Mecum • Leis
-            </button>
+          <ul class="nav-list" style="gap: 6px;">
+            <li class="nav-item">
+              <a href="#vademecum" onclick="event.preventDefault(); openVadeMecumView();" title="Biblioteca de Leis • Vade Mecum">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <span>Vade Mecum • Leis</span>
+              </a>
+            </li>
+            <li class="nav-item active" id="navItem_cronograma">
+              <a href="#cronograma" onclick="event.preventDefault(); switchStudentOSTool('cronograma');" title="Grade Tática Semanal e Turnos">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <span>Grade Tática Semanal</span>
+              </a>
+            </li>
+            <li class="nav-item" id="navItem_bizus">
+              <a href="#bizus" onclick="event.preventDefault(); switchStudentOSTool('bizus');" title="Flashcards Táticos gerados por IA">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                <span>Flashcards por IA</span>
+              </a>
+            </li>
+            <li class="nav-item" id="navItem_missoes">
+              <a href="#missoes" onclick="event.preventDefault(); switchStudentOSTool('missoes');" title="Treino Tático de Mini-Perguntas">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                <span>Treino de Mini-Perguntas</span>
+              </a>
+            </li>
+            <li class="nav-item" id="navItem_simulados">
+              <a href="#simulados" onclick="event.preventDefault(); switchStudentOSTool('simulados');" title="Metas e Simulados do Concurso">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>Simulados & Metas</span>
+              </a>
+            </li>
+            <li class="nav-item" id="navItem_revisoes">
+              <a href="#revisoes" onclick="event.preventDefault(); switchStudentOSTool('revisoes');" title="Ciclo de Revisões Espaçadas">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                <span>Ciclo de Revisões (24h/7d)</span>
+              </a>
+            </li>
+          </ul>
+        </section>
 
-            <button class="btn-quick-action" onclick="openModal('modalAddAssessment')">
-              <span class="plus-icon">+</span> Novo Simulado / Meta
-            </button>
-            <button class="btn-quick-action" onclick="openQuizTrainingModal()">
-              <span class="plus-icon">⚡</span> Treino de Mini-Perguntas
-            </button>
-            <button class="btn-quick-action" onclick="toggleHabitToday()">
-              <span class="plus-icon">+</span> Registrar Hábito do Dia
-            </button>
-            <button class="btn-quick-action" onclick="openStudyHoursQuickModal()">
+        <!-- Registros Rápidos (Ações Imediatas) -->
+        <section class="section-box" style="margin-bottom: 14px;">
+          <div class="section-title">
+            <span>Registros Rápidos</span>
+          </div>
+          <div class="quick-actions-list" style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="btn-quick-action" onclick="openStudyHoursQuickModal()" style="padding: 9px 12px; font-size: 12px;">
               <span class="plus-icon">+</span> Registrar Horas de Estudo
             </button>
-            <button class="btn-quick-action" onclick="openAIFlashcardsSection(event)">
-              <span class="plus-icon">⚡</span> Flashcards por IA
+            <button class="btn-quick-action" onclick="openModal('modalAddAssessment')" style="padding: 9px 12px; font-size: 12px;">
+              <span class="plus-icon">+</span> Novo Simulado / Meta
+            </button>
+            <button class="btn-quick-action" onclick="toggleHabitToday()" style="padding: 9px 12px; font-size: 12px;">
+              <span class="plus-icon">+</span> Registrar Hábito do Dia
             </button>
           </div>
-        </section>
-
-        <!-- Gestão Operacional -->
-        <section class="section-box">
-          <div class="section-title">
-            <span>Gestão Operacional</span>
-          </div>
-          <ul class="nav-list">
-            <li class="nav-item">
-              <a href="#vademecum" onclick="event.preventDefault(); openVadeMecumView();">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                Biblioteca de Leis • Vade Mecum
-              </a>
-            </li>
-
-            <li class="nav-item active">
-              <a href="#disciplinas">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                Disciplinas do Edital
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#cronograma">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                Grade Tática Semanal
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#simulados">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                Simulados & Metas
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#missoes" onclick="openQuizTrainingSection(event)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-                Missões & Tópicos
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#bizus" onclick="openAIFlashcardsSection(event)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                Bizus & Notas
-              </a>
-            </li>
-          </ul>
-        </section>
-
-        <!-- Diretório Tático -->
-        <section class="section-box">
-          <div class="section-title">
-            <span>Diretório Tático</span>
-          </div>
-          <ul class="nav-list">
-            <li class="nav-item">
-              <a href="#revisoes" onclick="openFlashcardDeck('Direito Penal')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                Ciclo de Revisões (24h/7d)
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#pomodoro">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                Zona de Foco Operacional
-              </a>
-            </li>
-            <li class="nav-item" id="sidebarUserSessionItem" style="display: none;">
-              <a href="javascript:void(0)" onclick="logoutTactical()" style="color: #f87171; display: flex; align-items: center; justify-content: space-between;" title="Encerrar Sessão">
-                <span style="display: flex; align-items: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                  <span>Encerrar Sessão</span>
-                </span>
-                <span id="sidebarUserEmail" style="font-size: 10px; opacity: 0.6; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
-              </a>
-            </li>
-          </ul>
         </section>
 
         <!-- Rastreador de Foco / Ambient Player -->
@@ -5222,42 +5345,79 @@
            ==================================================================== -->
       <section class="center-content">
 
-        <!-- Painel de Observabilidade Tática: Blocos Reorganizáveis -->
-        <div class="draggable-dashboard-hint" id="dashboardDraggableHint">
-          <div class="hint-left">
-            <span class="live-dot-ping"></span>
-            <span>Arraste e reorganize os blocos táticos para personalizar o layout do seu painel operacional.</span>
+        <!-- Resumo Operacional do Dia (4 Indicadores Minimalistas) -->
+        <div class="daily-operational-summary" id="dailyOperationalSummary">
+          <div class="daily-summary-card">
+            <div class="summary-card-icon" style="background: rgba(212, 175, 55, 0.12); color: var(--gold-light);">⏱️</div>
+            <div class="summary-card-data">
+              <span class="summary-card-value" id="summaryStatCycles">0</span>
+              <span class="summary-card-label">Ciclos Concluídos Hoje</span>
+            </div>
           </div>
-          <button type="button" class="btn-restore-layout" onclick="restoreDefaultDashboardLayout()" title="Restaurar posições originais dos blocos">
-            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-            <span>Restaurar Ordem</span>
-          </button>
-        </div>
-
-        <!-- 1. Disciplinas do Edital -->
-        <div class="tactical-draggable-widget" id="blockDisciplinas" data-widget-id="blockDisciplinas">
-          <div id="disciplinas">
-            <div class="section-title" style="margin-bottom: 14px;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <div class="widget-drag-handle" title="Arraste para reposicionar o bloco de Disciplinas" aria-label="Arrastar bloco">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
-                </div>
-                <span>Disciplinas do Concurso</span>
-                <span class="live-telemetry-badge" title="Matérias ativas e sincronizadas"><span class="live-dot-ping"></span><span>LIVE</span></span>
+          <div class="daily-summary-card">
+            <div class="summary-card-icon" style="background: rgba(168, 85, 247, 0.12); color: #C084FC;">⚡</div>
+            <div class="summary-card-data">
+              <span class="summary-card-value" id="summaryStatQuestions">0</span>
+              <span class="summary-card-label">Questões / Mini-Perguntas</span>
+            </div>
+          </div>
+          <div class="daily-summary-card">
+            <div class="summary-card-icon" style="background: rgba(59, 130, 246, 0.12); color: #60A5FA;">🗂️</div>
+            <div class="summary-card-data">
+              <span class="summary-card-value" id="summaryStatFlashcards">0</span>
+              <span class="summary-card-label">Flashcards Revisados</span>
+            </div>
+          </div>
+          <div class="daily-summary-card">
+            <div class="summary-card-icon" style="background: rgba(16, 185, 129, 0.12); color: #34D399;">📊</div>
+            <div class="summary-card-data">
+              <div style="display: flex; align-items: baseline; justify-content: space-between; width: 100%;">
+                <span class="summary-card-value" id="summaryStatProgress">0%</span>
+                <span style="font-size: 10px; color: var(--gold-light); font-weight: 700;">Edital</span>
               </div>
-              <span style="font-size: 11px; color: var(--text-secondary);" id="totalDisciplinasBadge">6 Disciplinas no Edital</span>
-            </div>
-            <div class="classes-grid" id="concursoClassesGrid">
-              <!-- Preenchido dinamicamente via JavaScript -->
+              <div class="summary-progress-track">
+                <div class="summary-progress-bar" id="summaryStatProgressBar" style="width: 0%;"></div>
+              </div>
+              <span class="summary-card-label">Progresso Geral</span>
             </div>
           </div>
         </div>
 
-        <!-- 2. Sub-grid de 2 Colunas: Grade Tática & Simulados/Metas -->
-        <div class="tactical-draggable-widget center-split-grid" id="blockCenterSplit" data-widget-id="blockCenterSplit">
+        <!-- Contêiner Amplo da Ferramenta Operacional Ativa -->
+        <div class="student-os-active-workspace" id="studentOsActiveWorkspace">
           
-          <!-- Grade Tática Semanal -->
-          <div class="timetable-card tactical-sub-widget" id="cronograma" data-subwidget-id="cronograma">
+          <!-- Barra de Abas da Ferramenta Central -->
+          <div class="os-workspace-header">
+            <div class="os-tool-tabs">
+              <button type="button" class="os-tool-tab-btn active" data-tool="cronograma" onclick="switchStudentOSTool('cronograma')">
+                <span class="tab-icon">📅</span>
+                <span>Cronograma Semanal</span>
+              </button>
+              <button type="button" class="os-tool-tab-btn" data-tool="bizus" onclick="switchStudentOSTool('bizus')">
+                <span class="tab-icon">⚡</span>
+                <span>Flashcards por IA</span>
+              </button>
+              <button type="button" class="os-tool-tab-btn" data-tool="missoes" onclick="switchStudentOSTool('missoes')">
+                <span class="tab-icon">🎯</span>
+                <span>Mini-Perguntas</span>
+              </button>
+              <button type="button" class="os-tool-tab-btn" data-tool="simulados" onclick="switchStudentOSTool('simulados')">
+                <span class="tab-icon">🏆</span>
+                <span>Simulados & Metas</span>
+              </button>
+              <button type="button" class="os-tool-tab-btn" data-tool="revisoes" onclick="switchStudentOSTool('revisoes')">
+                <span class="tab-icon">🔄</span>
+                <span>Ciclo de Revisões</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Painéis de Ferramentas (Exibe apenas a ferramenta ativa) -->
+          <div class="os-tool-panels-wrapper">
+            
+            <!-- Painel 1: Grade Tática Semanal (Ativo por Padrão) -->
+            <div class="os-tool-panel" id="toolPanel_cronograma" style="display: block;">
+              <div class="timetable-card tactical-sub-widget" id="cronograma" data-subwidget-id="cronograma">
             <div class="section-title">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <div class="widget-drag-handle" title="Arraste para reposicionar Grade Tática" aria-label="Arrastar">
@@ -5287,96 +5447,11 @@
               </table>
             </div>
           </div>
+            </div>
 
-          <!-- Próximas Provas & Simulados -->
-          <div class="assessments-card tactical-sub-widget" id="simulados" data-subwidget-id="simulados">
-            <div class="section-title">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <div class="widget-drag-handle" title="Arraste para reposicionar Metas" aria-label="Arrastar">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
-                </div>
-                <span>Próximas Provas & Metas</span>
-                <span class="live-telemetry-badge warn"><span class="live-dot-ping"></span><span>ALVO</span></span>
-              </div>
-              <button class="btn-quick-action" style="padding: 3px 8px; font-size: 10.5px; width: auto;" onclick="openAddAssessmentModal()" title="Adicionar nova meta ou simulado">
-                + Meta
-              </button>
-            </div>
-            <div class="assessments-grid" id="assessmentsContainer">
-              <!-- Gerado via JavaScript -->
-            </div>
-          </div>
-
-        </div>
-
-        <!-- 3. Gerenciador de Missões: Treinamento de Mini-Perguntas Interativas -->
-        <div class="tactical-draggable-widget tasks-card" id="missoes" data-widget-id="missoes">
-          <div class="section-title">
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-              <div class="widget-drag-handle" title="Arraste para reposicionar Missões" aria-label="Arrastar">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
-              </div>
-              <button type="button" class="btn-tactical-back" onclick="navigateBackToDashboard(event)" title="Voltar para a tela anterior do Painel">
-                <svg class="back-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="19" y1="12" x2="5" y2="12"></line>
-                  <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-                <span>Voltar ao Painel</span>
-              </button>
-              <span style="display: flex; align-items: center; gap: 6px;">
-                <svg class="tactical-icon" style="color: var(--gold-primary); width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-                Missões Táticas • Mini-Perguntas
-              </span>
-              <span class="live-telemetry-badge purple" title="Reator Tático Interativo"><span class="live-dot-ping"></span><span>REATOR</span></span>
-              <div class="quiz-scoreboard-box" id="quizMainScoreboard">
-                <span class="quiz-score-pill correct" id="quizScoreCorrect">✓ 0 Acertos</span>
-                <span class="quiz-score-pill wrong" id="quizScoreWrong">✕ 0 Erros</span>
-                <span class="quiz-score-pill rate" id="quizScoreAccuracy">0%</span>
-              </div>
-            </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <select id="quizSubjectFilterSelect" class="form-control" style="padding: 3px 8px; font-size: 11px; height: 28px; width: auto; max-width: 190px;" onchange="onQuizFilterChanged(this.value)">
-                <!-- Opções dinâmicas de matérias cadastradas + Missão Geral -->
-              </select>
-              <button class="btn-quick-action" style="padding: 4px 10px; font-size: 11px; width: auto;" onclick="openQuizTrainingModal()" title="Abrir modo imersivo de treinamento">
-                ⛶ Modo Foco
-              </button>
-            </div>
-          </div>
-          
-          <!-- Contêiner do Quiz Interativo Rápido -->
-          <div id="interactiveQuizContainer" style="min-height: 190px;">
-            <!-- Renderizado dinamicamente via JavaScript -->
-          </div>
-        </div>
-
-        <!-- 4. Sub-grid Inferior: Ciclo de Revisões & Bizus Táticos -->
-        <div class="tactical-draggable-widget bottom-split-grid" id="blockBottomSplit" data-widget-id="blockBottomSplit">
-          
-          <!-- Flashcards & Ciclo de Revisões -->
-          <div class="flashcards-card tactical-sub-widget" id="revisoes" data-subwidget-id="revisoes">
-            <div class="section-title">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <div class="widget-drag-handle" title="Arraste para reposicionar Ciclo de Revisões" aria-label="Arrastar">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
-                </div>
-                <span>Ciclo de Revisões Espaçadas</span>
-                <span class="live-telemetry-badge warn"><span class="live-dot-ping"></span><span>SPACED</span></span>
-              </div>
-            </div>
-            <div class="flashcards-tabs">
-              <button class="fc-tab-btn active" onclick="switchFlashcardTab('hoje', this)">Hoje (Pendentes)</button>
-              <button class="fc-tab-btn" onclick="switchFlashcardTab('7d', this)">7 Dias</button>
-              <button class="fc-tab-btn" onclick="switchFlashcardTab('30d', this)">30 Dias</button>
-              <button class="fc-tab-btn" onclick="switchFlashcardTab('todos', this)">Todos os Bizus</button>
-            </div>
-            <div class="flashcards-list" id="flashcardsListContainer">
-              <!-- Gerado via JavaScript -->
-            </div>
-          </div>
-
-          <!-- Flashcards Táticos por IA (Central de Bizus Táticos) -->
-          <div class="notes-card tactical-sub-widget" id="bizus" data-subwidget-id="bizus">
+            <!-- Painel 2: Flashcards por IA -->
+            <div class="os-tool-panel" id="toolPanel_bizus" style="display: none;">
+              <div class="notes-card tactical-sub-widget" id="bizus" data-subwidget-id="bizus">
             <div class="section-title">
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                 <div class="widget-drag-handle" title="Arraste para reposicionar Flashcards por IA" aria-label="Arrastar">
@@ -5465,11 +5540,108 @@
             <div id="stickyNotesContainer" style="display: none;"></div>
           </div>
 
+        
+            </div>
+
+            <!-- Painel 3: Treino de Mini-Perguntas -->
+            <div class="os-tool-panel" id="toolPanel_missoes" style="display: none;">
+              <div class="tactical-draggable-widget tasks-card" id="missoes" data-widget-id="missoes">
+          <div class="section-title">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <div class="widget-drag-handle" title="Arraste para reposicionar Missões" aria-label="Arrastar">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+              </div>
+              <button type="button" class="btn-tactical-back" onclick="navigateBackToDashboard(event)" title="Voltar para a tela anterior do Painel">
+                <svg class="back-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>Voltar ao Painel</span>
+              </button>
+              <span style="display: flex; align-items: center; gap: 6px;">
+                <svg class="tactical-icon" style="color: var(--gold-primary); width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                Missões Táticas • Mini-Perguntas
+              </span>
+              <span class="live-telemetry-badge purple" title="Reator Tático Interativo"><span class="live-dot-ping"></span><span>REATOR</span></span>
+              <div class="quiz-scoreboard-box" id="quizMainScoreboard">
+                <span class="quiz-score-pill correct" id="quizScoreCorrect">✓ 0 Acertos</span>
+                <span class="quiz-score-pill wrong" id="quizScoreWrong">✕ 0 Erros</span>
+                <span class="quiz-score-pill rate" id="quizScoreAccuracy">0%</span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <select id="quizSubjectFilterSelect" class="form-control" style="padding: 3px 8px; font-size: 11px; height: 28px; width: auto; max-width: 190px;" onchange="onQuizFilterChanged(this.value)">
+                <!-- Opções dinâmicas de matérias cadastradas + Missão Geral -->
+              </select>
+              <button class="btn-quick-action" style="padding: 4px 10px; font-size: 11px; width: auto;" onclick="openQuizTrainingModal()" title="Abrir modo imersivo de treinamento">
+                ⛶ Modo Foco
+              </button>
+            </div>
+          </div>
+          
+          <!-- Contêiner do Quiz Interativo Rápido -->
+          <div id="interactiveQuizContainer" style="min-height: 190px;">
+            <!-- Renderizado dinamicamente via JavaScript -->
+          </div>
         </div>
 
-      </section>
+        
+            </div>
 
-      <!-- ====================================================================
+            <!-- Painel 4: Simulados & Metas -->
+            <div class="os-tool-panel" id="toolPanel_simulados" style="display: none;">
+              <div class="assessments-card tactical-sub-widget" id="simulados" data-subwidget-id="simulados">
+            <div class="section-title">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="widget-drag-handle" title="Arraste para reposicionar Metas" aria-label="Arrastar">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+                </div>
+                <span>Próximas Provas & Metas</span>
+                <span class="live-telemetry-badge warn"><span class="live-dot-ping"></span><span>ALVO</span></span>
+              </div>
+              <button class="btn-quick-action" style="padding: 3px 8px; font-size: 10.5px; width: auto;" onclick="openAddAssessmentModal()" title="Adicionar nova meta ou simulado">
+                + Meta
+              </button>
+            </div>
+            <div class="assessments-grid" id="assessmentsContainer">
+              <!-- Gerado via JavaScript -->
+            </div>
+          </div>
+
+        
+            </div>
+
+            <!-- Painel 5: Ciclo de Revisões -->
+            <div class="os-tool-panel" id="toolPanel_revisoes" style="display: none;">
+              <div class="flashcards-card tactical-sub-widget" id="revisoes" data-subwidget-id="revisoes">
+            <div class="section-title">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="widget-drag-handle" title="Arraste para reposicionar Ciclo de Revisões" aria-label="Arrastar">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
+                </div>
+                <span>Ciclo de Revisões Espaçadas</span>
+                <span class="live-telemetry-badge warn"><span class="live-dot-ping"></span><span>SPACED</span></span>
+              </div>
+            </div>
+            <div class="flashcards-tabs">
+              <button class="fc-tab-btn active" onclick="switchFlashcardTab('hoje', this)">Hoje (Pendentes)</button>
+              <button class="fc-tab-btn" onclick="switchFlashcardTab('7d', this)">7 Dias</button>
+              <button class="fc-tab-btn" onclick="switchFlashcardTab('30d', this)">30 Dias</button>
+              <button class="fc-tab-btn" onclick="switchFlashcardTab('todos', this)">Todos os Bizus</button>
+            </div>
+            <div class="flashcards-list" id="flashcardsListContainer">
+              <!-- Gerado via JavaScript -->
+            </div>
+          </div>
+
+          
+            </div>
+
+          </div>
+
+        </div>
+
+      </section><!-- ====================================================================
            COLUNA DIREITA: RELÓGIO DUAL, POMODORO OPERACIONAL & MÉTRICAS
            ==================================================================== -->
       <aside class="right-sidebar">
@@ -5670,45 +5842,7 @@
             </a>
           </div>
 
-          <!-- Seção Coleções Táticas -->
-          <div class="vm-sidebar-section">
-            <div class="vm-sidebar-heading">
-              <span>Coleções Táticas</span>
-              <span style="font-size: 10px;">MAIS LIDAS</span>
-            </div>
-            <div class="vm-collection-item" onclick="VadeMecumEngine.openLawReader('constituicao.md')">
-              <div class="vm-collection-mini-cover" style="border-left-color: #3B82F6;">CF</div>
-              <div style="min-width: 0;">
-                <div style="font-size: 11.5px; font-weight: 700; color: #FFF;">CF/88</div>
-                <div style="font-size: 10px; color: var(--text-muted);">Art. 5º e 144</div>
-              </div>
-            </div>
-            <div class="vm-collection-item" onclick="VadeMecumEngine.openLawReader('codigo-penal')">
-              <div class="vm-collection-mini-cover" style="border-left-color: #EF4444;">CP</div>
-              <div style="min-width: 0;">
-                <div style="font-size: 11.5px; font-weight: 700; color: #FFF;">Código Penal</div>
-                <div style="font-size: 10px; color: var(--text-muted);">Dec-Lei 2.848/40</div>
-              </div>
-            </div>
-            <div class="vm-collection-item" onclick="VadeMecumEngine.openLawReader('codigo-processo-penal')">
-              <div class="vm-collection-mini-cover" style="border-left-color: #10B981;">CPP</div>
-              <div style="min-width: 0;">
-                <div style="font-size: 11.5px; font-weight: 700; color: #FFF;">Processo Penal</div>
-                <div style="font-size: 10px; color: var(--text-muted);">Dec-Lei 3.689/41</div>
-              </div>
-            </div>
-            <div class="vm-collection-item" onclick="VadeMecumEngine.openLawReader('lei-de-drogas')">
-              <div class="vm-collection-mini-cover" style="border-left-color: #8B5CF6;">11K</div>
-              <div style="min-width: 0;">
-                <div style="font-size: 11.5px; font-weight: 700; color: #FFF;">Lei de Drogas</div>
-                <div style="font-size: 10px; color: var(--text-muted);">Lei 11.343/06</div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Rodapé da Sidebar: Mini-Player de Leitura -->
+          <!-- Rodapé da Sidebar: Mini-Player de Leitura -->
         <div class="vm-reading-player">
           <div class="vm-reading-player-header">
             <span style="font-size: 10px; font-weight: 800; color: var(--gold-primary); text-transform: uppercase;">
@@ -8812,24 +8946,118 @@ Formato do Schema JSON Obrigatório:
     }
 
     // Ação do Botão Tático "← Voltar ao Painel"
+    
+    /* ========================================================================
+       GERENCIAMENTO DO WORKSPACE CENTRAL DO STUDENT OS & RESUMO OPERACIONAL
+       ======================================================================== */
+    function switchStudentOSTool(toolId) {
+      const validTools = ['cronograma', 'bizus', 'missoes', 'simulados', 'revisoes'];
+      if (!validTools.includes(toolId)) toolId = 'cronograma';
+
+      // 1. Atualizar abas no topo do workspace central
+      document.querySelectorAll('.os-tool-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tool === toolId);
+      });
+
+      // 2. Atualizar seleção no menu lateral esquerdo
+      document.querySelectorAll('.left-sidebar .nav-item').forEach(item => {
+        const link = item.querySelector('a');
+        const href = link?.getAttribute('href')?.replace('#', '') || '';
+        const onclickStr = link?.getAttribute('onclick') || '';
+        if (href === toolId || onclickStr.includes("'" + toolId + "'")) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+
+      // 3. Exibir apenas o painel correspondente na área central
+      validTools.forEach(t => {
+        const panel = document.getElementById('toolPanel_' + t);
+        if (panel) {
+          if (t === toolId) {
+            panel.style.display = 'block';
+            panel.classList.add('active');
+          } else {
+            panel.style.display = 'none';
+            panel.classList.remove('active');
+          }
+        }
+      });
+
+      // 4. Executar rotinas específicas de renderização da ferramenta
+      if (toolId === 'bizus' && typeof renderAIFlashcards === 'function') {
+        renderAIFlashcards();
+      } else if (toolId === 'missoes') {
+        if (typeof initInteractiveQuiz === 'function') initInteractiveQuiz();
+      }
+
+      // 5. Atualizar os indicadores do resumo do dia
+      updateOperationalDailySummary();
+
+      // 6. Prevenção rígida de deslocamento no scroll horizontal
+      window.scrollTo({ left: 0, top: window.scrollY, behavior: 'instant' });
+    }
+
+    function updateOperationalDailySummary() {
+      // Indicador 1: Ciclos de Pomodoro concluídos hoje
+      let completedCycles = 0;
+      try {
+        const rawCycles = localStorage.getItem('tactical_pomodoro_completed_today') || localStorage.getItem('pomodoroCyclesToday');
+        if (rawCycles) completedCycles = parseInt(rawCycles, 10) || 0;
+      } catch (e) {}
+      const elCycles = document.getElementById('summaryStatCycles');
+      if (elCycles) elCycles.innerText = completedCycles;
+
+      // Indicador 2: Questões / Mini-Perguntas respondidas
+      let totalQuestions = 0;
+      try {
+        const savedScore = localStorage.getItem('tactical_quiz_score');
+        if (savedScore) {
+          const parsed = JSON.parse(savedScore);
+          totalQuestions = (parsed.correct || 0) + (parsed.wrong || 0);
+        } else if (typeof currentQuizState !== 'undefined' && currentQuizState) {
+          totalQuestions = (currentQuizState.correct || 0) + (currentQuizState.wrong || 0);
+        }
+      } catch (e) {}
+      const elQuestions = document.getElementById('summaryStatQuestions');
+      if (elQuestions) elQuestions.innerText = totalQuestions;
+
+      // Indicador 3: Flashcards de IA no acervo
+      let totalCards = 0;
+      try {
+        const cards = typeof getStoredAIFlashcards === 'function' ? getStoredAIFlashcards() : [];
+        totalCards = cards.length;
+      } catch (e) {}
+      const elCards = document.getElementById('summaryStatFlashcards');
+      if (elCards) elCards.innerText = totalCards;
+
+      // Indicador 4: Progresso geral do edital
+      let avgProgress = 0;
+      try {
+        const materias = typeof getConfiguredMaterias === 'function' ? getConfiguredMaterias() : [];
+        if (materias.length > 0) {
+          let sum = 0;
+          materias.forEach(m => {
+            const total = Array.isArray(m.topicos) ? m.topicos.length : 0;
+            if (total > 0) {
+              const done = m.topicos.filter(t => t && (t.concluido || t.status === 'concluido' || t.status === 'done')).length;
+              sum += (done / total);
+            }
+          });
+          avgProgress = Math.round((sum / materias.length) * 100);
+        }
+      } catch (e) {}
+      const elProgText = document.getElementById('summaryStatProgress');
+      const elProgBar = document.getElementById('summaryStatProgressBar');
+      if (elProgText) elProgText.innerText = avgProgress + '%';
+      if (elProgBar) elProgBar.style.width = Math.min(100, avgProgress) + '%';
+    }
+
     function navigateBackToDashboard(event) {
       if (event) event.preventDefault();
-
-      // Trava preventiva de scroll horizontal
+      switchStudentOSTool('cronograma');
       window.scrollTo({ left: 0, top: window.scrollY, behavior: 'instant' });
-      document.documentElement.scrollLeft = 0;
-      document.body.scrollLeft = 0;
-
-      // Identifica a subtela atual (seja Flashcards ou Missões)
-      const currentActive = document.querySelector('.nav-item.active a')?.getAttribute('href')?.replace('#', '') || 'bizus';
-      executeTiltedScreenTransition(currentActive, 'disciplinas', 'backward');
-
-      // Garante a ativação de "Disciplinas do Edital" no menu lateral
-      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-      const discLink = document.querySelector('.nav-list a[href="#disciplinas"]');
-      if (discLink) {
-        discLink.closest('.nav-item')?.classList.add('active');
-      }
     }
 
     // Listener global permanente para assegurar que a janela nunca sofra desvio no eixo X
@@ -8918,9 +9146,7 @@ Formato do Schema JSON Obrigatório:
 
     function openAIFlashcardsSection(event) {
       if (event) event.preventDefault();
-      setFlashcardsViewMode('grid');
-      executeTiltedScreenTransition('disciplinas', 'bizus', 'forward');
-      renderAIFlashcards();
+      switchStudentOSTool('bizus');
     }
 
     /* ========================================================================
@@ -9230,7 +9456,7 @@ Formato do Schema JSON Obrigatório:
         console.warn('Erro ao atualizar progresso da disciplina:', e);
       }
 
-      renderClasses();
+      updateOperationalDailySummary();
       updateStudyMetrics();
 
       playTacticalBlip(1200, 0.1);
@@ -9363,7 +9589,7 @@ Formato do Schema JSON Obrigatório:
 
     function openQuizTrainingSection(event) {
       if (event) event.preventDefault();
-      executeTiltedScreenTransition('disciplinas', 'missoes', 'forward');
+      switchStudentOSTool('missoes');
     }
 
 
@@ -11920,6 +12146,8 @@ Formato do Schema JSON Obrigatório:
       initDraggableWidgets();
       updateClock();
       setInterval(updateClock, 1000);
+      switchStudentOSTool('cronograma');
+      updateOperationalDailySummary();
 
       // 3. Inicializar repositório ctresb/leis e status da API Gemini
       try {
@@ -12180,16 +12408,14 @@ Formato do Schema JSON Obrigatório:
               </div>
             </div>
             <div class="vm-featured-info">
-              <span style="font-size: 10px; font-weight: 800; color: ${c.accent}; text-transform: uppercase;">${c.category}</span>
+              <span style="font-size: 10px; font-weight: 800; color: ${c.accent}; text-transform: uppercase; letter-spacing: 0.05em;">${c.category}</span>
               <h3 style="cursor: pointer;" onclick="VadeMecumEngine.openLawReader('${c.path}', '${c.title}')">${c.title}</h3>
               <div class="vm-sub">${c.sub}</div>
-              <div class="vm-stars">${c.stars} <span style="font-size: 10.5px; color: var(--gold-light); font-weight: 600;">Incidência Máxima</span></div>
-              <div class="vm-summary-snippet">${c.summary}</div>
               <div class="vm-card-actions">
-                <button type="button" class="btn-primary" onclick="event.stopPropagation(); VadeMecumEngine.openLawReader('${c.path}', '${c.title}')" style="padding: 6px 12px; font-size: 11.5px; font-weight: 700; background: var(--gold-primary); color: #0B0E14;">
+                <button type="button" class="btn-primary" onclick="event.stopPropagation(); VadeMecumEngine.openLawReader('${c.path}', '${c.title}')" style="padding: 6px 14px; font-size: 11.5px; font-weight: 700; background: var(--gold-primary); color: #0B0E14; border-radius: 6px;">
                   📖 Ler Lei
                 </button>
-                <button type="button" class="btn-secondary" onclick="event.stopPropagation(); generateAIFlashcards('${c.targetSubject}')" style="padding: 6px 12px; font-size: 11.5px;">
+                <button type="button" class="btn-secondary" onclick="event.stopPropagation(); generateAIFlashcards('${c.targetSubject}')" style="padding: 6px 14px; font-size: 11.5px; border-radius: 6px;">
                   ⚡ Flashcards IA
                 </button>
               </div>
@@ -12314,10 +12540,8 @@ Formato do Schema JSON Obrigatório:
             <div class="glass-doc-sheet">
               <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-size: 8.5px; font-weight: 800; color: ${cat.accent}; text-transform: uppercase;">${law.badge}</span>
-                <span style="font-size: 8px; color: var(--gold-light);">Artigo Chave</span>
               </div>
-              <div style="font-size: 10px; font-weight: 700; color: #FFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${law.title}</div>
-              <div style="font-size: 8.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${law.meta || 'Texto Consolidado'}</div>
+              <div style="font-size: 10.5px; font-weight: 700; color: #FFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px;">${law.title}</div>
             </div>
           `).join('');
 
@@ -12353,17 +12577,11 @@ Formato do Schema JSON Obrigatório:
                   <span>${cat.title}</span>
                   <span class="glass-folder-tab-badge">${laws.length} ${cat.isRepo ? 'Amostras' : 'Leis'}</span>
                 </div>
-                <div class="glass-folder-quick-meta">
-                  <span class="folder-stars">${cat.stars}</span>
-                  <span class="folder-edital-tag">${cat.editalWeight}</span>
-                </div>
               </div>
 
               <!-- Corpo 3D com Bolso e Tampa Frontal Inclinável -->
               <div class="glass-folder-body">
-                <div class="glass-folder-back">
-                  <div class="glass-folder-sub">${cat.subtitle}</div>
-                </div>
+                <div class="glass-folder-back"></div>
 
                 <div class="glass-folder-pocket">
                   <div class="glass-folder-docs">
@@ -12380,8 +12598,7 @@ Formato do Schema JSON Obrigatório:
                     <div class="glass-folder-front-info">
                       <div class="glass-folder-front-title">${cat.shortName}</div>
                       <div class="glass-folder-front-stats">
-                        <span>⚡ ${laws.length} Leis do Edital</span>
-                        <span>${isOpen ? '📂 Aberta (Clique p/ Fechar)' : '📁 Fechada (Clique p/ Abrir Leque)'}</span>
+                        <span>${cat.title} • ${laws.length} ${laws.length === 1 ? 'Lei' : 'Leis'}</span>
                       </div>
                     </div>
                     <div class="glass-folder-chevron">
