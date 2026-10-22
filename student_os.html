@@ -5187,617 +5187,6 @@
       to { opacity: 1; transform: none; }
     }
 
-    /* Padrões Desktop (Escondidos em telas grandes para manter fidelidade 100%) */
-    .vm-mobile-row1,
-    .vm-drawer-backdrop,
-    .vm-drawer-header-mobile,
-    .vm-mobile-bottom-bar,
-    .vm-mobile-pills-bar {
-      display: none;
-    }
-
-    /* ========================================================================
-       ADAPTAÇÃO MOBILE COMPLETA E RESPONSIVA DO VADE MECUM (@media (max-width: 768px))
-       ======================================================================== */
-    @media (max-width: 768px) {
-      /* 1. Container Principal (#vademecum no Mobile) */
-      #vademecum,
-      #viewVadeMecum,
-      .vade-mecum-view,
-      #vademecum.active,
-      #viewVadeMecum.active,
-      .vade-mecum-view.active,
-      #vademecum[style*="display: grid"],
-      #viewVadeMecum[style*="display: grid"],
-      .vade-mecum-view[style*="display: grid"] {
-        display: flex !important;
-        flex-direction: column !important;
-        width: 100vw !important;
-        height: 100dvh !important;
-        height: 100vh !important;
-        position: fixed !important;
-        inset: 0 !important;
-        overflow: hidden !important;
-        z-index: 9999 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-
-      /* 2. Sidebar Transformada em Mobile Drawer Deslizante */
-      .vade-sidebar,
-      .vm-sidebar {
-        position: fixed !important;
-        top: 0 !important;
-        left: -100% !important;
-        width: 82% !important;
-        max-width: 300px !important;
-        height: 100dvh !important;
-        height: 100vh !important;
-        z-index: 10050 !important;
-        transition: left 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
-        background: #0B0E14 !important;
-        box-shadow: 4px 0 35px rgba(0, 0, 0, 0.9) !important;
-        padding: 16px !important;
-        overflow-y: auto !important;
-      }
-
-      .vade-sidebar.is-open,
-      .vm-sidebar.is-open {
-        left: 0 !important;
-      }
-
-      /* Backdrop Escuro Translúcido com Blur */
-      .vm-drawer-backdrop {
-        display: block !important;
-        position: fixed !important;
-        inset: 0 !important;
-        background: rgba(0, 0, 0, 0.75) !important;
-        backdrop-filter: blur(4px) !important;
-        -webkit-backdrop-filter: blur(4px) !important;
-        z-index: 10040 !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-        transition: opacity 0.3s ease !important;
-      }
-
-      .vm-drawer-backdrop.is-open {
-        opacity: 1 !important;
-        pointer-events: auto !important;
-      }
-
-      .vm-drawer-header-mobile {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        margin-bottom: 14px !important;
-        padding-bottom: 10px !important;
-        border-bottom: 1px solid rgba(212, 175, 55, 0.2) !important;
-      }
-
-      .vm-drawer-close-btn {
-        background: rgba(255, 255, 255, 0.06) !important;
-        border: 1px solid rgba(212, 175, 55, 0.3) !important;
-        color: var(--gold-light) !important;
-        border-radius: 6px !important;
-        padding: 5px 10px !important;
-        font-size: 11px !important;
-        font-weight: 700 !important;
-        cursor: pointer !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 4px !important;
-      }
-
-      /* 3. Topbar Mobile Compacta & Acessível (3 Linhas) */
-      .vm-topbar {
-        display: flex !important;
-        flex-direction: column !important;
-        padding: 10px 14px !important;
-        gap: 8px !important;
-        border-radius: 0 !important;
-        border-top: none !important;
-        border-left: none !important;
-        border-right: none !important;
-        border-bottom: 1px solid rgba(212, 175, 55, 0.25) !important;
-        background: rgba(11, 14, 20, 0.96) !important;
-        backdrop-filter: blur(16px) !important;
-        -webkit-backdrop-filter: blur(16px) !important;
-        position: sticky !important;
-        top: 0 !important;
-        z-index: 40 !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Linha 1: Hambúrguer + Título + IA/Modos */
-      .vm-mobile-row1 {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        width: 100% !important;
-        gap: 8px !important;
-      }
-
-      .vm-mobile-drawer-btn {
-        background: rgba(212, 175, 55, 0.14) !important;
-        border: 1px solid rgba(212, 175, 55, 0.4) !important;
-        color: #FFF !important;
-        padding: 6px 11px !important;
-        border-radius: 6px !important;
-        font-size: 11.5px !important;
-        font-weight: 700 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        cursor: pointer !important;
-      }
-
-      .vm-mobile-title {
-        font-size: 14.5px !important;
-        font-weight: 800 !important;
-        color: var(--gold-light) !important;
-        letter-spacing: -0.01em !important;
-        white-space: nowrap !important;
-      }
-
-      .vm-mobile-actions {
-        display: flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-      }
-
-      .vm-mobile-btn-action {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border: 1px solid rgba(212, 175, 55, 0.3) !important;
-        color: #F8FAFC !important;
-        padding: 5px 9px !important;
-        border-radius: 6px !important;
-        font-size: 11px !important;
-        font-weight: 600 !important;
-        cursor: pointer !important;
-        white-space: nowrap !important;
-      }
-
-      /* Linha 2: Busca Global 100% */
-      .vm-topbar-left {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-      }
-
-      .vm-nav-arrows {
-        display: none !important;
-      }
-
-      .vm-search-box {
-        width: 100% !important;
-        max-width: 100% !important;
-      }
-
-      .vm-search-input {
-        width: 100% !important;
-        max-width: 100% !important;
-        padding: 8px 12px 8px 34px !important;
-        font-size: 12.5px !important;
-        border-radius: 8px !important;
-      }
-
-      .vm-topbar-right {
-        display: none !important;
-      }
-
-      /* Linha 3: Pílulas de Filtro Rápido com Scroll Horizontal */
-      .vm-mobile-pills-bar {
-        display: flex !important;
-        width: 100% !important;
-        overflow-x: auto !important;
-        white-space: nowrap !important;
-        scrollbar-width: none !important;
-        gap: 7px !important;
-        padding: 3px 0 2px 0 !important;
-        -webkit-overflow-scrolling: touch !important;
-      }
-
-      .vm-mobile-pills-bar::-webkit-scrollbar {
-        display: none !important;
-      }
-
-      .vm-pill-chip {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 5px !important;
-        padding: 5px 11px !important;
-        border-radius: 14px !important;
-        font-size: 11px !important;
-        font-weight: 600 !important;
-        color: #94A3B8 !important;
-        background: rgba(255, 255, 255, 0.04) !important;
-        border: 1px solid rgba(212, 175, 55, 0.2) !important;
-        cursor: pointer !important;
-        transition: all 0.18s ease !important;
-        flex-shrink: 0 !important;
-      }
-
-      .vm-pill-chip:active,
-      .vm-pill-chip.active {
-        background: rgba(212, 175, 55, 0.22) !important;
-        border-color: #D4AF37 !important;
-        color: #FFF !important;
-        font-weight: 700 !important;
-        box-shadow: 0 0 10px rgba(212, 175, 55, 0.25) !important;
-      }
-
-      /* 4. Área de Conteúdo Principal */
-      .vade-main-content,
-      .vm-main-content {
-        overflow-y: auto !important;
-        flex: 1 !important;
-        padding: 14px 14px 85px 14px !important;
-        gap: 20px !important;
-        height: auto !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Seção Códigos em Destaque: Carrossel Horizontal Touch Snap */
-      .vm-featured-grid {
-        display: flex !important;
-        overflow-x: auto !important;
-        scroll-snap-type: x mandatory !important;
-        gap: 12px !important;
-        padding: 4px 2px 14px 2px !important;
-        -webkit-overflow-scrolling: touch !important;
-        scrollbar-width: none !important;
-      }
-
-      .vm-featured-grid::-webkit-scrollbar {
-        display: none !important;
-      }
-
-      .vm-featured-card {
-        scroll-snap-align: center !important;
-        flex: 0 0 88vw !important;
-        min-width: 88vw !important;
-        max-width: 88vw !important;
-        box-sizing: border-box !important;
-        padding: 14px !important;
-      }
-
-      .vm-featured-card .vm-book-cover {
-        width: 80px !important;
-        min-width: 80px !important;
-        height: 118px !important;
-        padding: 8px 6px !important;
-      }
-
-      /* Pastas 3D adaptadas para Toque */
-      .vm-folders-grid {
-        grid-template-columns: 1fr !important;
-        justify-items: center !important;
-        gap: 16px !important;
-        width: 100% !important;
-      }
-
-      .glass-folder-card {
-        width: 100% !important;
-        max-width: min(340px, 92vw) !important;
-        margin: 0 auto !important;
-        perspective: none !important;
-      }
-
-      .glass-folder-card.is-open {
-        grid-column: 1 / -1 !important;
-        max-width: 100% !important;
-      }
-
-      .glass-folder-fan-grid {
-        grid-template-columns: 1fr !important;
-        gap: 12px !important;
-        width: 100% !important;
-      }
-
-      /* Cards Compactos Mobile (Capa à esquerda + Detalhes + Botões) */
-      .vm-compact-mobile-card {
-        display: flex !important;
-        gap: 12px !important;
-        align-items: stretch !important;
-        background: rgba(18, 23, 34, 0.85) !important;
-        border: 1px solid rgba(212, 175, 55, 0.22) !important;
-        border-radius: 12px !important;
-        padding: 10px 12px !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-        position: relative !important;
-        overflow: hidden !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45) !important;
-        box-sizing: border-box !important;
-        width: 100% !important;
-      }
-
-      .vm-compact-cover {
-        width: 58px !important;
-        min-width: 58px !important;
-        height: 84px !important;
-        border-radius: 4px 8px 8px 4px !important;
-        background: linear-gradient(145deg, #182232, #0E131E) !important;
-        border: 1px solid rgba(212, 175, 55, 0.3) !important;
-        border-left: 4px solid var(--gold-primary) !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        padding: 6px 4px !important;
-        box-sizing: border-box !important;
-        flex-shrink: 0 !important;
-        box-shadow: -3px 4px 10px rgba(0, 0, 0, 0.5) !important;
-      }
-
-      .vm-compact-cover-seal img {
-        width: 22px !important;
-        height: 22px !important;
-        object-fit: contain !important;
-      }
-
-      .vm-compact-cover-badge {
-        font-size: 8.5px !important;
-        font-weight: 800 !important;
-        text-transform: uppercase !important;
-        text-align: center !important;
-        line-height: 1.1 !important;
-        max-width: 100% !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        white-space: nowrap !important;
-      }
-
-      .vm-compact-info {
-        flex: 1 !important;
-        min-width: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: space-between !important;
-        gap: 4px !important;
-      }
-
-      .vm-compact-meta-row {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        gap: 6px !important;
-      }
-
-      .vm-compact-cat-tag {
-        font-size: 9.5px !important;
-        font-weight: 700 !important;
-        text-transform: uppercase !important;
-      }
-
-      .vm-compact-repo-tag {
-        font-size: 9px !important;
-        color: var(--text-muted) !important;
-        background: rgba(255, 255, 255, 0.04) !important;
-        padding: 1px 5px !important;
-        border-radius: 4px !important;
-      }
-
-      .vm-compact-title {
-        font-size: 13px !important;
-        font-weight: 700 !important;
-        color: #FFF !important;
-        margin: 0 !important;
-        line-height: 1.3 !important;
-        display: -webkit-box !important;
-        -webkit-line-clamp: 2 !important;
-        -webkit-box-orient: vertical !important;
-        overflow: hidden !important;
-      }
-
-      .vm-compact-desc {
-        font-size: 11px !important;
-        color: #94A3B8 !important;
-        margin: 0 !important;
-        line-height: 1.35 !important;
-        display: -webkit-box !important;
-        -webkit-line-clamp: 1 !important;
-        -webkit-box-orient: vertical !important;
-        overflow: hidden !important;
-      }
-
-      .vm-compact-actions {
-        display: flex !important;
-        gap: 8px !important;
-        margin-top: 4px !important;
-      }
-
-      .vm-compact-btn-read {
-        padding: 6px 12px !important;
-        font-size: 11.5px !important;
-        background: var(--gold-primary) !important;
-        color: #0B0E14 !important;
-        font-weight: 700 !important;
-        border-radius: 6px !important;
-        flex: 1 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        min-height: 34px !important;
-      }
-
-      .vm-compact-btn-ai {
-        padding: 6px 10px !important;
-        font-size: 11.5px !important;
-        border-radius: 6px !important;
-        flex: 1 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        min-height: 34px !important;
-      }
-
-      /* Seção Top Incidência e Split */
-      .vm-split-section {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 20px !important;
-      }
-
-      .vm-ranking-col {
-        width: 100% !important;
-        padding: 14px !important;
-        border-radius: 12px !important;
-      }
-
-      /* 5. Leitor de Lei Seca Modal Mobile-Friendly (#modalVMLawReader) */
-      #modalVMLawReader {
-        padding: 0 !important;
-      }
-
-      #modalVMLawReader .modal-card {
-        width: 100vw !important;
-        max-width: 100vw !important;
-        height: 100dvh !important;
-        height: 100vh !important;
-        max-height: 100dvh !important;
-        border-radius: 0 !important;
-        border: none !important;
-        margin: 0 !important;
-        position: fixed !important;
-        inset: 0 !important;
-      }
-
-      .vm-reader-topbar {
-        padding: 10px 12px !important;
-        flex-direction: column !important;
-        gap: 8px !important;
-      }
-
-      .vm-reader-topbar-row1 {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        width: 100% !important;
-        gap: 8px !important;
-      }
-
-      .vm-reader-topbar-row2 {
-        width: 100% !important;
-      }
-
-      .vm-reader-topbar-row3 {
-        display: flex !important;
-        width: 100% !important;
-        overflow-x: auto !important;
-        gap: 6px !important;
-        padding-bottom: 2px !important;
-        scrollbar-width: none !important;
-      }
-
-      .vm-reader-topbar-row3::-webkit-scrollbar {
-        display: none !important;
-      }
-
-      #vmReaderBody {
-        padding: 14px 14px 80px 14px !important;
-        font-size: 15px !important;
-        line-height: 1.65 !important;
-      }
-
-      .vm-article-block {
-        padding: 12px 14px !important;
-        margin-bottom: 12px !important;
-      }
-
-      .vm-article-text {
-        font-size: 14.5px !important;
-        line-height: 1.65 !important;
-      }
-
-      /* 6. Barra Flutuante Inferior Rápida (Bottom Bar Mobile) */
-      .vm-mobile-bottom-bar {
-        display: flex !important;
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        height: 60px !important;
-        background: rgba(11, 14, 20, 0.95) !important;
-        border-top: 1px solid rgba(212, 175, 55, 0.35) !important;
-        backdrop-filter: blur(16px) !important;
-        -webkit-backdrop-filter: blur(16px) !important;
-        z-index: 10010 !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        padding: 8px 14px !important;
-        gap: 10px !important;
-        box-sizing: border-box !important;
-        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.75) !important;
-      }
-
-      .vm-mobile-bottom-resume-btn {
-        display: flex !important;
-        align-items: center !important;
-        gap: 10px !important;
-        background: rgba(212, 175, 55, 0.12) !important;
-        border: 1px solid rgba(212, 175, 55, 0.35) !important;
-        color: #F8FAFC !important;
-        padding: 6px 12px !important;
-        border-radius: 8px !important;
-        flex: 1 !important;
-        min-width: 0 !important;
-        cursor: pointer !important;
-        text-align: left !important;
-      }
-
-      .vm-mobile-bottom-icon {
-        font-size: 16px !important;
-        flex-shrink: 0 !important;
-      }
-
-      .vm-mobile-bottom-info {
-        flex: 1 !important;
-        min-width: 0 !important;
-      }
-
-      .vm-mobile-bottom-label {
-        font-size: 9px !important;
-        font-weight: 700 !important;
-        text-transform: uppercase !important;
-        color: var(--gold-primary) !important;
-        display: block !important;
-      }
-
-      .vm-mobile-bottom-title {
-        font-size: 11.5px !important;
-        font-weight: 700 !important;
-        color: #FFF !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        display: block !important;
-      }
-
-      .vm-mobile-bottom-arrow {
-        font-size: 11px !important;
-        color: var(--gold-light) !important;
-        font-weight: 700 !important;
-        flex-shrink: 0 !important;
-      }
-
-      .vm-mobile-bottom-back-btn {
-        display: flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        background: rgba(255, 255, 255, 0.05) !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        color: #E2E8F0 !important;
-        padding: 8px 12px !important;
-        border-radius: 8px !important;
-        font-size: 11.5px !important;
-        font-weight: 700 !important;
-        cursor: pointer !important;
-        flex-shrink: 0 !important;
-      }
-    }
   </style>
 </head>
 <body>
@@ -5824,10 +5213,6 @@
         </div>
         
         <div class="banner-actions">
-                    <button type="button" class="banner-btn" onclick="window.switchSystemMode('vademecum')" title="Biblioteca de Leis • Vade Mecum (ctresb/leis)" style="border-color: rgba(212, 175, 55, 0.45); background: rgba(212, 175, 55, 0.16); color: var(--gold-light); font-weight: 700;">
-            <span style="font-size: 14px;">⚖️</span>
-            <span>Biblioteca de Leis</span>
-          </button>
           <button type="button" class="banner-btn" onclick="openWorksWheelModal()" title="Alternador 3D de Modos do Sistema (Works Wheel)" style="border-color: rgba(212, 175, 55, 0.45); background: rgba(212, 175, 55, 0.14); color: var(--gold-light); font-weight: 700;">
             <svg class="tactical-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--gold-primary);"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 12l7.07-7.07"/><circle cx="12" cy="12" r="2"/></svg>
             Modos 3D ⎈
@@ -6052,7 +5437,7 @@
             <div class="os-tool-panel" id="toolPanel_cronograma" style="display: block;">
               <div class="timetable-card tactical-sub-widget" id="cronograma" data-subwidget-id="cronograma">
             <div class="section-title">
-              <div class="vm-reader-topbar-row3" style="display: flex; align-items: center; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
                 <div class="widget-drag-handle" title="Arraste para reposicionar Grade Tática" aria-label="Arrastar">
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>
                 </div>
@@ -6403,17 +5788,10 @@
        VIEW: BIBLIOTECA DE LEIS • VADE MECUM (INTEGRADA A CTRESB/LEIS)
        ========================================================================== -->
   <div id="vademecum" class="vade-mecum-view" style="display: none;">
-      <!-- Backdrop do Menu Gaveta Mobile -->
-      <div class="vm-drawer-backdrop" id="vmDrawerBackdrop" onclick="VadeMecumEngine.toggleSidebarDrawer(false)"></div>
           
       <!-- A. Sidebar Esquerda da Biblioteca (Navegação & Coleções) -->
       <aside class="vade-sidebar vm-sidebar">
         <div class="vm-sidebar-scroll">
-          <!-- Cabeçalho Mobile do Menu Gaveta -->
-          <div class="vm-drawer-header-mobile">
-            <span style="font-size: 12px; font-weight: 800; color: var(--gold-primary);">⚖️ NAVEGAÇÃO VADE MECUM</span>
-            <button type="button" class="vm-drawer-close-btn" onclick="VadeMecumEngine.toggleSidebarDrawer(false)">✕ Fechar</button>
-          </div>
           
           <!-- Perfil do Agente & Botão Retorno -->
           <div class="vm-agent-profile">
@@ -6504,24 +5882,7 @@
       <main class="vade-main-content vm-main-content">
         
         <!-- B. Barra Superior (Top Search & Ações) -->
-                <header class="vm-topbar">
-          <!-- Linha 1 Mobile: Hambúrguer + Título + IA / Modos -->
-          <div class="vm-mobile-row1">
-            <button type="button" class="vm-mobile-drawer-btn" onclick="VadeMecumEngine.toggleSidebarDrawer(true)">
-              <span>☰</span> Categorias
-            </button>
-            <div class="vm-mobile-title">
-              <span>⚖️</span> Vade Mecum
-            </div>
-            <div class="vm-mobile-actions">
-              <button type="button" class="vm-mobile-btn-action" onclick="openGeminiConfigModal()" title="API Gemini">
-                🔑 IA
-              </button>
-              <button type="button" class="vm-mobile-btn-action" onclick="openWorksWheelModal()" title="Alternador de Modos">
-                Modos ⎈
-              </button>
-            </div>
-          </div>
+        <header class="vm-topbar">
           <div class="vm-topbar-left">
             <div class="vm-nav-arrows">
               <button class="vm-arrow-btn" onclick="window.switchSystemMode('student-os')" title="Voltar ao Student OS">&lt;</button>
@@ -6542,36 +5903,6 @@
             </button>
             <button type="button" class="banner-btn" onclick="openWorksWheelModal()" title="Alternador 3D de Modos" style="font-size: 11.5px; padding: 6px 12px; border-color: rgba(212, 175, 55, 0.45); color: var(--gold-light);">
               Modos 3D ⎈
-            </button>
-          </div>
-                  <!-- Linha 3 Mobile: Pílulas de Filtro Rápido com Scroll Horizontal -->
-          <div class="vm-mobile-pills-bar" id="vmMobilePillsBar">
-            <button type="button" class="vm-pill-chip active" data-filter="all_laws" onclick="VadeMecumEngine.selectFilterPill('all_laws', this)">
-              📚 Todas as Leis
-            </button>
-            <button type="button" class="vm-pill-chip" data-filter="favoritas" onclick="VadeMecumEngine.selectFilterPill('favoritas', this)">
-              ⭐ Favoritas
-            </button>
-            <button type="button" class="vm-pill-chip" data-filter="codigos" onclick="VadeMecumEngine.selectFilterPill('codigos', this)">
-              ⚖️ Códigos
-            </button>
-            <button type="button" class="vm-pill-chip" data-filter="Constitucional" onclick="VadeMecumEngine.selectFilterPill('Constitucional', this)">
-              🏛️ Constitucional
-            </button>
-            <button type="button" class="vm-pill-chip" data-filter="Penal" onclick="VadeMecumEngine.selectFilterPill('Penal', this)">
-              ⚖️ Penal
-            </button>
-            <button type="button" class="vm-pill-chip" data-filter="Processo Penal" onclick="VadeMecumEngine.selectFilterPill('Processo Penal', this)">
-              🛡️ Processo Penal
-            </button>
-            <button type="button" class="vm-pill-chip" data-filter="Administrativo" onclick="VadeMecumEngine.selectFilterPill('Administrativo', this)">
-              📋 Administrativo
-            </button>
-            <button type="button" class="vm-pill-chip" data-filter="especial" onclick="VadeMecumEngine.selectFilterPill('especial', this)">
-              🚨 Leg. Especial
-            </button>
-            <button type="button" class="vm-pill-chip" data-filter="top7" onclick="VadeMecumEngine.selectFilterPill('top7', this)">
-              🔥 Top 7 Provas
             </button>
           </div>
         </header>
@@ -6650,22 +5981,6 @@
         </div>
 
       </main>
-
-      <!-- Barra Flutuante Inferior Rápida (Bottom Bar Mobile) -->
-      <div class="vm-mobile-bottom-bar" id="vmMobileBottomBar">
-        <button type="button" class="vm-mobile-bottom-resume-btn" onclick="VadeMecumEngine.resumeLastReadLaw()" title="Continuar leitura da última lei lida">
-          <span class="vm-mobile-bottom-icon">📖</span>
-          <div class="vm-mobile-bottom-info">
-            <span class="vm-mobile-bottom-label">Continuar</span>
-            <span class="vm-mobile-bottom-title" id="vmMobileBottomResumeTitle">Constituição Federal / 88</span>
-          </div>
-          <span class="vm-mobile-bottom-arrow">Ler ➔</span>
-        </button>
-        <button type="button" class="vm-mobile-bottom-back-btn" onclick="window.switchSystemMode('student-os')" title="Voltar ao Student OS">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-          <span>Student OS</span>
-        </button>
-      </div>
   </div>
 
   <!-- Containers de Modos Complementares Padronizados -->
@@ -6679,8 +5994,8 @@
     <div class="modal-card" style="max-width: 1040px; width: 95vw; height: 92vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; background: #0B0E14; border: 1px solid #D4AF37; box-shadow: 0 25px 70px rgba(0,0,0,0.92), 0 0 35px rgba(212, 175, 55, 0.2); border-radius: 12px;">
       
       <!-- Topbar Fixa do Leitor -->
-      <div class="vm-reader-topbar" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(212, 175, 55, 0.25); background: rgba(14, 18, 26, 0.98); gap: 12px; flex-wrap: wrap;">
-        <div class="vm-reader-topbar-row1" style="display: flex; align-items: center; gap: 12px; min-width: 240px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(212, 175, 55, 0.25); background: rgba(14, 18, 26, 0.98); gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 12px; min-width: 240px;">
           <button type="button" class="btn-secondary" onclick="closeModal('modalVMLawReader')" style="font-size: 11.5px; padding: 6px 12px; border-color: rgba(212,175,55,0.4); color: var(--gold-light); display: inline-flex; align-items: center; gap: 6px;" title="Voltar para a Biblioteca de Leis">
             ← Voltar para a Biblioteca
           </button>
@@ -6696,7 +6011,7 @@
         </div>
 
         <!-- Busca interna na lei aberta -->
-        <div class="vm-reader-topbar-row2" style="flex: 1; max-width: 380px; position: relative;">
+        <div style="flex: 1; max-width: 380px; position: relative;">
           <input type="text" id="vmReaderSearchInput" class="form-control" placeholder="🔍 Localizar artigo ou palavra nesta lei..." oninput="VadeMecumEngine.onReaderSearch(this.value)" style="width: 100%; padding-left: 12px; padding-right: 75px; font-size: 12px; height: 34px; border-radius: 17px; background: rgba(0,0,0,0.5); border: 1px solid rgba(212,175,55,0.3); color: #fff;" />
           <span id="vmReaderMatchCount" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 10.5px; color: var(--gold-primary); font-weight: 700;"></span>
         </div>
@@ -13127,85 +12442,6 @@ Formato do Schema JSON Obrigatório:
         `).join('');
       },
 
-      toggleSidebarDrawer(forceState) {
-        const sidebar = document.querySelector('.vm-sidebar');
-        const backdrop = document.getElementById('vmDrawerBackdrop');
-        if (!sidebar) return;
-        const isCurrentlyOpen = sidebar.classList.contains('is-open');
-        const shouldOpen = typeof forceState === 'boolean' ? forceState : !isCurrentlyOpen;
-        if (shouldOpen) {
-          sidebar.classList.add('is-open');
-          if (backdrop) backdrop.classList.add('is-open');
-          if (typeof playTacticalBlip === 'function') playTacticalBlip(560, 0.05);
-        } else {
-          sidebar.classList.remove('is-open');
-          if (backdrop) backdrop.classList.remove('is-open');
-          if (typeof playTacticalBlip === 'function') playTacticalBlip(380, 0.04);
-        }
-      },
-
-      selectFilterPill(filterKey, buttonEl) {
-        document.querySelectorAll('.vm-pill-chip').forEach(c => c.classList.remove('active'));
-        if (buttonEl) buttonEl.classList.add('active');
-
-        const searchInput = document.getElementById('vmSearchInput');
-        if (searchInput && this.searchQuery) {
-          searchInput.value = '';
-          this.searchQuery = '';
-        }
-
-        this.displayLimit = 24;
-        if (typeof playTacticalBlip === 'function') playTacticalBlip(620, 0.05);
-
-        if (filterKey === 'all_laws') {
-          const repoLaws = (typeof GitHubLawProvider !== 'undefined' && GitHubLawProvider.allRepoLaws) ? GitHubLawProvider.allRepoLaws : [];
-          const all = [...this.CORE_LAWS, ...repoLaws];
-          const titleEl = document.getElementById('vmForYouSectionTitle');
-          if (titleEl) titleEl.innerText = '📚 Todas as Leis (' + all.length.toLocaleString('pt-BR') + ' no acervo)';
-          this.renderForYouGrid(all);
-          return;
-        }
-
-        if (filterKey === 'favoritas') {
-          this.filterFavorites();
-          return;
-        }
-
-        if (filterKey === 'codigos') {
-          const codigos = this.CORE_LAWS.filter(l => l.isCode);
-          const titleEl = document.getElementById('vmForYouSectionTitle');
-          if (titleEl) titleEl.innerText = '⚖️ Códigos Principais';
-          this.renderForYouGrid(codigos);
-          return;
-        }
-
-        if (filterKey === 'top7') {
-          const ranked = this.CORE_LAWS.filter(l => l.rank).sort((a, b) => a.rank - b.rank);
-          const titleEl = document.getElementById('vmForYouSectionTitle');
-          if (titleEl) titleEl.innerText = '🔥 Top 7 Provas (Alta Incidência Policial)';
-          this.renderForYouGrid(ranked);
-          return;
-        }
-
-        if (filterKey === 'especial') {
-          const especial = this.CORE_LAWS.filter(l => l.category === 'especial' || (l.subCategory && l.subCategory.toLowerCase() === 'penal' && !l.isCode));
-          const titleEl = document.getElementById('vmForYouSectionTitle');
-          if (titleEl) titleEl.innerText = '🚨 Legislação Especial Penal';
-          this.renderForYouGrid(especial);
-          return;
-        }
-
-        // Ramos: Constitucional, Penal, Processo Penal, Administrativo
-        const filtered = this.CORE_LAWS.filter(l => 
-          (l.category && l.category.toLowerCase() === filterKey.toLowerCase()) ||
-          (l.subCategory && l.subCategory.toLowerCase() === filterKey.toLowerCase()) ||
-          (l.targetSubject && l.targetSubject.toLowerCase().includes(filterKey.toLowerCase()))
-        );
-        const titleEl = document.getElementById('vmForYouSectionTitle');
-        if (titleEl) titleEl.innerText = '📂 Ramo: ' + filterKey;
-        this.renderForYouGrid(filtered.length > 0 ? filtered : null);
-      },
-
       toggleFolder(folderId, ev) {
         if (ev) ev.stopPropagation();
         if (!this.openFolders) this.openFolders = new Set(['const', 'penal']);
@@ -13268,31 +12504,24 @@ Formato do Schema JSON Obrigatório:
             const badgeStr = isObj ? (item.badge || 'LEI') : 'REPO';
             const catStr = isObj ? (item.category || 'Geral') : 'ctresb/leis';
             const descStr = isObj ? (item.summary || item.sub || '') : pathStr;
-            const accentColor = isObj ? (item.accent || '#D4AF37') : '#06B6D4';
 
             return `
-              <div class="vm-compact-mobile-card vm-law-card" onclick="VadeMecumEngine.openLawReader('${pathStr}', '${titleStr.replace(/'/g, "\\'")}')">
-                <div class="vm-compact-cover" style="border-left-color: ${accentColor};">
-                  <div class="vm-compact-cover-seal">
-                    <img src="assets/distintivo_policia_civil.png" alt="PCMG" onerror="this.src='assets/logo_faca_caveira.png'" />
-                  </div>
-                  <span class="vm-compact-cover-badge" style="color: ${accentColor};">${badgeStr}</span>
+              <div class="vm-law-card glass-fan-law-card" onclick="VadeMecumEngine.openLawReader('${pathStr}', '${titleStr.replace(/'/g, "\\'")}')">
+                <div class="glass-fan-law-header">
+                  <span class="glass-fan-law-badge">${badgeStr}</span>
+                  <span style="font-size: 10px; font-weight: 700; color: var(--gold-light);">${catStr}</span>
                 </div>
-                <div class="vm-compact-info">
-                  <div class="vm-compact-meta-row">
-                    <span class="vm-compact-cat-tag" style="color: ${accentColor};">${catStr}</span>
-                    <span class="vm-compact-repo-tag">ctresb/leis</span>
-                  </div>
-                  <h4 class="vm-compact-title">${titleStr}</h4>
-                  <p class="vm-compact-desc">${descStr}</p>
-                  <div class="vm-compact-actions">
-                    <button type="button" class="btn-primary vm-compact-btn-read" onclick="event.stopPropagation(); VadeMecumEngine.openLawReader('${pathStr}', '${titleStr.replace(/'/g, "\\'")}')">
-                      📖 Ler
-                    </button>
-                    <button type="button" class="btn-secondary vm-compact-btn-ai" onclick="event.stopPropagation(); generateAIFlashcards('${isObj ? (item.targetSubject || catStr) : 'Legislação'}')">
-                      ⚡ IA
-                    </button>
-                  </div>
+                <div>
+                  <h4 class="glass-fan-law-title">${titleStr}</h4>
+                  <p class="glass-fan-law-desc">${descStr}</p>
+                </div>
+                <div class="glass-fan-law-actions">
+                  <button type="button" class="btn-primary" onclick="event.stopPropagation(); VadeMecumEngine.openLawReader('${pathStr}', '${titleStr.replace(/'/g, "\\'")}')" style="padding: 5px 12px; font-size: 11px; background: var(--gold-primary); color: #0B0E14; font-weight: 700; border-radius: 6px;">
+                    📖 Ler Lei
+                  </button>
+                  <button type="button" class="btn-secondary" onclick="event.stopPropagation(); generateAIFlashcards('${isObj ? (item.targetSubject || catStr) : 'Legislação'}')" style="padding: 5px 10px; font-size: 11px; border-radius: 6px;">
+                    ⚡ IA Flashcard
+                  </button>
                 </div>
               </div>
             `;
@@ -13357,7 +12586,7 @@ Formato do Schema JSON Obrigatório:
           `).join('');
 
           return `
-            <div class="glass-folder-card ${isOpen ? 'is-open' : ''}" data-open="${isOpen ? 'true' : 'false'}" id="folder_${cat.id}" onclick="VadeMecumEngine.toggleFolder('${cat.id}', event)">
+            <div class="glass-folder-card ${isOpen ? 'is-open' : ''}" id="folder_${cat.id}" onclick="VadeMecumEngine.toggleFolder('${cat.id}', event)">
               
               <!-- Aba Superior da Pasta -->
               <div class="glass-folder-header">
@@ -13585,7 +12814,6 @@ Formato do Schema JSON Obrigatório:
       },
 
       filterCategory(cat, ev) {
-        this.toggleSidebarDrawer(false);
         if (ev) ev.preventDefault();
         this.activeCategory = cat;
         this.displayLimit = 24;
@@ -13601,7 +12829,6 @@ Formato do Schema JSON Obrigatório:
       },
 
       filterFavorites(ev) {
-        this.toggleSidebarDrawer(false);
         if (ev) ev.preventDefault();
         document.querySelectorAll('.vm-nav-link').forEach(el => el.classList.remove('active'));
         if (ev && ev.currentTarget) ev.currentTarget.classList.add('active');
@@ -13615,7 +12842,6 @@ Formato do Schema JSON Obrigatório:
       },
 
       filterGrifados(ev) {
-        this.toggleSidebarDrawer(false);
         if (ev) ev.preventDefault();
         document.querySelectorAll('.vm-nav-link').forEach(el => el.classList.remove('active'));
         if (ev && ev.currentTarget) ev.currentTarget.classList.add('active');
@@ -13673,8 +12899,7 @@ Formato do Schema JSON Obrigatório:
       scrollFeatured(direction) {
         const grid = document.getElementById('vmFeaturedGrid');
         if (!grid) return;
-        const scrollAmount = window.innerWidth <= 768 ? Math.round(window.innerWidth * 0.88) : 340;
-        grid.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        grid.scrollBy({ left: direction * 340, behavior: 'smooth' });
       },
 
       updateReadingPlayer(title, percent = 0) {
@@ -13684,10 +12909,6 @@ Formato do Schema JSON Obrigatório:
         if (titleEl) titleEl.innerText = title;
         if (barEl) barEl.style.width = percent + '%';
         if (pctEl) pctEl.innerText = percent + '%';
-        const mobileResumeTitle = document.getElementById('vmMobileBottomResumeTitle');
-        if (mobileResumeTitle && title) {
-          mobileResumeTitle.innerText = title;
-        }
 
         localStorage.setItem('tatico_os_last_read_law', JSON.stringify({
           title: title,
@@ -13702,9 +12923,6 @@ Formato do Schema JSON Obrigatório:
           const saved = JSON.parse(localStorage.getItem('tatico_os_last_read_law'));
           if (saved && saved.title) {
             this.updateReadingPlayer(saved.title, saved.percent || 0);
-          } else {
-            const mobileResumeTitle = document.getElementById('vmMobileBottomResumeTitle');
-            if (mobileResumeTitle) mobileResumeTitle.innerText = 'Constituição Federal / 88';
           }
         } catch (e) {}
       },
@@ -13721,7 +12939,6 @@ Formato do Schema JSON Obrigatório:
       },
 
       async openLawReader(lawInput, customTitle = null) {
-        this.toggleSidebarDrawer(false);
         let path = '';
         let title = customTitle || '';
 
