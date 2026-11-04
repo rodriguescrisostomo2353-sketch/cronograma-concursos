@@ -7010,10 +7010,6 @@
     window.closeTacticalAuthModal = closeTacticalAuthModal;
 
     function updateCloudStatusBadge(state, text) {
-      if (typeof CloudSyncService !== 'undefined' && CloudSyncService.updateBadge) {
-        CloudSyncService.updateBadge(state, text);
-        return;
-      }
       const badges = [
         document.getElementById('studentOsSyncBadge'),
         document.getElementById('vmSyncBadge')
@@ -7023,11 +7019,42 @@
         b.className = 'tactical-sync-badge ' + state;
         const textEl = b.querySelector('.sync-text');
         const iconEl = b.querySelector('.sync-icon');
-        if (textEl) textEl.innerText = text || (state === 'synced' ? 'Sincronizado' : (state === 'syncing' ? 'Sincronizando...' : 'Offline'));
+        const cleanText = (text || (state === 'synced' ? 'Sincronizado' : (state === 'syncing' ? 'Sincronizando...' : 'Offline'))).replace(/^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\s]+/u, '').trim();
+        if (textEl) textEl.innerText = cleanText;
         if (iconEl) iconEl.innerText = state === 'synced' ? '☁️' : (state === 'syncing' ? '🔄' : '⚠️');
       });
+
+      const sidebarLabel = document.getElementById('sidebarSyncStatusLabel');
+      if (sidebarLabel) {
+        sidebarLabel.innerText = state === 'synced' ? '☁️ Sincronizado na Nuvem' : (state === 'syncing' ? '🔄 Sincronizando...' : '⚠️ Salvo Local');
+        sidebarLabel.style.color = state === 'synced' ? '#34D399' : (state === 'syncing' ? 'var(--gold-light)' : '#F87171');
+      }
+
+      const badgeFcUser = document.getElementById('badgeFlashcardSyncUser');
+      if (badgeFcUser) {
+        badgeFcUser.style.color = state === 'synced' ? '#34D399' : (state === 'syncing' ? 'var(--gold-light)' : '#F87171');
+      }
     }
     window.updateCloudStatusBadge = updateCloudStatusBadge;
+
+    function getSupabaseCachedUser() {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && ((k.startsWith('sb-') && k.endsWith('-auth-token')) || k === 'supabase.auth.token')) {
+          try {
+            const raw = localStorage.getItem(k);
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              const u = parsed.user || parsed.currentSession?.user;
+              if (u && (u.email || u.id)) return u;
+            }
+          } catch(e) {}
+        }
+      }
+      return null;
+    }
+    window.getSupabaseCachedUser = getSupabaseCachedUser;
+
 
     function checkAuth() {
       const user = getLoggedInUser();
@@ -7312,6 +7339,12 @@
           user = data?.user;
         } catch(e) {}
       }
+      if (!user || !user.user_metadata) {
+        const cached = getSupabaseCachedUser();
+        if (cached && (cached.user_metadata || cached.id)) {
+          user = user ? { ...user, user_metadata: cached.user_metadata || user.user_metadata } : cached;
+        }
+      }
       if (!user) {
         user = getLoggedInUser();
       }
@@ -7322,7 +7355,7 @@
       }
 
       checkAuth();
-      updateCloudStatusBadge('syncing', 'Puxando dados da nuvem...');
+      updateCloudStatusBadge('syncing', 'Sincronizando...');
 
       try {
         let cloudKey = '';
@@ -7331,7 +7364,7 @@
         let cloudMini = null;
         let cloudMetrics = null;
 
-        // 1. Extrai da Camada 1 (user_metadata do GoTrue / Supabase Auth)
+        // 1. Extrai da Camada 1 (user_metadata do Supabase Auth - 100% garantido por usuário)
         const meta = user.user_metadata || {};
         if (meta.gemini_api_key) cloudKey = meta.gemini_api_key;
         if (meta.gemini_model) cloudModel = meta.gemini_model;
@@ -7339,7 +7372,7 @@
         if (meta.tatico_mini_questions) cloudMini = meta.tatico_mini_questions;
         if (meta.tatico_metrics) cloudMetrics = meta.tatico_metrics;
 
-        // 2. Extrai da Camada 2 (Tabela user_data)
+        // 2. Extrai da Camada 2 (Tabela user_data) como complemento
         if (client && client.from) {
           try {
             const { data: row } = await client
@@ -7371,11 +7404,12 @@
               }
             }
           } catch (tableErr) {
-            console.warn('[CloudSync] Aviso ao ler tabela user_data:', tableErr);
+            console.warn('[CloudSync] Aviso ao consultar tabela user_data:', tableErr);
           }
         }
 
         // 3. Sincroniza a chave e modelo Gemini
+        const localKey = localStorage.getItem('tatico_os_gemini_key') || '';
         if (cloudKey && cloudKey.trim()) {
           localStorage.setItem('tatico_os_gemini_key', cloudKey.trim());
           if (cloudModel) {
@@ -7384,10 +7418,14 @@
           if (typeof updateGeminiStatusIndicator === 'function') {
             updateGeminiStatusIndicator();
           }
-          console.log('[CloudSync] Chave API Gemini hidratada com sucesso da nuvem.');
+          console.log('[CloudSync] Chave API Gemini hidratada da nuvem.');
+        } else if (localKey && localKey.trim()) {
+          // Nuvem sem chave mas local tem chave configurada: upload preventivo da chave!
+          console.log('[CloudSync] Nuvem sem chave. Enviando chave local para a conta na nuvem...');
+          await syncUserCloudData(true);
         }
 
-        // 4. Sincroniza os Flashcards
+        // 4. Sincroniza os Flashcards com proteção total
         const localCards = typeof getStoredAIFlashcards === 'function' ? getStoredAIFlashcards() : [];
         if (cloudCards && cloudCards.length > 0) {
           const cardMap = new Map();
@@ -7401,10 +7439,18 @@
             renderAIFlashcards(typeof currentAIFlashcardFilter !== 'undefined' ? currentAIFlashcardFilter : 'todos');
           }
           console.log(`[CloudSync] Flashcards hidratados: ${mergedCards.length} cards.`);
+          // Se locais tinham cards novos que não estavam na nuvem, atualiza a nuvem
+          if (mergedCards.length > cloudCards.length) {
+            console.log(`[CloudSync] Novos cards locais detectados (${mergedCards.length} vs ${cloudCards.length}). Atualizando nuvem...`);
+            await syncUserCloudData(true);
+          }
         } else if (localCards && localCards.length > 0) {
-          // Nuvem vazia mas máquina atual tem cards locais: upload automático preventivo
-          console.log(`[CloudSync] Nuvem vazia. Upload preventivo de ${localCards.length} cards locais...`);
-          await syncUserCloudData();
+          // Nuvem vazia de cards mas máquina atual tem cards locais: upload preventivo imediato!
+          console.log(`[CloudSync] Nuvem sem cards. Realizando upload preventivo de ${localCards.length} cards locais para a nuvem...`);
+          await syncUserCloudData(true);
+          if (typeof renderAIFlashcards === 'function') {
+            renderAIFlashcards(typeof currentAIFlashcardFilter !== 'undefined' ? currentAIFlashcardFilter : 'todos');
+          }
         }
 
         // 5. Sincroniza Mini-Perguntas e Métricas
@@ -7429,12 +7475,12 @@
 
         if (typeof updateDashboardMetrics === 'function') updateDashboardMetrics();
         if (typeof updateModalFCViewer === 'function') updateModalFCViewer();
-        updateCloudStatusBadge('synced', '☁️ Sincronizado (Conta Ativa)');
+        updateCloudStatusBadge('synced', 'Sincronizado');
         return true;
 
       } catch (err) {
         console.warn('[CloudSync] Erro ao carregar dados da nuvem:', err);
-        updateCloudStatusBadge('offline', '⚠️ Offline (Salvo Local)');
+        updateCloudStatusBadge('offline', 'Offline (Salvo Local)');
         return false;
       }
     };
@@ -7452,27 +7498,25 @@
       init() {
         this.user = getLoggedInUser();
 
-        // 1. Escuta mudanças na conexão de rede do dispositivo
         window.addEventListener('online', () => {
           this.user = getLoggedInUser();
           if (this.user) {
-            this.updateBadge('syncing', 'Conectado. Sincronizando...');
-            this.syncToCloud(true);
+            window.syncUserCloudData(true);
           } else {
-            this.updateBadge('offline', 'Online (Modo Local)');
+            updateCloudStatusBadge('offline', 'Modo Local');
           }
         });
 
         window.addEventListener('offline', () => {
-          this.updateBadge('offline', '⚠️ Offline (Salvo Local)');
+          updateCloudStatusBadge('offline', 'Offline (Salvo Local)');
         });
 
-        // 2. Ouvinte de estado de autenticação Supabase nativo
         try {
           const client = getSupabaseClient();
           if (client && client.auth) {
             client.auth.onAuthStateChange(async (event, session) => {
-              if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+              console.log('[SupabaseAuth] onAuthStateChange:', event);
+              if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
                 if (session && session.user) {
                   this.user = {
                     email: session.user.email,
@@ -7482,23 +7526,22 @@
                   };
                   localStorage.setItem('tactical_os_user', JSON.stringify(this.user));
                   checkAuth();
-                  await this.pullFromCloud();
+                  await window.loadUserCloudData();
                 }
               } else if (event === 'SIGNED_OUT') {
                 this.user = null;
-                this.updateBadge('offline', 'Modo Local');
+                checkAuth();
               }
             });
           }
         } catch(e) {
-          console.warn('[CloudSyncService] Supabase onAuthStateChange indisponível:', e);
+          console.warn('[CloudSyncService] Supabase onAuthStateChange:', e);
         }
 
-        // 3. Inicialização e Pull imediato se já houver sessão ativa
-        if (this.user && this.user.id) {
-          this.pullFromCloud();
+        if (this.user && this.user.id && !this.user.id.startsWith('usr_unknown')) {
+          window.loadUserCloudData();
         } else {
-          this.updateBadge('offline', 'Modo Local');
+          checkAuth();
         }
       },
 
@@ -13947,12 +13990,15 @@ Formato do Schema JSON Obrigatório:
         localStorage.setItem('tatico_purged_preprogrammed_v2', 'true');
       }
 
-      // 1. Checagem mandatória de autenticação
+      // 1. Checagem de autenticação e hidratação imediata da nuvem
       checkAuth();
 
-      // 1.1 Inicializar CloudSyncService (Pull inicial se logado)
+      // 1.1 Inicializar CloudSyncService (que chama loadUserCloudData())
       if (typeof CloudSyncService !== 'undefined') {
         CloudSyncService.init();
+      }
+      if (typeof window.loadUserCloudData === 'function') {
+        window.loadUserCloudData();
       }
 
       // 2. Carregar dados operacionais
