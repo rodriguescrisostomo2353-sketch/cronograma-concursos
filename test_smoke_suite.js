@@ -220,7 +220,7 @@ async function runSmokeTests() {
   // Salva backup de teste no disco para comprovação
   const scratchDir = path.join(__dirname, 'scratch');
   if (!fs.existsSync(scratchDir)) fs.mkdirSync(scratchDir, { recursive: true });
-  fs.writeFileSync(path.join(scratchDir, 'smoke_test_backup.json'), JSON.stringify(backupPayload, null, 2), 'utf8');
+  fs.writeFileSync(path.join(scratchDir, 'smoke_test_backup.json'), JSON.stringify(backupPayload, null, 2) + '\n', 'utf8');
 
   // Altera os dados locais e executa restauração real via BackupManager
   const originalCount = window.App.data.materias.length;

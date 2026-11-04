@@ -10300,8 +10300,16 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
     window.IdUtils = IdUtils;
 
     const SUPABASE_CONFIG = {
-      url: 'https://arhhajxkmjpjwbrlcsqm.supabase.co',
-      anonKey: 'sb_publishable_zZUuqpP2FXG9am-Q7UY95g_musS2nA-'
+      url: (function() {
+        try {
+          return localStorage.getItem('custom_supabase_url') || localStorage.getItem('concurso_custom_supabase_url') || 'https://arhhajxkmjpjwbrlcsqm.supabase.co';
+        } catch(e) { return 'https://arhhajxkmjpjwbrlcsqm.supabase.co'; }
+      })(),
+      anonKey: (function() {
+        try {
+          return localStorage.getItem('custom_supabase_anon_key') || localStorage.getItem('concurso_custom_supabase_anon_key') || 'sb_publishable_zZUuqpP2FXG9am-Q7UY95g_musS2nA-';
+        } catch(e) { return 'sb_publishable_zZUuqpP2FXG9am-Q7UY95g_musS2nA-'; }
+      })()
     };
 
     const SyncManager = {
@@ -18261,7 +18269,11 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           }
         } catch (err) {
           console.warn('[App] Erro na autenticação:', err);
-          this.showAuthFeedback(err.message || 'Erro ao processar solicitação. Verifique seus dados.', 'error');
+          let authErrMsg = err.message || 'Erro ao processar solicitação. Verifique seus dados.';
+          if (authErrMsg.includes('Failed to fetch') || authErrMsg.includes('NetworkError') || authErrMsg.includes('Load failed')) {
+            authErrMsg = '⚠️ Falha de conexão (Failed to fetch). O projeto Supabase pode estar pausado por inatividade no painel da Supabase. Acesse supabase.com/dashboard e clique em "Restore project" para reativá-lo, ou verifique sua conexão.';
+          }
+          this.showAuthFeedback(authErrMsg, 'error');
         } finally {
           if (submitBtn) {
             submitBtn.disabled = false;
