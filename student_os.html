@@ -2330,6 +2330,17 @@
       overflow: hidden;
     }
 
+    .note-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-tactical);
+      border-radius: var(--radius-sm);
+    }
+
     .note-footer {
       display: flex;
       justify-content: space-between;
@@ -2338,6 +2349,7 @@
       color: var(--text-muted);
       border-top: 1px solid rgba(255, 255, 255, 0.05);
       padding-top: 6px;
+      margin-top: auto; /* push footer to bottom */
     }
 
     .note-tag {
