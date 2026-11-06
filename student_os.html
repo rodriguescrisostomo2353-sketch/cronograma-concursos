@@ -7914,14 +7914,18 @@
         const geminiModel = localStorage.getItem('tatico_os_gemini_model') || 'gemini-3.0-flash';
         const allCards = typeof getStoredAIFlashcards === 'function' ? getStoredAIFlashcards() : [];
 
-        // Compactação de segurança para user_metadata (strip base64 > 50KB, mantém thumbnail leve <= 15KB)
+        // Compactação de segurança ultra-rígida para user_metadata (strip base64 > 5KB para evitar Failed to fetch / CORS drops)
         const metaCards = allCards.map(c => {
           const copy = { ...c };
-          if (copy.fullImageDataUrl && copy.fullImageDataUrl.length > 50000) {
+          // Remove qualquer imagem base64 pesada (> 5KB) do metadata do Auth
+          if (copy.fullImageDataUrl && copy.fullImageDataUrl.length > 5000) {
             delete copy.fullImageDataUrl;
           }
-          if (copy.thumbDataUrl && copy.thumbDataUrl.length > 25000) {
-            copy.thumbDataUrl = copy.thumbDataUrl.slice(0, 25000);
+          if (copy.thumbDataUrl && copy.thumbDataUrl.length > 5000) {
+            delete copy.thumbDataUrl;
+          }
+          if (copy.printThumbnail && copy.printThumbnail.length > 5000) {
+            delete copy.printThumbnail;
           }
           return copy;
         });
