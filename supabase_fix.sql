@@ -123,3 +123,4 @@ GRANT SELECT ON TABLE public.user_data TO anon;
 
 -- Notificação de sucesso
 SELECT 'Políticas RLS e tabela user_data configuradas com sucesso!' AS status;
+

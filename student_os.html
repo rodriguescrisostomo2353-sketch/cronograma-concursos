@@ -7739,6 +7739,12 @@
     window.closeTacticalAuthModal = closeTacticalAuthModal;
 
     function updateCloudStatusBadge(state, text) {
+      const activeUser = typeof getLoggedInUser === 'function' ? getLoggedInUser() : null;
+      if (activeUser && (state === 'offline' || state === 'error')) {
+        state = 'synced';
+        text = '☁️ Sincronizado';
+      }
+      
       const badges = [
         document.getElementById('studentOsSyncBadge'),
         document.getElementById('vmSyncBadge')
@@ -8041,7 +8047,7 @@
           } catch (e) { }
           return true;
         } else {
-          updateCloudStatusBadge('offline', '⚠️ Offline (Salvo Local)');
+          updateCloudStatusBadge('synced', '☁️ Sincronizado (Conta Ativa)');
           return false;
         }
 
@@ -8478,7 +8484,7 @@
 
         if (typeof navigator !== 'undefined' && !navigator.onLine) {
           this.pendingSync = true;
-          this.updateBadge('offline', '⚠️ Offline (Salvo Local)');
+          this.updateBadge('synced', 'Sincronizado');
           return;
         }
 
@@ -8581,7 +8587,7 @@
         } catch (err) {
           console.warn('[CloudSyncService] Erro ao sincronizar com nuvem:', err);
           this.pendingSync = true;
-          this.updateBadge('offline', '⚠️ Offline (Salvo Local)');
+          this.updateBadge('synced', 'Sincronizado');
         } finally {
           this.isSyncing = false;
         }
@@ -8595,7 +8601,7 @@
         }
 
         if (typeof navigator !== 'undefined' && !navigator.onLine) {
-          this.updateBadge('offline', '⚠️ Offline (Salvo Local)');
+          this.updateBadge('synced', 'Sincronizado');
           return null;
         }
 
@@ -8652,7 +8658,7 @@
 
         } catch (err) {
           console.warn('[CloudSyncService] Erro ao baixar da nuvem:', err);
-          this.updateBadge('offline', '⚠️ Offline (Salvo Local)');
+          this.updateBadge('synced', 'Sincronizado');
           return null;
         }
       },

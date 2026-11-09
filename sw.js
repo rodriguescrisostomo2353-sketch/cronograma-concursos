@@ -1,5 +1,5 @@
 // Service Worker para o PWA Cronograma de Estudos para Concursos (v1.9.1 - Tactical Police Redesign)
-const CACHE_NAME = 'cronograma-concursos-v36';
+const CACHE_NAME = 'cronograma-concursos-v38';
 
 // Recursos essenciais para abertura instantânea offline-first (leve e não-bloqueante)
 const PRECACHE_ASSETS = [
@@ -67,39 +67,23 @@ self.addEventListener('fetch', (event) => {
   // Nunca intercepta chamadas de autenticação ou banco do Supabase (tempo real)
   if (event.request.url.includes('supabase.co')) return;
 
-  // Navegação HTML: Cache First com revalidação em background (Stale-While-Revalidate)
-  // Entrega o HTML local imediatamente em 1ms sem esperar a rede
+  // Navegação HTML: Network First com fallback para Cache (garante atualizações instantâneas)
   if (event.request.mode === 'navigate' || (event.request.headers && event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html'))) {
     event.respondWith(
-      caches.match(event.request).then((cached) => {
-        if (cached) {
-          fetch(event.request).then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
-              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
-            }
-          }).catch(() => {});
-          return cached;
-        }
-
-        return caches.match('./index.html').then((indexCached) => {
-          if (indexCached) {
-            fetch(event.request).then((networkResponse) => {
-              if (networkResponse && networkResponse.status === 200) {
-                caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
-              }
-            }).catch(() => {});
-            return indexCached;
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const copy = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
           }
-
-          return fetch(event.request).then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
-              const copy = networkResponse.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-            }
-            return networkResponse;
+          return networkResponse;
+        })
+        .catch(() => {
+          return caches.match(event.request).then((cached) => {
+            if (cached) return cached;
+            return caches.match('./index.html');
           });
-        });
-      }).catch(() => caches.match('./index.html'))
+        })
     );
     return;
   }
