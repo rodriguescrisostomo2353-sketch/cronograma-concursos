@@ -18372,6 +18372,57 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
         }
       },
 
+      async copySqlFixScript() {
+        const sql = `-- SCRIPT DE CORREÇÃO DEFINITIVA DE TABELAS E RLS NO SUPABASE
+CREATE TABLE IF NOT EXISTS public.user_data (
+  user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  materias JSONB DEFAULT '[]'::jsonb,
+  nao_classificado JSONB DEFAULT '[]'::jsonb,
+  schedules JSONB DEFAULT '[]'::jsonb,
+  active_schedule_id TEXT,
+  completed_slots JSONB DEFAULT '{}'::jsonb,
+  priorities JSONB DEFAULT '{}'::jsonb,
+  auto_config JSONB DEFAULT '{}'::jsonb,
+  exam_date TEXT,
+  exam_title TEXT,
+  spaced_reviews JSONB DEFAULT '[]'::jsonb,
+  theme TEXT DEFAULT 'dark',
+  pdf_annotations JSONB DEFAULT '[]'::jsonb,
+  pdf_bookmarks JSONB DEFAULT '[]'::jsonb,
+  study_log JSONB DEFAULT '[]'::jsonb,
+  reset_epoch INTEGER DEFAULT 0,
+  device_id TEXT,
+  revision INTEGER DEFAULT 1,
+  content_hash TEXT,
+  study_data JSONB DEFAULT '{}'::jsonb,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.user_data ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Usuários podem gerenciar seus próprios dados" ON public.user_data;
+DROP POLICY IF EXISTS "Permitir select para proprietario" ON public.user_data;
+DROP POLICY IF EXISTS "Permitir insert para proprietario" ON public.user_data;
+DROP POLICY IF EXISTS "Permitir update para proprietario" ON public.user_data;
+DROP POLICY IF EXISTS "Permitir delete para proprietario" ON public.user_data;
+
+CREATE POLICY "Permitir select para proprietario" ON public.user_data FOR SELECT TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "Permitir insert para proprietario" ON public.user_data FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Permitir update para proprietario" ON public.user_data FOR UPDATE TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Permitir delete para proprietario" ON public.user_data FOR DELETE TO authenticated USING (auth.uid() = user_id);
+
+GRANT ALL ON TABLE public.user_data TO authenticated;
+GRANT ALL ON TABLE public.user_data TO service_role;
+GRANT SELECT ON TABLE public.user_data TO anon;`;
+
+        try {
+          await navigator.clipboard.writeText(sql);
+          this.showToast('Script SQL copiado com sucesso! Cole no SQL Editor do Supabase.', 'success');
+        } catch(e) {
+          prompt('Copie o código SQL abaixo e cole no SQL Editor do Supabase:', sql);
+        }
+      },
+
       async copySyncDiagnostics() {
         const isConfigured = Boolean(
           SUPABASE_CONFIG.url && 
