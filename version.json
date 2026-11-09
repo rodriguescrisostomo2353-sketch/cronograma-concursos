@@ -1,14 +1,25 @@
 {
-  "version": "1.9.1",
-  "date": "2026-10-16",
+  "version": "1.9.2",
+  "date": "2026-11-09",
   "notes": [
-    "Ícone Oficial Faca na Caveira / BOPE com adaga, caveira rachada e pistolas douradas cruzadas",
-    "Distintivo Oficial em Alta Resolução da Polícia Civil de Minas Gerais (PCMG)",
-    "Marca d'água tática com profundidade e blur no plano de fundo do aplicativo",
-    "Geração e alinhamento dos ícones do Android (todas as densidades de mipmaps) e PWA manifest"
+    "Sincronização em nuvem completa e bidirecional entre Celular (Mobile) e Computador (Web)",
+    "Canal de sincronização transparente via perfil Auth imune a bloqueios de RLS de tabela",
+    "Mesclagem automática inteligente de matérias e cronogramas sem travar a interface",
+    "Correção de status no Student OS mantendo conexão ativa e sincronizada",
+    "Melhorias de desempenho e atualização do Service Worker com estratégia Network-First"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.9.1",
+      "date": "2026-10-16",
+      "notes": [
+        "Ícone Oficial Faca na Caveira / BOPE com adaga, caveira rachada e pistolas douradas cruzadas",
+        "Distintivo Oficial em Alta Resolução da Polícia Civil de Minas Gerais (PCMG)",
+        "Marca d'água tática com profundidade e blur no plano de fundo do aplicativo",
+        "Geração e alinhamento dos ícones do Android (todas as densidades de mipmaps) e PWA manifest"
+      ]
+    },
     {
       "version": "1.9.0",
       "date": "2026-10-16",
