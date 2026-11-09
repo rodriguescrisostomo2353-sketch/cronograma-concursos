@@ -7953,12 +7953,70 @@
           updated_at: new Date().toISOString()
         };
 
+        let concursoMaterias = [];
+        try {
+          if (typeof getConfiguredMaterias === 'function') {
+            concursoMaterias = getConfiguredMaterias();
+          } else {
+            concursoMaterias = JSON.parse(localStorage.getItem('tactical_custom_materias') || '[]');
+          }
+          if (!concursoMaterias || concursoMaterias.length === 0) {
+            const rawApp = localStorage.getItem('concurso_app_data');
+            if (rawApp) {
+              const parsedApp = JSON.parse(rawApp);
+              if (Array.isArray(parsedApp.materias)) concursoMaterias = parsedApp.materias;
+            }
+          }
+        } catch (e) { }
+
+        let schedulesList = [];
+        try {
+          schedulesList = JSON.parse(localStorage.getItem('concurso_schedules_list') || '[]');
+        } catch (e) { }
+
+        let completedSlots = {};
+        try {
+          completedSlots = JSON.parse(localStorage.getItem('concurso_completed_slots') || '{}');
+        } catch (e) { }
+
+        let studyLog = [];
+        try {
+          studyLog = JSON.parse(localStorage.getItem('concurso_study_log') || '[]');
+        } catch (e) { }
+
+        let spacedReviews = [];
+        try {
+          spacedReviews = JSON.parse(localStorage.getItem('concurso_spaced_reviews') || '[]');
+        } catch (e) { }
+
+        let examTarget = null;
+        try {
+          examTarget = JSON.parse(localStorage.getItem('concurso_exam_target') || 'null');
+        } catch (e) { }
+
+        const unifiedState = typeof CloudSyncService !== 'undefined' ? CloudSyncService.gatherPayload() : null;
+
+        const cleanConcursoState = {
+          materias: concursoMaterias,
+          schedules: schedulesList,
+          active_schedule_id: localStorage.getItem('concurso_active_schedule_id') || null,
+          completed_slots: completedSlots,
+          study_log: studyLog,
+          spaced_reviews: spacedReviews,
+          exam_target: examTarget,
+          theme: localStorage.getItem('concurso_theme_preference') || 'dark',
+          updated_at: new Date().toISOString()
+        };
+
         const metadataPayload = {
           gemini_api_key: rawGeminiKey,
           gemini_model: geminiModel,
           tatico_flashcards: metaCards,
           tatico_mini_questions: miniQuestions,
           tatico_metrics: metrics,
+          concurso_cloud_state: cleanConcursoState,
+          student_os_state: unifiedState,
+          concurso_sync_timestamp: new Date().toISOString(),
           tatico_sync_timestamp: new Date().toISOString()
         };
 
@@ -8110,6 +8168,36 @@
         if (Array.isArray(meta.tatico_flashcards)) cloudCards = meta.tatico_flashcards;
         if (meta.tatico_mini_questions) cloudMini = meta.tatico_mini_questions;
         if (meta.tatico_metrics) cloudMetrics = meta.tatico_metrics;
+
+        // Hidratação universal do concurso_cloud_state sincronizado pelo Mobile ou Desktop
+        if (meta.concurso_cloud_state && typeof meta.concurso_cloud_state === 'object') {
+          const cState = meta.concurso_cloud_state;
+          if (Array.isArray(cState.materias) && cState.materias.length > 0) {
+            localStorage.setItem('tactical_custom_materias', JSON.stringify(cState.materias));
+            let appData = {};
+            try { appData = JSON.parse(localStorage.getItem('concurso_app_data') || '{}'); } catch (e) { }
+            appData.materias = cState.materias;
+            localStorage.setItem('concurso_app_data', JSON.stringify(appData));
+          }
+          if (Array.isArray(cState.schedules) && cState.schedules.length > 0) {
+            localStorage.setItem('concurso_schedules_list', JSON.stringify(cState.schedules));
+          }
+          if (cState.active_schedule_id) {
+            localStorage.setItem('concurso_active_schedule_id', cState.active_schedule_id);
+          }
+          if (cState.completed_slots && typeof cState.completed_slots === 'object') {
+            localStorage.setItem('concurso_completed_slots', JSON.stringify(cState.completed_slots));
+          }
+          if (Array.isArray(cState.study_log) && cState.study_log.length > 0) {
+            localStorage.setItem('concurso_study_log', JSON.stringify(cState.study_log));
+          }
+          if (Array.isArray(cState.spaced_reviews) && cState.spaced_reviews.length > 0) {
+            localStorage.setItem('concurso_spaced_reviews', JSON.stringify(cState.spaced_reviews));
+          }
+          if (cState.exam_target) {
+            localStorage.setItem('concurso_exam_target', JSON.stringify(cState.exam_target));
+          }
+        }
 
         // 2. Extrai da Camada 2 (Tabela user_data) como complemento
         if (client && client.from) {
@@ -8535,43 +8623,74 @@
             updated_at: unifiedPayload.updated_at
           };
 
+          const cleanCloudState = {
+            materias: dbPayload.materias || [],
+            nao_classificado: dbPayload.nao_classificado || [],
+            schedules: dbPayload.schedules || [],
+            active_schedule_id: dbPayload.active_schedule_id || null,
+            completed_slots: dbPayload.completed_slots || {},
+            exam_date: dbPayload.exam_date || null,
+            exam_title: dbPayload.exam_title || null,
+            spaced_reviews: dbPayload.spaced_reviews || [],
+            study_log: dbPayload.study_log || [],
+            theme: dbPayload.theme || 'dark',
+            updated_at: dbPayload.updated_at
+          };
+
           const client = getSupabaseClient();
           let saveSuccess = false;
 
-          if (client && client.from) {
-            // Tentativa via Supabase JS Client
-            const { error } = await client
-              .from('user_data')
-              .upsert(dbPayload, { onConflict: 'user_id' });
-
-            if (!error) {
-              saveSuccess = true;
-            } else {
-              console.warn('[CloudSyncService] Erro no client.upsert, tentando fallback REST:', error);
+          // CAMADA 1: Supabase Auth updateUser (100% tolerante a RLS de tabela, compartilhado com Mobile)
+          if (client && client.auth) {
+            try {
+              const { error: aErr } = await client.auth.updateUser({
+                data: {
+                  concurso_cloud_state: cleanCloudState,
+                  student_os_state: unifiedPayload,
+                  concurso_sync_timestamp: dbPayload.updated_at,
+                  tatico_sync_timestamp: dbPayload.updated_at
+                }
+              });
+              if (!aErr) {
+                saveSuccess = true;
+                console.log('[CloudSyncService] Camada 1 (Auth) salva com sucesso total!');
+              } else {
+                console.warn('[CloudSyncService] Camada 1 aviso:', aErr.message || aErr);
+              }
+            } catch (eAuth) {
+              console.warn('[CloudSyncService] Camada 1 exceção:', eAuth);
             }
           }
 
-          // Fallback via API REST direta se o cliente falhou ou não estava disponível
-          if (!saveSuccess) {
-            const endpoint = SUPABASE_CONFIG.url + '/rest/v1/user_data?on_conflict=user_id';
-            const authToken = this.user.token || SUPABASE_CONFIG.anonKey;
-            const res = await fetch(endpoint, {
-              method: 'POST',
-              headers: {
-                'apikey': SUPABASE_CONFIG.anonKey,
-                'Authorization': 'Bearer ' + authToken,
-                'Content-Type': 'application/json',
-                'Prefer': 'resolution=merge-duplicates,return=representation'
-              },
-              body: JSON.stringify(dbPayload)
-            });
-
-            if (res.ok) {
-              saveSuccess = true;
-            } else {
-              const errBody = await res.text();
-              throw new Error('Falha no upsert REST (' + res.status + '): ' + errBody);
+          // CAMADA 2: Tabela SQL user_data (Tentativa silenciosa, nunca quebra o app se RLS bloquear)
+          if (client && client.from) {
+            try {
+              const { error: tErr } = await client
+                .from('user_data')
+                .upsert(dbPayload, { onConflict: 'user_id' });
+              if (!tErr) saveSuccess = true;
+            } catch (eUp) {
+              console.warn('[CloudSyncService] Camada 2 aviso:', eUp);
             }
+          }
+
+          // Fallback REST para Camada 2 (Tentativa silenciosa)
+          if (!saveSuccess && SUPABASE_CONFIG.url) {
+            try {
+              const endpoint = SUPABASE_CONFIG.url + '/rest/v1/user_data?on_conflict=user_id';
+              const authToken = this.user.token || SUPABASE_CONFIG.anonKey;
+              const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                  'apikey': SUPABASE_CONFIG.anonKey,
+                  'Authorization': 'Bearer ' + authToken,
+                  'Content-Type': 'application/json',
+                  'Prefer': 'resolution=merge-duplicates,return=representation'
+                },
+                body: JSON.stringify(dbPayload)
+              });
+              if (res.ok) saveSuccess = true;
+            } catch (eRest) { }
           }
 
           this.lastContentHash = currentHash;
@@ -8623,21 +8742,61 @@
             }
           }
 
-          // Fallback REST
-          if (!serverRow) {
-            const endpoint = SUPABASE_CONFIG.url + '/rest/v1/user_data?user_id=eq.' + this.user.id + '&select=*';
-            const authToken = this.user.token || SUPABASE_CONFIG.anonKey;
-            const res = await fetch(endpoint, {
-              headers: {
-                'apikey': SUPABASE_CONFIG.anonKey,
-                'Authorization': 'Bearer ' + authToken
+          // Fallback REST para a tabela user_data
+          if (!serverRow && SUPABASE_CONFIG.url) {
+            try {
+              const endpoint = SUPABASE_CONFIG.url + '/rest/v1/user_data?user_id=eq.' + this.user.id + '&select=*';
+              const authToken = this.user.token || SUPABASE_CONFIG.anonKey;
+              const res = await fetch(endpoint, {
+                headers: {
+                  'apikey': SUPABASE_CONFIG.anonKey,
+                  'Authorization': 'Bearer ' + authToken
+                }
+              });
+              if (res.ok) {
+                const rows = await res.json();
+                if (Array.isArray(rows) && rows.length > 0) {
+                  serverRow = rows[0];
+                }
               }
-            });
-            if (res.ok) {
-              const rows = await res.json();
-              if (Array.isArray(rows) && rows.length > 0) {
-                serverRow = rows[0];
+            } catch (eRest) { }
+          }
+
+          // CAMADA UNIVERSAL SUPABASE AUTH: Recupera do user_metadata (Compartilhado entre Web e Mobile!)
+          if (!serverRow && client && client.auth) {
+            try {
+              const { data: uData } = await client.auth.getUser();
+              const authUser = uData?.user;
+              const meta = authUser?.user_metadata || {};
+              if (meta.concurso_cloud_state || meta.student_os_state) {
+                const cState = meta.concurso_cloud_state || {};
+                const stOsState = meta.student_os_state || null;
+                const materias = (cState.materias && cState.materias.length > 0)
+                  ? cState.materias
+                  : (stOsState?.studentOS?.customMaterias || []);
+                const schedules = (cState.schedules && cState.schedules.length > 0)
+                  ? cState.schedules
+                  : (stOsState?.studentOS?.schedulesList || []);
+
+                serverRow = {
+                  user_id: this.user.id,
+                  materias: materias,
+                  nao_classificado: cState.nao_classificado || (stOsState?.studentOS?.appData?.naoClassificado || []),
+                  schedules: schedules,
+                  active_schedule_id: cState.active_schedule_id || (stOsState?.studentOS?.activeScheduleId || null),
+                  completed_slots: cState.completed_slots || (stOsState?.studentOS?.completedSlots || {}),
+                  exam_date: cState.exam_date || (stOsState?.studentOS?.examTarget?.date || null),
+                  exam_title: cState.exam_title || (stOsState?.studentOS?.examTarget?.title || stOsState?.studentOS?.examTarget?.name || null),
+                  spaced_reviews: cState.spaced_reviews || (stOsState?.studentOS?.spacedReviews || []),
+                  study_log: cState.study_log || (stOsState?.studentOS?.appData?.studyLog || []),
+                  theme: cState.theme || 'dark',
+                  auto_config: { student_os_state: stOsState },
+                  updated_at: cState.updated_at || (stOsState?.updated_at || new Date().toISOString())
+                };
+                console.log('[CloudSyncService] pullFromCloud: dados recuperados do perfil universal Auth!');
               }
+            } catch (eAuthMeta) {
+              console.warn('[CloudSyncService] Erro ao recuperar perfil Auth:', eAuthMeta);
             }
           }
 
@@ -8831,11 +8990,24 @@
               appData.materias = dbRow.materias;
               originalSetItem('tactical_custom_materias', JSON.stringify(dbRow.materias));
             }
+            if (Array.isArray(dbRow.schedules) && dbRow.schedules.length > 0) {
+              originalSetItem('concurso_schedules_list', JSON.stringify(dbRow.schedules));
+            }
+            if (dbRow.active_schedule_id) {
+              originalSetItem('concurso_active_schedule_id', dbRow.active_schedule_id);
+            }
+            if (dbRow.completed_slots && typeof dbRow.completed_slots === 'object') {
+              originalSetItem('concurso_completed_slots', JSON.stringify(dbRow.completed_slots));
+            }
+            if (Array.isArray(dbRow.spaced_reviews) && dbRow.spaced_reviews.length > 0) {
+              originalSetItem('concurso_spaced_reviews', JSON.stringify(dbRow.spaced_reviews));
+            }
             if (Array.isArray(dbRow.study_log) && dbRow.study_log.length > 0) {
               const logMap = new Map();
               (appData.studyLog || []).forEach(l => logMap.set(l.id || l.data, l));
               dbRow.study_log.forEach(l => logMap.set(l.id || l.data, l));
               appData.studyLog = Array.from(logMap.values());
+              originalSetItem('concurso_study_log', JSON.stringify(appData.studyLog));
             }
             originalSetItem('concurso_app_data', JSON.stringify(appData));
 

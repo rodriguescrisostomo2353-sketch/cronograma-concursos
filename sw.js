@@ -1,5 +1,5 @@
-// Service Worker para o PWA Cronograma de Estudos para Concursos (v1.9.1 - Tactical Police Redesign)
-const CACHE_NAME = 'cronograma-concursos-v39';
+// Service Worker para o PWA Cronograma de Estudos para Concursos (v1.9.3 - Tactical Police Redesign)
+const CACHE_NAME = 'cronograma-concursos-v40';
 
 // Recursos essenciais para abertura instantânea offline-first (leve e não-bloqueante)
 const PRECACHE_ASSETS = [

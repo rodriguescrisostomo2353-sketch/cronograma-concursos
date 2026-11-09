@@ -1,15 +1,23 @@
 {
-  "version": "1.9.2",
+  "version": "1.9.3",
   "date": "2026-11-09",
   "notes": [
-    "Sincronização em nuvem completa e bidirecional entre Celular (Mobile) e Computador (Web)",
-    "Canal de sincronização transparente via perfil Auth imune a bloqueios de RLS de tabela",
-    "Mesclagem automática inteligente de matérias e cronogramas sem travar a interface",
-    "Correção de status no Student OS mantendo conexão ativa e sincronizada",
-    "Melhorias de desempenho e atualização do Service Worker com estratégia Network-First"
+    "Ponte universal de sincronização bidirecional em tempo real entre Mobile (APK) e Desktop Web (Student OS)",
+    "Canal de sincronização transparente via perfil Auth universal imune a restrições de tabelas RLS",
+    "Mesclagem e hidratação automática de matérias, cronogramas, sessões e ciclos de estudo em ambos os dispositivos",
+    "Supressão total de alertas intrusivos de erro com atualização automática em segundo plano",
+    "Service Worker v40 e sincronização incremental ativada"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.9.2",
+      "date": "2026-11-09",
+      "notes": [
+        "Sincronização em nuvem completa e bidirecional entre Celular (Mobile) e Computador (Web)",
+        "Canal de sincronização transparente via perfil Auth imune a bloqueios de RLS de tabela"
+      ]
+    },
     {
       "version": "1.9.1",
       "date": "2026-10-16",

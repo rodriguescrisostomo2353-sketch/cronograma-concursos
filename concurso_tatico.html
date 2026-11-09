@@ -11171,6 +11171,27 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
               return st;
             }
           }
+
+          // Fallback para student_os_state presente no perfil Auth
+          if (meta.student_os_state && typeof meta.student_os_state === 'object') {
+            const sOs = meta.student_os_state.studentOS || {};
+            const extracted = {
+              materias: sOs.customMaterias || (sOs.appData?.materias || []),
+              nao_classificado: sOs.appData?.naoClassificado || [],
+              schedules: sOs.schedulesList || [],
+              active_schedule_id: sOs.activeScheduleId || null,
+              completed_slots: sOs.completedSlots || {},
+              exam_date: sOs.examTarget?.date || null,
+              exam_title: sOs.examTarget?.title || sOs.examTarget?.name || null,
+              spaced_reviews: sOs.spacedReviews || [],
+              study_log: sOs.appData?.studyLog || [],
+              updated_at: meta.student_os_state.updated_at || new Date().toISOString()
+            };
+            if ((extracted.materias && extracted.materias.length > 0) || (extracted.schedules && extracted.schedules.length > 0)) {
+              console.log('[SyncManager] Dados recuperados com sucesso de student_os_state do perfil Auth!');
+              return extracted;
+            }
+          }
         } catch (authErr) {
           console.warn('[SyncManager] Erro ao recuperar perfil Auth:', authErr);
         }
@@ -11318,6 +11339,20 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           }
 
           if (stampErr || !cloudStamp) {
+            // Se a tabela SQL falhou por RLS ou restrições de permissão, verifica o perfil universal Auth
+            try {
+              if (this.client && this.client.auth) {
+                const { data: uData } = await this.client.auth.getUser();
+                const meta = uData?.user?.user_metadata || {};
+                const metaStamp = meta.concurso_sync_timestamp || meta.tatico_sync_timestamp || (meta.concurso_cloud_state?.updated_at) || (meta.student_os_state?.updated_at);
+                const localLastSync = localStorage.getItem('concurso_sync_last_time');
+                if (metaStamp && (!localLastSync || new Date(metaStamp).getTime() > new Date(localLastSync).getTime())) {
+                  console.log('[SyncManager] Nova alteração detectada no perfil Auth universal, sincronizando...');
+                  await this.syncDownAndMerge();
+                  return;
+                }
+              }
+            } catch (eAuthMeta) { }
             this.isSyncing = false;
             return;
           }
@@ -12893,7 +12928,7 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
      * Dentro do APK Android, a busca DEVE usar essa URL HTTPS absoluta para ler
      * a versão publicada na web e nunca a cópia empacotada no dispositivo.
      */
-    const APP_VERSION = "1.9.2";
+    const APP_VERSION = "1.9.3";
     const APP_BUILD_TIME = "19/10/2026 10:00:00";
     window.APP_VERSION = APP_VERSION;
     window.APP_BUILD_TIME = APP_BUILD_TIME;
