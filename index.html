@@ -10302,12 +10302,14 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
     const SUPABASE_CONFIG = {
       url: (function() {
         try {
-          return localStorage.getItem('custom_supabase_url') || localStorage.getItem('concurso_custom_supabase_url') || 'https://arhhajxkmjpjwbrlcsqm.supabase.co';
+          const raw = localStorage.getItem('custom_supabase_url') || localStorage.getItem('concurso_custom_supabase_url') || 'https://arhhajxkmjpjwbrlcsqm.supabase.co';
+          return String(raw || '').trim().replace(/\/+$/, '');
         } catch(e) { return 'https://arhhajxkmjpjwbrlcsqm.supabase.co'; }
       })(),
       anonKey: (function() {
         try {
-          return localStorage.getItem('custom_supabase_anon_key') || localStorage.getItem('concurso_custom_supabase_anon_key') || 'sb_publishable_zZUuqpP2FXG9am-Q7UY95g_musS2nA-';
+          const raw = localStorage.getItem('custom_supabase_anon_key') || localStorage.getItem('concurso_custom_supabase_anon_key') || 'sb_publishable_zZUuqpP2FXG9am-Q7UY95g_musS2nA-';
+          return String(raw || '').trim();
         } catch(e) { return 'sb_publishable_zZUuqpP2FXG9am-Q7UY95g_musS2nA-'; }
       })()
     };
@@ -11611,7 +11613,11 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
               }
             } else {
               report.writeStatus = 'error';
-              report.error = 'permission-denied: Erro ao gravar dados (' + (writeErr.code || '') + ': ' + (writeErr.message || '') + '). Verifique as políticas RLS no Supabase.';
+              const isFetchFail = String(writeErr.message || '').includes('Failed to fetch') || String(writeErr || '').includes('Failed to fetch');
+              const extraHint = isFetchFail 
+                ? ' (Falha de requisição de rede/CORS ou bloqueador ativo. Execute o script supabase_fix.sql no SQL Editor do Supabase para liberar as políticas RLS).'
+                : ' (Execute o script supabase_fix.sql no SQL Editor do painel Supabase para liberar o acesso).';
+              report.error = 'permission-denied: Erro ao gravar dados (' + (writeErr.code || 'RLS') + ': ' + (writeErr.message || 'Bloqueio de política RLS') + ').' + extraHint;
               this.recordSyncError(writeErr);
               if (resultBox) {
                 resultBox.style.background = 'rgba(239, 68, 68, 0.1)';
