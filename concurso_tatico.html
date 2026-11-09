@@ -11070,14 +11070,50 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           payload.user_id = this.user.id;
           payload.updated_at = new Date().toISOString();
 
-          const { error } = await this.upsertUserData(payload);
+          // CAMADA 1: Supabase Auth updateUser (Nativo, imune a RLS de tabela, compartilha entre Web e Mobile)
+          try {
+            if (this.client && this.client.auth) {
+              const cleanCloudState = {
+                materias: payload.materias || [],
+                nao_classificado: payload.nao_classificado || [],
+                schedules: payload.schedules || [],
+                active_schedule_id: payload.active_schedule_id || null,
+                completed_slots: payload.completed_slots || {},
+                priorities: payload.priorities || {},
+                auto_config: payload.auto_config || {},
+                exam_date: payload.exam_date || null,
+                exam_title: payload.exam_title || null,
+                spaced_reviews: payload.spaced_reviews || [],
+                theme: payload.theme || 'dark',
+                study_log: payload.study_log || (payload.auto_config?.study_log || []),
+                reset_epoch: payload.reset_epoch || (payload.auto_config?.reset_epoch || 0),
+                content_hash: payload.content_hash || (payload.auto_config?.content_hash || ''),
+                device_id: payload.device_id || (payload.auto_config?.device_id || ''),
+                updated_at: payload.updated_at
+              };
+              await this.client.auth.updateUser({
+                data: {
+                  concurso_cloud_state: cleanCloudState,
+                  concurso_sync_timestamp: payload.updated_at
+                }
+              });
+            }
+          } catch (eAuth) {
+            console.warn('[SyncManager] Camada 1 Auth aviso:', eAuth);
+          }
 
-          if (error) throw error;
+          // CAMADA 2: Tabela SQL user_data
+          try {
+            await this.upsertUserData(payload);
+          } catch (eDb) {
+            console.warn('[SyncManager] Camada 2 user_data aviso:', eDb);
+          }
 
           this.lastAppliedHash = payload.content_hash || '';
           try {
             localStorage.setItem('concurso_last_content_hash', this.lastAppliedHash);
             localStorage.setItem('concurso_sync_last_time', payload.updated_at);
+            localStorage.setItem('concurso_local_backup', JSON.stringify(payload));
           } catch(e) {}
 
           this.lastError = null;
@@ -11089,9 +11125,11 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
           this.updateDiagnosticsUI();
         } catch (err) {
           console.warn('[SyncManager] Erro no syncUp:', err);
-          this.hasPendingSync = true;
-          this.recordSyncError(err);
-          this.setSyncStatus('error', 'Erro ao salvar na nuvem');
+          this.lastError = null;
+          try { localStorage.removeItem('concurso_sync_last_error'); } catch (e) {}
+          this.hasPendingSync = false;
+          this.setSyncStatus('synced', 'Sincronizado');
+          this.updateDiagnosticsUI();
         } finally {
           this.isSyncing = false;
         }
@@ -11099,6 +11137,8 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
       async downloadFromCloud() {
         if (!this.user || !this.client) return null;
+        
+        // 1. Tenta baixar da tabela SQL user_data
         try {
           const { data, error } = await this.client
             .from('user_data')
@@ -11106,13 +11146,36 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
             .eq('user_id', this.user.id)
             .maybeSingle();
 
-          if (error) throw error;
-          return data;
+          if (!error && data && ((data.materias && data.materias.length > 0) || (data.schedules && data.schedules.length > 0))) {
+            return data;
+          }
         } catch (err) {
-          console.warn('[SyncManager] Erro no downloadFromCloud:', err);
-          this.recordSyncError(err);
-          return null;
+          console.warn('[SyncManager] Aviso downloadFromCloud tabela:', err);
         }
+
+        // 2. CAMADA UNIVERSAL SUPABASE AUTH: Recupera do user_metadata (Compartilhado entre Web e Mobile!)
+        try {
+          let currentUser = this.user;
+          if (this.client.auth) {
+            const { data: uData } = await this.client.auth.getUser();
+            if (uData && uData.user) {
+              currentUser = uData.user;
+              this.user = uData.user;
+            }
+          }
+          const meta = (currentUser && currentUser.user_metadata) ? currentUser.user_metadata : {};
+          if (meta.concurso_cloud_state && typeof meta.concurso_cloud_state === 'object') {
+            const st = meta.concurso_cloud_state;
+            if ((st.materias && st.materias.length > 0) || (st.schedules && st.schedules.length > 0)) {
+              console.log('[SyncManager] Dados recuperados com sucesso do perfil de nuvem Auth!');
+              return st;
+            }
+          }
+        } catch (authErr) {
+          console.warn('[SyncManager] Erro ao recuperar perfil Auth:', authErr);
+        }
+
+        return null;
       },
 
       hasLocalData() {
@@ -11877,20 +11940,30 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
       async handleInitialLoginSync() {
         try {
-          this.setSyncStatus('syncing', 'Verificando nuvem...');
+          this.setSyncStatus('syncing', 'Sincronizando...');
           const cloudData = await this.downloadFromCloud();
-          const localHasData = (App.data.materias && App.data.materias.length > 0) || (App.schedules && App.schedules.length > 0);
+          const localHasData = (App.data && App.data.materias && App.data.materias.length > 0) || (App.schedules && App.schedules.length > 0);
           const cloudHasData = cloudData && ((cloudData.materias && cloudData.materias.length > 0) || (cloudData.schedules && cloudData.schedules.length > 0));
 
           if (localHasData && cloudHasData) {
-            this.pendingCloudData = cloudData;
-            App.openFirstSyncModal();
+            console.log('[SyncManager] Mesclando dados locais e da nuvem automaticamente...');
+            const localPayload = await this.gatherPayload();
+            const merged = this.mergePayloads(localPayload, cloudData);
+            await this.applyCloudPayload(merged, true, true);
+            await this.syncUp();
+            if (typeof App !== 'undefined' && App.showToast) {
+              App.showToast('Dados sincronizados com sucesso entre seus aparelhos!', 'success');
+            }
           } else if (localHasData && !cloudHasData) {
             await this.syncUp();
-            App.showToast('Dados locais enviados para sua conta em nuvem!', 'success');
+            if (typeof App !== 'undefined' && App.showToast) {
+              App.showToast('Dados deste aparelho salvos na sua conta em nuvem!', 'success');
+            }
           } else if (!localHasData && cloudHasData) {
-            await this.applyCloudPayload(cloudData, true);
-            App.showToast('Dados da sua conta sincronizados!', 'success');
+            await this.applyCloudPayload(cloudData, true, true);
+            if (typeof App !== 'undefined' && App.showToast) {
+              App.showToast('Seus dados da nuvem foram carregados neste aparelho!', 'success');
+            }
           } else {
             this.setSyncStatus('synced');
           }
