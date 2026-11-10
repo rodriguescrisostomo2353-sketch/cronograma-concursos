@@ -12090,9 +12090,9 @@
         return res;
       },
 
-      async syncUp() {
+      async syncUp(forced = false) {
         if (!this.user || !this.client) return;
-        if (this.isSyncing) return;
+        if (this.isSyncing && !forced) return;
 
         try {
           this.isSyncing = true;
@@ -12517,7 +12517,7 @@
           }
 
           await this.applyCloudPayload(merged, true, true);
-          await this.syncUp();
+          await this.syncUp(true);
           this.lastSyncTime = new Date();
           this.setSyncStatus('synced', 'Sincronizado');
           this.renderLastSyncTime();
@@ -12537,6 +12537,7 @@
         try {
           App.showToast('Iniciando sincronização completa com a nuvem...', 'info');
           await this.syncDownAndMerge();
+          await this.syncUp(true);
           App.showToast('Sincronização concluída com sucesso!', 'success');
         } catch (err) {
           App.showToast('Erro ao sincronizar: ' + (err.message || err), 'warning');
@@ -13035,7 +13036,7 @@
             const localPayload = await this.gatherPayload();
             const merged = this.mergePayloads(localPayload, cloudData);
             await this.applyCloudPayload(merged, true, true);
-            await this.syncUp();
+            await this.syncUp(true);
             if (typeof App !== 'undefined' && App.showToast) {
               App.showToast('Dados sincronizados com sucesso entre seus aparelhos!', 'success');
             }
