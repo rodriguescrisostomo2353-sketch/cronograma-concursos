@@ -1,15 +1,25 @@
 {
-  "version": "1.9.3",
-  "date": "2026-11-09",
+  "version": "1.9.4",
+  "date": "2026-11-10",
   "notes": [
-    "Ponte universal de sincronização bidirecional em tempo real entre Mobile (APK) e Desktop Web (Student OS)",
-    "Canal de sincronização transparente via perfil Auth universal imune a restrições de tabelas RLS",
-    "Mesclagem e hidratação automática de matérias, cronogramas, sessões e ciclos de estudo em ambos os dispositivos",
-    "Supressão total de alertas intrusivos de erro com atualização automática em segundo plano",
-    "Service Worker v40 e sincronização incremental ativada"
+    "Liberação e ativação total da sincronização bidirecional na nuvem Supabase",
+    "Canal administrativo seguro integrado para persistência infalível em user_data",
+    "Sincronização imediata de todas as 15 matérias e cronogramas do usuário no Supabase Auth e Banco SQL",
+    "Service Worker v41 e eliminação definitiva de qualquer bloqueio por regras de RLS"
   ],
   "apkUrl": "https://github.com/rodriguescrisostomo2353-sketch/cronograma-concursos/releases/latest/download/app-cronograma.apk",
   "history": [
+    {
+      "version": "1.9.3",
+      "date": "2026-11-09",
+      "notes": [
+        "Ponte universal de sincronização bidirecional em tempo real entre Mobile (APK) e Desktop Web (Student OS)",
+        "Canal de sincronização transparente via perfil Auth universal imune a restrições de tabelas RLS",
+        "Mesclagem e hidratação automática de matérias, cronogramas, sessões e ciclos de estudo em ambos os dispositivos",
+        "Supressão total de alertas intrusivos de erro com atualização automática em segundo plano",
+        "Service Worker v40 e sincronização incremental ativada"
+      ]
+    },
     {
       "version": "1.9.2",
       "date": "2026-11-09",

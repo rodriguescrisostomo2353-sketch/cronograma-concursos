@@ -1,6 +1,6 @@
 {
   "name": "cronograma-concursos",
-  "version": "1.9.3",
+  "version": "1.9.4",
   "description": "Aplicativo de Cronograma de Estudos para Concursos",
   "scripts": {
     "build": "tsc",
