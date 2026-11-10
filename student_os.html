@@ -8339,9 +8339,29 @@
           }
         });
 
-        window.addEventListener('offline', () => {
+                window.addEventListener('offline', () => {
           updateCloudStatusBadge('offline', 'Offline (Salvo Local)');
         });
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible' && this.user) {
+            this.pullFromCloud();
+          }
+        });
+
+        window.addEventListener('focus', () => {
+          if (this.user) {
+            this.pullFromCloud();
+          }
+        });
+
+        if (!this._periodicSyncInterval) {
+          this._periodicSyncInterval = setInterval(() => {
+            if (this.user && !this.isSyncing && typeof navigator !== 'undefined' && navigator.onLine) {
+              this.pullFromCloud();
+            }
+          }, 25000);
+        }
 
         try {
           const client = getSupabaseClient();
