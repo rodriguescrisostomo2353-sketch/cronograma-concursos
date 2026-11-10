@@ -15510,25 +15510,13 @@ Nenhum erro registrado. O aplicativo está operando normalmente!
 
       initUpdateListeners() {
         let resumeDebounceTimer = null;
-                const handleResume = () => {
+        const handleResume = () => {
           if (resumeDebounceTimer) clearTimeout(resumeDebounceTimer);
           resumeDebounceTimer = setTimeout(() => {
             console.log('[Atualizações] App aberto/retomado: verificando atualizações no servidor online...');
             App.checkUpdates(false);
-            if (typeof SyncManager !== 'undefined' && SyncManager.user && SyncManager.syncDownAndMerge) {
-              console.log('[SyncManager] App retomado: sincronizando bidirecional com a nuvem...');
-              SyncManager.syncDownAndMerge();
-            }
           }, 300);
         };
-
-        if (!this._periodicSyncInterval) {
-          this._periodicSyncInterval = setInterval(() => {
-            if (typeof SyncManager !== 'undefined' && SyncManager.user && !SyncManager.isSyncing && !SyncManager.isOffline()) {
-              SyncManager.syncDownAndMerge();
-            }
-          }, 25000);
-        }
 
         // Ao voltar ao primeiro plano na aba/navegador
         document.addEventListener('visibilitychange', () => {
