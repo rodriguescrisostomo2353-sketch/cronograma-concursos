@@ -8060,7 +8060,6 @@
         }
 
         // CAMADA 2: Tabela user_data (upsert por user_id)
-        const unifiedState = typeof CloudSyncService !== 'undefined' ? CloudSyncService.gatherPayload() : null;
         let autoConfigObj = {};
         try {
           const rawAuto = localStorage.getItem('concurso_auto_config_last');
